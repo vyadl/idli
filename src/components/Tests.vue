@@ -76,7 +76,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['_setList', '_addList', '_addFilter', '_setItems']),
+    ...mapActions(['_setList', '_addList', '_addFilter', '_setItems', '_switchList']),
 
     makeTestData(itemCount) {
       if (!this.makeInThisList) {
