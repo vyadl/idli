@@ -148,16 +148,6 @@ export default {
       }
     }
 
-    // &:hover {
-    //   .item {
-    //     &__delete {
-    //       opacity: 1;
-    //       transform: none;
-    //       pointer-events: all;
-    //     }
-    //   }
-    // }
-
     .list-item-body {
       display: inline-block;
       font-size: 16px;
@@ -169,29 +159,5 @@ export default {
         box-shadow: 0 0 3px 0 rgba(#222, 0.4);
       }
     }
-
-    // &__delete {
-    //   position: relative;
-    //   transition: 0.2s opacity, 0.2s transform;
-    //   opacity: 0;
-    //   transform: translateX(-20px);
-    //   pointer-events: none;
-    //   height: 15px;
-    //   width: 15px;
-
-    //   &::after,
-    //   &::before {
-    //     content: "";
-    //     position: absolute;
-    //     width: 2px;
-    //     height: 100%;
-    //     transform: rotate(-45deg);
-    //     background-color: #333;
-    //   }
-
-    //   &::after {
-    //     transform: rotate(45deg);
-    //   }
-    // }
   }
 </style>

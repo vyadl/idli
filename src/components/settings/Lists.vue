@@ -63,35 +63,6 @@ export default {
       user-select: none;
     }
 
-    // &__count {
-    //   position: absolute;
-    //   top: 5px;
-    //   left: 5px;
-    //   color: #bbb;
-    //   font-size: 11px;
-    // }
-
-    // &__trigger {
-    //   position: fixed;
-    //   top: 60px;
-    //   right: 17px;
-    //   width: 20px;
-    //   height: 20px;
-    //   cursor: pointer;
-    //   z-index: 2;
-    //   transition: 0.2s opacity;
-    //   opacity: 0.7;
-    //   &:hover {
-    //     opacity: 1;
-    //   }
-
-    //   &::before {
-    //     content: "...";
-    //     font-size: 16px;
-    //     text-align: center;
-    //   }
-    // }
-
     .lists-edit {
       position: absolute;
       color: #bbb;
@@ -104,9 +75,5 @@ export default {
         background-color: #333;
       }
     }
-
-    // &__types {
-    //   padding-top: 20px;
-    // }
   }
 </style>

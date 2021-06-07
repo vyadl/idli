@@ -1,7 +1,7 @@
 <template>
   <div class="visualization">
-    <div class="g-setting-title g-setting-title--main">visualization</div>
-    <label class="g-label" :class="{ 'g-label--active': isShuffled }">
+    <div class="g-setting-title main">visualization</div>
+    <label class="g-label" :class="{ 'active': isShuffled }">
       shuffle mode
       <input
         type="checkbox"
@@ -14,10 +14,10 @@
     </label>
     <div
       v-if="isShuffled"
-      class="g-button visualization__button"
+      class="g-button"
       @click="_shuffleFilteredList"
     >randomize it!</div>
-    <label class="g-label" :class="{ 'g-label--active': isCloudModeOn }">
+    <label class="g-label" :class="{ 'active': isCloudModeOn }">
       cloud mode
       <input
         type="checkbox"
@@ -28,7 +28,7 @@
         @change="_switchCloudMode"
       />
     </label>
-    <label v-if="isCloudModeOn" class="g-label" :class="{ 'g-label--active': isStarsModeOn }">
+    <label v-if="isCloudModeOn" class="g-label" :class="{ 'active': isStarsModeOn }">
       stars mode
       <input
         type="checkbox"
@@ -39,7 +39,7 @@
         @change="_switchStarsMode"
       />
     </label>
-    <label class="g-label" :class="{ 'g-label--active': isInvert }">
+    <label class="g-label" :class="{ 'active': isInvert }">
       invert
       <input
         type="checkbox"
@@ -57,7 +57,6 @@
 import { mapGetters, mapActions } from "vuex";
 
 export default {
-  name: "Visualization",
   data: function() {
     return {
       localCloudMode: 0,

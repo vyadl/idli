@@ -1,10 +1,5 @@
 <template>
   <div class="main-list">
-    <!-- <div
-      v-if="false"
-      class="main-list__add"
-      @click="_startCreatingItem"
-    ></div> -->
     <transition name="fade">
       <div 
         class="preloader"
@@ -91,49 +86,5 @@ export default {
       top: 0;
       background-color: rgba(#fff, .3);
     }
-
-    // &__add {
-    //   position: fixed;
-    //   top: 20px;
-    //   right: 20px;
-    //   width: 15px;
-    //   height: 15px;
-    //   cursor: pointer;
-    //   z-index: 2;
-    //   transition: .2s opacity;
-    //   opacity: .7;
-    //   &:hover {
-    //     opacity: 1;
-    //   }
-
-    //   &::after,
-    //   &::before {
-    //     content: '';
-    //     position: absolute;
-    //     background-color: #333;
-    //   }
-
-    //   &::before {
-    //     width: 2px;
-    //     height: 100%;
-    //     position: absolute;
-    //     top: 50%;
-    //     left: 50%;
-    //     transform: translate(-50%, -50%);
-    //   }
-
-    //   &::after {
-    //     width: 100%;
-    //     height: 2px;
-    //     position: absolute;
-    //     top: 50%;
-    //     left: 50%;
-    //     transform: translate(-50%, -50%);
-    //   }
-    // }
   }
-
-  // .item-move {
-  //   transition: transform .5s;
-  // }
 </style>

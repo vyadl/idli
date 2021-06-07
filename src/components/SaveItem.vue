@@ -281,15 +281,18 @@ export default {
       color: #333;
       transition: opacity .2s;
       padding: 5px;
-      font: 14px Verdana, sens-serif;
+      font: 14px Verdana, sans-serif;
       cursor: pointer;
       margin: 0 7px;
+
       &:hover {
         opacity: .7;
       }
+
       &:active {
         opacity: .6;
       }
+
       &:disabled {
         opacity: .4;
       }

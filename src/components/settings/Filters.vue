@@ -83,27 +83,6 @@ export default {
       font-size: 11px;
     }
 
-    // &__trigger {
-    //   position: fixed;
-    //   top: 60px;
-    //   right: 17px;
-    //   width: 20px;
-    //   height: 20px;
-    //   cursor: pointer;
-    //   z-index: 2;
-    //   transition: .2s opacity;
-    //   opacity: 0.7;
-    //   &:hover {
-    //     opacity: 1;
-    //   }
-
-    //   &::before {
-    //     content: '...';
-    //     font-size: 16px;
-    //     text-align: center;
-    //   }      
-    // }
-
     .filters-edit {
       position: absolute;
       color: #bbb;
@@ -116,10 +95,6 @@ export default {
         background-color: #333;
       }
     }
-
-    // &__types {
-    //   padding-top: 20px;
-    // }
 
     .filters-input {
       display: none;
