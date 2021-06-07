@@ -1,19 +1,19 @@
 <template>
-  <div>
-    <div class="filters__tags">
-      <div class="g-setting-title g-setting-title--small">
+  <div class="filters-showing">
+    <div class="tags">
+      <div class="g-setting-title small">
         tags
       </div>
       <label 
         class="g-label"
-        :class="{'g-label--active': tag.value}"
+        :class="{'active': tag.value}"
         v-for="tag in localFilters.tags"
         :key="tag.id"
       >
         {{ tag.name }}
         <input 
           type="checkbox"
-          class="filters__input"
+          class="g-hidden"
           :true-value="1"
           :false-value="0"
           v-model="tag.value"
@@ -21,20 +21,20 @@
         >
       </label>
     </div>
-    <div class="filters__types">
-      <div class="g-setting-title g-setting-title--small">
+    <div class="types">
+      <div class="g-setting-title small">
         types
       </div>
       <label 
         v-for="type in localFilters.types"
         :key="type.id"
         class="g-label"
-        :class="{'g-label--active': type.value}"
+        :class="{'active': type.value}"
       >
         {{ type.name }}
         <input 
           type="checkbox"
-          class="filters__input"
+          class="g-hidden"
           :true-value="1"
           :false-value="0"
           v-model="type.value"
@@ -46,12 +46,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
-
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'FiltersShowing',
-
   data: function() {
     return {
       localFilters: {
@@ -85,59 +82,9 @@ export default {
 </script>
 
 <style lang="scss">
-.filters {
-  &__inner {
-    user-select: none;
-    min-height: 100px;
-  }
-
-  &__count {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    color: #bbb;
-    font-size: 11px;
-  }
-
-  &__trigger {
-    position: fixed;
-    top: 60px;
-    right: 17px;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    z-index: 2;
-    transition: .2s opacity;
-    opacity: 0.7;
-    &:hover {
-      opacity: 1;
-    }
-
-    &::before {
-      content: '...';
-      font-size: 16px;
-      text-align: center;
-    }      
-  }
-
-  &__edit {
-    position: absolute;
-    color: #bbb;
-    top: auto;
-    left: -35px;
-    bottom: 7px;
-    transform: rotate(-90deg);
-    &--active {
-      background-color: #333;
+  .filters-showing {
+    .types {
+      padding-top: 20px;
     }
   }
-
-  &__types {
-    padding-top: 20px;
-  }
-
-  &__input {
-    display: none;
-  }
-}
 </style>

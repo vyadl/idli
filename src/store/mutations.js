@@ -132,9 +132,9 @@ export default {
   },
 
   setItems(state, newItems) {
-    const currentListObj = state.lists[state.currentListId];
+    const currentList = state.lists[state.currentListId];
 
-    const maxId = Object.keys(currentListObj.items).length ? Math.max(...Object.keys(currentListObj.items)) : 0;
+    const maxId = Object.keys(currentList.items).length ? Math.max(...Object.keys(currentList.items)) : 0;
     let newId = maxId + 1;
 
     newItems.forEach((item) => {
@@ -142,7 +142,7 @@ export default {
       newId++;
     });
 
-    Vue.set(currentListObj, 'items', {
+    Vue.set(currentList, 'items', {
       ...newItems,
     });
   },

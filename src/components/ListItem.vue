@@ -1,16 +1,16 @@
 <template>
   <div
-    class="item"
+    class="list-item"
     :class="{
-    'item--cloud-mode': isCloudModeOn,
-    'item--stars-mode': isStarsModeOn,
-    'item--invert': isInvert,
+    'cloud-mode': isCloudModeOn,
+    'stars-mode': isStarsModeOn,
+    'invert': isInvert,
   }"
     :style="styles"
   >
     <div
-      class="item__body"
-      :class="{ 'item__body--active' : activeItem && activeItem.id == item.id}"
+      class="inner"
+      :class="{ 'active' : activeItem && activeItem.id == item.id}"
       @click.stop="_setActiveItem(item)"
     >{{ item.text }}</div>
   </div>
@@ -20,12 +20,7 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'ListItem',
   props: ['item'],
-
-  beforeMount() {
-
-  },
 
   mounted() {
     if (this.listChanging) {
@@ -78,44 +73,44 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.2s;
-  &--cloud-mode {
-    position: absolute;
+<style lang="scss">
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
 
-    &::before {
-      content: "";
-      z-index: 1;
+    &.cloud-mode {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: #fff;
-      filter: blur(7px);
-    }
 
-    .item {
-      &__body {
+      &::before {
+        content: "";
+        z-index: 1;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        filter: blur(7px);
+      }
+
+      .inner {
         position: relative;
         z-index: 2;
       }
     }
-  }
-  &--stars-mode {
-    position: absolute;
-    border-radius: 50%;
-    width: 2px;
-    height: 2px;
-    background-color: #000;
-    &:hover {
-      .item {
-        &__body {
+
+    &.stars-mode {
+      position: absolute;
+      border-radius: 50%;
+      width: 2px;
+      height: 2px;
+      background-color: #000;
+
+      &:hover {
+        .inner {
           opacity: 1;
           transform: scale(1);
           margin: 0;
@@ -123,79 +118,46 @@ export default {
           z-index: 2;
         }
       }
-    }
 
-    &::before {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      filter: none;
-      background-color: transparent;
-    }
+      &::before {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        filter: none;
+        background-color: transparent;
+      }
 
-    .item {
-      &__body {
+      .inner {
         opacity: 0;
         transform: scale(0);
         transition: opacity 0.2s;
       }
     }
-  }
-  &--invert {
-    &::before {
-      background-color: #000;
-    }
-    &.item--stars-mode {
-      background-color: #fff;
 
+    &.invert {
       &::before {
-        background-color: transparent;
+        background-color: #000;
+      }
+
+      &.stars-mode {
+        background-color: #fff;
+
+        &::before {
+          background-color: transparent;
+        }
+      }
+    }
+
+    .inner {
+      display: inline-block;
+      font-size: 16px;
+      margin-bottom: 10px;
+      padding: 5px;
+      transition: 0.2s box-shadow;
+
+      &.active {
+        box-shadow: 0 0 3px 0 rgba(#222, 0.4);
       }
     }
   }
-  &:hover {
-    .item {
-      &__delete {
-        opacity: 1;
-        transform: none;
-        pointer-events: all;
-      }
-    }
-  }
-
-  &__body {
-    display: inline-block;
-    font-size: 16px;
-    margin-bottom: 10px;
-    padding: 5px;
-    transition: 0.2s box-shadow;
-    &--active {
-      box-shadow: 0 0 3px 0 rgba(#222, 0.4);
-    }
-  }
-
-  &__delete {
-    position: relative;
-    transition: 0.2s opacity, 0.2s transform;
-    opacity: 0;
-    transform: translateX(-20px);
-    pointer-events: none;
-    height: 15px;
-    width: 15px;
-
-    &::after,
-    &::before {
-      content: "";
-      position: absolute;
-      width: 2px;
-      height: 100%;
-      transform: rotate(-45deg);
-      background-color: #333;
-    }
-
-    &::after {
-      transform: rotate(45deg);
-    }
-  }
-}
 </style>

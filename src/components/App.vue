@@ -2,11 +2,11 @@
   <div 
     class="app"
     :class="{ 
-      'app--cloud-mode': isCloudModeOn || isStarsModeOn, 
-      'app--invert': isInvert,
+      'cloud-mode': isCloudModeOn || isStarsModeOn, 
+      'invert': isInvert,
     }"
   >
-    <div class="app__title">{{ listObj.name }}</div>
+    <div class="list-title">{{ currentList.name }}</div>
     <settings></settings>
     <transition name="fade">
       <save-item v-if="isChangingActive"></save-item>
@@ -16,53 +16,52 @@
 </template>
 
 <script>
-import SaveItem from './SaveItem.vue';
-import MainList from './MainList.vue';
-import Settings from './Settings.vue';
+import SaveItem from '@/components/SaveItem.vue';
+import MainList from '@/components/MainList.vue';
+import Settings from '@/components/Settings.vue';
 import { mapGetters, mapActions } from 'vuex';
 
-  export default {
-    name: 'App',
-    components: {
-      SaveItem,
-      MainList,
-      Settings,
-    },
+export default {
+  components: {
+    SaveItem,
+    MainList,
+    Settings,
+  },
 
-    created() {
-      this._getInitialData();
-    },
+  created() {
+    this._getInitialData();
+  },
 
-    computed: {
-      ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'listObj']),
-    },
+  computed: {
+    ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'currentList']),
+  },
 
-    methods: {
-      ...mapActions(['_getInitialData']),
-    }
-  }
-</script>
-
-<style scoped lang="scss">
-.app {
-  font: 12px Verdana, sans-serif;
-  &--cloud-mode {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    top: 0;
-    left: 0;
-  }
-  &--invert {
-    background-color: #000;
-    color: #fff;
-  }
-
-  &__title {
-    color: #bbb;
-    font-size: 14px;
-    padding: 10px;
+  methods: {
+    ...mapActions(['_getInitialData']),
   }
 }
+</script>
+
+<style lang="scss">
+  .app { 
+    &.cloud-mode {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+    }
+
+    &.invert {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .list-title {
+      color: #bbb;
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
 </style>

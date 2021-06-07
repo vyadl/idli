@@ -1,34 +1,34 @@
 <template>
 <div class="tests">
-  <div class="g-setting-title g-setting-title--main">
+  <div class="g-setting-title main">
     test data
   </div>
   <label 
     class="g-label"
-    :class="{'g-label--active': makeInThisList}"
+    :class="{'active': makeInThisList}"
   >
     make in this list
     <input 
       type="checkbox"
-      class="filters__input"
+      class="g-hidden"
       v-model="makeInThisList"
     >
   </label>
   <label 
     class="g-label"
-    :class="{'g-label--active': makeNewFilters}"
+    :class="{'active': makeNewFilters}"
   >
     make new filters
     <input 
       type="checkbox"
-      class="filters__input"
+      class="g-hidden"
       v-model="makeNewFilters"
     >
   </label>
   <form @submit.stop.prevent="makeTestData('default')">
     <input 
       type="number"
-      class="g-input tests__input"
+      class="g-input input"
       placeholder="number of items"
       max="1000"
       min="0"
@@ -38,7 +38,7 @@
     >
     <button
       type="submit" 
-      class="g-button visualization__button"
+      class="g-button"
     >
       make test list
     </button>
@@ -47,7 +47,7 @@
   <br>
   <button
     type="button" 
-    class="g-button visualization__button"
+    class="g-button"
     v-for="(number, index) in testCounts"
     :key="index"
     @click="makeTestData(number)"
@@ -61,7 +61,6 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'Tests',
   data: function() {
     return {
       placeholderCount: 11,
@@ -162,12 +161,12 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.tests {
-  &__input {
-    margin-bottom: 10px;
-    width: 50px;
-    margin-left: 5px;
+<style lang="scss">
+  .tests {
+    .input {
+      margin-bottom: 10px;
+      width: 50px;
+      margin-left: 5px;
+    }
   }
-}
 </style>
