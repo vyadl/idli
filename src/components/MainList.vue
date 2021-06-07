@@ -15,13 +15,15 @@
       ></list-item>
     </template>
     <template v-else>
-      <transition-group class="main-list-wrap" name="item">
-        <list-item
-          v-for="item in finalList"
-          :key="item.id"
-          :item="item"
-        ></list-item>
-      </transition-group>
+      <div class="inner">
+        <transition-group name="item">
+          <list-item
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          ></list-item>
+        </transition-group>
+      </div>
     </template>
   </div>
 </template>
@@ -72,7 +74,7 @@ export default {
     text-align: center;
     padding-top: 40px;
 
-    .main-list-wrap {
+    .inner {
       display: flex;
       flex-direction: column;
     }

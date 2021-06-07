@@ -8,13 +8,13 @@
         filters
       </div>
       <label 
-        class="g-label filters-edit"
+        class="g-label edit"
         :class="{'active': isEditing}"
       >
         edit
         <input
           type="checkbox"
-          class="filters-input"
+          class="input"
           v-model="isEditing"
         >
       </label>
@@ -83,7 +83,7 @@ export default {
       font-size: 11px;
     }
 
-    .filters-edit {
+    .edit {
       position: absolute;
       color: #bbb;
       top: auto;
@@ -96,7 +96,7 @@ export default {
       }
     }
 
-    .filters-input {
+    .input {
       display: none;
     }
   }

@@ -43,9 +43,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .app {
-    font: 12px Verdana, sans-serif;
-
+  .app { 
     &.cloud-mode {
       position: fixed;
       width: 100%;

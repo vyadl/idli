@@ -36,7 +36,6 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'FiltersShowing',
   data: function() {
     return {
       newListName: '',

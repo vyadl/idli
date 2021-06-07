@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+body {
+  font: 12px Verdana, sans-serif;
+}
+
 .g-hidden {
   display: none;
 }
@@ -15,6 +19,7 @@
   border: none;
   border-bottom: 1px solid #bbb;
   font: 14px Verdana, sans-serif;
+
   &:focus {
     border-bottom: 1px solid #666;
   }
@@ -43,10 +48,7 @@ input[type=number] {
    &.active {
     background-color: #ddd;
   }
-  &--underscore {
-    background-color: transparent;
-    text-decoration: underline;
-  }
+
   &:hover {
     opacity: .7;
   }

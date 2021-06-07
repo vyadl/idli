@@ -8,26 +8,26 @@
       :class="{ 'active': isSettingActive }"
     >
       <div 
-        class="menu-item menu-add"
+        class="menu-item icon-add"
         @click="_startCreatingItem"
       ></div>
       <div 
-        class="menu-item menu-filters"
+        class="menu-item icon-filters"
         :class="{ 'active': settingsStatuses.filters }"
         @click="_switchSettingStatus('filters')"
       ></div>
       <div 
-        class="menu-item menu-visualization"
+        class="menu-item icon-visualization"
         :class="{ 'active': settingsStatuses.visualization }"
         @click="_switchSettingStatus('visualization')"
       ></div>
       <div 
-        class="menu-item menu-tests"
+        class="menu-item icon-tests"
         :class="{ 'active': settingsStatuses.tests }"
         @click="_switchSettingStatus('tests')"
       >t</div>
       <div 
-        class="menu-item menu-lists"
+        class="menu-item icon-lists"
         :class="{ 'active': settingsStatuses.lists }"
         @click="_switchSettingStatus('lists')"
       >l</div>
@@ -169,7 +169,7 @@ export default {
       }
     }
 
-    .menu-add {
+    .icon-add {
       &::before {
         width: 2px;
         height: 100%;
@@ -189,7 +189,7 @@ export default {
       }
     }
   
-    .menu-filters {
+    .icon-filters {
       &::before {
         content: '...';
         font-size: 14px;
@@ -203,7 +203,7 @@ export default {
       }   
     }
   
-    .menu-tests {
+    .icon-tests {
       &::before {
         content: '';
         font-size: 12px;
@@ -217,7 +217,7 @@ export default {
       }   
     }
 
-    .menu-visualization {
+    .icon-visualization {
       &::before,
       &::after {
         position: absolute;

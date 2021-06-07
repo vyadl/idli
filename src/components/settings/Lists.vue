@@ -2,7 +2,7 @@
   <div class="lists">
     <div class="inner">
       <div class="g-setting-title main">lists</div>
-      <label class="g-label lists-edit" :class="{ 'active': isEditing }">
+      <label class="g-label edit" :class="{ 'active': isEditing }">
         edit
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
@@ -63,7 +63,7 @@ export default {
       user-select: none;
     }
 
-    .lists-edit {
+    .edit {
       position: absolute;
       color: #bbb;
       top: auto;

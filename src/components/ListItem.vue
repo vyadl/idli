@@ -9,7 +9,7 @@
     :style="styles"
   >
     <div
-      class="list-item-body"
+      class="inner"
       :class="{ 'active' : activeItem && activeItem.id == item.id}"
       @click.stop="_setActiveItem(item)"
     >{{ item.text }}</div>
@@ -96,7 +96,7 @@ export default {
         filter: blur(7px);
       }
 
-      .list-item-body {
+      .inner {
         position: relative;
         z-index: 2;
       }
@@ -110,7 +110,7 @@ export default {
       background-color: #000;
 
       &:hover {
-        .list-item-body {
+        .inner {
           opacity: 1;
           transform: scale(1);
           margin: 0;
@@ -127,7 +127,7 @@ export default {
         background-color: transparent;
       }
 
-      .list-item-body {
+      .inner {
         opacity: 0;
         transform: scale(0);
         transition: opacity 0.2s;
@@ -148,7 +148,7 @@ export default {
       }
     }
 
-    .list-item-body {
+    .inner {
       display: inline-block;
       font-size: 16px;
       margin-bottom: 10px;

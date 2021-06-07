@@ -1,5 +1,5 @@
 <template>
-  <div class="list-showing">
+  <div class="lists-showing">
     <div>
       <label 
         class="g-label"
@@ -23,12 +23,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from 'vuex';
-
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'FiltersShowing',
-
   computed: {
     ...mapGetters(['lists', 'currentListId']),
   },

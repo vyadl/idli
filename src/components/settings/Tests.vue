@@ -1,6 +1,6 @@
 <template>
 <div class="tests">
-  <div class="g-setting-title g-setting-title--main">
+  <div class="g-setting-title main">
     test data
   </div>
   <label 
@@ -28,7 +28,7 @@
   <form @submit.stop.prevent="makeTestData('default')">
     <input 
       type="number"
-      class="g-input tests-input"
+      class="g-input input"
       placeholder="number of items"
       max="1000"
       min="0"
@@ -163,7 +163,7 @@ export default {
 
 <style lang="scss">
   .tests {
-    .tests-input {
+    .input {
       margin-bottom: 10px;
       width: 50px;
       margin-left: 5px;
