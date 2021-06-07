@@ -1,101 +1,100 @@
 <template>
-<div 
-  class="add"
-  :class="{'add--visible': isChangingActive}"
->
   <div 
-    class="add__mask"
-    @click="cancelChanging"
-  ></div>
-  <div class="add__inner">
-    <div class="add__text">
-      <div class="add__text-label">
-        item
-      </div>
-      <input 
-        type="text" 
-        class="add__text-input"
-        v-model="item.text"
-      >
-    </div>
-    <div class="add__text">
-      <div 
-        class="add__text-label"
-        :class="{'add__text-label--clickable': !isDetailsShowed && !item.details}"
-        @click="isDetailsShowed = !isDetailsShowed"
-      >
-        {{ !isDetailsShowed && !item.details ? 'write' : '' }} details
-      </div>
-      <textarea 
-        class="add__descr"
-        v-if="item.details || isDetailsShowed"
-        v-model="item.details"
-      ></textarea>
-    </div>
-    <div class="add__settings">
-      <label
-        class="g-label"
-        :class="{'g-label--active': item.tags.indexOf(tag.id) !== -1}"
-        v-for="tag in filters.tags"
-        :key="tag.id"
-      >
-        <input
-          type="checkbox"
-          class="add__input"
-          :value="tag.id"
-          v-model="item.tags"
-          :true-value="1"
-          :false-value="0"
-        >
-        {{ tag.name }}
-      </label>
-    </div>
-    <div class="add__types">
-      <label 
-        class="g-label"
-        :class="{'g-label--active': item.type === type.id}"
-        v-for="type in filters.types"
-        :key="type.id"
-      >
-        {{ type.name }}
+    class="save-item"
+    :class="{ 'visible': isChangingActive }"
+  >
+    <div 
+      class="mask"
+      @click="cancelChanging"
+    ></div>
+    <div class="inner">
+      <div>
+        <div class="text-label">
+          item
+        </div>
         <input 
-          type="radio"
-          class="add__input"
-          name="type"
-          :value="type.id"
-          v-model="item.type"
-          @click="unableType(type.id)"
+          type="text" 
+          class="item-name"
+          v-model="item.text"
         >
-      </label>
-    </div>
-    <div class="add__buttons">
-      <button
-        class="add__button"
-        type="button"
-        @click="saveItem"
-        :disabled="!item.text"
-      >{{ activeItem ? 'change' : 'add'}}</button>
-      <button
-        class="add__button"
-        type="button"
-        v-if="activeItem"
-        @click="cancelChanging"
-      >cancel</button>
-      <button
-        class="add__button"
-        type="button"
-        @click="deleteItem"
-      >{{ activeItem ? 'delete' : 'cancel' }}</button>
+      </div>
+      <div>
+        <div 
+          class="text-label"
+          :class="{ 'clickable': !isDetailsShowed && !item.details }"
+          @click="isDetailsShowed = !isDetailsShowed"
+        >
+          {{ !isDetailsShowed && !item.details ? 'write' : '' }} details
+        </div>
+        <textarea 
+          class="item-description"
+          v-if="item.details || isDetailsShowed"
+          v-model="item.details"
+        ></textarea>
+      </div>
+      <div class="item-settings">
+        <label
+          class="g-label"
+          :class="{ 'active': item.tags.indexOf(tag.id) !== -1 }"
+          v-for="tag in filters.tags"
+          :key="tag.id"
+        >
+          <input
+            type="checkbox"
+            class="g-hidden"
+            :value="tag.id"
+            v-model="item.tags"
+            :true-value="1"
+            :false-value="0"
+          >
+          {{ tag.name }}
+        </label>
+      </div>
+      <div class="item-types">
+        <label 
+          class="g-label"
+          :class="{'active': item.type === type.id}"
+          v-for="type in filters.types"
+          :key="type.id"
+        >
+          {{ type.name }}
+          <input 
+            type="radio"
+            class="g-hidden"
+            name="type"
+            :value="type.id"
+            v-model="item.type"
+            @click="unableType(type.id)"
+          >
+        </label>
+      </div>
+      <div class="buttons-container">
+        <button
+          class="item-button"
+          type="button"
+          @click="saveItem"
+          :disabled="!item.text"
+        >{{ activeItem ? 'change' : 'add'}}</button>
+        <button
+          class="item-button"
+          type="button"
+          v-if="activeItem"
+          @click="cancelChanging"
+        >cancel</button>
+        <button
+          class="item-button"
+          type="button"
+          @click="deleteItem"
+        >{{ activeItem ? 'delete' : 'cancel' }}</button>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'SaveItem',
   data: function() {
     return {
       isDetailsShowed: false,
@@ -129,6 +128,7 @@ export default {
 
   methods: {
     ...mapActions(['_addItem', '_changeItem', '_deleteItem', '_setActiveItem']),
+  
     saveItem() {
       if (this.activeItem) {
         this._changeItem({ 
@@ -173,19 +173,18 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.add {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  width: 100vw;
-  padding: 15px;
-  color: #000;
-  
-  &--visible {
-    .add {
-      &__mask {
+<style lang="scss">
+  .save-item {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    padding: 15px;
+    color: #000;
+    
+    &.visible {
+      .mask {
         position: fixed;
         width: 100vw;
         height: 100vh;
@@ -194,7 +193,8 @@ export default {
         background-color: rgba(#444, .3);
         opacity: 1;
       }
-      &__inner {
+  
+      .inner {
         transform: none;
         opacity: 1;
         background-color: #fff;
@@ -207,94 +207,92 @@ export default {
         margin: 0 auto;
       }
     }
-  }
 
-  &__mask {
-    transition: .2s opacity;
-  }
+    .mask {
+      transition: .2s opacity;
+    }
 
-  &__inner {
-    transition: .2s opacity, .2s transform;
-    transform: translateY(-300px);
-    opacity: 0;
-  }
+    .inner {
+      transition: .2s opacity, .2s transform;
+      transform: translateY(-300px);
+      opacity: 0;
+    }
 
-  &__settings {
-    padding: 15px;
-    text-align: center;
-  }
+    .text-label {
+      color: #999;
+      font-size: 11px;
 
-  &__types {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 200px;
-    padding: 10px 0 15px;
-    margin: auto;
-  }
+      &.clickable {
+        cursor: pointer;
+        opacity: .6;
 
-  &__buttons {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
 
-  &__input {
-    display: none;
-  }
+    .item-name,
+    .item-description {
+      outline: none;
+      padding: 8px 6px;
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #bbb;
+      font: 14px Verdana, sans-serif;
 
-  &__text-label {
-    color: #999;
-    font-size: 11px;
-    &--clickable {
+      &:focus {
+        border-bottom: 1px solid #666;
+      }
+    }
+
+    .item-name {
+      margin-bottom: 15px;
+    }
+
+    .item-description {
+      resize: none;
+    }
+
+    .item-settings {
+      padding: 15px;
+      text-align: center;
+    }
+
+    .item-types {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 200px;
+      padding: 10px 0 15px;
+      margin: auto;
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .item-button {
+      border-radius: 5px;
+      background: transparent;
+      border: 1px solid #444;
+      color: #333;
+      transition: opacity .2s;
+      padding: 5px;
+      font: 14px Verdana, sens-serif;
       cursor: pointer;
-      opacity: .6;
+      margin: 0 7px;
       &:hover {
-        opacity: 1;
+        opacity: .7;
+      }
+      &:active {
+        opacity: .6;
+      }
+      &:disabled {
+        opacity: .4;
       }
     }
   }
-
-  &__text-input,
-  &__descr {
-    outline: none;
-    padding: 8px 6px;
-    width: 100%;
-    border: none;
-    border-bottom: 1px solid #bbb;
-    font: 14px Verdana, sans-serif;
-    &:focus {
-      border-bottom: 1px solid #666;
-    }
-  }
-
-  &__text-input {
-    margin-bottom: 15px;
-  }
-
-  &__descr {
-    resize: none;
-  }
-
-  &__button {
-    border-radius: 5px;
-    background: transparent;
-    border: 1px solid #444;
-    color: #333;
-    transition: opacity .2s;
-    padding: 5px;
-    font: 14px Verdana, sens-serif;
-    cursor: pointer;
-    margin: 0 7px;
-    &:hover {
-      opacity: .7;
-    }
-    &:active {
-      opacity: .6;
-    }
-    &:disabled {
-      opacity: .4;
-    }
-  }
-}
 </style>

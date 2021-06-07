@@ -162,7 +162,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .tests {
   &__input {
     margin-bottom: 10px;
