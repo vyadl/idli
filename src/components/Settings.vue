@@ -1,32 +1,32 @@
 <template>
-  <div 
+  <div
     class="settings"
     :class="{ 'invert': isInvert }"
   >
-    <div 
+    <div
       class="menu"
-      :class="{ 'active': isSettingActive }"
+      :class="{ 'active': isAnySettingActive }"
     >
-      <div 
+      <div
         class="menu-item icon-add"
         @click="_startCreatingItem"
       ></div>
-      <div 
+      <div
         class="menu-item icon-filters"
         :class="{ 'active': settingsStatuses.filters }"
         @click="_switchSettingStatus('filters')"
       ></div>
-      <div 
+      <div
         class="menu-item icon-visualization"
         :class="{ 'active': settingsStatuses.visualization }"
         @click="_switchSettingStatus('visualization')"
       ></div>
-      <div 
+      <div
         class="menu-item icon-tests"
         :class="{ 'active': settingsStatuses.tests }"
         @click="_switchSettingStatus('tests')"
       >t</div>
-      <div 
+      <div
         class="menu-item icon-lists"
         :class="{ 'active': settingsStatuses.lists }"
         @click="_switchSettingStatus('lists')"
@@ -35,20 +35,20 @@
     <transition name="fade">
       <div
         class="settings-body"
-        v-if="isSettingActive"
+        v-if="isAnySettingActive"
       >
         <filters
-          v-if="settingsStatuses.filters" 
+          v-if="settingsStatuses.filters"
           key="filters"></filters>
-        <visualization 
+        <visualization
           v-if="settingsStatuses.visualization"
           key="visualization"
         ></visualization>
-        <tests 
+        <tests
           v-if="settingsStatuses.tests"
           key="tests"
         ></tests>
-        <lists 
+        <lists
           v-if="settingsStatuses.lists"
           key="lists"
         ></lists>
@@ -74,13 +74,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['activeItem', 'isChangingActive', 'isSettingActive', 'settingsStatuses', 'isInvert']),
+    ...mapGetters(['activeItem', 'isChangingActive', 'isAnySettingActive', 'settingsStatuses', 'isInvert']),
   },
 
   methods: {
-    ...mapActions(['_startCreatingItem', '_setSettingsStatus', '_switchSettingStatus'])
+    ...mapActions(['_startCreatingItem', '_setSettingsStatus', '_switchSettingStatus']),
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -88,7 +88,7 @@ export default {
     position: relative;
     z-index: 100;
     color: #000;
-    
+
     &.invert {
       .menu {
         color: #fff;
@@ -109,7 +109,7 @@ export default {
       top: 90px;
       background-color: #fff;
       box-shadow: 0 0 5px rgba(#666, .4);
-      border-radius: 3px; 
+      border-radius: 3px;
       transition: .2s transform ease-in-out;
     }
 
@@ -123,7 +123,7 @@ export default {
       padding: 15px;
       opacity: .8;
       transition: .2s opacity;
-  
+
       &.active {
         opacity: 1;
       }
@@ -160,7 +160,7 @@ export default {
       &:hover {
         opacity: 1;
       }
-      
+
       &::after,
       &::before {
         content: '';
@@ -188,7 +188,7 @@ export default {
         transform: translate(-50%, -50%);
       }
     }
-  
+
     .icon-filters {
       &::before {
         content: '...';
@@ -200,9 +200,9 @@ export default {
         line-height: 0;
         transform: translate(-50%, -50%);
         background-color: transparent;
-      }   
+      }
     }
-  
+
     .icon-tests {
       &::before {
         content: '';
@@ -214,7 +214,7 @@ export default {
         line-height: 0;
         transform: translate(-50%, -50%);
         background-color: transparent;
-      }   
+      }
     }
 
     .icon-visualization {

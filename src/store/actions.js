@@ -3,7 +3,7 @@ export default {
     commit('setState', data);
   },
 
-  _getInitialData({ dispatch }, userI) {
+  _getInitialData({ dispatch }) {
     if (localStorage.getItem('appLists')) {
       dispatch('_setInitialState', JSON.parse(localStorage.getItem('appLists')));
     } else {
@@ -23,7 +23,9 @@ export default {
     dispatch('_updateLocal');
   },
 
-  _removeList({ commit, dispatch }, payload) {
+  _removeList({ commit, dispatch, getters }, payload) {
+    const switchListId = Object.keys(getters.lists).find(listId => listId !== String(payload));
+    commit('switchList', switchListId);
     commit('removeList', payload);
 
     dispatch('_updateLocal');
@@ -51,11 +53,11 @@ export default {
 
   _setList({ commit, dispatch, getters }, list) {
     const areMoreNewItems = Object.keys(list).length > Object.keys(getters.list).length;
-    
+
     if (areMoreNewItems) {
       commit('changeChangingListStatus', true);
     }
-    
+
     setTimeout(() => {
       setTimeout(() => {
         commit('setList', list);
@@ -68,8 +70,8 @@ export default {
 
   _addFilter({ commit, dispatch, getters }, payload) {
     if (
-      (payload.type === 'tags' || payload.type === 'types') 
-      && typeof payload.name === 'string' 
+      (payload.type === 'tags' || payload.type === 'types')
+      && typeof payload.name === 'string'
       && payload.name.length
     ) {
       commit('addFilter', {
@@ -118,7 +120,7 @@ export default {
       commit('deleteItem', item.id);
       dispatch('_updateLocal');
     }
-    
+
     dispatch('_setActiveItem', null);
   },
 
@@ -154,7 +156,7 @@ export default {
   // setting actions
 
   _setSettingsStatus({ commit }, status) {
-    commit('setSettingsStatus', status)
+    commit('setSettingsStatus', status);
   },
 
   _switchSettingStatus({ state, commit }, field) {

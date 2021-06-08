@@ -7,7 +7,7 @@
       <div class="g-setting-title main">
         filters
       </div>
-      <label 
+      <label
         class="g-label edit"
         :class="{'active': isEditing}"
       >
@@ -29,22 +29,21 @@ import FiltersShowing from '@/components/settings/FiltersShowing.vue';
 import FiltersEditing from '@/components/settings/FiltersEditing.vue';
 import { mapGetters, mapActions } from 'vuex';
 
-
 export default {
   components: {
     FiltersShowing,
-    FiltersEditing
+    FiltersEditing,
   },
 
-  data: function() {
+  data() {
     return {
       isEditing: false,
       localFilters: {
         isDone: false,
         isLongterm: false,
         types: [],
-      }
-    }
+      },
+    };
   },
 
   computed: {
@@ -66,7 +65,7 @@ export default {
       this.isEditing = !this.isEditing;
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

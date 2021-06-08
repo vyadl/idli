@@ -4,14 +4,14 @@
       <div class="g-setting-title small">
         tags
       </div>
-      <label 
+      <label
         class="g-label"
         :class="{'active': tag.value}"
         v-for="tag in localFilters.tags"
         :key="tag.id"
       >
         {{ tag.name }}
-        <input 
+        <input
           type="checkbox"
           class="g-hidden"
           :true-value="1"
@@ -25,14 +25,14 @@
       <div class="g-setting-title small">
         types
       </div>
-      <label 
+      <label
         v-for="type in localFilters.types"
         :key="type.id"
         class="g-label"
         :class="{'active': type.value}"
       >
         {{ type.name }}
-        <input 
+        <input
           type="checkbox"
           class="g-hidden"
           :true-value="1"
@@ -49,13 +49,13 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
+  data() {
     return {
       localFilters: {
         tags: [],
         types: [],
-      }
-    }
+      },
+    };
   },
 
   computed: {
@@ -73,12 +73,12 @@ export default {
       const filters = {
         tags: this.localFilters.tags.filter(item => item.value).map((item) => item.id),
         types: this.localFilters.types.filter(item => item.value).map((item) => item.id),
-      }
-      
+      };
+
       this._filterList(filters);
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

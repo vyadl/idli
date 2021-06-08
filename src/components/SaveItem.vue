@@ -1,9 +1,9 @@
 <template>
-  <div 
+  <div
     class="save-item"
     :class="{ 'visible': isChangingActive }"
   >
-    <div 
+    <div
       class="mask"
       @click="cancelChanging"
     ></div>
@@ -12,21 +12,21 @@
         <div class="text-label">
           item
         </div>
-        <input 
-          type="text" 
+        <input
+          type="text"
           class="item-name"
           v-model="item.text"
         >
       </div>
       <div>
-        <div 
+        <div
           class="text-label"
           :class="{ 'clickable': !isDetailsShowed && !item.details }"
           @click="isDetailsShowed = !isDetailsShowed"
         >
           {{ !isDetailsShowed && !item.details ? 'write' : '' }} details
         </div>
-        <textarea 
+        <textarea
           class="item-description"
           v-if="item.details || isDetailsShowed"
           v-model="item.details"
@@ -51,14 +51,14 @@
         </label>
       </div>
       <div class="item-types">
-        <label 
+        <label
           class="g-label"
           :class="{'active': item.type === type.id}"
           v-for="type in filters.types"
           :key="type.id"
         >
           {{ type.name }}
-          <input 
+          <input
             type="radio"
             class="g-hidden"
             name="type"
@@ -95,7 +95,7 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
+  data() {
     return {
       isDetailsShowed: false,
       item: {
@@ -105,7 +105,7 @@ export default {
         tags: [],
         type: '',
       },
-    }
+    };
   },
 
   computed: {
@@ -119,27 +119,27 @@ export default {
   },
 
   watch: {
-    activeItem: function (oldValue, newValue) {
+    activeItem() {
       if (this.activeItem) {
         this.item = { ...this.activeItem };
       }
-    }
+    },
   },
 
   methods: {
     ...mapActions(['_addItem', '_changeItem', '_deleteItem', '_setActiveItem']),
-  
+
     saveItem() {
       if (this.activeItem) {
-        this._changeItem({ 
+        this._changeItem({
           ...this.item,
-        });  
+        });
       } else {
-        this._addItem({ 
+        this._addItem({
           ...this.item,
-        });  
+        });
       }
-      
+
       this.finishChanging();
     },
 
@@ -168,9 +168,9 @@ export default {
       if (this.item.type === id) {
         this.item.type = '';
       }
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -182,7 +182,7 @@ export default {
     width: 100vw;
     padding: 15px;
     color: #000;
-    
+
     &.visible {
       .mask {
         position: fixed;
@@ -193,7 +193,7 @@ export default {
         background-color: rgba(#444, .3);
         opacity: 1;
       }
-  
+
       .inner {
         transform: none;
         opacity: 1;

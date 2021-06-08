@@ -1,7 +1,7 @@
 <template>
   <div class="main-list">
     <transition name="fade">
-      <div 
+      <div
         class="preloader"
         v-if="listChanging"
       >
@@ -16,13 +16,15 @@
     </template>
     <template v-else>
       <div class="inner">
-        <transition-group name="item">
-          <list-item
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-          ></list-item>
-        </transition-group>
+        <transition name="fade">
+          <div v-if="isListShown">
+            <list-item
+              v-for="item in finalList"
+              :key="item.id"
+              :item="item"
+            ></list-item>
+          </div>
+        </transition>
       </div>
     </template>
   </div>
@@ -30,39 +32,50 @@
 
 <script>
 import ListItem from '@/components/ListItem.vue';
-import Utils from '@/utils/utils.js';
+import Utils from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ListItem,
   },
-
+  data: () => ({
+    isListShown: false,
+    finalList: {},
+  }),
   computed: {
     ...mapGetters([
-      'filteredList', 
+      'filteredList',
       'shuffleTrigger',
       'isCloudModeOn',
       'isStarsModeOn',
       'listChanging',
-      'isShuffled'
+      'isShuffled',
     ]),
-
     shuffledList() {
-      this.shuffleTrigger;
+      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
       return Utils.shuffleArray(this.filteredList);
     },
 
-    finalList() {
+    computedList() {
       return this.isShuffled ? this.shuffledList : this.filteredList;
     },
+  },
+  watch: {
+    computedList: {
+      handler: function computedListHanler() {
+        this.isListShown = false;
 
-    transitionName() {
-      return this.isCloudModeOn ? 'none' :'item';
+        setTimeout(() => {
+          this.finalList = {};
+          this.finalList = this.computedList;
+          this.isListShown = true;
+        }, 200);
+      },
+      immediate: true,
     },
   },
-
   methods: {
     ...mapActions(['_startCreatingItem', '_changeCloudMode']),
   },
@@ -79,7 +92,7 @@ export default {
       flex-direction: column;
     }
 
-    &__preloader {
+    .preloader {
       position: fixed;
       z-index: 100;
       width: 100vw;

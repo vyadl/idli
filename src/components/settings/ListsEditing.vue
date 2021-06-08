@@ -1,7 +1,7 @@
 <template>
   <div class="lists-editting">
     <div>
-      <div 
+      <div
         v-for="list in lists"
         :key="list.id"
       >
@@ -21,7 +21,7 @@
         type="text"
         v-model="newListName"
       >
-      <button 
+      <button
         type="button"
         class="g-button"
         @click.stop.prevent="addList(newListName)"
@@ -36,22 +36,14 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
+  data() {
     return {
       newListName: '',
-    }
+    };
   },
 
   computed: {
     ...mapGetters(['lists']),
-  },
-
-  watch: {
-    lists: {
-      handler(value) {
-      },
-      deep: true,
-    }
   },
 
   methods: {
@@ -61,7 +53,7 @@ export default {
       this._addList({ name });
 
       this.newListName = '';
-    }
+    },
   },
-}
+};
 </script>

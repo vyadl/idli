@@ -3,30 +3,30 @@
   <div class="g-setting-title main">
     test data
   </div>
-  <label 
+  <label
     class="g-label"
     :class="{'active': makeInThisList}"
   >
     make in this list
-    <input 
+    <input
       type="checkbox"
       class="g-hidden"
       v-model="makeInThisList"
     >
   </label>
-  <label 
+  <label
     class="g-label"
     :class="{'active': makeNewFilters}"
   >
     make new filters
-    <input 
+    <input
       type="checkbox"
       class="g-hidden"
       v-model="makeNewFilters"
     >
   </label>
   <form @submit.stop.prevent="makeTestData('default')">
-    <input 
+    <input
       type="number"
       class="g-input input"
       placeholder="number of items"
@@ -37,7 +37,7 @@
       autofocus
     >
     <button
-      type="submit" 
+      type="submit"
       class="g-button"
     >
       make test list
@@ -46,7 +46,7 @@
   <br>
   <br>
   <button
-    type="button" 
+    type="button"
     class="g-button"
     v-for="(number, index) in testCounts"
     :key="index"
@@ -61,17 +61,17 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
+  data() {
     return {
       placeholderCount: 11,
       makeInThisList: false,
       makeNewFilters: false,
       testCounts: [22, 49, 104, 211, 303, 404],
-    }
+    };
   },
 
   computed: {
-    ...mapGetters(['filters', 'listNames', 'currentListId', 'doesTestListExist']),
+    ...mapGetters(['filters', 'listNames', 'currentListId', 'doesTestListExist', 'lists']),
   },
 
   methods: {
@@ -94,25 +94,31 @@ export default {
     },
 
     makeTestList(itemCount) {
-      const list = [];
+      const list = {};
       const finalCount = itemCount === 'default' ? this.placeholderCount : itemCount;
-      const types = this.filters.types;
-      const tags = this.filters.tags;
+      const currentList = this.lists[this.currentListId];
+      const maxId = Object.keys(currentList.items).length
+        ? Math.max(...Object.keys(currentList.items))
+        : 0;
+      let newId = maxId + 1;
 
       for (let i = 0; i < finalCount; i++) {
-        list.push({
+        list[newId] = {
+          id: newId,
           text: `${this.makeTestWord(10)} ${Math.round(Math.random()) ? this.makeTestWord(10) : ''}`,
           details: `${this.makeTestWord(10)} ${this.makeTestWord(5)} ${this.makeTestWord(12)}`,
           type: this.getType(),
           tags: this.getTags(),
-        });
+        };
+
+        newId++;
       }
 
       this._setItems(list);
     },
 
     getType() {
-      const types = this.filters.types;
+      const { types } = this.filters;
 
       return types.length ? types[Math.floor(Math.random() * types.length)].id : '';
     },
@@ -127,9 +133,9 @@ export default {
 
           if (!tags.includes(tagId)) {
             tags.push(tagId);
-          };
-        };
-      };
+          }
+        }
+      }
 
       return tags;
     },
@@ -139,12 +145,12 @@ export default {
       const typesMaxCount = 11;
 
       for (let i = 0; i < Math.floor(Math.random() * tagsMaxCount); i++) {
-        this._addFilter({ name: this.makeTestWord(10), type: 'tags' })
-      };
+        this._addFilter({ name: this.makeTestWord(10), type: 'tags' });
+      }
 
       for (let i = 0; i < Math.floor(Math.random() * typesMaxCount); i++) {
-        this._addFilter({ name: this.makeTestWord(10), type: 'types' })
-      };
+        this._addFilter({ name: this.makeTestWord(10), type: 'types' });
+      }
     },
 
     makeTestWord(maxChars) {
@@ -156,9 +162,9 @@ export default {
       }
 
       return text;
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">

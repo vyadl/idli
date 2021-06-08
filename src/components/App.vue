@@ -1,12 +1,12 @@
 <template>
-  <div 
+  <div
     class="app"
-    :class="{ 
-      'cloud-mode': isCloudModeOn || isStarsModeOn, 
+    :class="{
+      'cloud-mode': isCloudModeOn || isStarsModeOn,
       'invert': isInvert,
     }"
   >
-    <div class="list-title">{{ currentList.name }}</div>
+    <div class="list-title">{{ currentList ? currentList.name : '' }}</div>
     <settings></settings>
     <transition name="fade">
       <save-item v-if="isChangingActive"></save-item>
@@ -38,12 +38,12 @@ export default {
 
   methods: {
     ...mapActions(['_getInitialData']),
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
-  .app { 
+  .app {
     &.cloud-mode {
       position: fixed;
       width: 100%;

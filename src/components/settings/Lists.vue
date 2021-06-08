@@ -17,22 +17,21 @@ import ListsShowing from '@/components/settings/ListsShowing.vue';
 import ListsEditing from '@/components/settings/ListsEditing.vue';
 import { mapGetters, mapActions } from 'vuex';
 
-
 export default {
   components: {
     ListsShowing,
-    ListsEditing
+    ListsEditing,
   },
 
-  data: function() {
+  data() {
     return {
       isEditing: false,
       localFilters: {
         isDone: false,
         isLongterm: false,
         types: [],
-      }
-    }
+      },
+    };
   },
 
   computed: {
@@ -54,7 +53,7 @@ export default {
       this.isEditing = !this.isEditing;
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

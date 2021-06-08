@@ -38,15 +38,14 @@ export default {
       'isStarsModeOn',
       'starsSettings',
       'isInvert',
-      'ListChanging'
+      'ListChanging',
     ]),
 
     styles() {
       let styleObj = {};
-      this.shuffleTrigger;
+      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
       if (this.isCloudModeOn || this.isStarsModeOn) {
-
         const widthWindow = document.documentElement.clientWidth;
         const heightWindow = document.documentElement.clientHeight;
         const scaleStyle = `scale(${Math.floor(Math.random() * (20 - 5) + 5) / 10})`;
@@ -55,12 +54,11 @@ export default {
 
         styleObj = {
           transform: `${scaleStyle} ${rotateStyle} ${translateStyle}`,
-        }
+        };
       }
 
-
       return this.isCloudModeOn || this.isStarsModeOn ? styleObj : {};
-    }
+    },
   },
 
   methods: {
@@ -70,7 +68,7 @@ export default {
       this._setActiveItem(JSON.stringify(JSON.parse(this.item)));
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -1,11 +1,11 @@
 export default {
   lists: state => state.lists,
-  currentList: (state, getters) => state.lists[state.currentListId],
-  list: (state, getters) => getters.currentList.items,
+  currentList: (state) => state.lists[state.currentListId],
+  list: (state, getters) => getters.currentList?.items,
   currentListId: state => state.currentListId,
   doesTestListExist: state => Object.keys(state.lists).some(key => key === 'test'),
-  filters: (state, getters) => getters.currentList.filters,
-  checkedFilters: (state, getters) => getters.currentList.checkedFilters,
+  filters: (state, getters) => getters.currentList?.filters,
+  checkedFilters: (state, getters) => getters.currentList?.checkedFilters,
   activeItem: state => state.activeItem,
   listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,
@@ -17,25 +17,20 @@ export default {
   shuffleTrigger: state => state.shuffleTrigger,
   isShuffled: state => state.mode.shuffle,
   mode: state => state.mode,
-  listLength: (state, getters) => {
-    return getters.filteredList.length;
-  },
+  listLength: (state, getters) => getters.filteredList.length,
 
-  isSettingActive: (state, getters) => {
-    for (let status in getters.settingsStatuses) {
-      if (getters.settingsStatuses[status]) {
-        return true;
-      }
-    }
-
-    return false;
-  },
+  isAnySettingActive: (state, getters) => Object.values(getters.settingsStatuses)
+    .some(value => value),
 
   filteredList: (state, getters) => {
+    if (!getters.list) {
+      return [];
+    }
+
     const listValues = Object.values(getters.list);
     const filters = getters.checkedFilters;
-    const tags = filters.tags;
-    const types = filters.types;
+    const { tags } = filters;
+    const { types } = filters;
 
     return listValues.filter((item) => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);

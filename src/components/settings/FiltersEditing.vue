@@ -11,12 +11,20 @@
         >remove tag</button>
       </div>
       <input type="text" v-model="newTag" />
-      <button type="button" class="g-button" @click.stop.prevent="addFilter('tags', newTag)">add tag</button>
+      <button
+        type="button"
+        class="g-button"
+        @click.stop.prevent="addFilter('tags', newTag)"
+      >add tag</button>
     </div>
     <div class="types">
       <div class="g-setting-title small">types</div>
       <div v-for="type in localFilters.types" :key="type.id">
-        <input type="text" v-model="type.name" @change="changeFilter('types', type.name, type.id)" />
+        <input
+          type="text"
+          v-model="type.name"
+          @change="changeFilter('types', type.name, type.id)"
+        />
         <button
           type="button"
           class="g-button"
@@ -37,7 +45,7 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
+  data() {
     return {
       localFilters: {
         tags: [],
@@ -45,7 +53,7 @@ export default {
       },
       newTag: '',
       newType: '',
-    }
+    };
   },
 
   computed: {
@@ -58,11 +66,11 @@ export default {
 
   watch: {
     filters: {
-      handler(value) {
+      handler() {
         this.localFilters = JSON.parse(JSON.stringify(this.filters));
       },
       deep: true,
-    }
+    },
   },
 
   methods: {
@@ -84,9 +92,9 @@ export default {
 
     changeFilter(type, name, id) {
       this._changeFilter({ type, name, id });
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">

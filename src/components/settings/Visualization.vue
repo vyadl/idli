@@ -54,36 +54,36 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
+  data() {
     return {
       localCloudMode: 0,
       localInvertMode: 0,
       localStarsMode: 0,
-      localIsShuffled: 0
+      localIsShuffled: 0,
     };
   },
 
   computed: {
     ...mapGetters([
-      "filters",
-      "isCloudModeOn",
-      "isStarsModeOn",
-      "isInvert",
-      "isShuffled"
-    ])
+      'filters',
+      'isCloudModeOn',
+      'isStarsModeOn',
+      'isInvert',
+      'isShuffled',
+    ]),
   },
 
   methods: {
     ...mapActions([
-      "_shuffleFilteredList",
-      "_switchCloudMode",
-      "_switchStarsMode",
-      "_switchInvertMode",
-      "_switchShuffleMode"
-    ])
-  }
+      '_shuffleFilteredList',
+      '_switchCloudMode',
+      '_switchStarsMode',
+      '_switchInvertMode',
+      '_switchShuffleMode',
+    ]),
+  },
 };
 </script>
