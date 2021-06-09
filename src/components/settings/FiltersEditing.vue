@@ -2,15 +2,25 @@
   <div class="filters-editting">
     <div class="tags">
       <div class="g-setting-title small">tags</div>
-      <div v-for="tag in localFilters.tags" :key="tag.id">
-        <input type="text" v-model="tag.name" @change="changeFilter('tags', tag.name, tag.id)" />
+      <div
+        v-for="tag in localFilters.tags"
+        :key="tag.id"
+      >
+        <input
+          type="text"
+          v-model="tag.name"
+          @change="changeFilter('tags', tag.name, tag.id)"
+        />
         <button
           type="button"
           class="g-button"
           @click.stop.prevent="removeFilter('tags', tag.id)"
         >remove tag</button>
       </div>
-      <input type="text" v-model="newTag" />
+      <input
+        type="text"
+        v-model="newTag"
+      />
       <button
         type="button"
         class="g-button"
@@ -19,7 +29,10 @@
     </div>
     <div class="categories">
       <div class="g-setting-title small">categories</div>
-      <div v-for="category in localFilters.categories" :key="category.id">
+      <div
+        v-for="category in localFilters.categories"
+        :key="category.id"
+      >
         <input
           type="text"
           v-model="category.name"
@@ -31,7 +44,10 @@
           @click.stop.prevent="removeFilter('categories', category.id)"
         >remove category</button>
       </div>
-      <input type="text" v-model="newCategory" />
+      <input
+        type="text"
+        v-model="newCategory"
+      />
       <button
         type="button"
         class="g-button"

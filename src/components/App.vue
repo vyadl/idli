@@ -6,7 +6,12 @@
       'invert': isInvert,
     }"
   >
-    <div class="list-title">{{ currentListName || '' }}</div>
+    <div
+      class="list-title"
+      v-if="currentListName"
+    >
+      {{ currentListName }}
+    </div>
     <Settings />
     <transition name="fade">
       <SaveItem v-if="isChangingActive" />
