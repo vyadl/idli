@@ -3,7 +3,7 @@
     <div>
       <label
         class="g-label"
-        :class="{'active': list.id == currentId}"
+        :class="{'active': list.id == currentListId}"
         v-for="list in lists"
         :key="list.id"
       >
@@ -27,7 +27,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   computed: {
-    ...mapGetters(['lists', 'currentId']),
+    ...mapGetters(['lists', 'currentListId']),
   },
   methods: {
     ...mapActions(['_switchList']),

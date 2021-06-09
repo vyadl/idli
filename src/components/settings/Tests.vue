@@ -5,17 +5,6 @@
   </div>
   <label
     class="g-label"
-    :class="{'active': makeInThisList}"
-  >
-    make in this list
-    <input
-      type="checkbox"
-      class="g-hidden"
-      v-model="makeInThisList"
-    >
-  </label>
-  <label
-    class="g-label"
     :class="{'active': makeNewFilters}"
   >
     make new filters
@@ -63,15 +52,14 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   data: () => ({
     placeholderCount: 11,
-    makeInThisList: false,
     makeNewFilters: false,
     testCounts: [22, 49, 104, 211, 303, 404],
   }),
   computed: {
     ...mapGetters([
       'filters',
-      'currentId',
-      'doesTestListExist',
+      'currentListId',
+      'isTestListExist',
       'currentListObj',
     ]),
   },
@@ -83,16 +71,14 @@ export default {
       '_switchList',
     ]),
     makeTestData(itemCount) {
-      if (!this.makeInThisList) {
-        if (!this.doesTestListExist) {
-          this._addList({ name: 'test list', id: 'test' });
-        } else if (this.currentId !== 'test') {
-          this._switchList('test');
-        }
+      if (!this.isTestListExist) {
+        this._addList({ name: 'test list', id: 'test' });
+      } else if (this.currentListId !== 'test') {
+        this._switchList('test');
+      }
 
-        if (this.makeNewFilters) {
-          this.makeTestFilters();
-        }
+      if (this.makeNewFilters) {
+        this.makeTestFilters();
       }
 
       this.makeTestList(itemCount);
@@ -110,7 +96,7 @@ export default {
           id: newId,
           text: `${this.makeTestWord(10)} ${Math.round(Math.random()) ? this.makeTestWord(10) : ''}`,
           details: `${this.makeTestWord(10)} ${this.makeTestWord(5)} ${this.makeTestWord(12)}`,
-          type: this.getType(),
+          category: this.getCategory(),
           tags: this.getTags(),
         };
 
@@ -119,10 +105,10 @@ export default {
 
       this._setItems(list);
     },
-    getType() {
-      const { types } = this.filters;
+    getCategory() {
+      const { categories } = this.filters;
 
-      return types.length ? types[Math.floor(Math.random() * types.length)].id : '';
+      return categories.length ? categories[Math.floor(Math.random() * categories.length)].id : '';
     },
     getTags() {
       const tagsCount = Math.round(Math.random() * this.filters.tags.length);
@@ -142,14 +128,14 @@ export default {
     },
     makeTestFilters() {
       const tagsMaxCount = 8;
-      const typesMaxCount = 11;
+      const categoriesMaxCount = 11;
 
       for (let i = 0; i < Math.floor(Math.random() * tagsMaxCount); i++) {
         this._addFilter({ name: this.makeTestWord(10), type: 'tags' });
       }
 
-      for (let i = 0; i < Math.floor(Math.random() * typesMaxCount); i++) {
-        this._addFilter({ name: this.makeTestWord(10), type: 'types' });
+      for (let i = 0; i < Math.floor(Math.random() * categoriesMaxCount); i++) {
+        this._addFilter({ name: this.makeTestWord(10), type: 'categories' });
       }
     },
     makeTestWord(maxChars) {

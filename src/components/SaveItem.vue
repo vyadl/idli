@@ -50,21 +50,21 @@
           {{ tag.name }}
         </label>
       </div>
-      <div class="item-types">
+      <div class="item-caregories">
         <label
           class="g-label"
-          :class="{'active': item.type === type.id}"
-          v-for="type in filters.types"
-          :key="type.id"
+          :class="{'active': item.category === category.id}"
+          v-for="category in filters.categories"
+          :key="category.id"
         >
-          {{ type.name }}
+          {{ category.name }}
           <input
             type="radio"
             class="g-hidden"
-            name="type"
-            :value="type.id"
-            v-model="item.type"
-            @click="unableType(type.id)"
+            name="category"
+            :value="category.id"
+            v-model="item.category"
+            @click="unableCategory(category.id)"
           >
         </label>
       </div>
@@ -102,7 +102,7 @@ export default {
       text: '',
       details: '',
       tags: [],
-      type: '',
+      category: '',
     },
   }),
   computed: {
@@ -144,8 +144,8 @@ export default {
 
       this.finishChanging();
     },
-    chooseType(itemType) {
-      this.item.type = itemType;
+    chooseCategory(itemCategory) {
+      this.item.category = itemCategory;
     },
     deleteItem() {
       this._deleteItem(this.activeItem);
@@ -158,12 +158,12 @@ export default {
     finishChanging() {
       this.item.text = '';
       this.item.details = '';
-      this.item.type = '';
+      this.item.category = '';
       this.item.tags = [];
     },
-    unableType(id) {
-      if (this.item.type === id) {
-        this.item.type = '';
+    unableCategory(id) {
+      if (this.item.category === id) {
+        this.item.category = '';
       }
     },
   },
@@ -256,7 +256,7 @@ export default {
       text-align: center;
     }
 
-    .item-types {
+    .item-categories {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;

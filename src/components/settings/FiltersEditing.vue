@@ -17,26 +17,26 @@
         @click.stop.prevent="addFilter('tags', newTag)"
       >add tag</button>
     </div>
-    <div class="types">
-      <div class="g-setting-title small">types</div>
-      <div v-for="type in localFilters.types" :key="type.id">
+    <div class="categories">
+      <div class="g-setting-title small">categories</div>
+      <div v-for="category in localFilters.categories" :key="category.id">
         <input
           type="text"
-          v-model="type.name"
-          @change="changeFilter('types', type.name, type.id)"
+          v-model="category.name"
+          @change="changeFilter('categories', category.name, category.id)"
         />
         <button
           type="button"
           class="g-button"
-          @click.stop.prevent="removeFilter('types', type.id)"
-        >remove type</button>
+          @click.stop.prevent="removeFilter('categories', category.id)"
+        >remove category</button>
       </div>
-      <input type="text" v-model="newType" />
+      <input type="text" v-model="newCategory" />
       <button
         type="button"
         class="g-button"
-        @click.stop.prevent="addFilter('types', newType)"
-      >add type</button>
+        @click.stop.prevent="addFilter('categories', newCategory)"
+      >add category</button>
     </div>
   </div>
 </template>
@@ -48,10 +48,10 @@ export default {
   data: () => ({
     localFilters: {
       tags: [],
-      types: [],
+      categories: [],
     },
     newTag: '',
-    newType: '',
+    newCategory: '',
   }),
   computed: {
     ...mapGetters(['filters']),
@@ -78,7 +78,7 @@ export default {
     },
     addFilter(type, name) {
       this._addFilter({ type, name });
-      this[type === 'tags' ? 'newTag' : 'newType'] = '';
+      this[type === 'tags' ? 'newTag' : 'newCategory'] = '';
     },
     changeFilter(type, name, id) {
       this._changeFilter({ type, name, id });
@@ -89,7 +89,7 @@ export default {
 
 <style lang="scss">
   .filters-editting {
-    .types {
+    .categories {
       padding-top: 20px;
     }
   }

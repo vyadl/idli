@@ -6,7 +6,7 @@
       'invert': isInvert,
     }"
   >
-    <div class="list-title">{{ currentListObj.name || '' }}</div>
+    <div class="list-title">{{ currentListName || '' }}</div>
     <Settings />
     <transition name="fade">
       <SaveItem v-if="isChangingActive" />
@@ -35,6 +35,9 @@ export default {
       'isChangingActive',
       'currentListObj',
     ]),
+    currentListName() {
+      return this.currentListObj?.name;
+    },
   },
   created() {
     this._getInitialData();

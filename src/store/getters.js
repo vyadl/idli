@@ -1,8 +1,8 @@
 export default {
   lists: state => state.lists,
-  currentListObj: (state) => state.lists[state.currentId],
-  currentItems: (state, getters) => getters.currentListObj?.items,
-  currentId: state => state.currentId,
+  currentListObj: (state) => state.lists[state.currentListId],
+  currentListItems: (state, getters) => getters.currentListObj?.items,
+  currentListId: state => state.currentListId,
   doesTestListExist: state => Object.keys(state.lists).some(key => key === 'test'),
   filters: (state, getters) => getters.currentListObj?.filters,
   checkedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
@@ -23,19 +23,19 @@ export default {
     .some(value => value),
 
   filteredList: (state, getters) => {
-    if (!getters.currentItems) {
+    if (!getters.currentListItems) {
       return [];
     }
 
-    const listValues = Object.values(getters.currentItems);
+    const listValues = Object.values(getters.currentListItems);
     const filters = getters.checkedFilters;
-    const { tags, types } = filters;
+    const { tags, categories } = filters;
 
     return listValues.filter((item) => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);
-      const isTypeIntersection = !types.length || types.indexOf(item.type) !== -1;
+      const isCategoryIntersection = !categories.length || categories.indexOf(item.category) !== -1;
 
-      return areTagsIntersection && isTypeIntersection;
+      return areTagsIntersection && isCategoryIntersection;
     });
   },
 };

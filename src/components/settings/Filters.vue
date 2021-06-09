@@ -37,9 +37,7 @@ export default {
   data: () => ({
     isEditing: false,
     localFilters: {
-      isDone: false,
-      isLongterm: false,
-      types: [],
+      categories: [],
     },
   }),
   computed: {

@@ -13,21 +13,21 @@ export default {
 
   // list actions
 
-  _setInitialState({ commit }, payload) {
-    commit('setInitialState', payload);
+  _setInitialState({ commit }, lists) {
+    commit('setInitialState', lists);
   },
 
-  _addList({ commit, dispatch }, payload) {
-    commit('addList', payload);
+  _addList({ commit, dispatch }, { name, id }) {
+    commit('addList', { name, id });
 
     dispatch('_updateLocal');
   },
 
-  _removeList({ commit, dispatch, getters }, payload) {
-    const switchListId = Object.keys(getters.lists).find(listId => listId !== String(payload));
+  _removeList({ commit, dispatch, getters }, listId) {
+    const switchListId = Object.keys(getters.lists).find(id => id !== String(listId));
 
     commit('switchList', switchListId);
-    commit('removeList', payload);
+    commit('removeList', listId);
 
     dispatch('_updateLocal');
   },
@@ -69,14 +69,15 @@ export default {
 
   // filter actions
 
-  _addFilter({ commit, dispatch, getters }, payload) {
+  _addFilter({ commit, dispatch, getters }, { name, type }) {
     if (
-      (payload.type === 'tags' || payload.type === 'types')
-      && typeof payload.name === 'string'
-      && payload.name.length
+      (type === 'tags' || type === 'categories')
+      && typeof name === 'string'
+      && name.length
     ) {
       commit('addFilter', {
-        ...payload,
+        name,
+        type,
         filters: getters.filters,
       });
     }
@@ -84,21 +85,24 @@ export default {
     dispatch('_updateLocal');
   },
 
-  _changeFilter({ commit, dispatch, getters }, payload) {
+  _changeFilter({ commit, dispatch, getters }, { type, name, id }) {
     commit('changeFilter', {
-      ...payload,
+      type,
+      name,
+      id,
       filters: getters.filters,
     });
 
     dispatch('_updateLocal');
   },
 
-  _removeFilter({ commit, dispatch, getters }, payload) {
+  _removeFilter({ commit, dispatch, getters }, { type, id }) {
     commit('removeFilter', {
-      ...payload,
+      type,
+      id,
       filters: getters.filters,
     });
-    commit('removeFilterFromList', payload);
+    commit('removeFilterFromList', { type, id });
     dispatch('_updateLocal');
   },
 
@@ -186,7 +190,7 @@ export default {
   _updateLocal({ getters }) {
     localStorage.setItem('appLists', JSON.stringify({
       lists: getters.lists,
-      currentId: getters.currentId,
+      currentListId: getters.currentListId,
     }));
   },
 };

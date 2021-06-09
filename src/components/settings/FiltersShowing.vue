@@ -21,23 +21,23 @@
         >
       </label>
     </div>
-    <div class="types">
+    <div class="categories">
       <div class="g-setting-title small">
-        types
+        categories
       </div>
       <label
-        v-for="type in localFilters.types"
-        :key="type.id"
+        v-for="category in localFilters.categories"
+        :key="category.id"
         class="g-label"
-        :class="{'active': type.value}"
+        :class="{'active': category.value}"
       >
-        {{ type.name }}
+        {{ category.name }}
         <input
           type="checkbox"
           class="g-hidden"
           :true-value="1"
           :false-value="0"
-          v-model="type.value"
+          v-model="category.value"
           @change="changeFilter"
         >
       </label>
@@ -52,7 +52,7 @@ export default {
   data: () => ({
     localFilters: {
       tags: [],
-      types: [],
+      categories: [],
     },
   }),
   computed: {
@@ -66,7 +66,7 @@ export default {
     changeFilter() {
       const filters = {
         tags: this.localFilters.tags.filter(item => item.value).map((item) => item.id),
-        types: this.localFilters.types.filter(item => item.value).map((item) => item.id),
+        categories: this.localFilters.categories.filter(item => item.value).map((item) => item.id),
       };
 
       this._filterList(filters);
@@ -77,7 +77,7 @@ export default {
 
 <style lang="scss">
   .filters-showing {
-    .types {
+    .categories {
       padding-top: 20px;
     }
   }

@@ -1,7 +1,7 @@
 export default {
   lists: {},
   listsLabels: {},
-  currentId: null,
+  currentListId: null,
   shuffledList: null,
   listChanging: false,
   activeItem: null,
