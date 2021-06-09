@@ -1,9 +1,9 @@
 <template>
-  <div 
+  <div
     class="save-item"
     :class="{ 'visible': isChangingActive }"
   >
-    <div 
+    <div
       class="mask"
       @click="cancelChanging"
     ></div>
@@ -12,21 +12,21 @@
         <div class="text-label">
           item
         </div>
-        <input 
-          type="text" 
+        <input
+          type="text"
           class="item-name"
           v-model="item.text"
         >
       </div>
       <div>
-        <div 
+        <div
           class="text-label"
           :class="{ 'clickable': !isDetailsShowed && !item.details }"
           @click="isDetailsShowed = !isDetailsShowed"
         >
           {{ !isDetailsShowed && !item.details ? 'write' : '' }} details
         </div>
-        <textarea 
+        <textarea
           class="item-description"
           v-if="item.details || isDetailsShowed"
           v-model="item.details"
@@ -50,21 +50,21 @@
           {{ tag.name }}
         </label>
       </div>
-      <div class="item-types">
-        <label 
+      <div class="item-caregories">
+        <label
           class="g-label"
-          :class="{'active': item.type === type.id}"
-          v-for="type in filters.types"
-          :key="type.id"
+          :class="{'active': item.category === category.id}"
+          v-for="category in filters.categories"
+          :key="category.id"
         >
-          {{ type.name }}
-          <input 
+          {{ category.name }}
+          <input
             type="radio"
             class="g-hidden"
-            name="type"
-            :value="type.id"
-            v-model="item.type"
-            @click="unableType(type.id)"
+            name="category"
+            :value="category.id"
+            v-model="item.category"
+            @click="unableCategory(category.id)"
           >
         </label>
       </div>
@@ -95,82 +95,79 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
-    return {
-      isDetailsShowed: false,
-      item: {
-        id: 1,
-        text: '',
-        details: '',
-        tags: [],
-        type: '',
-      },
-    }
-  },
-
+  data: () => ({
+    isDetailsShowed: false,
+    item: {
+      id: 1,
+      text: '',
+      details: '',
+      tags: [],
+      category: '',
+    },
+  }),
   computed: {
-    ...mapGetters(['list', 'filters', 'activeItem', 'isChangingActive']),
+    ...mapGetters([
+      'filters',
+      'activeItem',
+      'isChangingActive',
+    ]),
   },
-
+  watch: {
+    activeItem() {
+      if (this.activeItem) {
+        this.item = { ...this.activeItem };
+      }
+    },
+  },
   created() {
     if (this.activeItem) {
       this.item = { ...this.activeItem };
     }
   },
-
-  watch: {
-    activeItem: function (oldValue, newValue) {
-      if (this.activeItem) {
-        this.item = { ...this.activeItem };
-      }
-    }
-  },
-
   methods: {
-    ...mapActions(['_addItem', '_changeItem', '_deleteItem', '_setActiveItem']),
-  
+    ...mapActions([
+      '_addItem',
+      '_changeItem',
+      '_deleteItem',
+      '_setActiveItem',
+    ]),
     saveItem() {
       if (this.activeItem) {
-        this._changeItem({ 
+        this._changeItem({
           ...this.item,
-        });  
+        });
       } else {
-        this._addItem({ 
+        this._addItem({
           ...this.item,
-        });  
+        });
       }
-      
+
       this.finishChanging();
     },
-
-    chooseType(itemType) {
-      this.item.type = itemType;
+    chooseCategory(itemCategory) {
+      this.item.category = itemCategory;
     },
-
     deleteItem() {
       this._deleteItem(this.activeItem);
       this.finishChanging();
     },
-
     cancelChanging() {
       this._setActiveItem(null);
       this.finishChanging();
     },
-
     finishChanging() {
       this.item.text = '';
       this.item.details = '';
-      this.item.type = '';
+      this.item.category = '';
       this.item.tags = [];
     },
-
-    unableType(id) {
-      if (this.item.type === id) {
-        this.item.type = '';
+    unableCategory(id) {
+      if (this.item.category === id) {
+        this.item.category = '';
       }
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">
@@ -182,7 +179,7 @@ export default {
     width: 100vw;
     padding: 15px;
     color: #000;
-    
+
     &.visible {
       .mask {
         position: fixed;
@@ -193,7 +190,7 @@ export default {
         background-color: rgba(#444, .3);
         opacity: 1;
       }
-  
+
       .inner {
         transform: none;
         opacity: 1;
@@ -259,7 +256,7 @@ export default {
       text-align: center;
     }
 
-    .item-types {
+    .item-categories {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;

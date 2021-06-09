@@ -2,33 +2,57 @@
   <div class="filters-editting">
     <div class="tags">
       <div class="g-setting-title small">tags</div>
-      <div v-for="tag in localFilters.tags" :key="tag.id">
-        <input type="text" v-model="tag.name" @change="changeFilter('tags', tag.name, tag.id)" />
+      <div
+        v-for="tag in localFilters.tags"
+        :key="tag.id"
+      >
+        <input
+          type="text"
+          v-model="tag.name"
+          @change="changeFilter('tags', tag.name, tag.id)"
+        />
         <button
           type="button"
           class="g-button"
           @click.stop.prevent="removeFilter('tags', tag.id)"
         >remove tag</button>
       </div>
-      <input type="text" v-model="newTag" />
-      <button type="button" class="g-button" @click.stop.prevent="addFilter('tags', newTag)">add tag</button>
-    </div>
-    <div class="types">
-      <div class="g-setting-title small">types</div>
-      <div v-for="type in localFilters.types" :key="type.id">
-        <input type="text" v-model="type.name" @change="changeFilter('types', type.name, type.id)" />
-        <button
-          type="button"
-          class="g-button"
-          @click.stop.prevent="removeFilter('types', type.id)"
-        >remove type</button>
-      </div>
-      <input type="text" v-model="newType" />
+      <input
+        type="text"
+        v-model="newTag"
+      />
       <button
         type="button"
         class="g-button"
-        @click.stop.prevent="addFilter('types', newType)"
-      >add type</button>
+        @click.stop.prevent="addFilter('tags', newTag)"
+      >add tag</button>
+    </div>
+    <div class="categories">
+      <div class="g-setting-title small">categories</div>
+      <div
+        v-for="category in localFilters.categories"
+        :key="category.id"
+      >
+        <input
+          type="text"
+          v-model="category.name"
+          @change="changeFilter('categories', category.name, category.id)"
+        />
+        <button
+          type="button"
+          class="g-button"
+          @click.stop.prevent="removeFilter('categories', category.id)"
+        >remove category</button>
+      </div>
+      <input
+        type="text"
+        v-model="newCategory"
+      />
+      <button
+        type="button"
+        class="g-button"
+        @click.stop.prevent="addFilter('categories', newCategory)"
+      >add category</button>
     </div>
   </div>
 </template>
@@ -37,61 +61,51 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
-    return {
-      localFilters: {
-        tags: [],
-        types: [],
-      },
-      newTag: '',
-      newType: '',
-    }
-  },
-
+  data: () => ({
+    localFilters: {
+      tags: [],
+      categories: [],
+    },
+    newTag: '',
+    newCategory: '',
+  }),
   computed: {
-    ...mapGetters(['filters', 'listLength']),
+    ...mapGetters(['filters']),
   },
-
-  created() {
-    this.localFilters = JSON.parse(JSON.stringify(this.filters));
-  },
-
   watch: {
     filters: {
-      handler(value) {
+      handler() {
         this.localFilters = JSON.parse(JSON.stringify(this.filters));
       },
       deep: true,
-    }
-  },
-
-  methods: {
-    ...mapActions(['_setActiveItem', '_filterList', '_addFilter', '_removeFilter', '_changeFilter']),
-
-    saveFilters() {
-      this._saveFilters(this.localFilters);
     },
-
+  },
+  created() {
+    this.localFilters = JSON.parse(JSON.stringify(this.filters));
+  },
+  methods: {
+    ...mapActions([
+      '_addFilter',
+      '_removeFilter',
+      '_changeFilter',
+    ]),
     removeFilter(type, id) {
       this._removeFilter({ type, id });
     },
-
     addFilter(type, name) {
       this._addFilter({ type, name });
-
-      this[type === 'tags' ? 'newTag' : 'newType'] = '';
+      this[type === 'tags' ? 'newTag' : 'newCategory'] = '';
     },
-
     changeFilter(type, name, id) {
       this._changeFilter({ type, name, id });
-    }
+    },
   },
-}
+};
 </script>
 
 <style lang="scss">
   .filters-editting {
-    .types {
+    .categories {
       padding-top: 20px;
     }
   }

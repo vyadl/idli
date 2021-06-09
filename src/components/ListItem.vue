@@ -21,16 +21,8 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   props: ['item'],
-
-  mounted() {
-    if (this.listChanging) {
-      this._changeChangingListStatus(false);
-    }
-  },
-
   computed: {
     ...mapGetters([
-      'list',
       'activeItem',
       'isChangingActive',
       'isCloudModeOn',
@@ -38,15 +30,13 @@ export default {
       'isStarsModeOn',
       'starsSettings',
       'isInvert',
-      'ListChanging'
+      'ListChanging',
     ]),
-
     styles() {
       let styleObj = {};
-      this.shuffleTrigger;
+      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
       if (this.isCloudModeOn || this.isStarsModeOn) {
-
         const widthWindow = document.documentElement.clientWidth;
         const heightWindow = document.documentElement.clientHeight;
         const scaleStyle = `scale(${Math.floor(Math.random() * (20 - 5) + 5) / 10})`;
@@ -55,22 +45,27 @@ export default {
 
         styleObj = {
           transform: `${scaleStyle} ${rotateStyle} ${translateStyle}`,
-        }
+        };
       }
 
-
       return this.isCloudModeOn || this.isStarsModeOn ? styleObj : {};
+    },
+  },
+  mounted() {
+    if (this.listChanging) {
+      this._changeChangingListStatus(false);
     }
   },
-
   methods: {
-    ...mapActions(['_setActiveItem', '_deleteItem', '_setChangingStatus', '_changeChangingListStatus']),
-
+    ...mapActions([
+      '_setActiveItem',
+      '_changeChangingListStatus',
+    ]),
     setactiveItem() {
       this._setActiveItem(JSON.stringify(JSON.parse(this.item)));
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

@@ -4,14 +4,14 @@
       <div class="g-setting-title small">
         tags
       </div>
-      <label 
+      <label
         class="g-label"
         :class="{'active': tag.value}"
         v-for="tag in localFilters.tags"
         :key="tag.id"
       >
         {{ tag.name }}
-        <input 
+        <input
           type="checkbox"
           class="g-hidden"
           :true-value="1"
@@ -21,23 +21,23 @@
         >
       </label>
     </div>
-    <div class="types">
+    <div class="categories">
       <div class="g-setting-title small">
-        types
+        categories
       </div>
-      <label 
-        v-for="type in localFilters.types"
-        :key="type.id"
+      <label
+        v-for="category in localFilters.categories"
+        :key="category.id"
         class="g-label"
-        :class="{'active': type.value}"
+        :class="{'active': category.value}"
       >
-        {{ type.name }}
-        <input 
+        {{ category.name }}
+        <input
           type="checkbox"
           class="g-hidden"
           :true-value="1"
           :false-value="0"
-          v-model="type.value"
+          v-model="category.value"
           @change="changeFilter"
         >
       </label>
@@ -49,41 +49,35 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data: function() {
-    return {
-      localFilters: {
-        tags: [],
-        types: [],
-      }
-    }
-  },
-
+  data: () => ({
+    localFilters: {
+      tags: [],
+      categories: [],
+    },
+  }),
   computed: {
-    ...mapGetters(['filters', 'listLength', 'checkedFilters']),
+    ...mapGetters(['filters']),
   },
-
   created() {
     this.localFilters = this.filters;
   },
-
   methods: {
-    ...mapActions(['_setActiveItem', '_filterList']),
-
+    ...mapActions(['_filterList']),
     changeFilter() {
       const filters = {
         tags: this.localFilters.tags.filter(item => item.value).map((item) => item.id),
-        types: this.localFilters.types.filter(item => item.value).map((item) => item.id),
-      }
-      
+        categories: this.localFilters.categories.filter(item => item.value).map((item) => item.id),
+      };
+
       this._filterList(filters);
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
   .filters-showing {
-    .types {
+    .categories {
       padding-top: 20px;
     }
   }

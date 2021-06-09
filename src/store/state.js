@@ -8,8 +8,6 @@ export default {
   settingsStatuses: {
     filters: false,
     visualization: false,
-    IO: false,
-    general: false,
     tests: false,
     lists: false,
   },
@@ -27,4 +25,4 @@ export default {
   },
   isInvert: false,
   isChangingActive: false,
-}
+};

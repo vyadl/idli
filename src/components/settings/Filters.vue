@@ -7,7 +7,7 @@
       <div class="g-setting-title main">
         filters
       </div>
-      <label 
+      <label
         class="g-label edit"
         :class="{'active': isEditing}"
       >
@@ -18,8 +18,8 @@
           v-model="isEditing"
         >
       </label>
-      <filters-editing v-if="isEditing"></filters-editing>
-      <filters-showing v-else></filters-showing>
+      <FiltersEditing v-if="isEditing" />
+      <FiltersShowing v-else />
     </div>
   </div>
 </template>
@@ -29,44 +29,36 @@ import FiltersShowing from '@/components/settings/FiltersShowing.vue';
 import FiltersEditing from '@/components/settings/FiltersEditing.vue';
 import { mapGetters, mapActions } from 'vuex';
 
-
 export default {
   components: {
     FiltersShowing,
-    FiltersEditing
+    FiltersEditing,
   },
-
-  data: function() {
-    return {
-      isEditing: false,
-      localFilters: {
-        isDone: false,
-        isLongterm: false,
-        types: [],
-      }
-    }
-  },
-
+  data: () => ({
+    isEditing: false,
+    localFilters: {
+      categories: [],
+    },
+  }),
   computed: {
-    ...mapGetters(['filters', 'listLength']),
+    ...mapGetters([
+      'filters',
+      'listLength',
+    ]),
   },
-
   created() {
     this.localFilters = this.filters;
   },
-
   methods: {
-    ...mapActions(['_setActiveItem', '_filterList']),
-
+    ...mapActions(['_filterList']),
     changeFilter() {
       this._filterList(this.localFilters);
     },
-
     switchEditing() {
       this.isEditing = !this.isEditing;
     },
   },
-}
+};
 </script>
 
 <style lang="scss">

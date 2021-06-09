@@ -1,11 +1,11 @@
 export default {
   lists: state => state.lists,
-  currentList: (state, getters) => state.lists[state.currentListId],
-  list: (state, getters) => getters.currentList.items,
+  currentListObj: (state) => state.lists[state.currentListId],
+  currentListItems: (state, getters) => getters.currentListObj?.items,
   currentListId: state => state.currentListId,
   doesTestListExist: state => Object.keys(state.lists).some(key => key === 'test'),
-  filters: (state, getters) => getters.currentList.filters,
-  checkedFilters: (state, getters) => getters.currentList.checkedFilters,
+  filters: (state, getters) => getters.currentListObj?.filters,
+  checkedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
   activeItem: state => state.activeItem,
   listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,
@@ -17,31 +17,25 @@ export default {
   shuffleTrigger: state => state.shuffleTrigger,
   isShuffled: state => state.mode.shuffle,
   mode: state => state.mode,
-  listLength: (state, getters) => {
-    return getters.filteredList.length;
-  },
+  listLength: (state, getters) => getters.filteredList.length,
 
-  isSettingActive: (state, getters) => {
-    for (let status in getters.settingsStatuses) {
-      if (getters.settingsStatuses[status]) {
-        return true;
-      }
-    }
-
-    return false;
-  },
+  isAnySettingActive: (state, getters) => Object.values(getters.settingsStatuses)
+    .some(value => value),
 
   filteredList: (state, getters) => {
-    const listValues = Object.values(getters.list);
+    if (!getters.currentListItems) {
+      return [];
+    }
+
+    const listValues = Object.values(getters.currentListItems);
     const filters = getters.checkedFilters;
-    const tags = filters.tags;
-    const types = filters.types;
+    const { tags, categories } = filters;
 
     return listValues.filter((item) => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);
-      const isTypeIntersection = !types.length || types.indexOf(item.type) !== -1;
+      const isCategoryIntersection = !categories.length || categories.indexOf(item.category) !== -1;
 
-      return areTagsIntersection && isTypeIntersection;
+      return areTagsIntersection && isCategoryIntersection;
     });
   },
 };

@@ -1,28 +1,30 @@
 <template>
   <div class="main-list">
     <transition name="fade">
-      <div 
+      <div
         class="preloader"
         v-if="listChanging"
       >
       </div>
     </transition>
     <template v-if="isCloudModeOn && !isStarsModeOn">
-      <list-item
+      <ListItem
         v-for="item in finalList"
         :key="item.id"
         :item="item"
-      ></list-item>
+      />
     </template>
     <template v-else>
       <div class="inner">
-        <transition-group name="item">
-          <list-item
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-          ></list-item>
-        </transition-group>
+        <transition name="fade">
+          <div v-if="isListShown">
+            <ListItem
+              v-for="item in finalList"
+              :key="item.id"
+              :item="item"
+            />
+          </div>
+        </transition>
       </div>
     </template>
   </div>
@@ -30,41 +32,48 @@
 
 <script>
 import ListItem from '@/components/ListItem.vue';
-import Utils from '@/utils/utils.js';
-import { mapGetters, mapActions } from 'vuex';
+import Utils from '@/utils/utils';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
     ListItem,
   },
-
+  data: () => ({
+    isListShown: false,
+    finalList: {},
+  }),
   computed: {
     ...mapGetters([
-      'filteredList', 
+      'filteredList',
       'shuffleTrigger',
       'isCloudModeOn',
       'isStarsModeOn',
       'listChanging',
-      'isShuffled'
+      'isShuffled',
     ]),
-
     shuffledList() {
-      this.shuffleTrigger;
+      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
       return Utils.shuffleArray(this.filteredList);
     },
-
-    finalList() {
+    computedList() {
       return this.isShuffled ? this.shuffledList : this.filteredList;
     },
-
-    transitionName() {
-      return this.isCloudModeOn ? 'none' :'item';
-    },
   },
+  watch: {
+    computedList: {
+      handler: function computedListHanler() {
+        this.isListShown = false;
 
-  methods: {
-    ...mapActions(['_startCreatingItem', '_changeCloudMode']),
+        setTimeout(() => {
+          this.finalList = {};
+          this.finalList = this.computedList;
+          this.isListShown = true;
+        }, 200);
+      },
+      immediate: true,
+    },
   },
 };
 </script>
@@ -79,7 +88,7 @@ export default {
       flex-direction: column;
     }
 
-    &__preloader {
+    .preloader {
       position: fixed;
       z-index: 100;
       width: 100vw;

@@ -1,14 +1,14 @@
 <template>
   <div class="lists-showing">
     <div>
-      <label 
+      <label
         class="g-label"
         :class="{'active': list.id == currentListId}"
         v-for="list in lists"
         :key="list.id"
       >
         {{ list.name }}
-        <input 
+        <input
           type="radio"
           class="g-hidden"
           :true-value="1"
@@ -29,9 +29,8 @@ export default {
   computed: {
     ...mapGetters(['lists', 'currentListId']),
   },
-
   methods: {
     ...mapActions(['_switchList']),
   },
-}
+};
 </script>

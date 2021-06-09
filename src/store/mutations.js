@@ -28,11 +28,11 @@ export default {
         items: {},
         filters: {
           tags: [],
-          types: [],
+          categories: [],
         },
         checkedFilters: {
           tags: [],
-          types: [],
+          categories: [],
         },
       });
 
@@ -49,9 +49,9 @@ export default {
   },
 
   filterList(state, filters) {
-    const currentList = state.lists[state.currentListId];
+    const currentListObj = state.lists[state.currentListId];
 
-    currentList.checkedFilters = JSON.parse(JSON.stringify(filters));
+    currentListObj.checkedFilters = JSON.parse(JSON.stringify(filters));
     state.mode.shuffle = false;
   },
 
@@ -71,86 +71,83 @@ export default {
   // filter
 
   addFilter(state, { name, type, filters }) {
-    const cloneTypedFilters = [...filters[type]];
+    const clonedTypedFilters = [...filters[type]];
 
-    cloneTypedFilters.push({
+    clonedTypedFilters.push({
       name,
       value: false,
-      id: filters[type].reduce((result, item) => {
-        return +item.id > result ? +item.id : result;
-      }, 0) + 1,
+      id: filters[type].length ? filters[type][filters[type].length - 1].id + 1 : 0,
     });
 
-    Vue.set(filters, type, cloneTypedFilters);
+    Vue.set(filters, type, clonedTypedFilters);
   },
 
-  changeFilter(state, { name, id, type, filters }) {
-    const cloneTypedFilters = [...filters[type]];
-    const filter = cloneTypedFilters.find(item => item.id == id);
+  changeFilter(state, {
+    name,
+    id,
+    type,
+    filters,
+  }) {
+    const clonedTypedFilters = [...filters[type]];
+    const filter = clonedTypedFilters.find(item => item.id === id);
 
     filter.name = name;
-    Vue.set(filters, type, cloneTypedFilters);
+    Vue.set(filters, type, clonedTypedFilters);
   },
 
   removeFilter(state, { type, id, filters }) {
     Vue.set(
       filters,
       type,
-      filters[type].filter(item => item.id !== id)
+      filters[type].filter(item => item.id !== id),
     );
   },
 
   removeFilterFromList(state, { type, id }) {
-    const currentList = state.lists[state.currentListId].items;
+    const currentListItems = state.lists[state.currentListId].items;
 
-    Object.keys(currentList).forEach((key) => {
-      const filterPosition = currentList[key][type].indexOf(id);
-      const cloneFilters = [...currentList[key][type]];
+    Object.keys(currentListItems).forEach((key) => {
+      const filterPosition = currentListItems[key][type].indexOf(id);
+      const clonedFilters = [...currentListItems[key][type]];
 
       if (filterPosition !== -1) {
-        cloneFilters.splice(filterPosition, 1);
-        currentList[key][type] = cloneFilters;
+        clonedFilters.splice(filterPosition, 1);
+        currentListItems[key][type] = clonedFilters;
       }
-    })
+    });
   },
 
   // item
 
   addItem(state, newItem) {
-    const currentList = state.lists[state.currentListId].items;
+    const currentListItems = state.lists[state.currentListId].items;
 
-    const maxId = Object.keys(currentList).length ? Math.max(...Object.keys(currentList)) : 0;
+    const maxId = Object.keys(currentListItems).length
+      ? Math.max(...Object.keys(currentListItems))
+      : 0;
     const newId = maxId + 1;
 
-    Vue.set(currentList, newId, {
+    Vue.set(currentListItems, newId, {
       id: newId,
       text: newItem.text,
       details: newItem.details,
       tags: JSON.parse(JSON.stringify(newItem.tags)),
-      type: newItem.type,
+      category: newItem.category,
     });
   },
 
   setItems(state, newItems) {
-    const currentList = state.lists[state.currentListId];
+    const currentListObj = state.lists[state.currentListId];
 
-    const maxId = Object.keys(currentList.items).length ? Math.max(...Object.keys(currentList.items)) : 0;
-    let newId = maxId + 1;
-
-    newItems.forEach((item) => {
-      item.id = newId;
-      newId++;
-    });
-
-    Vue.set(currentList, 'items', {
+    Vue.set(currentListObj, 'items', {
       ...newItems,
     });
   },
 
   deleteItem(state, id) {
-    const currentList = state.lists[state.currentListId].items;
+    const currentListItems = state.lists[state.currentListId].items;
 
-    Vue.delete(currentList, id);
+    Vue.delete(currentListItems, id);
   },
 
   setActiveItem(state, item) {
@@ -158,9 +155,9 @@ export default {
   },
 
   changeItem(state, changedItem) {
-    const currentList = state.lists[state.currentListId].items;
+    const currentListItems = state.lists[state.currentListId].items;
 
-    Vue.set(currentList, changedItem.id, changedItem);
+    Vue.set(currentListItems, changedItem.id, changedItem);
   },
 
   setChangingStatus(state, status) {
@@ -200,12 +197,11 @@ export default {
 
   setSettingsStatus(state, payload) {
     const statuses = state.settingsStatuses;
-    let statusField = '';
 
     statuses[payload.field] = payload.value;
 
     Object.keys(statuses).forEach(statusField => {
-      if (statusField != payload.field) {
+      if (statusField !== payload.field) {
         statuses[statusField] = false;
       }
     });

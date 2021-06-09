@@ -1,17 +1,22 @@
 <template>
-  <div 
+  <div
     class="app"
-    :class="{ 
-      'cloud-mode': isCloudModeOn || isStarsModeOn, 
+    :class="{
+      'cloud-mode': isCloudModeOn || isStarsModeOn,
       'invert': isInvert,
     }"
   >
-    <div class="list-title">{{ currentList.name }}</div>
-    <settings></settings>
+    <div
+      class="list-title"
+      v-if="currentListName"
+    >
+      {{ currentListName }}
+    </div>
+    <Settings />
     <transition name="fade">
-      <save-item v-if="isChangingActive"></save-item>
+      <SaveItem v-if="isChangingActive" />
     </transition>
-    <main-list></main-list>
+    <MainList />
   </div>
 </template>
 
@@ -27,23 +32,29 @@ export default {
     MainList,
     Settings,
   },
-
+  computed: {
+    ...mapGetters([
+      'isCloudModeOn',
+      'isStarsModeOn',
+      'isInvert',
+      'isChangingActive',
+      'currentListObj',
+    ]),
+    currentListName() {
+      return this.currentListObj?.name;
+    },
+  },
   created() {
     this._getInitialData();
   },
-
-  computed: {
-    ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'currentList']),
-  },
-
   methods: {
     ...mapActions(['_getInitialData']),
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
-  .app { 
+  .app {
     &.cloud-mode {
       position: fixed;
       width: 100%;
