@@ -6,8 +6,8 @@
         edit
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
-      <lists-editing v-if="isEditing"></lists-editing>
-      <lists-showing v-else></lists-showing>
+      <ListsEditing v-if="isEditing" />
+      <ListsShowing v-else />
     </div>
   </div>
 </template>
@@ -22,33 +22,25 @@ export default {
     ListsShowing,
     ListsEditing,
   },
-
-  data() {
-    return {
-      isEditing: false,
-      localFilters: {
-        isDone: false,
-        isLongterm: false,
-        types: [],
-      },
-    };
-  },
-
+  data: () => ({
+    isEditing: false,
+    localFilters: {
+      isDone: false,
+      isLongterm: false,
+      types: [],
+    },
+  }),
   computed: {
     ...mapGetters(['filters']),
   },
-
   created() {
     this.localFilters = this.filters;
   },
-
   methods: {
-    ...mapActions(['_setActiveItem', '_filterList']),
-
+    ...mapActions(['_filterList']),
     changeFilter() {
       this._filterList(this.localFilters);
     },
-
     switchEditing() {
       this.isEditing = !this.isEditing;
     },

@@ -57,25 +57,20 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      localCloudMode: 0,
-      localInvertMode: 0,
-      localStarsMode: 0,
-      localIsShuffled: 0,
-    };
-  },
-
+  data: () => ({
+    localCloudMode: 0,
+    localInvertMode: 0,
+    localStarsMode: 0,
+    localIsShuffled: 0,
+  }),
   computed: {
     ...mapGetters([
-      'filters',
       'isCloudModeOn',
       'isStarsModeOn',
       'isInvert',
       'isShuffled',
     ]),
   },
-
   methods: {
     ...mapActions([
       '_shuffleFilteredList',

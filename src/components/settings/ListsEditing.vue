@@ -36,19 +36,17 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      newListName: '',
-    };
-  },
-
+  data: () => ({
+    newListName: '',
+  }),
   computed: {
     ...mapGetters(['lists']),
   },
-
   methods: {
-    ...mapActions(['_removeList', '_addList']),
-
+    ...mapActions([
+      '_removeList',
+      '_addList',
+    ]),
     addList(name) {
       this._addList({ name });
 

@@ -95,29 +95,23 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      isDetailsShowed: false,
-      item: {
-        id: 1,
-        text: '',
-        details: '',
-        tags: [],
-        type: '',
-      },
-    };
-  },
-
+  data: () => ({
+    isDetailsShowed: false,
+    item: {
+      id: 1,
+      text: '',
+      details: '',
+      tags: [],
+      type: '',
+    },
+  }),
   computed: {
-    ...mapGetters(['filters', 'activeItem', 'isChangingActive']),
+    ...mapGetters([
+      'filters',
+      'activeItem',
+      'isChangingActive',
+    ]),
   },
-
-  created() {
-    if (this.activeItem) {
-      this.item = { ...this.activeItem };
-    }
-  },
-
   watch: {
     activeItem() {
       if (this.activeItem) {
@@ -125,10 +119,18 @@ export default {
       }
     },
   },
-
+  created() {
+    if (this.activeItem) {
+      this.item = { ...this.activeItem };
+    }
+  },
   methods: {
-    ...mapActions(['_addItem', '_changeItem', '_deleteItem', '_setActiveItem']),
-
+    ...mapActions([
+      '_addItem',
+      '_changeItem',
+      '_deleteItem',
+      '_setActiveItem',
+    ]),
     saveItem() {
       if (this.activeItem) {
         this._changeItem({
@@ -142,28 +144,23 @@ export default {
 
       this.finishChanging();
     },
-
     chooseType(itemType) {
       this.item.type = itemType;
     },
-
     deleteItem() {
       this._deleteItem(this.activeItem);
       this.finishChanging();
     },
-
     cancelChanging() {
       this._setActiveItem(null);
       this.finishChanging();
     },
-
     finishChanging() {
       this.item.text = '';
       this.item.details = '';
       this.item.type = '';
       this.item.tags = [];
     },
-
     unableType(id) {
       if (this.item.type === id) {
         this.item.type = '';

@@ -18,8 +18,8 @@
           v-model="isEditing"
         >
       </label>
-      <filters-editing v-if="isEditing"></filters-editing>
-      <filters-showing v-else></filters-showing>
+      <FiltersEditing v-if="isEditing" />
+      <FiltersShowing v-else />
     </div>
   </div>
 </template>
@@ -34,33 +34,28 @@ export default {
     FiltersShowing,
     FiltersEditing,
   },
-
-  data() {
-    return {
-      isEditing: false,
-      localFilters: {
-        isDone: false,
-        isLongterm: false,
-        types: [],
-      },
-    };
-  },
-
+  data: () => ({
+    isEditing: false,
+    localFilters: {
+      isDone: false,
+      isLongterm: false,
+      types: [],
+    },
+  }),
   computed: {
-    ...mapGetters(['filters', 'listLength']),
+    ...mapGetters([
+      'filters',
+      'listLength',
+    ]),
   },
-
   created() {
     this.localFilters = this.filters;
   },
-
   methods: {
-    ...mapActions(['_setActiveItem', '_filterList']),
-
+    ...mapActions(['_filterList']),
     changeFilter() {
       this._filterList(this.localFilters);
     },
-
     switchEditing() {
       this.isEditing = !this.isEditing;
     },

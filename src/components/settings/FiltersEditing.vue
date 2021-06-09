@@ -45,25 +45,17 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      localFilters: {
-        tags: [],
-        types: [],
-      },
-      newTag: '',
-      newType: '',
-    };
-  },
-
+  data: () => ({
+    localFilters: {
+      tags: [],
+      types: [],
+    },
+    newTag: '',
+    newType: '',
+  }),
   computed: {
-    ...mapGetters(['filters', 'listLength']),
+    ...mapGetters(['filters']),
   },
-
-  created() {
-    this.localFilters = JSON.parse(JSON.stringify(this.filters));
-  },
-
   watch: {
     filters: {
       handler() {
@@ -72,24 +64,22 @@ export default {
       deep: true,
     },
   },
-
+  created() {
+    this.localFilters = JSON.parse(JSON.stringify(this.filters));
+  },
   methods: {
-    ...mapActions(['_setActiveItem', '_filterList', '_addFilter', '_removeFilter', '_changeFilter']),
-
-    saveFilters() {
-      this._saveFilters(this.localFilters);
-    },
-
+    ...mapActions([
+      '_addFilter',
+      '_removeFilter',
+      '_changeFilter',
+    ]),
     removeFilter(type, id) {
       this._removeFilter({ type, id });
     },
-
     addFilter(type, name) {
       this._addFilter({ type, name });
-
       this[type === 'tags' ? 'newTag' : 'newType'] = '';
     },
-
     changeFilter(type, name, id) {
       this._changeFilter({ type, name, id });
     },

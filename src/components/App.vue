@@ -7,11 +7,11 @@
     }"
   >
     <div class="list-title">{{ currentListObj.name || '' }}</div>
-    <settings></settings>
+    <Settings />
     <transition name="fade">
-      <save-item v-if="isChangingActive"></save-item>
+      <SaveItem v-if="isChangingActive" />
     </transition>
-    <main-list></main-list>
+    <MainList />
   </div>
 </template>
 
@@ -27,15 +27,18 @@ export default {
     MainList,
     Settings,
   },
-
+  computed: {
+    ...mapGetters([
+      'isCloudModeOn',
+      'isStarsModeOn',
+      'isInvert',
+      'isChangingActive',
+      'currentListObj',
+    ]),
+  },
   created() {
     this._getInitialData();
   },
-
-  computed: {
-    ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'currentListObj']),
-  },
-
   methods: {
     ...mapActions(['_getInitialData']),
   },

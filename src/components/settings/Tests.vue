@@ -61,22 +61,27 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      placeholderCount: 11,
-      makeInThisList: false,
-      makeNewFilters: false,
-      testCounts: [22, 49, 104, 211, 303, 404],
-    };
-  },
-
+  data: () => ({
+    placeholderCount: 11,
+    makeInThisList: false,
+    makeNewFilters: false,
+    testCounts: [22, 49, 104, 211, 303, 404],
+  }),
   computed: {
-    ...mapGetters(['filters', 'listNames', 'currentId', 'doesTestListExist', 'lists', 'currentListObj']),
+    ...mapGetters([
+      'filters',
+      'currentId',
+      'doesTestListExist',
+      'currentListObj',
+    ]),
   },
-
   methods: {
-    ...mapActions(['_setList', '_addList', '_addFilter', '_setItems', '_switchList']),
-
+    ...mapActions([
+      '_addList',
+      '_addFilter',
+      '_setItems',
+      '_switchList',
+    ]),
     makeTestData(itemCount) {
       if (!this.makeInThisList) {
         if (!this.doesTestListExist) {
@@ -92,7 +97,6 @@ export default {
 
       this.makeTestList(itemCount);
     },
-
     makeTestList(itemCount) {
       const list = {};
       const finalCount = itemCount === 'default' ? this.placeholderCount : itemCount;
@@ -115,13 +119,11 @@ export default {
 
       this._setItems(list);
     },
-
     getType() {
       const { types } = this.filters;
 
       return types.length ? types[Math.floor(Math.random() * types.length)].id : '';
     },
-
     getTags() {
       const tagsCount = Math.round(Math.random() * this.filters.tags.length);
       const tags = [];
@@ -138,7 +140,6 @@ export default {
 
       return tags;
     },
-
     makeTestFilters() {
       const tagsMaxCount = 8;
       const typesMaxCount = 11;
@@ -151,7 +152,6 @@ export default {
         this._addFilter({ name: this.makeTestWord(10), type: 'types' });
       }
     },
-
     makeTestWord(maxChars) {
       let text = '';
       const possible = 'abcdefghijklmnopqrstuvwxyz';

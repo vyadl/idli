@@ -37,21 +37,22 @@
         class="settings-body"
         v-if="isAnySettingActive"
       >
-        <filters
+        <Filters
           v-if="settingsStatuses.filters"
-          key="filters"></filters>
-        <visualization
+          key="filters"
+        />
+        <Visualization
           v-if="settingsStatuses.visualization"
           key="visualization"
-        ></visualization>
-        <tests
+        />
+        <Tests
           v-if="settingsStatuses.tests"
           key="tests"
-        ></tests>
-        <lists
+        />
+        <Lists
           v-if="settingsStatuses.lists"
           key="lists"
-        ></lists>
+        />
       </div>
     </transition>
   </div>
@@ -65,20 +66,24 @@ import Lists from '@/components/settings/Lists.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: 'Settings',
   components: {
     Filters,
     Visualization,
     Tests,
     Lists,
   },
-
   computed: {
-    ...mapGetters(['activeItem', 'isChangingActive', 'isAnySettingActive', 'settingsStatuses', 'isInvert']),
+    ...mapGetters([
+      'isAnySettingActive',
+      'settingsStatuses',
+      'isInvert',
+    ]),
   },
-
   methods: {
-    ...mapActions(['_startCreatingItem', '_setSettingsStatus', '_switchSettingStatus']),
+    ...mapActions([
+      '_startCreatingItem',
+      '_switchSettingStatus',
+    ]),
   },
 };
 </script>

@@ -29,7 +29,6 @@ export default {
   computed: {
     ...mapGetters(['lists', 'currentId']),
   },
-
   methods: {
     ...mapActions(['_switchList']),
   },

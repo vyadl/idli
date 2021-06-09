@@ -49,26 +49,20 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      localFilters: {
-        tags: [],
-        types: [],
-      },
-    };
-  },
-
+  data: () => ({
+    localFilters: {
+      tags: [],
+      types: [],
+    },
+  }),
   computed: {
-    ...mapGetters(['filters', 'listLength', 'checkedFilters']),
+    ...mapGetters(['filters']),
   },
-
   created() {
     this.localFilters = this.filters;
   },
-
   methods: {
-    ...mapActions(['_setActiveItem', '_filterList']),
-
+    ...mapActions(['_filterList']),
     changeFilter() {
       const filters = {
         tags: this.localFilters.tags.filter(item => item.value).map((item) => item.id),

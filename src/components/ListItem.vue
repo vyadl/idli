@@ -21,13 +21,6 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   props: ['item'],
-
-  mounted() {
-    if (this.listChanging) {
-      this._changeChangingListStatus(false);
-    }
-  },
-
   computed: {
     ...mapGetters([
       'activeItem',
@@ -39,7 +32,6 @@ export default {
       'isInvert',
       'ListChanging',
     ]),
-
     styles() {
       let styleObj = {};
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
@@ -59,10 +51,16 @@ export default {
       return this.isCloudModeOn || this.isStarsModeOn ? styleObj : {};
     },
   },
-
+  mounted() {
+    if (this.listChanging) {
+      this._changeChangingListStatus(false);
+    }
+  },
   methods: {
-    ...mapActions(['_setActiveItem', '_deleteItem', '_setChangingStatus', '_changeChangingListStatus']),
-
+    ...mapActions([
+      '_setActiveItem',
+      '_changeChangingListStatus',
+    ]),
     setactiveItem() {
       this._setActiveItem(JSON.stringify(JSON.parse(this.item)));
     },

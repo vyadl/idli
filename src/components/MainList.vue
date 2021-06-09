@@ -8,7 +8,7 @@
       </div>
     </transition>
     <template v-if="isCloudModeOn && !isStarsModeOn">
-      <list-item
+      <ListItem
         v-for="item in finalList"
         :key="item.id"
         :item="item"
@@ -18,7 +18,7 @@
       <div class="inner">
         <transition name="fade">
           <div v-if="isListShown">
-            <list-item
+            <ListItem
               v-for="item in finalList"
               :key="item.id"
               :item="item"
@@ -33,7 +33,7 @@
 <script>
 import ListItem from '@/components/ListItem.vue';
 import Utils from '@/utils/utils';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -57,7 +57,6 @@ export default {
 
       return Utils.shuffleArray(this.filteredList);
     },
-
     computedList() {
       return this.isShuffled ? this.shuffledList : this.filteredList;
     },
@@ -75,9 +74,6 @@ export default {
       },
       immediate: true,
     },
-  },
-  methods: {
-    ...mapActions(['_startCreatingItem', '_changeCloudMode']),
   },
 };
 </script>
