@@ -25,6 +25,7 @@ export default {
 
   _removeList({ commit, dispatch, getters }, payload) {
     const switchListId = Object.keys(getters.lists).find(listId => listId !== String(payload));
+
     commit('switchList', switchListId);
     commit('removeList', payload);
 
@@ -185,7 +186,7 @@ export default {
   _updateLocal({ getters }) {
     localStorage.setItem('appLists', JSON.stringify({
       lists: getters.lists,
-      currentListId: getters.currentListId,
+      currentId: getters.currentId,
     }));
   },
 };

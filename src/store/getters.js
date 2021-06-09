@@ -1,11 +1,11 @@
 export default {
   lists: state => state.lists,
-  currentList: (state) => state.lists[state.currentListId],
-  list: (state, getters) => getters.currentList?.items,
-  currentListId: state => state.currentListId,
+  currentListObj: (state) => state.lists[state.currentId],
+  currentItems: (state, getters) => getters.currentListObj?.items,
+  currentId: state => state.currentId,
   doesTestListExist: state => Object.keys(state.lists).some(key => key === 'test'),
-  filters: (state, getters) => getters.currentList?.filters,
-  checkedFilters: (state, getters) => getters.currentList?.checkedFilters,
+  filters: (state, getters) => getters.currentListObj?.filters,
+  checkedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
   activeItem: state => state.activeItem,
   listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,
@@ -23,14 +23,13 @@ export default {
     .some(value => value),
 
   filteredList: (state, getters) => {
-    if (!getters.list) {
+    if (!getters.currentItems) {
       return [];
     }
 
-    const listValues = Object.values(getters.list);
+    const listValues = Object.values(getters.currentItems);
     const filters = getters.checkedFilters;
-    const { tags } = filters;
-    const { types } = filters;
+    const { tags, types } = filters;
 
     return listValues.filter((item) => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);

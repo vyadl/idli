@@ -109,7 +109,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['list', 'filters', 'activeItem', 'isChangingActive']),
+    ...mapGetters(['filters', 'activeItem', 'isChangingActive']),
   },
 
   created() {

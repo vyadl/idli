@@ -12,7 +12,7 @@
         v-for="item in finalList"
         :key="item.id"
         :item="item"
-      ></list-item>
+      />
     </template>
     <template v-else>
       <div class="inner">
@@ -22,7 +22,7 @@
               v-for="item in finalList"
               :key="item.id"
               :item="item"
-            ></list-item>
+            />
           </div>
         </transition>
       </div>

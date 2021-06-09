@@ -71,7 +71,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['filters', 'listNames', 'currentListId', 'doesTestListExist', 'lists']),
+    ...mapGetters(['filters', 'listNames', 'currentId', 'doesTestListExist', 'lists', 'currentListObj']),
   },
 
   methods: {
@@ -81,7 +81,7 @@ export default {
       if (!this.makeInThisList) {
         if (!this.doesTestListExist) {
           this._addList({ name: 'test list', id: 'test' });
-        } else if (this.currentListId !== 'test') {
+        } else if (this.currentId !== 'test') {
           this._switchList('test');
         }
 
@@ -96,9 +96,8 @@ export default {
     makeTestList(itemCount) {
       const list = {};
       const finalCount = itemCount === 'default' ? this.placeholderCount : itemCount;
-      const currentList = this.lists[this.currentListId];
-      const maxId = Object.keys(currentList.items).length
-        ? Math.max(...Object.keys(currentList.items))
+      const maxId = Object.keys(this.currentListObj.items).length
+        ? Math.max(...Object.keys(this.currentListObj.items))
         : 0;
       let newId = maxId + 1;
 

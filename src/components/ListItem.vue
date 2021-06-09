@@ -30,7 +30,6 @@ export default {
 
   computed: {
     ...mapGetters([
-      'list',
       'activeItem',
       'isChangingActive',
       'isCloudModeOn',

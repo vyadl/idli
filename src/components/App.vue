@@ -6,7 +6,7 @@
       'invert': isInvert,
     }"
   >
-    <div class="list-title">{{ currentList ? currentList.name : '' }}</div>
+    <div class="list-title">{{ currentListObj.name || '' }}</div>
     <settings></settings>
     <transition name="fade">
       <save-item v-if="isChangingActive"></save-item>
@@ -33,7 +33,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'currentList']),
+    ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'currentListObj']),
   },
 
   methods: {
