@@ -1,11 +1,12 @@
 export default {
   lists: state => state.lists,
-  currentListObj: (state) => state.lists[state.currentListId],
-  currentListItems: (state, getters) => getters.currentListObj?.items,
+  currentListObj: (state) => state.lists.length
+    ? state.lists.find(list => list.id === state.currentListId)
+    : null,
   currentListId: state => state.currentListId,
-  doesTestListExist: state => Object.keys(state.lists).some(key => key === 'test'),
-  filters: (state, getters) => getters.currentListObj?.filters,
-  checkedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
+  currentListItems: (state, getters) => getters.currentListObj?.items,
+  currentListFilters: (state, getters) => getters.currentListObj?.filters,
+  currentListCheckedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
   activeItem: state => state.activeItem,
   listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,
@@ -17,7 +18,7 @@ export default {
   shuffleTrigger: state => state.shuffleTrigger,
   isShuffled: state => state.mode.shuffle,
   mode: state => state.mode,
-  listLength: (state, getters) => getters.filteredList.length,
+  filteredListLength: (state, getters) => getters.filteredList.length,
 
   isAnySettingActive: (state, getters) => Object.values(getters.settingsStatuses)
     .some(value => value),
@@ -28,7 +29,7 @@ export default {
     }
 
     const listValues = Object.values(getters.currentListItems);
-    const filters = getters.checkedFilters;
+    const filters = getters.currentListCheckedFilters;
     const { tags, categories } = filters;
 
     return listValues.filter((item) => {

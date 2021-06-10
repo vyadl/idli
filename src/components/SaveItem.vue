@@ -36,7 +36,7 @@
         <label
           class="g-label"
           :class="{ 'active': item.tags.indexOf(tag.id) !== -1 }"
-          v-for="tag in filters.tags"
+          v-for="tag in currentListFilters.tags"
           :key="tag.id"
         >
           <input
@@ -54,7 +54,7 @@
         <label
           class="g-label"
           :class="{'active': item.category === category.id}"
-          v-for="category in filters.categories"
+          v-for="category in currentListFilters.categories"
           :key="category.id"
         >
           {{ category.name }}
@@ -107,7 +107,7 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'filters',
+      'currentListFilters',
       'activeItem',
       'isChangingActive',
     ]),

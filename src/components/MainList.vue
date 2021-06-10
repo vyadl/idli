@@ -67,7 +67,7 @@ export default {
         this.isListShown = false;
 
         setTimeout(() => {
-          this.finalList = {};
+          this.finalList = [];
           this.finalList = this.computedList;
           this.isListShown = true;
         }, 200);

@@ -57,9 +57,8 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'filters',
+      'currentListFilters',
       'currentListId',
-      'isTestListExist',
       'currentListObj',
     ]),
   },
@@ -71,12 +70,7 @@ export default {
       '_switchList',
     ]),
     makeTestData(itemCount) {
-      if (!this.isTestListExist) {
-        this._addList({ name: 'test list', id: 'test' });
-      } else if (this.currentListId !== 'test') {
-        this._switchList('test');
-      }
-
+      this._addList('test list');
       if (this.makeNewFilters) {
         this.makeTestFilters();
       }
@@ -106,17 +100,18 @@ export default {
       this._setItems(list);
     },
     getCategory() {
-      const { categories } = this.filters;
+      const { categories } = this.currentListFilters;
 
       return categories.length ? categories[Math.floor(Math.random() * categories.length)].id : '';
     },
     getTags() {
-      const tagsCount = Math.round(Math.random() * this.filters.tags.length);
+      const tagsCount = Math.round(Math.random() * this.currentListFilters.tags.length);
       const tags = [];
 
       if (tagsCount) {
         for (let i = 0; i < tagsCount; i++) {
-          const tagId = this.filters.tags[Math.floor(Math.random() * this.filters.tags.length)].id;
+          const tagId = this.currentListFilters
+            .tags[Math.floor(Math.random() * this.currentListFilters.tags.length)].id;
 
           if (!tags.includes(tagId)) {
             tags.push(tagId);

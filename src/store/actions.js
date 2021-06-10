@@ -7,7 +7,7 @@ export default {
     if (localStorage.getItem('appLists')) {
       dispatch('_setInitialState', JSON.parse(localStorage.getItem('appLists')));
     } else {
-      dispatch('_addList', { name: 'default' });
+      dispatch('_addList', 'default');
     }
   },
 
@@ -17,14 +17,14 @@ export default {
     commit('setInitialState', lists);
   },
 
-  _addList({ commit, dispatch }, { name, id }) {
-    commit('addList', { name, id });
+  _addList({ commit, dispatch }, name) {
+    commit('addList', name);
 
     dispatch('_updateLocal');
   },
 
   _removeList({ commit, dispatch, getters }, listId) {
-    const switchListId = Object.keys(getters.lists).find(id => id !== String(listId));
+    const switchListId = getters.lists.find(list => list.id !== listId);
 
     commit('switchList', switchListId);
     commit('removeList', listId);
@@ -52,21 +52,6 @@ export default {
     commit('switchShuffleMode');
   },
 
-  _setList({ commit, dispatch, getters }, list) {
-    const areMoreNewItems = Object.keys(list).length > Object.keys(getters.list).length;
-
-    if (areMoreNewItems) {
-      commit('changeChangingListStatus', true);
-    }
-
-    setTimeout(() => {
-      setTimeout(() => {
-        commit('setList', list);
-        dispatch('_updateLocalList');
-      }, 5);
-    }, 5);
-  },
-
   // filter actions
 
   _addFilter({ commit, dispatch, getters }, { name, type }) {
@@ -78,7 +63,7 @@ export default {
       commit('addFilter', {
         name,
         type,
-        filters: getters.filters,
+        filters: getters.currentListFilters,
       });
     }
 
@@ -90,7 +75,7 @@ export default {
       type,
       name,
       id,
-      filters: getters.filters,
+      filters: getters.currentListFilters,
     });
 
     dispatch('_updateLocal');
@@ -100,7 +85,7 @@ export default {
     commit('removeFilter', {
       type,
       id,
-      filters: getters.filters,
+      filters: getters.currentListFilters,
     });
     commit('removeFilterFromList', { type, id });
     dispatch('_updateLocal');

@@ -3,45 +3,64 @@ import Vue from 'vue';
 export default {
   // list
 
-  addList(state, { name, id }) {
-    const listsValues = Object.values(state.lists);
-    const sameNameList = listsValues.find(item => item.name === name);
+  addList(state, name) {
+    const newListId = state.lists.length
+      ? state.lists[state.lists.length - 1].id + 1
+      : 0;
 
-    if (!sameNameList || sameNameList.name === 'test') {
-      const listsKeys = Object.keys(state.lists);
-      const listsKeysNumbers = listsKeys.reduce((result, item) => {
-        if (Number(item)) {
-          result.push(Number(item));
-        }
+    state.lists.push({
+      name,
+      id: newListId,
+      items: {},
+      filters: {
+        tags: [],
+        categories: [],
+      },
+      checkedFilters: {
+        tags: [],
+        categories: [],
+      },
+    });
 
-        return result;
-      }, []);
-      const listId = id === 'test'
-        ? 'test'
-        : listsKeysNumbers.length
-          ? Math.max(...listsKeysNumbers) + 1
-          : 1;
+    state.currentListId = newListId;
 
-      Vue.set(state.lists, listId, {
-        name,
-        id: listId,
-        items: {},
-        filters: {
-          tags: [],
-          categories: [],
-        },
-        checkedFilters: {
-          tags: [],
-          categories: [],
-        },
-      });
+    // const sameNameList = state.lists.find(list => list.name === name);
 
-      state.currentListId = listId;
-    }
+    // if (!sameNameList || sameNameList.name === 'test') {
+    //   const listsKeys = Object.keys(state.lists);
+    //   const listsKeysNumbers = listsKeys.reduce((result, item) => {
+    //     if (Number(item)) {
+    //       result.push(Number(item));
+    //     }
+
+    //     return result;
+    //   }, []);
+    //   const listId = id === 'test'
+    //     ? 'test'
+    //     : listsKeysNumbers.length
+    //       ? Math.max(...listsKeysNumbers) + 1
+    //       : 1;
+
+    //   Vue.set(state.lists, listId, {
+    //     name,
+    //     id: listId,
+    //     items: {},
+    //     filters: {
+    //       tags: [],
+    //       categories: [],
+    //     },
+    //     checkedFilters: {
+    //       tags: [],
+    //       categories: [],
+    //     },
+    //   });
+
+    //   state.currentListId = listId;
+    // }
   },
 
   removeList(state, id) {
-    Vue.delete(state.lists, id);
+    state.lists = state.lists.filter(list => list.id !== id);
   },
 
   switchList(state, id) {
@@ -49,7 +68,7 @@ export default {
   },
 
   filterList(state, filters) {
-    const currentListObj = state.lists[state.currentListId];
+    const currentListObj = state.lists.find(list => list.id === state.currentListId);
 
     currentListObj.checkedFilters = JSON.parse(JSON.stringify(filters));
     state.mode.shuffle = false;
@@ -104,7 +123,7 @@ export default {
   },
 
   removeFilterFromList(state, { type, id }) {
-    const currentListItems = state.lists[state.currentListId].items;
+    const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
 
     Object.keys(currentListItems).forEach((key) => {
       const filterPosition = currentListItems[key][type].indexOf(id);
@@ -120,7 +139,7 @@ export default {
   // item
 
   addItem(state, newItem) {
-    const currentListItems = state.lists[state.currentListId].items;
+    const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
 
     const maxId = Object.keys(currentListItems).length
       ? Math.max(...Object.keys(currentListItems))
@@ -137,7 +156,7 @@ export default {
   },
 
   setItems(state, newItems) {
-    const currentListObj = state.lists[state.currentListId];
+    const currentListObj = state.lists.find(list => list.id === state.currentListId);
 
     Vue.set(currentListObj, 'items', {
       ...newItems,
@@ -145,7 +164,7 @@ export default {
   },
 
   deleteItem(state, id) {
-    const currentListItems = state.lists[state.currentListId].items;
+    const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
 
     Vue.delete(currentListItems, id);
   },
@@ -155,7 +174,7 @@ export default {
   },
 
   changeItem(state, changedItem) {
-    const currentListItems = state.lists[state.currentListId].items;
+    const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
 
     Vue.set(currentListItems, changedItem.id, changedItem);
   },

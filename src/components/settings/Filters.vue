@@ -2,7 +2,7 @@
   <div class="filters">
     <div class="inner">
       <div class="items-count">
-        {{ listLength }}
+        {{ filteredListLength }}
       </div>
       <div class="g-setting-title main">
         filters
@@ -42,12 +42,12 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'filters',
-      'listLength',
+      'currentListFilters',
+      'filteredListLength',
     ]),
   },
   created() {
-    this.localFilters = this.filters;
+    this.localFilters = this.currentListFilters;
   },
   methods: {
     ...mapActions(['_filterList']),
