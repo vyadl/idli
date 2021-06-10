@@ -107,7 +107,7 @@ export default {
     const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
 
     const newItemId = currentListItems.length
-      ? currentListItems[currentListItems.length - 1] + 1
+      ? currentListItems[currentListItems.length - 1].id + 1
       : 0;
 
     state.lists.find(list => list.id === state.currentListId).items
