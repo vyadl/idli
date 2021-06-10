@@ -98,7 +98,7 @@ export default {
   data: () => ({
     isDetailsShowed: false,
     item: {
-      id: 1,
+      id: '',
       text: '',
       details: '',
       tags: [],

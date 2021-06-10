@@ -110,8 +110,8 @@ export default {
       : 0;
 
     state.lists[currentListIndex].items.push({
-      id: newItemId,
       ...newItem,
+      id: newItemId,
     });
   },
 

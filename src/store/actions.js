@@ -33,7 +33,10 @@ export default {
   },
 
   _filterList({ commit, dispatch, getters }, filters) {
-    commit('filterList', { currentListIndex: getters.currentListIndex, filters });
+    commit('filterList', {
+      currentListIndex: getters.currentListIndex,
+      filters,
+    });
 
     dispatch('_updateLocal');
   },
@@ -87,27 +90,40 @@ export default {
       id,
       filters: getters.currentListFilters,
     });
-    commit('removeFilterFromList', { currentListIndex: getters.currentListIndex, type, id });
+    commit('removeFilterFromList', {
+      currentListIndex: getters.currentListIndex,
+      type,
+      id,
+    });
     dispatch('_updateLocal');
   },
 
   // item actions
 
   _addItem({ commit, dispatch, getters }, newItem) {
-    commit('addItem', { currentListIndex: getters.currentListIndex, newItem });
+    commit('addItem', {
+      currentListIndex: getters.currentListIndex,
+      newItem,
+    });
     dispatch('_setChangingStatus', false);
     dispatch('_updateLocal');
   },
 
   _setItems({ commit, dispatch, getters }, newItems) {
-    commit('setItems', { currentListIndex: getters.currentListIndex, newItems });
+    commit('setItems', {
+      currentListIndex: getters.currentListIndex,
+      newItems,
+    });
     dispatch('_setChangingStatus', false);
     dispatch('_updateLocal');
   },
 
   _deleteItem({ commit, dispatch, getters }, item) {
     if (item) {
-      commit('deleteItem', { currentListIndex: getters.currentListIndex, id: item.id });
+      commit('deleteItem', {
+        currentListIndex: getters.currentListIndex,
+        id: item.id,
+      });
       dispatch('_updateLocal');
     }
 
@@ -124,7 +140,10 @@ export default {
   },
 
   _changeItem({ commit, dispatch, getters }, changedItem) {
-    commit('changeItem', { currentListIndex: getters.currentListIndex, changedItem });
+    commit('changeItem', {
+      currentListIndex: getters.currentListIndex,
+      changedItem,
+    });
     dispatch('_setActiveItem', null);
     dispatch('_updateLocal');
   },
