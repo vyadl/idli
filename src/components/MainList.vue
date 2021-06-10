@@ -41,7 +41,7 @@ export default {
   },
   data: () => ({
     isListShown: false,
-    finalList: {},
+    finalList: [],
   }),
   computed: {
     ...mapGetters([
