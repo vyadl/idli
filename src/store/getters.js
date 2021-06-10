@@ -1,6 +1,7 @@
 export default {
   lists: state => state.lists,
-  currentListObj: (state) => state.lists.find(list => list.id === state.currentListId),
+  currentListObj: state => state.lists.find(list => list.id === state.currentListId),
+  currentListIndex: (state, getters) => getters.lists.indexOf(getters.currentListObj, 0),
   currentListId: state => state.currentListId,
   currentListItems: (state, getters) => getters.currentListObj?.items,
   currentListFilters: (state, getters) => getters.currentListObj?.filters,

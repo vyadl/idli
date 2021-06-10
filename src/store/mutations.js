@@ -33,9 +33,8 @@ export default {
     state.currentListId = id;
   },
 
-  filterList(state, filters) {
-    state.lists.find(list => list.id === state.currentListId)
-      .checkedFilters = JSON.parse(JSON.stringify(filters));
+  filterList(state, { currentListIndex, filters }) {
+    state.lists[currentListIndex].checkedFilters = JSON.parse(JSON.stringify(filters));
     state.mode.shuffle = false;
   },
 
@@ -87,8 +86,8 @@ export default {
     );
   },
 
-  removeFilterFromList(state, { type, id }) {
-    const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
+  removeFilterFromList(state, { currentListIndex, type, id }) {
+    const currentListItems = state.lists[currentListIndex].items;
 
     currentListItems.forEach(item => {
       const filterPosition = currentListItems[item.id][type].indexOf(id);
@@ -103,30 +102,25 @@ export default {
 
   // item
 
-  addItem(state, newItem) {
-    const currentListItems = state.lists.find(list => list.id === state.currentListId).items;
+  addItem(state, { currentListIndex, newItem }) {
+    const currentListItems = state.lists[currentListIndex].items;
 
     const newItemId = currentListItems.length
       ? currentListItems[currentListItems.length - 1].id + 1
       : 0;
 
-    state.lists.find(list => list.id === state.currentListId).items
-      .push({
-        id: newItemId,
-        text: newItem.text,
-        details: newItem.details,
-        tags: JSON.parse(JSON.stringify(newItem.tags)),
-        category: newItem.category,
-      });
+    state.lists[currentListIndex].items.push({
+      id: newItemId,
+      ...newItem,
+    });
   },
 
-  setItems(state, newItems) {
-    state.lists.find(list => list.id === state.currentListId).items = newItems;
+  setItems(state, { currentListIndex, newItems }) {
+    state.lists[currentListIndex].items = newItems;
   },
 
-  deleteItem(state, id) {
-    state.lists.find(list => list.id === state.currentListId).items = state.lists
-      .find(list => list.id === state.currentListId).items
+  deleteItem(state, { currentListIndex, id }) {
+    state.lists[currentListIndex].items = state.lists[currentListIndex].items
       .filter(item => item.id !== id);
   },
 
@@ -134,12 +128,12 @@ export default {
     state.activeItem = item;
   },
 
-  changeItem(state, changedItem) {
-    const index = state.lists.find(list => list.id === state.currentListId).items
+  changeItem(state, { currentListIndex, changedItem }) {
+    const index = state.lists[currentListIndex].items
       .findIndex(item => item.id === changedItem.id);
 
     Vue.set(
-      state.lists.find(list => list.id === state.currentListId).items,
+      state.lists[currentListIndex].items,
       index,
       changedItem,
     );

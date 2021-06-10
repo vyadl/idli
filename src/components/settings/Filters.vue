@@ -27,7 +27,7 @@
 <script>
 import FiltersShowing from '@/components/settings/FiltersShowing.vue';
 import FiltersEditing from '@/components/settings/FiltersEditing.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -36,27 +36,9 @@ export default {
   },
   data: () => ({
     isEditing: false,
-    localFilters: {
-      categories: [],
-    },
   }),
   computed: {
-    ...mapGetters([
-      'currentListFilters',
-      'filteredListLength',
-    ]),
-  },
-  created() {
-    this.localFilters = this.currentListFilters;
-  },
-  methods: {
-    ...mapActions(['_filterList']),
-    changeFilter() {
-      this._filterList(this.localFilters);
-    },
-    switchEditing() {
-      this.isEditing = !this.isEditing;
-    },
+    ...mapGetters(['filteredListLength']),
   },
 };
 </script>
