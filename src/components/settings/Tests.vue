@@ -57,9 +57,8 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'filters',
+      'currentListFilters',
       'currentListId',
-      'isTestListExist',
       'currentListObj',
     ]),
   },
@@ -71,12 +70,7 @@ export default {
       '_switchList',
     ]),
     makeTestData(itemCount) {
-      if (!this.isTestListExist) {
-        this._addList({ name: 'test list', id: 'test' });
-      } else if (this.currentListId !== 'test') {
-        this._switchList('test');
-      }
-
+      this._addList('test list');
       if (this.makeNewFilters) {
         this.makeTestFilters();
       }
@@ -84,39 +78,37 @@ export default {
       this.makeTestList(itemCount);
     },
     makeTestList(itemCount) {
-      const list = {};
+      const itemList = [];
       const finalCount = itemCount === 'default' ? this.placeholderCount : itemCount;
-      const maxId = Object.keys(this.currentListObj.items).length
-        ? Math.max(...Object.keys(this.currentListObj.items))
-        : 0;
-      let newId = maxId + 1;
+      let itemId = 0;
 
       for (let i = 0; i < finalCount; i++) {
-        list[newId] = {
-          id: newId,
+        itemList.push({
+          id: itemId,
           text: `${this.makeTestWord(10)} ${Math.round(Math.random()) ? this.makeTestWord(10) : ''}`,
           details: `${this.makeTestWord(10)} ${this.makeTestWord(5)} ${this.makeTestWord(12)}`,
-          category: this.getCategory(),
+          categories: this.getCategory(),
           tags: this.getTags(),
-        };
+        });
 
-        newId++;
+        itemId++;
       }
 
-      this._setItems(list);
+      this._setItems(itemList);
     },
     getCategory() {
-      const { categories } = this.filters;
+      const { categories } = this.currentListFilters;
 
       return categories.length ? categories[Math.floor(Math.random() * categories.length)].id : '';
     },
     getTags() {
-      const tagsCount = Math.round(Math.random() * this.filters.tags.length);
+      const tagsCount = Math.round(Math.random() * this.currentListFilters.tags.length);
       const tags = [];
 
       if (tagsCount) {
         for (let i = 0; i < tagsCount; i++) {
-          const tagId = this.filters.tags[Math.floor(Math.random() * this.filters.tags.length)].id;
+          const tagId = this.currentListFilters
+            .tags[Math.floor(Math.random() * this.currentListFilters.tags.length)].id;
 
           if (!tags.includes(tagId)) {
             tags.push(tagId);

@@ -56,17 +56,18 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters(['filters']),
+    ...mapGetters(['currentListFilters']),
   },
   created() {
-    this.localFilters = this.filters;
+    this.localFilters = this.currentListFilters;
   },
   methods: {
     ...mapActions(['_filterList']),
     changeFilter() {
       const filters = {
-        tags: this.localFilters.tags.filter(item => item.value).map((item) => item.id),
-        categories: this.localFilters.categories.filter(item => item.value).map((item) => item.id),
+        tags: this.localFilters.tags.filter(tag => tag.value).map(tag => tag.id),
+        categories: this.localFilters.categories
+          .filter(category => category.value).map(category => category.id),
       };
 
       this._filterList(filters);

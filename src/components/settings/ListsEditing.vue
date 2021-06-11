@@ -48,7 +48,7 @@ export default {
       '_addList',
     ]),
     addList(name) {
-      this._addList({ name });
+      this._addList(name);
 
       this.newListName = '';
     },

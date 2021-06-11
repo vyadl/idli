@@ -29,10 +29,10 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters(['filters']),
+    ...mapGetters(['currentListFilters']),
   },
   created() {
-    this.localFilters = this.filters;
+    this.localFilters = this.currentListFilters;
   },
   methods: {
     ...mapActions(['_filterList']),

@@ -70,18 +70,18 @@ export default {
     newCategory: '',
   }),
   computed: {
-    ...mapGetters(['filters']),
+    ...mapGetters(['currentListFilters']),
   },
   watch: {
-    filters: {
+    currentListFilters: {
       handler() {
-        this.localFilters = JSON.parse(JSON.stringify(this.filters));
+        this.localFilters = JSON.parse(JSON.stringify(this.currentListFilters));
       },
       deep: true,
     },
   },
   created() {
-    this.localFilters = JSON.parse(JSON.stringify(this.filters));
+    this.localFilters = JSON.parse(JSON.stringify(this.currentListFilters));
   },
   methods: {
     ...mapActions([
