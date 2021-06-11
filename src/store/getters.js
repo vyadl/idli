@@ -31,7 +31,7 @@ export default {
     const { tags, categories } = getters.currentListCheckedFilters;
 
     return getters.currentListItems.filter(item => {
-      const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);
+      const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
       const isCategoryIntersection = !categories.length || categories
         .indexOf(item.categories) !== -1;
 

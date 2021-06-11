@@ -26,7 +26,7 @@ export default {
   _removeList({ commit, dispatch, getters }, listId) {
     if (getters.currentListId === listId) {
       const switchListId = getters.lists.find(list => list.id !== listId).id;
-      echo(switchListId);
+
       commit('switchList', switchListId);
     }
 
