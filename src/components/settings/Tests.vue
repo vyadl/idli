@@ -87,7 +87,7 @@ export default {
           id: itemId,
           text: `${this.makeTestWord(10)} ${Math.round(Math.random()) ? this.makeTestWord(10) : ''}`,
           details: `${this.makeTestWord(10)} ${this.makeTestWord(5)} ${this.makeTestWord(12)}`,
-          category: this.getCategory(),
+          categories: this.getCategory(),
           tags: this.getTags(),
         });
 

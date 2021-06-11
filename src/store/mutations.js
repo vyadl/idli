@@ -90,12 +90,16 @@ export default {
     const currentListItems = state.lists[currentListIndex].items;
 
     currentListItems.forEach(item => {
-      const filterPosition = currentListItems[item.id][type].indexOf(id);
-      const clonedFilters = [...currentListItems[item.id][type]];
+      if (type === 'categories') {
+        item.categories = null; // eslint-disable-line no-param-reassign
+      } else {
+        const filterPosition = item.tags.indexOf(id);
+        const clonedFilters = [...item.tags];
 
-      if (filterPosition !== -1) {
-        clonedFilters.splice(filterPosition, 1);
-        currentListItems[item.id][type] = clonedFilters;
+        if (filterPosition !== -1) {
+          clonedFilters.splice(filterPosition, 1);
+          item.tags = clonedFilters; // eslint-disable-line no-param-reassign
+        }
       }
     });
   },

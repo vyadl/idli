@@ -28,12 +28,12 @@ export default {
       return [];
     }
 
-    const filters = getters.currentListCheckedFilters;
-    const { tags, categories } = filters;
+    const { tags, categories } = getters.currentListCheckedFilters;
 
     return getters.currentListItems.filter(item => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);
-      const isCategoryIntersection = !categories.length || categories.indexOf(item.category) !== -1;
+      const isCategoryIntersection = !categories.length || categories
+        .indexOf(item.categories) !== -1;
 
       return areTagsIntersection && isCategoryIntersection;
     });

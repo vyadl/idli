@@ -53,7 +53,7 @@
       <div class="item-caregories">
         <label
           class="g-label"
-          :class="{'active': item.category === category.id}"
+          :class="{'active': item.categories === category.id}"
           v-for="category in currentListFilters.categories"
           :key="category.id"
         >
@@ -63,7 +63,7 @@
             class="g-hidden"
             name="category"
             :value="category.id"
-            v-model="item.category"
+            v-model="item.categories"
             @click="unableCategory(category.id)"
           >
         </label>
@@ -102,7 +102,7 @@ export default {
       text: '',
       details: '',
       tags: [],
-      category: '',
+      categories: '',
     },
   }),
   computed: {
@@ -145,7 +145,7 @@ export default {
       this.finishChanging();
     },
     chooseCategory(itemCategory) {
-      this.item.category = itemCategory;
+      this.item.categories = itemCategory;
     },
     deleteItem() {
       this._deleteItem(this.activeItem);
@@ -158,12 +158,12 @@ export default {
     finishChanging() {
       this.item.text = '';
       this.item.details = '';
-      this.item.category = '';
+      this.item.categories = '';
       this.item.tags = [];
     },
     unableCategory(id) {
-      if (this.item.category === id) {
-        this.item.category = '';
+      if (this.item.categories === id) {
+        this.item.categories = '';
       }
     },
   },
