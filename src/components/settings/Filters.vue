@@ -7,6 +7,8 @@
       <div class="g-setting-title main">
         filters
       </div>
+      <FiltersEditing v-if="isEditing" />
+      <FiltersShowing v-else />
       <label
         class="g-label edit"
         :class="{'active': isEditing}"
@@ -18,8 +20,6 @@
           v-model="isEditing"
         >
       </label>
-      <FiltersEditing v-if="isEditing" />
-      <FiltersShowing v-else />
     </div>
   </div>
 </template>
@@ -58,12 +58,7 @@ export default {
     }
 
     .edit {
-      position: absolute;
-      color: #bbb;
-      top: auto;
-      left: -35px;
-      bottom: 7px;
-      transform: rotate(-90deg);
+      color: #333;
 
       &.active {
         background-color: #333;

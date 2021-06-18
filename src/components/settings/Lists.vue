@@ -2,12 +2,12 @@
   <div class="lists">
     <div class="inner">
       <div class="g-setting-title main">lists</div>
+      <ListsEditing v-if="isEditing" />
+      <ListsShowing v-else />
       <label class="g-label edit" :class="{ 'active': isEditing }">
         edit
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
-      <ListsEditing v-if="isEditing" />
-      <ListsShowing v-else />
     </div>
   </div>
 </template>
@@ -48,17 +48,14 @@ export default {
 
 <style lang="scss">
   .lists {
+    margin-bottom: 50px;
+
     .inner {
       user-select: none;
     }
 
     .edit {
-      position: absolute;
-      color: #bbb;
-      top: auto;
-      left: -35px;
-      bottom: 7px;
-      transform: rotate(-90deg);
+      color: #333;
 
       &.active {
         background-color: #333;

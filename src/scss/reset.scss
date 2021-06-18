@@ -2,10 +2,24 @@ body {
   margin: 0;
 }
 
-input, 
+input,
+textarea,
 button {
-  &:focus,
-  &:active {
-    outline: none;
-  }
+  border: none;
+  border-radius: 0;
+  outline: none;
+  background-color: transparent;
+  box-shadow: none;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }

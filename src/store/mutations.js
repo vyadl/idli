@@ -1,57 +1,83 @@
 import Vue from 'vue';
 
 export default {
-  // list
 
-  addList(state, name) {
-    const newListId = state.lists.length
+  // lists
+
+  addList(state, list) {
+    const isListNameSame = state.lists.some(localList => list.name === localList.name);
+
+    if (isListNameSame) {
+      list.name = `${list.name} (copy)`; // eslint-disable-line no-param-reassign
+      echo(list.name, list.id);
+    }
+
+    list.id = state.lists.length // eslint-disable-line no-param-reassign
       ? state.lists[state.lists.length - 1].id + 1
       : 0;
-
-    state.lists.push({
-      name,
-      id: newListId,
-      items: [],
-      filters: {
-        tags: [],
-        categories: [],
-      },
-      checkedFilters: {
-        tags: [],
-        categories: [],
-      },
-    });
-
-    state.currentListId = newListId;
+    state.lists.push(list);
+    state.currentListId = list.id;
   },
-
   removeList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);
   },
-
   switchList(state, id) {
     state.currentListId = id;
   },
-
   filterList(state, { currentListIndex, filters }) {
     state.lists[currentListIndex].checkedFilters = JSON.parse(JSON.stringify(filters));
     state.mode.shuffle = false;
   },
-
   switchShuffleMode(state) {
     state.mode.shuffle = !state.mode.shuffle;
   },
-
   setInitialState(state, { lists, currentListId }) {
     state.lists = lists;
     state.currentListId = currentListId;
   },
-
   shuffleFilteredList(state) {
     state.shuffleTrigger = !state.shuffleTrigger;
   },
 
-  // filter
+  // items
+
+  addItem(state, { currentListIndex, newItem }) {
+    const currentListItems = state.lists[currentListIndex].items;
+
+    const newItemId = currentListItems.length
+      ? currentListItems[currentListItems.length - 1].id + 1
+      : 0;
+
+    state.lists[currentListIndex].items.push({
+      ...newItem,
+      id: newItemId,
+    });
+  },
+  setItems(state, { currentListIndex, newItems }) {
+    state.lists[currentListIndex].items = newItems;
+  },
+  deleteItem(state, { currentListIndex, id }) {
+    state.lists[currentListIndex].items = state.lists[currentListIndex].items
+      .filter(item => item.id !== id);
+  },
+  setActiveItem(state, item) {
+    state.activeItem = item;
+  },
+  changeItem(state, { currentListIndex, changedItem }) {
+    const index = state.lists[currentListIndex].items
+      .findIndex(item => item.id === changedItem.id);
+
+    Vue.set(
+      state.lists[currentListIndex].items,
+      index,
+      changedItem,
+    );
+  },
+  setChangingStatus(state, status) {
+    state.isChangingActive = status;
+  },
+
+  // filters
 
   addFilter(state, { name, type, filters }) {
     const clonedTypedFilters = [...filters[type]];
@@ -64,7 +90,6 @@ export default {
 
     Vue.set(filters, type, clonedTypedFilters);
   },
-
   changeFilter(state, {
     name,
     id,
@@ -77,7 +102,6 @@ export default {
     filter.name = name;
     Vue.set(filters, type, clonedTypedFilters);
   },
-
   removeFilter(state, { type, id, filters }) {
     Vue.set(
       filters,
@@ -85,7 +109,6 @@ export default {
       filters[type].filter(item => item.id !== id),
     );
   },
-
   removeFilterFromList(state, { currentListIndex, type, id }) {
     const currentListItems = state.lists[currentListIndex].items;
 
@@ -104,49 +127,6 @@ export default {
     });
   },
 
-  // item
-
-  addItem(state, { currentListIndex, newItem }) {
-    const currentListItems = state.lists[currentListIndex].items;
-
-    const newItemId = currentListItems.length
-      ? currentListItems[currentListItems.length - 1].id + 1
-      : 0;
-
-    state.lists[currentListIndex].items.push({
-      ...newItem,
-      id: newItemId,
-    });
-  },
-
-  setItems(state, { currentListIndex, newItems }) {
-    state.lists[currentListIndex].items = newItems;
-  },
-
-  deleteItem(state, { currentListIndex, id }) {
-    state.lists[currentListIndex].items = state.lists[currentListIndex].items
-      .filter(item => item.id !== id);
-  },
-
-  setActiveItem(state, item) {
-    state.activeItem = item;
-  },
-
-  changeItem(state, { currentListIndex, changedItem }) {
-    const index = state.lists[currentListIndex].items
-      .findIndex(item => item.id === changedItem.id);
-
-    Vue.set(
-      state.lists[currentListIndex].items,
-      index,
-      changedItem,
-    );
-  },
-
-  setChangingStatus(state, status) {
-    state.isChangingActive = status;
-  },
-
   // settings
 
   switchCloudMode(state) {
@@ -159,7 +139,6 @@ export default {
       state.mode.shuffle = true;
     }
   },
-
   switchStarsMode(state) {
     state.mode.stars = !state.mode.stars;
     state.mode.list = !state.mode.stars;
@@ -169,15 +148,12 @@ export default {
       state.mode.shuffle = true;
     }
   },
-
   switchInvertMode(state) {
     state.isInvert = !state.isInvert;
   },
-
   changeChangingListStatus(state, status) {
     state.listChanging = status;
   },
-
   setSettingsStatus(state, payload) {
     const statuses = state.settingsStatuses;
 
@@ -188,5 +164,14 @@ export default {
         statuses[statusField] = false;
       }
     });
+  },
+  openSidebar(state) {
+    state.sidebar.isOpen = true;
+  },
+  closeSidebar(state) {
+    state.sidebar.isOpen = false;
+  },
+  changeSidebarMode(state, mode) {
+    state.sidebar.mode = mode;
   },
 };

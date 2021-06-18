@@ -48,7 +48,19 @@ export default {
       '_addList',
     ]),
     addList(name) {
-      this._addList(name);
+      this._addList({
+        name,
+        id: null,
+        items: [],
+        filters: {
+          tags: [],
+          categories: [],
+        },
+        checkedFilters: {
+          tags: [],
+          categories: [],
+        },
+      });
 
       this.newListName = '';
     },

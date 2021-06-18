@@ -24,4 +24,8 @@ export default {
   },
   isInvert: false,
   isChangingActive: false,
+  sidebar: {
+    isOpen: false,
+    mode: null,
+  },
 };

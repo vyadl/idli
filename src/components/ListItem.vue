@@ -70,11 +70,12 @@ export default {
 
 <style lang="scss">
   .list-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: auto;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    margin: auto;
     cursor: pointer;
     transition: transform 0.2s;
 
