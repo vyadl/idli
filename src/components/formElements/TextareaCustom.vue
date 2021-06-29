@@ -6,7 +6,7 @@
     <textarea
       class="textarea"
       :value="value"
-      @input="change($event)"
+      @input="input($event)"
     ></textarea>
   </label>
 </template>
@@ -18,7 +18,7 @@ export default {
     value: String,
   },
   methods: {
-    change(event) {
+    input(event) {
       this.$emit('input', event.target.value);
     },
   },
