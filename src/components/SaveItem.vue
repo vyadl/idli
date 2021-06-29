@@ -10,13 +10,11 @@
     <div class="inner">
       <InputCustom
         label="item"
-        :value="item.text"
-        @input="item.text = $event"
+        v-model="item.text"
       />
       <TextareaCustom
         label="details"
-        :value="item.details"
-        @input="item.details = $event"
+        v-model="item.details"
         @click="isDetailsShowed = !isDetailsShowed"
       />
       <div class="item-settings">
@@ -64,7 +62,7 @@
         />
         <ButtonText
           v-if="activeItem"
-          text="cansel"
+          text="cancel"
           style-type="bordered"
           @click="cancelChanging"
         />

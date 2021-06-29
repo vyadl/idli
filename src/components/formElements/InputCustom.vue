@@ -7,7 +7,7 @@
       type="text"
       class="input"
       :value="value"
-      @input="change($event)"
+      @input="input($event)"
     >
   </label>
 </template>
@@ -19,7 +19,7 @@ export default {
     value: String,
   },
   methods: {
-    change(event) {
+    input(event) {
       this.$emit('input', event.target.value);
     },
   },
