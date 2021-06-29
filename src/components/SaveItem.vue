@@ -168,9 +168,9 @@ export default {
 <style lang="scss">
   .save-item {
     position: fixed;
+    z-index: 100;
     top: 0;
     left: 0;
-    z-index: 100;
     width: 100vw;
     padding: 15px;
     color: #000;
@@ -187,16 +187,16 @@ export default {
       }
 
       .inner {
-        transform: none;
-        opacity: 1;
-        background-color: #fff;
         position: relative;
-        border-radius: 4px;
-        padding: 20px 25px;
-        box-shadow: 2px 2px 10px 0 rgba(#222, .6);
         width: 500px;
         max-width: 70vw;
         margin: 0 auto;
+        padding: 20px 25px;
+        border-radius: 4px;
+        opacity: 1;
+        background-color: #fff;
+        box-shadow: 2px 2px 10px 0 rgba(#222, .6);
+        transform: none;
       }
     }
 
@@ -205,23 +205,11 @@ export default {
     }
 
     .inner {
-      transition: .2s opacity, .2s transform;
-      transform: translateY(-300px);
       opacity: 0;
-    }
-
-    .text-label {
-      color: #999;
-      font-size: 11px;
-
-      &.clickable {
-        cursor: pointer;
-        opacity: .6;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
+      transform: translateY(-300px);
+      transition:
+        .2s opacity,
+        .2s transform;
     }
 
     .item-settings {
@@ -242,30 +230,6 @@ export default {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-    }
-
-    .item-button {
-      border-radius: 5px;
-      background: transparent;
-      border: 1px solid #444;
-      color: #333;
-      transition: opacity .2s;
-      padding: 5px;
-      font: 14px Verdana, sans-serif;
-      cursor: pointer;
-      margin: 0 7px;
-
-      &:hover {
-        opacity: .7;
-      }
-
-      &:active {
-        opacity: .6;
-      }
-
-      &:disabled {
-        opacity: .4;
-      }
     }
   }
 </style>
