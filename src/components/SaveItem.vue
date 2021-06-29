@@ -8,30 +8,15 @@
       @click="cancelChanging"
     ></div>
     <div class="inner">
-      <div>
-        <div class="text-label">
-          item
-        </div>
-        <input
-          type="text"
-          class="item-name"
-          v-model="item.text"
-        >
-      </div>
-      <div>
-        <div
-          class="text-label"
-          :class="{ 'clickable': !isDetailsShowed && !item.details }"
-          @click="isDetailsShowed = !isDetailsShowed"
-        >
-          {{ !isDetailsShowed && !item.details ? 'write' : '' }} details
-        </div>
-        <textarea
-          class="item-description"
-          v-if="item.details || isDetailsShowed"
-          v-model="item.details"
-        ></textarea>
-      </div>
+      <InputCustom
+        label="item"
+        v-model="item.text"
+      />
+      <TextareaCustom
+        label="details"
+        v-model="item.details"
+        @click="isDetailsShowed = !isDetailsShowed"
+      />
       <div class="item-settings">
         <label
           class="g-label"
@@ -69,32 +54,40 @@
         </label>
       </div>
       <div class="buttons-container">
-        <button
-          class="item-button"
-          type="button"
-          @click="saveItem"
+        <ButtonText
           :disabled="!item.text"
-        >{{ activeItem ? 'change' : 'add'}}</button>
-        <button
-          class="item-button"
-          type="button"
+          :text="activeItem ? 'change' : 'add'"
+          style-type="bordered"
+          @click="saveItem"
+        />
+        <ButtonText
           v-if="activeItem"
+          text="cancel"
+          style-type="bordered"
           @click="cancelChanging"
-        >cancel</button>
-        <button
-          class="item-button"
-          type="button"
+        />
+        <ButtonText
+          :text="activeItem ? 'delete' : 'cancel'"
+          style-type="bordered"
           @click="deleteItem"
-        >{{ activeItem ? 'delete' : 'cancel' }}</button>
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import InputCustom from '@/components/formElements/InputCustom.vue';
+import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
+  components: {
+    InputCustom,
+    TextareaCustom,
+    ButtonText,
+  },
   data: () => ({
     isDetailsShowed: false,
     item: {
@@ -173,9 +166,9 @@ export default {
 <style lang="scss">
   .save-item {
     position: fixed;
+    z-index: 100;
     top: 0;
     left: 0;
-    z-index: 100;
     width: 100vw;
     padding: 15px;
     color: #000;
@@ -192,16 +185,16 @@ export default {
       }
 
       .inner {
-        transform: none;
-        opacity: 1;
-        background-color: #fff;
         position: relative;
-        border-radius: 4px;
-        padding: 15px;
-        box-shadow: 2px 2px 10px 0 rgba(#222, .6);
         width: 500px;
         max-width: 70vw;
         margin: 0 auto;
+        padding: 20px 25px;
+        border-radius: 4px;
+        opacity: 1;
+        background-color: #fff;
+        box-shadow: 2px 2px 10px 0 rgba(#222, .6);
+        transform: none;
       }
     }
 
@@ -210,45 +203,11 @@ export default {
     }
 
     .inner {
-      transition: .2s opacity, .2s transform;
-      transform: translateY(-300px);
       opacity: 0;
-    }
-
-    .text-label {
-      color: #999;
-      font-size: 11px;
-
-      &.clickable {
-        cursor: pointer;
-        opacity: .6;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
-
-    .item-name,
-    .item-description {
-      outline: none;
-      padding: 8px 6px;
-      width: 100%;
-      border: none;
-      border-bottom: 1px solid #bbb;
-      font: 14px Verdana, sans-serif;
-
-      &:focus {
-        border-bottom: 1px solid #666;
-      }
-    }
-
-    .item-name {
-      margin-bottom: 15px;
-    }
-
-    .item-description {
-      resize: none;
+      transform: translateY(-300px);
+      transition:
+        .2s opacity,
+        .2s transform;
     }
 
     .item-settings {
@@ -269,30 +228,6 @@ export default {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-    }
-
-    .item-button {
-      border-radius: 5px;
-      background: transparent;
-      border: 1px solid #444;
-      color: #333;
-      transition: opacity .2s;
-      padding: 5px;
-      font: 14px Verdana, sans-serif;
-      cursor: pointer;
-      margin: 0 7px;
-
-      &:hover {
-        opacity: .7;
-      }
-
-      &:active {
-        opacity: .6;
-      }
-
-      &:disabled {
-        opacity: .4;
-      }
     }
   }
 </style>

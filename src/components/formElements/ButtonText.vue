@@ -1,5 +1,6 @@
 <template>
   <button
+    type="button"
     class="button-text"
     :class="styleType"
     @click="$emit('click')"
@@ -31,11 +32,11 @@ export default {
     }
 
     &.bordered {
-      border: 3px solid map-get($colors, 'gray-1');
+      border: 3px solid map-get($colors, 'gray-2');
     }
 
     &.underline {
-      border-bottom: 1px solid map-get($colors, 'gray-1');
+      border-bottom: 1px solid map-get($colors, 'gray-2');
     }
 
     &:hover {

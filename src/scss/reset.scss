@@ -16,8 +16,10 @@ button {
   outline: none;
   background-color: transparent;
   box-shadow: none;
+  font: inherit;
   font-weight: inherit;
   letter-spacing: inherit;
+  resize: none;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
