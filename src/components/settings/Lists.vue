@@ -9,7 +9,7 @@
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
     </div>
-  <TestData />
+    <TestData />
   </div>
 </template>
 
