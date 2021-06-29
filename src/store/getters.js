@@ -19,6 +19,8 @@ export default {
   isShuffled: state => state.mode.shuffle,
   mode: state => state.mode,
   filteredListLength: (state, getters) => getters.filteredList.length,
+  isSidebarOpen: state => state.sidebar.isOpen,
+  sidebarMode: state => state.sidebar.mode,
 
   isAnySettingActive: (state, getters) => Object.values(getters.settingsStatuses)
     .some(value => value),

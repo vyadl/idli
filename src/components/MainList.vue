@@ -80,8 +80,8 @@ export default {
 
 <style lang="scss">
   .main-list {
-    text-align: center;
     padding-top: 40px;
+    text-align: center;
 
     .inner {
       display: flex;
@@ -91,10 +91,10 @@ export default {
     .preloader {
       position: fixed;
       z-index: 100;
-      width: 100vw;
-      height: 100vh;
       left: 0;
       top: 0;
+      width: 100vw;
+      height: 100vh;
       background-color: rgba(#fff, .3);
     }
   }

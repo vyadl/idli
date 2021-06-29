@@ -2,25 +2,28 @@
   <div class="lists">
     <div class="inner">
       <div class="g-setting-title main">lists</div>
+      <ListsEditing v-if="isEditing" />
+      <ListsShowing v-else />
       <label class="g-label edit" :class="{ 'active': isEditing }">
         edit
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
-      <ListsEditing v-if="isEditing" />
-      <ListsShowing v-else />
     </div>
+    <TestData />
   </div>
 </template>
 
 <script>
 import ListsShowing from '@/components/settings/ListsShowing.vue';
 import ListsEditing from '@/components/settings/ListsEditing.vue';
+import TestData from '@/components/settings/TestData.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ListsShowing,
     ListsEditing,
+    TestData,
   },
   data: () => ({
     isEditing: false,
@@ -49,16 +52,12 @@ export default {
 <style lang="scss">
   .lists {
     .inner {
+      margin-bottom: 50px;
       user-select: none;
     }
 
     .edit {
-      position: absolute;
-      color: #bbb;
-      top: auto;
-      left: -35px;
-      bottom: 7px;
-      transform: rotate(-90deg);
+      color: #333;
 
       &.active {
         background-color: #333;
