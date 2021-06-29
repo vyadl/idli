@@ -1,5 +1,6 @@
 <template>
   <button
+    type="button"
     class="button-icon"
     @click="$emit('click')"
   ><img

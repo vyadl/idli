@@ -8,30 +8,17 @@
       @click="cancelChanging"
     ></div>
     <div class="inner">
-      <div>
-        <div class="text-label">
-          item
-        </div>
-        <input
-          type="text"
-          class="item-name"
-          v-model="item.text"
-        >
-      </div>
-      <div>
-        <div
-          class="text-label"
-          :class="{ 'clickable': !isDetailsShowed && !item.details }"
-          @click="isDetailsShowed = !isDetailsShowed"
-        >
-          {{ !isDetailsShowed && !item.details ? 'write' : '' }} details
-        </div>
-        <textarea
-          class="item-description"
-          v-if="item.details || isDetailsShowed"
-          v-model="item.details"
-        ></textarea>
-      </div>
+      <InputCustom
+        label="item"
+        :value="item.text"
+        @input="item.text = $event"
+      />
+      <TextareaCustom
+        label="details"
+        :value="item.details"
+        @input="item.details = $event"
+        @click="isDetailsShowed = !isDetailsShowed"
+      />
       <div class="item-settings">
         <label
           class="g-label"
@@ -69,32 +56,40 @@
         </label>
       </div>
       <div class="buttons-container">
-        <button
-          class="item-button"
-          type="button"
-          @click="saveItem"
+        <ButtonText
           :disabled="!item.text"
-        >{{ activeItem ? 'change' : 'add'}}</button>
-        <button
-          class="item-button"
-          type="button"
+          :text="activeItem ? 'change' : 'add'"
+          style-type="bordered"
+          @click="saveItem"
+        />
+        <ButtonText
           v-if="activeItem"
+          text="cansel"
+          style-type="bordered"
           @click="cancelChanging"
-        >cancel</button>
-        <button
-          class="item-button"
-          type="button"
+        />
+        <ButtonText
+          :text="activeItem ? 'delete' : 'cancel'"
+          style-type="bordered"
           @click="deleteItem"
-        >{{ activeItem ? 'delete' : 'cancel' }}</button>
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import InputCustom from '@/components/formElements/InputCustom.vue';
+import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
+  components: {
+    InputCustom,
+    TextareaCustom,
+    ButtonText,
+  },
   data: () => ({
     isDetailsShowed: false,
     item: {
@@ -197,7 +192,7 @@ export default {
         background-color: #fff;
         position: relative;
         border-radius: 4px;
-        padding: 15px;
+        padding: 20px 25px;
         box-shadow: 2px 2px 10px 0 rgba(#222, .6);
         width: 500px;
         max-width: 70vw;
@@ -227,28 +222,6 @@ export default {
           opacity: 1;
         }
       }
-    }
-
-    .item-name,
-    .item-description {
-      outline: none;
-      padding: 8px 6px;
-      width: 100%;
-      border: none;
-      border-bottom: 1px solid #bbb;
-      font: 14px Verdana, sans-serif;
-
-      &:focus {
-        border-bottom: 1px solid #666;
-      }
-    }
-
-    .item-name {
-      margin-bottom: 15px;
-    }
-
-    .item-description {
-      resize: none;
     }
 
     .item-settings {
