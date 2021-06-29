@@ -1,8 +1,8 @@
 <template>
   <div class="settings-card">
-    <div class="title">
+    <h1 class="title">
       {{ title }}
-    </div>
+    </h1>
     <slot />
   </div>
 </template>

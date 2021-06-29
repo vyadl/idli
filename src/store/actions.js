@@ -118,7 +118,7 @@ export default {
 
   _addFilter({ commit, dispatch, getters }, { name, type }) {
     if (
-      (type === 'tags' || type === 'categories')
+      (['tags', 'categories'].includes(type))
       && typeof name === 'string'
       && name.length
     ) {

@@ -9,18 +9,21 @@
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
     </div>
+  <TestData />
   </div>
 </template>
 
 <script>
 import ListsShowing from '@/components/settings/ListsShowing.vue';
 import ListsEditing from '@/components/settings/ListsEditing.vue';
+import TestData from '@/components/settings/TestData.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ListsShowing,
     ListsEditing,
+    TestData,
   },
   data: () => ({
     isEditing: false,
@@ -48,9 +51,8 @@ export default {
 
 <style lang="scss">
   .lists {
-    margin-bottom: 50px;
-
     .inner {
+      margin-bottom: 50px;
       user-select: none;
     }
 

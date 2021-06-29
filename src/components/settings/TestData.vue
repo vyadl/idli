@@ -1,31 +1,35 @@
 <template>
-  <div class="test-data">
-    <div
-      class="open-message"
-      @click="areTestListsShown = !areTestListsShown"
-    >show test lists</div>
-    <div
-      class="test-list-buttons"
-      v-if="areTestListsShown"
-    >
-      <ButtonText
-        v-for="list in testData"
-        :key="list.name"
-        :text="list.name"
-        :style-type="'solid'"
-        @click="_addList(JSON.parse(JSON.stringify(list)))"
-      />
+  <SettingsCard title="test data">
+    <div class="test-data">
+      <div
+        class="open-message"
+        @click="areTestListsShown = !areTestListsShown"
+      >show test lists</div>
+      <div
+        class="test-list-buttons"
+        v-if="areTestListsShown"
+      >
+        <ButtonText
+          v-for="list in testData"
+          :key="list.name"
+          :text="list.name"
+          :style-type="'solid'"
+          @click="_addList(JSON.parse(JSON.stringify(list)))"
+        />
+      </div>
     </div>
-  </div>
+  </SettingsCard>
 </template>
 
 <script>
+import SettingsCard from '@/components/settings/SettingsCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 
 export default {
   components: {
+    SettingsCard,
     ButtonText,
   },
   data: () => ({

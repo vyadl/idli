@@ -4,14 +4,14 @@
     @click="$emit('click')"
   ><img
     class="icon"
-    :src="icon" width="25px"
+    :src="`/icons/${iconName}.svg`"
   ></button>
 </template>
 
 <script>
 export default {
   props: {
-    icon: String,
+    iconName: String,
   },
 };
 </script>
@@ -24,8 +24,13 @@ export default {
     background-color: transparent;
     cursor: pointer;
 
+    &.active {
+      background-color: map-get($colors, 'gray-4');
+    }
+
     .icon {
       display: block;
+      width: 25px;
     }
   }
 </style>

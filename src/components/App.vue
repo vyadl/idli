@@ -19,7 +19,7 @@
       class="main-content"
       :class="{ parallax: isSidebarOpen }"
     >
-    <MainList />
+      <MainList />
     </div>
     <Sidebar />
   </div>

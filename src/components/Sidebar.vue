@@ -5,26 +5,23 @@
   >
     <div class="add-item-button">
       <ButtonIcon
-        :icon="'/icons/add.svg'"
+        icon-name="add"
         @click="_startCreatingItem"
       />
     </div>
     <div class="open-sidebar-buttons">
       <ButtonIcon
         v-for="mode in sidebarModes"
-        :key="mode.mode"
-        :class="{ 'active': sidebarMode === mode.mode }"
-        :icon="mode.icon"
-        @click="_openSidebar(mode.mode)"
+        :key="mode"
+        :class="{ 'active': sidebarMode === mode }"
+        :icon-name="mode"
+        @click="_openSidebar(mode)"
       />
     </div>
     <div class="sidebar-content">
       <Filters v-if="sidebarMode === 'filters'" />
       <Visualization v-if="sidebarMode === 'visualization'" />
-      <div v-if="sidebarMode === 'lists'">
-        <Lists />
-        <TestData />
-      </div>
+      <Lists v-if="sidebarMode === 'lists'" />
     </div>
   </div>
 </template>
@@ -32,7 +29,6 @@
 <script>
 import Filters from '@/components/settings/Filters.vue';
 import Visualization from '@/components/settings/Visualization.vue';
-import TestData from '@/components/settings/TestData.vue';
 import Lists from '@/components/settings/Lists.vue';
 import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -41,25 +37,11 @@ export default {
   components: {
     Filters,
     Visualization,
-    TestData,
     Lists,
     ButtonIcon,
   },
   data: () => ({
-    sidebarModes: [
-      {
-        mode: 'filters',
-        icon: '/icons/filters.svg',
-      },
-      {
-        mode: 'visualization',
-        icon: '/icons/visualization.svg',
-      },
-      {
-        mode: 'lists',
-        icon: '/icons/lists.svg',
-      },
-    ],
+    sidebarModes: ['filters', 'visualization', 'lists'],
   }),
   computed: {
     ...mapGetters([
