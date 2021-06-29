@@ -5,13 +5,16 @@ export default {
   // lists
 
   addList(state, list) {
-    const isListNameSame = state.lists.some(localList => list.name === localList.name);
+    let { name } = list;
+    let isListNameSame = state.lists.some(localList => name === localList.name);
 
-    if (isListNameSame) {
-      list.name = `${list.name} (copy)`; // eslint-disable-line no-param-reassign
-      echo(list.name, list.id);
+    while (isListNameSame) {
+      name = `${name} (copy)`;
+      isListNameSame = state.lists
+        .some(localList => name === localList.name); // eslint-disable-line no-loop-func
     }
 
+    list.name = name; // eslint-disable-line no-param-reassign
     list.id = state.lists.length // eslint-disable-line no-param-reassign
       ? state.lists[state.lists.length - 1].id + 1
       : 0;
