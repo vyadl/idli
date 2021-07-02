@@ -18,17 +18,27 @@
         />
       </div>
     </div>
+    <ModalConfirmation
+      text="sure?"
+      name="modal"
+    />
+    <ButtonText
+      style-type="bordered"
+        text="modal"
+        @click="$modal.show('modal')"/>
   </SettingsCard>
 </template>
 
 <script>
 import SettingsCard from '@/components/settings/SettingsCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ModalConfirmation from '@/components/formElements/ModalConfirmation.vue';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 
 export default {
   components: {
+    ModalConfirmation,
     SettingsCard,
     ButtonText,
   },
@@ -43,6 +53,9 @@ export default {
   },
   methods: {
     ...mapActions(['_addList']),
+    click(event) {
+      echo(event.target.value);
+    },
   },
 };
 </script>

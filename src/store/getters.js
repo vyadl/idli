@@ -21,6 +21,7 @@ export default {
   filteredListLength: (state, getters) => getters.filteredList.length,
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
+  isConfirmationModalShown: state => state.isConfirmationModalShown,
 
   isAnySettingActive: (state, getters) => Object.values(getters.settingsStatuses)
     .some(value => value),
