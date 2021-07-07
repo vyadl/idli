@@ -18,14 +18,6 @@
         />
       </div>
     </div>
-    <ModalConfirmation
-      text="sure?"
-      name="modal"
-    />
-    <ButtonText
-      style-type="bordered"
-        text="modal"
-        @click="$modal.show('modal')"/>
   </SettingsCard>
 </template>
 
@@ -53,9 +45,6 @@ export default {
   },
   methods: {
     ...mapActions(['_addList']),
-    click(event) {
-      echo(event.target.value);
-    },
   },
 };
 </script>

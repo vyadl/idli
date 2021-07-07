@@ -16,25 +16,10 @@
       </h1>
     </header>
     <main class="main">
-      <slot />
+      <slot name="main"/>
     </main>
-    <footer class="footer">
-      <ButtonText
-        style-type="bordered"
-        :text="confirmation ? 'yes' : isNewElement ? 'add' : 'change'"
-        @click="submit"
-      />
-      <ButtonText
-        style-type="bordered"
-        text="cancel"
-        @click="cancel"
-      />
-      <ButtonText
-        style-type="bordered"
-        text="delete"
-        v-if="!isNewElement && !confirmation"
-        @click="deleteElement"
-      />
+    <footer>
+      <slot name="buttons" />
     </footer>
   </modal>
 </template>
@@ -49,8 +34,6 @@ export default {
   props: {
     name: String,
     headerText: String,
-    isNewElement: Boolean,
-    confirmation: Boolean,
   },
   methods: {
     open() {
@@ -58,15 +41,6 @@ export default {
     },
     close() {
       this.$emit('closed');
-    },
-    submit() {
-      this.$emit('submit');
-    },
-    cancel() {
-      this.$emit('cancel');
-    },
-    deleteElement() {
-      this.$emit('delete');
     },
   },
 };

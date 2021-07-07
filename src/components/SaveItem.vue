@@ -35,7 +35,7 @@
           :label="category.name"
           name="category"
           v-model="item.categories"
-          @click="unableCategory(category.id)"
+          @click="disableCategory(category.id)"
         />
       </div>
       <div class="buttons-container">
@@ -78,6 +78,7 @@ export default {
     ButtonText,
   },
   data: () => ({
+    check: '',
     isDetailsShowed: false,
     item: {
       id: '',
@@ -140,7 +141,7 @@ export default {
       this.item.categories = '';
       this.item.tags = [];
     },
-    unableCategory(id) {
+    disableCategory(id) {
       if (this.item.categories === id) {
         this.item.categories = '';
       }

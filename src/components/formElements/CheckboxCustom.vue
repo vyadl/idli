@@ -2,8 +2,6 @@
   <label class="checkbox-custom">
     <input
       type="checkbox"
-      true-value="true"
-      false-value="false"
       class="input"
       :value="value"
       :checked="isChecked"
@@ -27,6 +25,12 @@ export default {
       default: false,
     },
     label: String,
+    trueValue: {
+      default: true
+    },
+    falseValue: {
+      default: false
+    }
   },
   computed: {
     isChecked() {
