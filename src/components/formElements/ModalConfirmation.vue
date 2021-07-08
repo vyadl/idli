@@ -1,9 +1,10 @@
 <template>
   <ModalBasic
     name="confirm"
-    :headerText="headerText"
+    :header-text="headerText"
+    :width="width"
   >
-    <template v-slot:mait>
+    <template v-slot:main>
       some text
     </template>
     <template v-slot:buttons>
@@ -33,6 +34,7 @@ export default {
   },
   props: {
     headerText: String,
+    width: Number,
   },
   computed: {
     ...mapGetters(['isConfirmationModalShown']),

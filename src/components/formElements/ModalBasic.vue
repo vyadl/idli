@@ -1,8 +1,8 @@
 <template>
   <modal
     class="modal-basic"
-    width="300"
     height="auto"
+    :width="width"
     :name="name"
     @opened="open"
     @closed="close"
@@ -34,6 +34,10 @@ export default {
   props: {
     name: String,
     headerText: String,
+    width: {
+      type: Number,
+      default: 500,
+    }
   },
   methods: {
     open() {
