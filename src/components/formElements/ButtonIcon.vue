@@ -2,7 +2,7 @@
   <button
     type="button"
     class="button-icon"
-    @click="$emit('click')"
+    @click="click"
   ><img
     class="icon"
     :src="`/icons/${iconName}.svg`"
@@ -13,6 +13,11 @@
 export default {
   props: {
     iconName: String,
+  },
+  methods: {
+    click() {
+      this.$emit('click');
+    },
   },
 };
 </script>

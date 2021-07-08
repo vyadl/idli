@@ -17,41 +17,26 @@
         v-model="item.details"
         @click="isDetailsShowed = !isDetailsShowed"
       />
-      <div class="item-settings">
-        <label
-          class="g-label"
-          :class="{ 'active': item.tags.indexOf(tag.id) !== -1 }"
+      <div class="filters-container">
+        <CheckboxCustom
           v-for="tag in currentListFilters.tags"
           :key="tag.id"
-        >
-          <input
-            type="checkbox"
-            class="g-hidden"
-            :value="tag.id"
-            v-model="item.tags"
-            :true-value="1"
-            :false-value="0"
-          >
-          {{ tag.name }}
-        </label>
+          :value="tag.id"
+          :label="tag.name"
+          name="tags"
+          v-model="item.tags"
+        />
       </div>
-      <div class="item-caregories">
-        <label
-          class="g-label"
-          :class="{'active': item.categories === category.id}"
+      <div class="filters-container">
+        <RadioCustom
           v-for="category in currentListFilters.categories"
           :key="category.id"
-        >
-          {{ category.name }}
-          <input
-            type="radio"
-            class="g-hidden"
-            name="category"
-            :value="category.id"
-            v-model="item.categories"
-            @click="unableCategory(category.id)"
-          >
-        </label>
+          :value="category.id"
+          :label="category.name"
+          name="category"
+          v-model="item.categories"
+          @click="disableCategory(category.id)"
+        />
       </div>
       <div class="buttons-container">
         <ButtonText
@@ -79,6 +64,8 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
+import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -86,9 +73,12 @@ export default {
   components: {
     InputCustom,
     TextareaCustom,
+    CheckboxCustom,
+    RadioCustom,
     ButtonText,
   },
   data: () => ({
+    check: '',
     isDetailsShowed: false,
     item: {
       id: '',
@@ -137,9 +127,6 @@ export default {
 
       this.finishChanging();
     },
-    chooseCategory(itemCategory) {
-      this.item.categories = itemCategory;
-    },
     deleteItem() {
       this._deleteItem(this.activeItem);
       this.finishChanging();
@@ -154,7 +141,7 @@ export default {
       this.item.categories = '';
       this.item.tags = [];
     },
-    unableCategory(id) {
+    disableCategory(id) {
       if (this.item.categories === id) {
         this.item.categories = '';
       }
@@ -210,24 +197,15 @@ export default {
         .2s transform;
     }
 
-    .item-settings {
-      padding: 15px;
-      text-align: center;
-    }
-
-    .item-categories {
+    .filters-container {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      width: 200px;
-      padding: 10px 0 15px;
-      margin: auto;
+      flex-wrap: wrap;
     }
 
     .buttons-container {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
     }
   }
 </style>

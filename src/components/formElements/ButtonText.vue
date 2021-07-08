@@ -3,7 +3,8 @@
     type="button"
     class="button-text"
     :class="styleType"
-    @click="$emit('click')"
+    :disabled="disabled"
+    @click="click"
   >{{ text }}</button>
 </template>
 
@@ -11,7 +12,13 @@
 export default {
   props: {
     styleType: String,
+    disabled: Boolean,
     text: String,
+  },
+  methods: {
+    click() {
+      this.$emit('click');
+    },
   },
 };
 </script>
@@ -19,7 +26,10 @@ export default {
 <style lang="scss">
   .button-text {
     margin: 3px;
-    padding: 5px 8px;
+    padding: 5px 12px 7px;
+    text-align: left;
+    vertical-align: middle;
+    line-height: 1.3;
     font-size: 12px;
     letter-spacing: .3px;
     cursor: pointer;
