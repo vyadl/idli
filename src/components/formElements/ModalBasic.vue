@@ -25,19 +25,15 @@
 </template>
 
 <script>
-import ButtonText from '@/components/formElements/ButtonText.vue';
 
 export default {
-  components: {
-    ButtonText,
-  },
   props: {
     name: String,
     headerText: String,
     width: {
       type: Number,
       default: 500,
-    }
+    },
   },
   methods: {
     open() {
