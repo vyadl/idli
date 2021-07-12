@@ -4,8 +4,8 @@
       {{ label }}
     </div>
     <input
-      type="text"
       class="input"
+      :type="type"
       :value="value"
       @input="input($event)"
     >
@@ -16,6 +16,10 @@
 export default {
   props: {
     label: String,
+    type: {
+      type: String,
+      default: 'text',
+    },
     value: String,
   },
   methods: {

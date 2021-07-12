@@ -12,7 +12,10 @@
 export default {
   props: {
     styleType: String,
-    disabled: Boolean,
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     text: String,
   },
   methods: {
