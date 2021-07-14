@@ -1,8 +1,8 @@
 <template>
   <button
-    type="button"
     class="button-text"
     :class="styleType"
+    :type="type"
     :disabled="disabled"
     @click="click"
   >{{ text }}</button>
@@ -12,6 +12,10 @@
 export default {
   props: {
     styleType: String,
+    type: {
+      type: String,
+      default: 'button',
+    },
     disabled: {
       type: Boolean,
       default: false,

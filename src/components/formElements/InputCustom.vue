@@ -7,6 +7,7 @@
       class="input"
       :type="type"
       :value="value"
+      :required="required"
       @input="input($event)"
     >
   </label>
@@ -21,6 +22,10 @@ export default {
       default: 'text',
     },
     value: String,
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     input(event) {
@@ -34,7 +39,7 @@ export default {
   .input-custom {
     display: block;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 
     .label {
       margin-bottom: 10px;

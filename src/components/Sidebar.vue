@@ -17,11 +17,25 @@
         :icon-name="mode"
         @click="_openSidebar(mode)"
       />
+      <ButtonText
+        style-type="solid"
+        text="registration"
+        :class="{ 'active': sidebarMode === 'registration' }"
+        @click="_openSidebar('registration')"
+      />
+      <ButtonText
+        style-type="solid"
+        text="log in"
+        :class="{ 'active': sidebarMode === 'auth' }"
+        @click="_openSidebar('auth')"
+      />
     </div>
     <div class="sidebar-content">
       <Filters v-if="sidebarMode === 'filters'" />
       <Visualization v-if="sidebarMode === 'visualization'" />
       <Lists v-if="sidebarMode === 'lists'" />
+      <RegistrationForm v-if="sidebarMode === 'registration'" />
+      <AuthForm v-if="sidebarMode === 'auth'" />
     </div>
   </div>
 </template>
@@ -30,7 +44,10 @@
 import Filters from '@/components/settings/Filters.vue';
 import Visualization from '@/components/settings/Visualization.vue';
 import Lists from '@/components/settings/Lists.vue';
+import RegistrationForm from '@/components/auth/RegistrationForm.vue';
+import AuthForm from '@/components/auth/AuthForm.vue';
 import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -38,7 +55,10 @@ export default {
     Filters,
     Visualization,
     Lists,
+    RegistrationForm,
+    AuthForm,
     ButtonIcon,
+    ButtonText,
   },
   data: () => ({
     sidebarModes: ['filters', 'visualization', 'lists'],
@@ -98,6 +118,7 @@ export default {
       bottom: 30px;
       display: flex;
       flex-direction: column;
+      align-items: flex-end;
       transform: translateX(-120%);
     }
 

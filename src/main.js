@@ -3,11 +3,13 @@ import Vue from 'vue';
 import App from '@/components/App.vue';
 import store from '@/store/index';
 import VModal from 'vue-js-modal';
+import axios from 'axios';
 
 new Vue({
   store,
   render: h => h(App),
 }).$mount('#app');
 
-Vue.use(VModal);
 Vue.config.devtools = true;
+Vue.use(VModal);
+Vue.prototype.$axios = axios;
