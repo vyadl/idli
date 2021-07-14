@@ -26,11 +26,11 @@ export default {
     },
     label: String,
     trueValue: {
-      default: true
+      default: true,
     },
     falseValue: {
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     isChecked() {

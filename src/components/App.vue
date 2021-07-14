@@ -29,6 +29,7 @@
 import SaveItem from '@/components/SaveItem.vue';
 import MainList from '@/components/MainList.vue';
 import Sidebar from '@/components/Sidebar.vue';
+import axiosSettings from '@/settings/axiosSettings';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -51,6 +52,7 @@ export default {
     },
   },
   created() {
+    axiosSettings.initAxios();
     this._getInitialData();
   },
   methods: {
