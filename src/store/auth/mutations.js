@@ -1,14 +1,13 @@
+import models from '@/models/models';
+
 export default {
   logIn(state, user) {
     state.user = user;
   },
   logOut(state) {
-    state.user = {
-      id: null,
-      username: null,
-      email: null,
-      roles: [],
-      accessToken: null,
-    };
+    state.user = new models.User();
+  },
+  setRequestStatus(state, status) {
+    state.requestStatus = status;
   },
 };

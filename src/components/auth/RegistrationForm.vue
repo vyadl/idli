@@ -23,7 +23,7 @@
       :required="true"
     />
     <InputCustom
-      label="repeat password"
+      label="confirm password"
       type="password"
       v-model="passwordToCheck"
       :required="true"
@@ -35,24 +35,15 @@
       >
         {{ responseMessage }}
       </div>
-      <div
-        class="error-message"
+      <ErrorMessage
+        :message="errorMessage"
         v-if="errorMessage.length"
-      >
-        {{ errorMessage }}
-      </div>
-      <div
-        class="error-message"
-        v-if="arePasswordsEntered && !isPasswordConfirmed"
-      >
-        wrong password
-      </div>
+      />
     </div>
     <ButtonText
       style-type="bordered"
       type="submit"
       text="register"
-      :disabled="arePasswordsEntered && !isPasswordConfirmed"
     />
   </form>
 </template>
@@ -60,12 +51,14 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/formElements/ErrorMessage.vue';
 import { mapActions } from 'vuex';
 
 export default {
   components: {
     InputCustom,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     user: {
@@ -77,23 +70,22 @@ export default {
     responseMessage: '',
     errorMessage: '',
   }),
-  computed: {
-    arePasswordsEntered() {
-      return Boolean(this.user.password.length && this.passwordToCheck.length);
-    },
-    isPasswordConfirmed() {
-      return this.user.password === this.passwordToCheck;
-    },
-  },
   methods: {
     ...mapActions({
       _register: 'auth/_register',
     }),
+    confirmPassword() {
+      return this.user.password === this.passwordToCheck;
+    },
     register(user) {
-      this.clearMessage();
-      this._register(user)
-        .then(response => { this.responseMessage = response.data.message; })
-        .catch(error => { this.errorMessage = error.response.data.message; });
+      if (this.confirmPassword()) {
+        this.clearMessage();
+        this._register(user)
+          .then(response => { this.responseMessage = response.data.message; })
+          .catch(error => { this.errorMessage = error.response.data.message; });
+      } else {
+        this.errorMessage = 'wrong password';
+      }
     },
     clearMessage() {
       this.responseMessage = '';
@@ -115,19 +107,10 @@ export default {
       margin-bottom: 10px;
     }
 
-    .error-message,
     .response-message {
       width: 100%;
-      padding: 8px;;
+      padding: 8px;
       font-size: 10px;
-    }
-
-    .error-message {
-      background-color: rgb(236, 204, 204);
-      color: rgb(245, 99, 99);
-    }
-
-    .response-message {
       background-color: rgb(211, 248, 200);
       color: rgb(58, 136, 51);
     }

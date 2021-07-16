@@ -1,35 +1,32 @@
+import axiosSettings from '@/settings/axiosSettings'; // eslint-disable-line
+
 export default {
-  _register(state, user) {
-    return this._vm.$axios({
-      method: 'post',
-      url: 'https://api.idli.space/api/auth/signup',
-      data: user,
-    }).then(response => response);
+  _register({ commit }, user) {
+    commit('setRequestStatus', 'processing');
+    return this._vm.$axios.post(`${this._vm.$apiBasePath}auth/signup`, user)
+      .then(response => response)
+      .finally(() => commit('setRequestStatus', null));
   },
   _logIn({ commit }, user) {
-    return this._vm.$axios({
-      method: 'post',
-      url: 'https://api.idli.space/api/auth/signin',
-      data: user,
-    })
+    commit('setRequestStatus', 'processing');
+    return this._vm.$axios.post(`${this._vm.$apiBasePath}auth/signin`, user)
       .then(response => {
-        const { accessToken } = response.data;
-
         commit('logIn', response.data);
-        localStorage.setItem('accessToken', JSON.stringify(accessToken));
-        this._vm.$axios.defaults.headers.common.Authorization = accessToken;
+        localStorage.setItem('user', JSON.stringify(response.data));
+        axiosSettings.setAccessToken(response.data.accessToken);
 
         return response;
       })
       .catch(error => {
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
 
         throw error;
-      });
+      })
+      .finally(() => commit('setRequestStatus', null));
   },
   _logOut({ commit }) {
     commit('logOut');
-    localStorage.removeItem('accessToken');
-    delete this._vm.$axios.defaults.headers.common.Authorization;
+    localStorage.removeItem('user');
+    axiosSettings.deleteAccessToken();
   },
 };

@@ -13,3 +13,4 @@ new Vue({
 Vue.config.devtools = true;
 Vue.use(VModal);
 Vue.prototype.$axios = axios;
+Vue.prototype.$apiBasePath = process.env.VUE_APP_API_BASE_PATH;
