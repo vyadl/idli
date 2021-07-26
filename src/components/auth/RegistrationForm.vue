@@ -5,36 +5,30 @@
   >
     <InputCustom
       label="username"
+      required
       v-model="user.username"
-      :required="true"
       @input="clearMessage"
     />
     <InputCustom
       label="e-mail"
       type="email"
+      required
       v-model="user.email"
-      :required="true"
       @input="clearMessage"
     />
     <InputCustom
       label="password"
       type="password"
+      required
       v-model="user.password"
-      :required="true"
     />
     <InputCustom
       label="confirm password"
       type="password"
+      required
       v-model="passwordToCheck"
-      :required="true"
     />
     <div class="message-container">
-      <div
-        class="response-message"
-        v-if="responseMessage.length"
-      >
-        {{ responseMessage }}
-      </div>
       <ErrorMessage
         :message="errorMessage"
         v-if="errorMessage.length"
@@ -44,6 +38,7 @@
       style-type="bordered"
       type="submit"
       text="register"
+      :disabled="isButtonDisabled"
     />
   </form>
 </template>
@@ -67,7 +62,7 @@ export default {
       password: '',
     },
     passwordToCheck: '',
-    responseMessage: '',
+    isButtonDisabled: false,
     errorMessage: '',
   }),
   methods: {
@@ -79,16 +74,17 @@ export default {
     },
     register(user) {
       if (this.confirmPassword()) {
+        this.isButtonDisabled = true;
         this.clearMessage();
         this._register(user)
-          .then(response => { this.responseMessage = response.data.message; })
-          .catch(error => { this.errorMessage = error.response.data.message; });
+          .then()
+          .catch(error => { this.errorMessage = error.response.data.message; })
+          .finally(() => { this.isButtonDisabled = false; });
       } else {
         this.errorMessage = 'wrong password';
       }
     },
     clearMessage() {
-      this.responseMessage = '';
       this.errorMessage = '';
     },
   },
@@ -105,14 +101,6 @@ export default {
       width: 100%;
       height: 30px;
       margin-bottom: 10px;
-    }
-
-    .response-message {
-      width: 100%;
-      padding: 8px;
-      font-size: 10px;
-      background-color: rgb(211, 248, 200);
-      color: rgb(58, 136, 51);
     }
   }
 </style>

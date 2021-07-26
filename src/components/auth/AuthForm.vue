@@ -15,24 +15,22 @@
   >
     <InputCustom
       label="username"
+      required
       v-model="logInData.username"
-      :required="true"
       @input="clearMessage"
     />
     <InputCustom
       label="password"
       type="password"
+      required
       v-model="logInData.password"
-      :required="true"
       @input="clearMessage"
     />
     <div class="message-container">
-      <div
-        class="message"
+      <ErrorMessage
+        :message="errorMessage"
         v-if="errorMessage.length"
-      >
-        {{ errorMessage }}
-      </div>
+      />
     </div>
     <ButtonText
       style-type="bordered"
@@ -45,12 +43,14 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/formElements/ErrorMessage.vue';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
     InputCustom,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     logInData: {
@@ -98,14 +98,6 @@ export default {
       width: 100%;
       height: 30px;
       margin-bottom: 10px;
-    }
-
-    .message {
-      width: 100%;
-      padding: 8px;
-      background-color: rgb(236, 204, 204);
-      color: rgb(245, 99, 99);
-      font-size: 10px;
     }
   }
 </style>

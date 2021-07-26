@@ -1,5 +1,9 @@
-import axios from 'axios';
+import Vue from 'vue';
 import store from '@/store/index'; // eslint-disable-line
+import axios from 'axios';
+
+Vue.prototype.$axios = axios;
+Vue.prototype.$apiBasePath = process.env.VUE_APP_API_BASE_PATH;
 
 axios.interceptors.response.use(response => response,
   error => {
