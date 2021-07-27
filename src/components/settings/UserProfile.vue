@@ -5,7 +5,7 @@
       <ButtonText
         style-type="bordered"
         text="sign out"
-        @click="_logOut"
+        @click="_signOut"
       />
     </div>
   </SettingsCard>
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      _logOut: 'auth/_logOut',
+      _signOut: 'auth/_signOut',
     }),
   },
 };

@@ -1,19 +1,19 @@
 <template>
   <form
     class="auth-form"
-    @submit.prevent="logIn(logInData)"
+    @submit.prevent="signIn(signInData)"
   >
     <InputCustom
       label="username"
       required
-      v-model="logInData.username"
+      v-model="signInData.username"
       @input="clearMessage"
     />
     <InputCustom
       label="password"
       type="password"
       required
-      v-model="logInData.password"
+      v-model="signInData.password"
       @input="clearMessage"
     />
     <div class="message-container">
@@ -25,8 +25,8 @@
     <ButtonText
       style-type="bordered"
       type="submit"
-      text="log in"
-      :disabled="requestStatus === 'processing'"
+      text="sign in"
+      :disabled="isRequestProcessing"
     />
   </form>
 </template>
@@ -44,7 +44,7 @@ export default {
     ErrorMessage,
   },
   data: () => ({
-    logInData: {
+    signInData: {
       username: '',
       password: '',
     },
@@ -52,18 +52,18 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      requestStatus: 'auth/requestStatus',
+      isRequestProcessing: 'auth/isRequestProcessing',
     }),
   },
   methods: {
     ...mapActions({
-      _logIn: 'auth/_logIn',
+      _signIn: 'auth/_signIn',
     }),
     clearMessage() {
       this.errorMessage = '';
     },
-    logIn(logInData) {
-      this._logIn(logInData)
+    signIn(signInData) {
+      this._signIn(signInData)
         .catch(error => { this.errorMessage = error.response.data.message; });
     },
   },

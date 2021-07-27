@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sidebar"
+    class="sidebar j-sidebar-control"
     :class="{ 'show': isSidebarOpen }"
   >
     <div
@@ -16,13 +16,15 @@
       class="open-sidebar-button"
       :class="{ hide: isSidebarOpen }"
       :disabled="isSidebarOpen"
-      @click="isLoggedIn ? _openSidebar('lists') : _openSidebar('sign up')"
+      @click="_openSidebar(isLoggedIn ? 'lists' : 'sign up')"
     >
       <div class="arrow"></div>
     </div>
-    <div class="sidebar-mode-buttons" :class="{ show: isSidebarOpen }">
+    <div
+      class="sidebar-mode-buttons"
+      :class="{ show: isSidebarOpen }"
+    >
       <ButtonText
-        class="sidebar-button"
         style-type="solid"
         v-for="mode in sidebarModes"
         :key="mode"
@@ -71,18 +73,14 @@ export default {
       isLoggedIn: 'auth/isLoggedIn',
     }),
     sidebarModes() {
-      let sidebarModes = ['filters', 'visualization', 'lists', 'profile'];
-
-      if (!this.isLoggedIn) {
-        sidebarModes = ['sign up', 'sign in'];
-      }
-
-      return sidebarModes;
+      return this.isLoggedIn
+        ? ['filters', 'visualization', 'lists', 'profile']
+        : ['sign up', 'sign in'];
     },
   },
   mounted() {
     document.addEventListener('click', event => {
-      if (!event.target.closest('.sidebar') && !event.target.closest('.buttons-container')) {
+      if (!event.target.closest('.j-sidebar-control')) {
         this._closeSidebar();
       }
     });
@@ -153,7 +151,6 @@ export default {
 
     .sidebar-mode-buttons {
       position: fixed;
-      z-index: -10;
       bottom: 30px;
       display: flex;
       flex-direction: column;
@@ -169,11 +166,6 @@ export default {
       position: fixed;
       top: 20px;
       transform: translateX(-120%);
-    }
-
-    .sidebar-button {
-      position: relative;
-      z-index: -10;
     }
   }
 </style>

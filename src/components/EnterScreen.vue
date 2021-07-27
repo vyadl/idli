@@ -4,7 +4,7 @@
       class="logo"
       src="/icons/logo.svg"
     >
-    <div class="buttons-container">
+    <div class="buttons-container j-sidebar-control">
       <ButtonText
         text="sign up"
         @click="_openSidebar('sign up')"

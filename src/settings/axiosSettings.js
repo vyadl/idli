@@ -8,9 +8,10 @@ Vue.prototype.$apiBasePath = process.env.VUE_APP_API_BASE_PATH;
 axios.interceptors.response.use(response => response,
   error => {
     if (error.response.data.message === 'Invalid JWT Token') {
-      store.dispatch('auth/_logOut');
+      store.dispatch('auth/_signOut');
       store.dispatch('_openSidebar', 'auth');
     }
+
     throw error;
   });
 

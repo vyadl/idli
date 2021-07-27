@@ -1,13 +1,16 @@
 import models from '@/models/models';
 
 export default {
-  logIn(state, user) {
+  signIn(state, user) {
     state.user = user;
   },
-  logOut(state) {
+  signOut(state) {
     state.user = new models.User();
   },
-  setRequestStatus(state, status) {
-    state.requestStatus = status;
+  startRequestProcessing(state) {
+    state.isRequestProcessing = true;
+  },
+  finishRequestProcessing(state) {
+    state.isRequestProcessing = false;
   },
 };

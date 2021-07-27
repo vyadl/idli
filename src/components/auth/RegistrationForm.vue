@@ -1,7 +1,7 @@
 <template>
   <form
     class="registration-form"
-    @submit.prevent="register(user)"
+    @submit.prevent="signUp(user)"
   >
     <InputCustom
       label="username"
@@ -37,8 +37,8 @@
     <ButtonText
       style-type="bordered"
       type="submit"
-      text="register"
-      :disabled="requestStatus === 'processing'"
+      text="sign up"
+      :disabled="isRequestProcessing"
     />
   </form>
 </template>
@@ -66,26 +66,23 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      requestStatus: 'auth/requestStatus',
+      isRequestProcessing: 'auth/isRequestProcessing',
     }),
   },
   methods: {
     ...mapActions({
-      _register: 'auth/_register',
+      _signUp: 'auth/_signUp',
     }),
-    confirmPassword() {
-      return this.user.password === this.passwordToCheck;
-    },
     clearMessage() {
       this.errorMessage = '';
     },
-    register(user) {
-      if (this.confirmPassword()) {
+    signUp(user) {
+      if (this.user.password === this.passwordToCheck) {
         this.clearMessage();
-        this._register(user)
+        this._signUp(user)
           .catch(error => { this.errorMessage = error.response.data.message; });
       } else {
-        this.errorMessage = 'wrong password';
+        this.errorMessage = 'passwords don`t match';
       }
     },
   },
