@@ -36,6 +36,7 @@ export default {
       if (this.stopPropagation) {
         event.stopPropagation();
       }
+
       this.$emit('click');
     },
   },

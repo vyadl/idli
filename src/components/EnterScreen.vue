@@ -7,13 +7,13 @@
     <div class="buttons-container">
       <ButtonText
         text="sign up"
-        stopPropagation
+        stop-propagation
         @click="_openSidebar('sign up')"
       />
       <div>|</div>
       <ButtonText
         text="sign in"
-        stopPropagation
+        stop-propagation
         @click="_openSidebar('sign in')"
       />
     </div>
