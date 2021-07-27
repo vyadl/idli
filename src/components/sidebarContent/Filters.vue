@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import FiltersShowing from '@/components/settings/FiltersShowing.vue';
-import FiltersEditing from '@/components/settings/FiltersEditing.vue';
+import FiltersShowing from '@/components/sidebarContent/FiltersShowing.vue';
+import FiltersEditing from '@/components/sidebarContent/FiltersEditing.vue';
 import { mapGetters } from 'vuex';
 
 export default {

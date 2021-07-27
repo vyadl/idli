@@ -1,5 +1,5 @@
 <template>
-  <SettingsCard title="test data">
+  <ContentTitle title="test data">
     <div class="test-data">
       <div
         class="open-message"
@@ -18,18 +18,18 @@
         />
       </div>
     </div>
-  </SettingsCard>
+  </ContentTitle>
 </template>
 
 <script>
-import SettingsCard from '@/components/settings/SettingsCard.vue';
+import ContentTitle from '@/components/textElements/ContentTitle.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 
 export default {
   components: {
-    SettingsCard,
+    ContentTitle,
     ButtonText,
   },
   data: () => ({
@@ -42,7 +42,9 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['_addList']),
+    ...mapActions({
+      _addList: '_addList',
+    }),
   },
 };
 </script>

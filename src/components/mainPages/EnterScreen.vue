@@ -1,5 +1,8 @@
 <template>
-  <div class="enter-screen">
+  <div
+    class="enter-screen"
+    :class="{ parallax: isSidebarOpen }"
+  >
     <img
       class="logo"
       src="/icons/logo.svg"
@@ -22,11 +25,16 @@
 
 <script>
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ButtonText,
+  },
+  computed: {
+    ...mapGetters({
+      isSidebarOpen: 'isSidebarOpen',
+    }),
   },
   methods: {
     ...mapActions({
@@ -44,6 +52,11 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
+    transition: transform .5s;
+
+      &.parallax {
+        transform: translateX(-20px);
+      }
 
     .logo {
       display: block;

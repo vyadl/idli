@@ -1,5 +1,5 @@
 <template>
-  <SettingsCard title="your profile">
+  <ContentTitle title="your profile">
     <div class="user-profile">
       <div class="username">{{ username }}</div>
       <ButtonText
@@ -8,17 +8,17 @@
         @click="_signOut"
       />
     </div>
-  </SettingsCard>
+  </ContentTitle>
 </template>
 
 <script>
-import SettingsCard from '@/components/settings/SettingsCard.vue';
+import ContentTitle from '@/components/textElements/ContentTitle.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SettingsCard,
+    ContentTitle,
     ButtonText,
   },
   computed: {
