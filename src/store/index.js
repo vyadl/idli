@@ -5,6 +5,7 @@ import state from './state';
 import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
+import auth from './auth';
 
 Vue.use(Vuex);
 
@@ -13,6 +14,9 @@ const store = new Store({
   mutations,
   actions,
   getters,
+  modules: {
+    auth,
+  },
 });
 
 export default store;

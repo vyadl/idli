@@ -9,5 +9,5 @@ new Vue({
   render: h => h(App),
 }).$mount('#app');
 
-Vue.use(VModal);
 Vue.config.devtools = true;
+Vue.use(VModal);

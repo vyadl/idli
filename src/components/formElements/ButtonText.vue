@@ -1,10 +1,11 @@
 <template>
   <button
-    type="button"
     class="button-text"
-    :class="styleType"
+    :class="[styleType, { active }]"
+    :type="type"
     :disabled="disabled"
-    @click="click"
+    :stopPropagation="stopPropagation"
+    @click="click($event)"
   >{{ text }}</button>
 </template>
 
@@ -12,11 +13,30 @@
 export default {
   props: {
     styleType: String,
-    disabled: Boolean,
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    type: {
+      type: String,
+      default: 'button',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     text: String,
+    stopPropagation: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
-    click() {
+    click(event) {
+      if (this.stopPropagation) {
+        event.stopPropagation();
+      }
+
       this.$emit('click');
     },
   },
@@ -34,6 +54,10 @@ export default {
     letter-spacing: .3px;
     cursor: pointer;
     transition: opacity .2s;
+
+    &.active {
+      opacity: .85;
+    }
 
     &.solid {
       border-radius: 3px;
