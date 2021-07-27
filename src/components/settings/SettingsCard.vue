@@ -17,12 +17,11 @@ export default {
 
 <style lang="scss">
   .settings-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 100%;
 
     .title {
-      margin-bottom: 10px;
+      width: fit-content;
+      margin: 0 auto 15px;
       font-size: 14px;
       color: #333;
     }

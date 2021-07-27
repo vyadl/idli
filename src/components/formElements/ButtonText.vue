@@ -1,7 +1,7 @@
 <template>
   <button
     class="button-text"
-    :class="styleType"
+    :class="[styleType, { 'active': active }]"
     :type="type"
     :disabled="disabled"
     @click="click"
@@ -12,6 +12,10 @@
 export default {
   props: {
     styleType: String,
+    active: {
+      type: Boolean,
+      default: false,
+    },
     type: {
       type: String,
       default: 'button',
@@ -41,6 +45,10 @@ export default {
     letter-spacing: .3px;
     cursor: pointer;
     transition: opacity .2s;
+
+    &.active {
+      opacity: .85;
+    }
 
     &.solid {
       border-radius: 3px;

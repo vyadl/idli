@@ -38,7 +38,7 @@
       style-type="bordered"
       type="submit"
       text="register"
-      :disabled="isButtonDisabled"
+      :disabled="requestStatus === 'processing'"
     />
   </form>
 </template>
@@ -47,7 +47,7 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/formElements/ErrorMessage.vue';
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -62,9 +62,13 @@ export default {
       password: '',
     },
     passwordToCheck: '',
-    isButtonDisabled: false,
     errorMessage: '',
   }),
+  computed: {
+    ...mapGetters({
+      requestStatus: 'auth/requestStatus',
+    }),
+  },
   methods: {
     ...mapActions({
       _register: 'auth/_register',
@@ -72,20 +76,17 @@ export default {
     confirmPassword() {
       return this.user.password === this.passwordToCheck;
     },
+    clearMessage() {
+      this.errorMessage = '';
+    },
     register(user) {
       if (this.confirmPassword()) {
-        this.isButtonDisabled = true;
         this.clearMessage();
         this._register(user)
-          .then()
-          .catch(error => { this.errorMessage = error.response.data.message; })
-          .finally(() => { this.isButtonDisabled = false; });
+          .catch(error => { this.errorMessage = error.response.data.message; });
       } else {
         this.errorMessage = 'wrong password';
       }
-    },
-    clearMessage() {
-      this.errorMessage = '';
     },
   },
 };

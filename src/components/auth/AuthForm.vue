@@ -1,15 +1,5 @@
 <template>
-  <div v-if="username">
-    <div>
-      {{ username }}
-    </div>
-    <ButtonText
-      text="log out"
-      @click="logOut"
-    />
-  </div>
   <form
-    v-else
     class="auth-form"
     @submit.prevent="logIn(logInData)"
   >
@@ -36,6 +26,7 @@
       style-type="bordered"
       type="submit"
       text="log in"
+      :disabled="requestStatus === 'processing'"
     />
   </form>
 </template>
@@ -44,7 +35,7 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/formElements/ErrorMessage.vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -57,32 +48,23 @@ export default {
       username: '',
       password: '',
     },
-    user: '',
     errorMessage: '',
   }),
   computed: {
     ...mapGetters({
-      username: 'auth/username',
+      requestStatus: 'auth/requestStatus',
     }),
   },
   methods: {
     ...mapActions({
       _logIn: 'auth/_logIn',
-      _logOut: 'auth/_logOut',
     }),
-    logIn(logInData) {
-      this._logIn(logInData)
-        .then(response => {
-          this.user = response.data;
-        })
-        .catch(error => { this.errorMessage = error.response.data.message; });
-    },
-    logOut() {
-      this._logOut();
-      this.user = '';
-    },
     clearMessage() {
       this.errorMessage = '';
+    },
+    logIn(logInData) {
+      this._logIn(logInData)
+        .catch(error => { this.errorMessage = error.response.data.message; });
     },
   },
 };

@@ -3,39 +3,41 @@
     class="sidebar"
     :class="{ 'show': isSidebarOpen }"
   >
-    <div class="add-item-button">
+    <div
+      class="add-item-button"
+      v-if="isLoggedIn"
+    >
       <ButtonIcon
         icon-name="add"
         @click="_startCreatingItem"
       />
     </div>
-    <div class="open-sidebar-buttons">
-      <ButtonIcon
+    <div
+      class="open-sidebar-button"
+      :class="{ hide: isSidebarOpen }"
+      :disabled="isSidebarOpen"
+      @click="isLoggedIn ? _openSidebar('lists') : _openSidebar('sign up')"
+    >
+      <div class="arrow"></div>
+    </div>
+    <div class="sidebar-mode-buttons" :class="{ show: isSidebarOpen }">
+      <ButtonText
+        class="sidebar-button"
+        style-type="solid"
         v-for="mode in sidebarModes"
         :key="mode"
-        :class="{ 'active': sidebarMode === mode }"
-        :icon-name="mode"
+        :active="sidebarMode === mode"
+        :text="mode"
         @click="_openSidebar(mode)"
-      />
-      <ButtonText
-        style-type="solid"
-        text="registration"
-        :class="{ 'active': sidebarMode === 'registration' }"
-        @click="_openSidebar('registration')"
-      />
-      <ButtonText
-        style-type="solid"
-        text="log in"
-        :class="{ 'active': sidebarMode === 'auth' }"
-        @click="_openSidebar('auth')"
       />
     </div>
     <div class="sidebar-content">
       <Filters v-if="sidebarMode === 'filters'" />
       <Visualization v-if="sidebarMode === 'visualization'" />
       <Lists v-if="sidebarMode === 'lists'" />
-      <RegistrationForm v-if="sidebarMode === 'registration'" />
-      <AuthForm v-if="sidebarMode === 'auth'" />
+      <UserProfile v-if="sidebarMode === 'profile'"/>
+      <RegistrationForm v-if="sidebarMode === 'sign up'" />
+      <AuthForm v-if="sidebarMode === 'sign in'" />
     </div>
   </div>
 </template>
@@ -44,6 +46,7 @@
 import Filters from '@/components/settings/Filters.vue';
 import Visualization from '@/components/settings/Visualization.vue';
 import Lists from '@/components/settings/Lists.vue';
+import UserProfile from '@/components/settings/UserProfile.vue';
 import RegistrationForm from '@/components/auth/RegistrationForm.vue';
 import AuthForm from '@/components/auth/AuthForm.vue';
 import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
@@ -55,23 +58,31 @@ export default {
     Filters,
     Visualization,
     Lists,
+    UserProfile,
     RegistrationForm,
     AuthForm,
     ButtonIcon,
     ButtonText,
   },
-  data: () => ({
-    sidebarModes: ['filters', 'visualization', 'lists'],
-  }),
   computed: {
-    ...mapGetters([
-      'isSidebarOpen',
-      'sidebarMode',
-    ]),
+    ...mapGetters({
+      isSidebarOpen: 'isSidebarOpen',
+      sidebarMode: 'sidebarMode',
+      isLoggedIn: 'auth/isLoggedIn',
+    }),
+    sidebarModes() {
+      let sidebarModes = ['filters', 'visualization', 'lists', 'profile'];
+
+      if (!this.isLoggedIn) {
+        sidebarModes = ['sign up', 'sign in'];
+      }
+
+      return sidebarModes;
+    },
   },
   mounted() {
     document.addEventListener('click', event => {
-      if (!event.target.closest('.sidebar')) {
+      if (!event.target.closest('.sidebar') && !event.target.closest('.buttons-container')) {
         this._closeSidebar();
       }
     });
@@ -113,19 +124,56 @@ export default {
       overflow-x: hidden;
     }
 
-    .open-sidebar-buttons {
+    .open-sidebar-button {
+      width: 25px;
+      height: 25px;
       position: fixed;
+      bottom: 30px;
+      cursor: pointer;
+      transform: translateX(-120%);
+      transition:
+        opacity .2s,
+        transform .3s;
+
+      &.hide {
+        z-index: -10;
+        opacity: 0;
+        transform: translateX(-200%);
+      }
+    }
+
+    .arrow {
+      width: 100%;
+      height: 100%;
+      border-left: 5px solid map-get($colors, 'black');
+      border-top: 5px solid map-get($colors, 'black');
+      transform-origin: center center;
+      transform: rotate(-45deg);
+    }
+
+    .sidebar-mode-buttons {
+      position: fixed;
+      z-index: -10;
       bottom: 30px;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      transform: translateX(-120%);
+      transition: transform .4s;
+
+      &.show {
+        transform: translateX(-120%);
+      }
     }
 
     .add-item-button {
       position: fixed;
       top: 20px;
       transform: translateX(-120%);
+    }
+
+    .sidebar-button {
+      position: relative;
+      z-index: -10;
     }
   }
 </style>
