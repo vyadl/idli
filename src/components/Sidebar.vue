@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sidebar"
+    class="sidebar j-sidebar"
     :class="{ 'show': isSidebarOpen }"
   >
     <div
@@ -80,7 +80,7 @@ export default {
   },
   mounted() {
     document.addEventListener('click', event => {
-      if (!event.target.closest('.sidebar')) {
+      if (!event.target.closest('.j-sidebar')) {
         this._closeSidebar();
       }
     });
