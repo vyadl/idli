@@ -4,14 +4,16 @@
       class="logo"
       src="/icons/logo.svg"
     >
-    <div class="buttons-container j-sidebar-control">
+    <div class="buttons-container">
       <ButtonText
         text="sign up"
+        stopPropagation
         @click="_openSidebar('sign up')"
       />
       <div>|</div>
       <ButtonText
         text="sign in"
+        stopPropagation
         @click="_openSidebar('sign in')"
       />
     </div>

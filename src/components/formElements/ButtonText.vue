@@ -1,10 +1,11 @@
 <template>
   <button
     class="button-text"
-    :class="[styleType, { 'active': active }]"
+    :class="[styleType, { active }]"
     :type="type"
     :disabled="disabled"
-    @click="click"
+    :stopPropagation="stopPropagation"
+    @click="click($event)"
   >{{ text }}</button>
 </template>
 
@@ -25,9 +26,16 @@ export default {
       default: false,
     },
     text: String,
+    stopPropagation: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
-    click() {
+    click(event) {
+      if (this.stopPropagation) {
+        event.stopPropagation();
+      }
       this.$emit('click');
     },
   },
