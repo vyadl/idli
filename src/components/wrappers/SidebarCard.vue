@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-card">
+  <div class="sidebar-card">
     <h1 class="title">
       {{ title }}
     </h1>
@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .settings-card {
+  .sidebar-card {
     width: 100%;
 
     .title {

@@ -1,5 +1,5 @@
 <template>
-  <ContentTitle title="test data">
+  <SidebarCard title="test data">
     <div class="test-data">
       <div
         class="open-message"
@@ -18,18 +18,18 @@
         />
       </div>
     </div>
-  </ContentTitle>
+  </SidebarCard>
 </template>
 
 <script>
-import ContentTitle from '@/components/textElements/ContentTitle.vue';
+import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 
 export default {
   components: {
-    ContentTitle,
+    SidebarCard,
     ButtonText,
   },
   data: () => ({
