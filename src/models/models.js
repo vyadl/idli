@@ -6,4 +6,18 @@ export default {
     this.roles = [];
     this.accessToken = null;
   },
+  List() {
+    this.name = null;
+    this.id = null;
+    this.items = [];
+    this.filters = {
+      tags: [],
+      categories: [],
+    };
+    this.checkedFilters = {
+      tags: [],
+      categories: [],
+    };
+    this.isPrivate = true;
+  },
 };

@@ -1,6 +1,7 @@
 export default {
   lists: [],
   currentListId: null,
+  edittingListId: null,
   shuffledList: null,
   listChanging: false,
   activeItem: null,

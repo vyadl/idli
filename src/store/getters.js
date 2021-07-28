@@ -7,6 +7,7 @@ export default {
   currentListItems: (state, getters) => getters.currentListObj?.items,
   currentListFilters: (state, getters) => getters.currentListObj?.filters,
   currentListCheckedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
+  edittingListObj: state => state.lists.find(list => list.id === state.edittingListId),
   activeItem: state => state.activeItem,
   listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,

@@ -21,11 +21,18 @@ export default {
     state.lists.push(list);
     state.currentListId = list.id;
   },
+  saveList(state, list) {
+    const index = state.lists.findIndex(localList => localList.id === list.id);
+    state.lists.splice(index, 1, list);
+  },
   removeList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);
   },
   switchList(state, id) {
     state.currentListId = id;
+  },
+  setListForEditting(state, id) {
+    state.edittingListId = id;
   },
   filterList(state, { currentListIndex, filters }) {
     state.lists[currentListIndex].checkedFilters = JSON.parse(JSON.stringify(filters));

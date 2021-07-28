@@ -1,22 +1,23 @@
 <template>
-  <SidebarCard title="test data">
-    <div class="test-data">
-      <div
-        class="open-message"
-        @click="areTestListsShown = !areTestListsShown"
-      >show test lists</div>
-      <div
-        class="test-list-buttons"
-        v-if="areTestListsShown"
-      >
-        <ButtonText
-          v-for="list in testData"
-          :key="list.name"
-          :text="list.name"
-          :style-type="'solid'"
-          @click="_addList(JSON.parse(JSON.stringify(list)))"
-        />
-      </div>
+  <SidebarCard
+    class="test-data"
+    title="test data"
+  >
+    <div
+      class="open-message"
+      @click="areTestListsShown = !areTestListsShown"
+    >show test lists</div>
+    <div
+      class="test-list-buttons"
+      v-if="areTestListsShown"
+    >
+      <ButtonText
+        v-for="list in testData"
+        :key="list.name"
+        :text="list.name"
+        :style-type="'solid'"
+        @click="_addList(JSON.parse(JSON.stringify(list)))"
+      />
     </div>
   </SidebarCard>
 </template>

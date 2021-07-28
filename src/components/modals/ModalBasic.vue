@@ -56,7 +56,7 @@ export default {
     }
 
     .vm--modal {
-      padding: 15px;
+      padding: 25px;
     }
 
     .header,

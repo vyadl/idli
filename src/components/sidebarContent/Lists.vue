@@ -8,8 +8,14 @@
         edit
         <input type="checkbox" class="g-hidden" v-model="isEditing" />
       </label>
+      <ButtonText
+        text="new list"
+        style-type="solid"
+        @click="$modal.show('listForm')"
+      />
     </div>
     <TestData />
+    <ListForm />
   </div>
 </template>
 
@@ -17,6 +23,8 @@
 import ListsShowing from '@/components/sidebarContent/ListsShowing.vue';
 import ListsEditing from '@/components/sidebarContent/ListsEditing.vue';
 import TestData from '@/components/sidebarContent/TestData.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
+import ListForm from '@/components/list/ListForm.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -24,6 +32,8 @@ export default {
     ListsShowing,
     ListsEditing,
     TestData,
+    ButtonText,
+    ListForm,
   },
   data: () => ({
     isEditing: false,
