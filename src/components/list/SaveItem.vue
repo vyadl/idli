@@ -89,11 +89,11 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters([
-      'currentListFilters',
-      'activeItem',
-      'isChangingActive',
-    ]),
+    ...mapGetters({
+      currentListFilters: 'currentListFilters',
+      activeItem: 'activeItem',
+      isChangingActive: 'isChangingActive',
+    }),
   },
   watch: {
     activeItem() {
@@ -108,12 +108,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      '_addItem',
-      '_changeItem',
-      '_deleteItem',
-      '_setActiveItem',
-    ]),
+    ...mapActions({
+      _addItem: '_addItem',
+      _changeItem: '_changeItem',
+      _deleteItem: '_deleteItem',
+      _setActiveItem: '_setActiveItem',
+    }),
     saveItem() {
       if (this.activeItem) {
         this._changeItem({

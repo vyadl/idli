@@ -45,12 +45,12 @@
 </template>
 
 <script>
-import Filters from '@/components/settings/Filters.vue';
-import Visualization from '@/components/settings/Visualization.vue';
-import Lists from '@/components/settings/Lists.vue';
-import UserProfile from '@/components/settings/UserProfile.vue';
-import RegistrationForm from '@/components/auth/RegistrationForm.vue';
-import AuthForm from '@/components/auth/AuthForm.vue';
+import Filters from '@/components/sidebarContent/Filters.vue';
+import Visualization from '@/components/sidebarContent/Visualization.vue';
+import Lists from '@/components/sidebarContent/Lists.vue';
+import UserProfile from '@/components/sidebarContent/UserProfile.vue';
+import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
+import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
 import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -86,11 +86,11 @@ export default {
     });
   },
   methods: {
-    ...mapActions([
-      '_startCreatingItem',
-      '_openSidebar',
-      '_closeSidebar',
-    ]),
+    ...mapActions({
+      _startCreatingItem: '_startCreatingItem',
+      _openSidebar: '_openSidebar',
+      _closeSidebar: '_closeSidebar',
+    }),
   },
 };
 </script>

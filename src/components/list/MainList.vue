@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import ListItem from '@/components/ListItem.vue';
+import ListItem from '@/components/list/ListItem.vue';
 import Utils from '@/utils/utils';
 import { mapGetters } from 'vuex';
 
@@ -44,14 +44,14 @@ export default {
     finalList: [],
   }),
   computed: {
-    ...mapGetters([
-      'filteredList',
-      'shuffleTrigger',
-      'isCloudModeOn',
-      'isStarsModeOn',
-      'listChanging',
-      'isShuffled',
-    ]),
+    ...mapGetters({
+      filteredList: 'filteredList',
+      shuffleTrigger: 'shuffleTrigger',
+      isCloudModeOn: 'isCloudModeOn',
+      isStarsModeOn: 'isStarsModeOn',
+      listChanging: 'listChanging',
+      isShuffled: 'isShuffled',
+    }),
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 

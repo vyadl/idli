@@ -22,16 +22,15 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   props: ['item'],
   computed: {
-    ...mapGetters([
-      'activeItem',
-      'isChangingActive',
-      'isCloudModeOn',
-      'shuffleTrigger',
-      'isStarsModeOn',
-      'starsSettings',
-      'isInvert',
-      'ListChanging',
-    ]),
+    ...mapGetters({
+      activeItem: 'activeItem',
+      isCloudModeOn: 'isCloudModeOn',
+      shuffleTrigger: 'shuffleTrigger',
+      isStarsModeOn: 'isStarsModeOn',
+      starsSettings: 'starsSettings',
+      isInvert: 'isInvert',
+      ListChanging: 'ListChanging',
+    }),
     styles() {
       let styleObj = {};
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions

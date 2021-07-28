@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import ListsShowing from '@/components/settings/ListsShowing.vue';
-import ListsEditing from '@/components/settings/ListsEditing.vue';
-import TestData from '@/components/settings/TestData.vue';
+import ListsShowing from '@/components/sidebarContent/ListsShowing.vue';
+import ListsEditing from '@/components/sidebarContent/ListsEditing.vue';
+import TestData from '@/components/sidebarContent/TestData.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {

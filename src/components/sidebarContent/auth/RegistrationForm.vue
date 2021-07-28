@@ -46,7 +46,7 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ErrorMessage from '@/components/formElements/ErrorMessage.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
