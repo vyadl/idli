@@ -3,11 +3,6 @@
     class="lists-list"
     title="lists"
   >
-    <ButtonText
-      text="new list"
-      style-type="solid"
-      @click="openListForm"
-    />
     <div class="lists-container">
       <div
         class="list"
@@ -15,26 +10,31 @@
         :key="list.id"
       >
         <ButtonText
+          style-type="line"
+          class="edit-button"
+          text="···"
+          @click="setListForEditting(list.id)"
+        />
+        <ButtonText
+          style-type="line"
           :text="list.name"
           :active="list.id === currentListId"
           @click="_switchList(list.id)"
         />
-        <ButtonText
-          class="edit-button"
-          text="edit"
-          @click="setListForEditting(list.id)"
-        />
       </div>
+      <ButtonText
+      text="new list"
+      style-type="bordered"
+      @click="openListForm"
+    />
     </div>
     <TestData/>
-    <ListForm/>
   </SidebarCard>
 </template>
 
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import TestData from '@/components/sidebarContent/TestData.vue';
-import ListForm from '@/components/list/ListForm.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -42,7 +42,6 @@ export default {
   components: {
     SidebarCard,
     TestData,
-    ListForm,
     ButtonText,
   },
   computed: {
@@ -75,6 +74,10 @@ export default {
     }
 
     .list {
+      display: flex;
+      align-items: center;
+      transform: translateX(-10%);
+
       &:hover {
         .edit-button {
           opacity: 1;

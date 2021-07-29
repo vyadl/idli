@@ -100,10 +100,10 @@ export default {
       dispatch('_updateLocal');
     }
 
-    dispatch('_setActiveItem', null);
+    dispatch('_setEdittingItemObj', null);
   },
-  _setActiveItem({ commit, dispatch }, item) {
-    commit('setActiveItem', item);
+  _setEdittingItemObj({ commit, dispatch }, item) {
+    commit('setEdittingItemObj', item);
     dispatch('_setChangingStatus', true);
 
     if (!item) {
@@ -115,7 +115,7 @@ export default {
       currentListIndex: getters.currentListIndex,
       changedItem,
     });
-    dispatch('_setActiveItem', null);
+    dispatch('_setEdittingItemObj', null);
     dispatch('_updateLocal');
   },
   _startCreatingItem({ dispatch }) {

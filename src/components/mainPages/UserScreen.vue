@@ -12,21 +12,16 @@
       >
         <MainList />
       </div>
-      <transition name="fade">
-        <SaveItem v-if="isChangingActive" />
-      </transition>
   </div>
 </template>
 
 <script>
 import MainList from '@/components/list/MainList.vue';
-import SaveItem from '@/components/list/SaveItem.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     MainList,
-    SaveItem,
   },
   computed: {
     ...mapGetters({

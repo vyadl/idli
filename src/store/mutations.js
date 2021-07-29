@@ -70,8 +70,8 @@ export default {
     state.lists[currentListIndex].items = state.lists[currentListIndex].items
       .filter(item => item.id !== id);
   },
-  setActiveItem(state, item) {
-    state.activeItem = item;
+  setEdittingItemObj(state, item) {
+    state.edittingItemObj = item;
   },
   changeItem(state, { currentListIndex, changedItem }) {
     const index = state.lists[currentListIndex].items

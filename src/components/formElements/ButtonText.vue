@@ -73,6 +73,11 @@ export default {
       border-bottom: 1px solid map-get($colors, 'gray-2');
     }
 
+    &.line {
+      margin-bottom: 5px;
+      padding: 0;
+    }
+
     &:hover {
       opacity: .7;
     }

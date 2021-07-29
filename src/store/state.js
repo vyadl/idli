@@ -4,7 +4,7 @@ export default {
   edittingListId: null,
   shuffledList: null,
   listChanging: false,
-  activeItem: null,
+  edittingItemObj: null,
   settingsStatuses: {
     filters: false,
     visualization: false,

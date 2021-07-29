@@ -20,4 +20,11 @@ export default {
     };
     this.isPrivate = true;
   },
+  Item() {
+    this.id = null;
+    this.text = null;
+    this.details = null;
+    this.tags = [];
+    this.categories = null;
+  },
 };

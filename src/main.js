@@ -4,10 +4,11 @@ import App from '@/components/App.vue';
 import store from '@/store/index';
 import VModal from 'vue-js-modal';
 
+Vue.use(VModal);
+
 new Vue({
   store,
   render: h => h(App),
 }).$mount('#app');
 
 Vue.config.devtools = true;
-Vue.use(VModal);

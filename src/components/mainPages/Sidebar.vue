@@ -9,7 +9,7 @@
     >
       <ButtonIcon
         icon-name="add"
-        @click="_startCreatingItem"
+        @click="openItemForm"
       />
     </div>
     <div
@@ -87,10 +87,12 @@ export default {
   },
   methods: {
     ...mapActions({
-      _startCreatingItem: '_startCreatingItem',
       _openSidebar: '_openSidebar',
       _closeSidebar: '_closeSidebar',
     }),
+    openItemForm() {
+      this.$modal.show('itemForm');
+    },
   },
 };
 </script>

@@ -18,7 +18,7 @@
     <main class="main">
       <slot name="main"/>
     </main>
-    <footer>
+    <footer class="footer">
       <slot name="buttons" />
     </footer>
   </modal>
@@ -62,6 +62,11 @@ export default {
     .header,
     .main {
       margin-bottom: 10px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: center;
     }
   }
 </style>

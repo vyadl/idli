@@ -3,13 +3,19 @@
     class="list-form"
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
-    @closed="_setListForEditting(null)"
+    @closed="clearData()"
   >
     <template v-slot:main>
       <InputCustom
         label="name"
         v-model="list.name"
       />
+      <div class="private-option">
+        <CheckboxCustom
+          label="private"
+          v-model="list.isPrivate"
+        />
+      </div>
       <div class="filters-container">
         <div class="tags">
           <h1 class="filters-header">
@@ -17,15 +23,15 @@
           </h1>
           <div
             class="filter"
-            v-for="tag in list.filters.tags"
-            :key="tag.id"
+            v-for="(tag, index) in list.filters.tags"
+            :key="index"
           >
             <InputCustom
               v-model="tag.name"
             />
             <div
               class="delete-filter-button"
-              @click.stop="deleteFilter('tags', tag.id)"
+              @click.stop="deleteFilter('tags', index)"
             ></div>
           </div>
           <div
@@ -39,34 +45,47 @@
           </h1>
           <div
             class="filter"
-            v-for="category in list.filters.categories"
-            :key="category.id"
+            v-for="(category, index) in list.filters.categories"
+            :key="index"
           >
             <InputCustom
               v-model="category.name"
             />
             <div
               class="delete-filter-button"
-              @click.stop="deleteFilter('categories', tag.id)"
+              @click.stop="deleteFilter('categories', index)"
             ></div>
           </div>
           <div
             class="add-filter-button"
-            @click="addFilter('categories')"
+            @click.stop="addFilter('categories')"
           ></div>
         </div>
       </div>
+      <ErrorMessage
+        :message="errorMessage"
+        v-if="errorMessage"
+      />
+      <ButtonText
+        text="delete list"
+        style-type="bordered"
+        v-if="edittingListObj"
+        @click="deleteList(list.id)"
+        stop-propagation
+      />
     </template>
     <template v-slot:buttons>
       <ButtonText
         text="save"
         style-type="bordered"
         @click="submitList"
+        stop-propagation
       />
       <ButtonText
         text="cansel"
         style-type="bordered"
         @click="closeListForm"
+        stop-propagation
       />
     </template>
   </ModalBasic>
@@ -75,7 +94,9 @@
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
+import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import models from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 
@@ -83,10 +104,13 @@ export default {
   components: {
     ModalBasic,
     InputCustom,
+    CheckboxCustom,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     list: new models.List(),
+    errorMessage: '',
   }),
   computed: {
     ...mapGetters({
@@ -100,21 +124,26 @@ export default {
   },
   methods: {
     ...mapActions({
+      _setListForEditting: '_setListForEditting',
       _addList: '_addList',
       _saveList: '_saveList',
       _removeList: '_removeList',
-      _setListForEditting: '_setListForEditting',
     }),
-    setEdittingList() {
-      if (this.edittingListObj) {
-        this.list = JSON.parse(JSON.stringify(this.edittingListObj));
-      }
-    },
     closeListForm() {
       this.$modal.hide('listForm');
     },
-    deleteFilter(type, id) {
-      this.list.filters[type] = this.list.filters[type].filter(filter => filter.id !== id);
+    clearData() {
+      this._setListForEditting(null);
+      this.list = new models.List();
+      this.errorMessage = '';
+    },
+    setEdittingList() {
+      if (this.edittingListObj) {
+        this.list = { ...this.edittingListObj };
+      }
+    },
+    deleteFilter(type, index) {
+      this.list.filters[type].splice(index, 1);
     },
     addFilter(type) {
       this.list.filters[type].push({
@@ -122,14 +151,34 @@ export default {
         id: null,
       });
     },
-    submitList() {
-      if (this.edittingListObj) {
-        this._saveList(this.list);
-      } else {
-        this._addList(this.list);
+    verifyFilters() {
+      const filtersNames = [];
+      this.list.filters.tags.forEach(tag => filtersNames.push(tag.name));
+      this.list.filters.categories.forEach(category => filtersNames.push(category.name));
+      const noRepeatFiltersNames = new Set(filtersNames);
+
+      if (filtersNames.length === noRepeatFiltersNames.size) {
+        return true;
       }
 
+      return false;
+    },
+    deleteList(id) {
+      this._removeList(id);
       this.closeListForm();
+    },
+    submitList() {
+      if (this.verifyFilters()) {
+        if (this.edittingListObj) {
+          this._saveList(this.list);
+        } else {
+          this._addList(this.list);
+        }
+
+        this.closeListForm();
+      } else {
+        this.errorMessage = 'same names in filters';
+      }
     },
   },
 };
@@ -137,16 +186,20 @@ export default {
 
 <style lang="scss">
   .list-form {
+    .private-option {
+      padding: 5 0;
+    }
+
     .filters-container {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       width: 100%;
       margin-bottom: 15px;
     }
 
     .tags,
     .categories {
-      width: 200px;
+      width: 210px;
     }
 
     .filters-header {
