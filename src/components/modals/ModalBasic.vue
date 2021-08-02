@@ -4,7 +4,7 @@
     height="auto"
     :width="width"
     :name="name"
-    @opened="open"
+    @before-open="beforeOpen"
     @closed="close"
   >
     <header
@@ -29,15 +29,18 @@
 export default {
   props: {
     name: String,
-    headerText: String,
     width: {
       type: Number,
       default: 500,
     },
+    headerText: {
+      type: String,
+      default: '',
+    },
   },
   methods: {
-    open() {
-      this.$emit('opened');
+    beforeOpen() {
+      this.$emit('before-open');
     },
     close() {
       this.$emit('closed');

@@ -3,6 +3,7 @@
     class="item-form"
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
+    @before-open="setItemForEditting"
     @closed="clearData()"
   >
     <template v-slot:main>
@@ -51,7 +52,7 @@
         text="delete"
         style-type="bordered"
         v-if="edittingItemObj"
-        @click="_deleteItem(item)"
+        @click="deleteItem(item)"
       />
     </template>
   </ModalBasic>
@@ -85,16 +86,9 @@ export default {
       currentListFilters: 'currentListFilters',
     }),
   },
-  watch: {
-    edittingItemObj() {
-      if (this.edittingItemObj) {
-        this.item = { ...this.edittingItemObj };
-      }
-    },
-  },
   methods: {
     ...mapActions({
-      _setEdittingItemObj: '_setEdittingItemObj',
+      _setItemForEditting: '_setItemForEditting',
       _addItem: '_addItem',
       _changeItem: '_changeItem',
       _deleteItem: '_deleteItem',
@@ -103,8 +97,13 @@ export default {
       this.$modal.hide('itemForm');
     },
     clearData() {
-      this._setEdittingItemObj(null);
+      this._setItemForEditting(null);
       this.item = new models.Item();
+    },
+    setItemForEditting() {
+      if (this.edittingItemObj) {
+        this.item = { ...this.edittingItemObj };
+      }
     },
     saveItem() {
       if (this.edittingItemObj) {
@@ -113,6 +112,10 @@ export default {
         this._addItem(this.item);
       }
 
+      this.closeItemForm();
+    },
+    deleteItem(item) {
+      this._deleteItem(item);
       this.closeItemForm();
     },
     disableCategory(id) {

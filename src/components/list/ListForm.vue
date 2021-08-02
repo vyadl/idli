@@ -3,6 +3,7 @@
     class="list-form"
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
+    @before-open="setListForEditting()"
     @closed="clearData()"
   >
     <template v-slot:main>
@@ -31,7 +32,7 @@
             />
             <div
               class="delete-filter-button"
-              @click.stop="deleteFilter('tags', index)"
+              @click="deleteFilter('tags', index)"
             ></div>
           </div>
           <div
@@ -53,12 +54,12 @@
             />
             <div
               class="delete-filter-button"
-              @click.stop="deleteFilter('categories', index)"
+              @click="deleteFilter('categories', index)"
             ></div>
           </div>
           <div
             class="add-filter-button"
-            @click.stop="addFilter('categories')"
+            @click="addFilter('categories')"
           ></div>
         </div>
       </div>
@@ -71,7 +72,6 @@
         style-type="bordered"
         v-if="edittingListObj"
         @click="deleteList(list.id)"
-        stop-propagation
       />
     </template>
     <template v-slot:buttons>
@@ -79,13 +79,11 @@
         text="save"
         style-type="bordered"
         @click="submitList"
-        stop-propagation
       />
       <ButtonText
         text="cansel"
         style-type="bordered"
         @click="closeListForm"
-        stop-propagation
       />
     </template>
   </ModalBasic>
@@ -117,11 +115,6 @@ export default {
       edittingListObj: 'edittingListObj',
     }),
   },
-  watch: {
-    edittingListObj: function edittingListObjHanler() {
-      this.setEdittingList();
-    },
-  },
   methods: {
     ...mapActions({
       _setListForEditting: '_setListForEditting',
@@ -132,15 +125,15 @@ export default {
     closeListForm() {
       this.$modal.hide('listForm');
     },
+    setListForEditting() {
+      if (this.edittingListObj) {
+        this.list = { ...this.edittingListObj };
+      }
+    },
     clearData() {
       this._setListForEditting(null);
       this.list = new models.List();
       this.errorMessage = '';
-    },
-    setEdittingList() {
-      if (this.edittingListObj) {
-        this.list = { ...this.edittingListObj };
-      }
     },
     deleteFilter(type, index) {
       this.list.filters[type].splice(index, 1);
@@ -157,11 +150,7 @@ export default {
       this.list.filters.categories.forEach(category => filtersNames.push(category.name));
       const noRepeatFiltersNames = new Set(filtersNames);
 
-      if (filtersNames.length === noRepeatFiltersNames.size) {
-        return true;
-      }
-
-      return false;
+      return filtersNames.length === noRepeatFiltersNames.size;
     },
     deleteList(id) {
       this._removeList(id);

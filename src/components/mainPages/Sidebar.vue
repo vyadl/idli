@@ -12,26 +12,23 @@
         @click="openItemForm"
       />
     </div>
-    <div
-      class="open-sidebar-button"
-      :class="{ hide: isSidebarOpen }"
-      :disabled="isSidebarOpen"
-      @click="_openSidebar(isLoggedIn ? 'lists' : 'sign up')"
-    >
-      <div class="arrow"></div>
-    </div>
-    <div
-      class="sidebar-mode-buttons"
-      :class="{ show: isSidebarOpen }"
-    >
-      <ButtonText
-        style-type="solid"
-        v-for="mode in sidebarModes"
-        :key="mode"
-        :active="sidebarMode === mode"
-        :text="mode"
-        @click="_openSidebar(mode)"
-      />
+    <div class="sidebar-buttons">
+      <div class="mode-buttons">
+        <ButtonText
+          style-type="solid"
+          v-for="mode in sidebarModes"
+          :key="mode"
+          :active="sidebarMode === mode"
+          :text="mode"
+          @click="_openSidebar(mode)"
+        />
+      </div>
+      <div
+        class="open-button"
+        @click="isSidebarOpen ? _closeSidebar() : _openSidebar(isLoggedIn ? 'lists' : 'sign up')"
+      >
+        <div class="arrow"></div>
+      </div>
     </div>
     <div class="sidebar-content">
       <Filters v-if="sidebarMode === 'filters'" />
@@ -78,13 +75,6 @@ export default {
         : ['sign up', 'sign in'];
     },
   },
-  mounted() {
-    document.addEventListener('click', event => {
-      if (!event.target.closest('.j-sidebar')) {
-        this._closeSidebar();
-      }
-    });
-  },
   methods: {
     ...mapActions({
       _openSidebar: '_openSidebar',
@@ -113,6 +103,18 @@ export default {
     &.show {
       box-shadow: 15px 0 30px 0 gray;
       transform: translateX(0);
+
+      .mode-buttons {
+        transform: translateX(-110%);
+      }
+
+      .open-button {
+        transform: translateX(-180%);
+      }
+
+      .arrow {
+        transform: rotate(135deg);
+      }
     }
 
     .sidebar-content {
@@ -124,22 +126,24 @@ export default {
       overflow-x: hidden;
     }
 
-    .open-sidebar-button {
-      width: 25px;
-      height: 25px;
+    .sidebar-buttons {
       position: fixed;
       bottom: 30px;
-      cursor: pointer;
-      transform: translateX(-120%);
-      transition:
-        opacity .2s,
-        transform .3s;
+    }
 
-      &.hide {
-        z-index: -10;
-        opacity: 0;
-        transform: translateX(-200%);
-      }
+    .mode-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-bottom: 15px;
+      transition: transform .4s;
+    }
+
+    .open-button {
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      transform: translateX(-100%);
     }
 
     .arrow {
@@ -147,21 +151,9 @@ export default {
       height: 100%;
       border-left: 5px solid map-get($colors, 'black');
       border-top: 5px solid map-get($colors, 'black');
+      transition: transform .4s;
       transform-origin: center center;
       transform: rotate(-45deg);
-    }
-
-    .sidebar-mode-buttons {
-      position: fixed;
-      bottom: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      transition: transform .4s;
-
-      &.show {
-        transform: translateX(-120%);
-      }
     }
 
     .add-item-button {

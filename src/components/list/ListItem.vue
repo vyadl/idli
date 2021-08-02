@@ -11,7 +11,7 @@
     <div
       class="inner"
       :class="{ 'active' : edittingItemObj && edittingItemObj.id == item.id}"
-      @click.stop="setEdittingItemObj"
+      @click.stop="setItemForEditting"
     >{{ item.text }}</div>
   </div>
 </template>
@@ -57,11 +57,11 @@ export default {
   },
   methods: {
     ...mapActions([
-      '_setEdittingItemObj',
+      '_setItemForEditting',
       '_changeChangingListStatus',
     ]),
-    setEdittingItemObj() {
-      this._setEdittingItemObj(this.item);
+    setItemForEditting() {
+      this._setItemForEditting(this.item);
       this.$modal.show('itemForm');
     },
   },

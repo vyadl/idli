@@ -70,7 +70,7 @@ export default {
     state.lists[currentListIndex].items = state.lists[currentListIndex].items
       .filter(item => item.id !== id);
   },
-  setEdittingItemObj(state, item) {
+  setItemForEditting(state, item) {
     state.edittingItemObj = item;
   },
   changeItem(state, { currentListIndex, changedItem }) {
