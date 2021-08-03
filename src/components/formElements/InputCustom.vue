@@ -45,22 +45,22 @@ export default {
     margin-bottom: 18px;
 
     .label {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .input {
       width: 100%;
       padding: 5px;
       border-bottom: 1px solid map-get($colors, 'gray-1');
-      outline: 6px solid map-get($colors, 'gray-4');
-      background-color: map-get($colors, 'gray-4');
+      outline: 8px solid transparent;
+      background-color: transparent;
       transition:
         outline .2s,
         background-color .2s;
 
       &:focus {
-        outline-color: transparent;
-        background-color: transparent;;
+        outline-color: map-get($colors, 'gray-4');
+        background-color: map-get($colors, 'gray-4');
       }
     }
   }

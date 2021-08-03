@@ -15,6 +15,7 @@
     <div class="sidebar-buttons">
       <div class="mode-buttons">
         <ButtonText
+          class="mode-button"
           style-type="solid"
           v-for="mode in sidebarModes"
           :key="mode"
@@ -118,7 +119,7 @@ export default {
       }
 
       .state-button {
-        transform: translateX(-180%) rotate(180deg);
+        transform: translateX(-200%) rotate(180deg);
       }
     }
 
@@ -140,14 +141,30 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       transition: transform .4s;
+    }
+
+    .mode-button {
+      position: relative;
+      margin-bottom: 5px;
+
+      &::before {
+        content: '';
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow: -5px 0 12px 12px white;
+      }
     }
 
     .state-button {
       width: fit-content;
       transition: transform .4s;
-      transform: translateX(-100%);
+      transform: translateX(-150%);
     }
 
     .add-item-button {

@@ -24,7 +24,7 @@
       </div>
       <ButtonText
         text="new list"
-        style-type="bordered"
+        style-type="solid"
         @click="openListForm"
       />
     </div>

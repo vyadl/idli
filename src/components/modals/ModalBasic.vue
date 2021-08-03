@@ -69,7 +69,8 @@ export default {
 
     .footer {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
+      padding-top: 30px;
     }
   }
 </style>

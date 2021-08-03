@@ -56,10 +56,10 @@ export default {
     }
 
     &.arrow {
-      width: 25px;
-      height: 25px;
-      border-left: 5px solid map-get($colors, 'black');
-      border-top: 5px solid map-get($colors, 'black');
+      width: 20px;
+      height: 20px;
+      border-left: 3px solid map-get($colors, 'black');
+      border-top: 3px solid map-get($colors, 'black');
       transform-origin: center center;
       transform: rotate(-45deg);
     }

@@ -6,7 +6,7 @@
   >
     <img
       class="logo"
-      src="/icons/logo.svg"
+      src="/images/logo.svg"
     >
     <div class="buttons-container">
       <ButtonText

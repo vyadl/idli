@@ -67,7 +67,7 @@
       />
       <ButtonText
         text="delete list"
-        style-type="bordered"
+        style-type="solid"
         v-if="edittingListObj"
         @click="deleteList(list.id)"
       />
@@ -75,12 +75,12 @@
     <template v-slot:buttons>
       <ButtonText
         text="save"
-        style-type="bordered"
+        style-type="solid"
         @click="submitList"
       />
       <ButtonText
         text="cansel"
-        style-type="bordered"
+        style-type="solid"
         @click="closeListForm"
       />
     </template>

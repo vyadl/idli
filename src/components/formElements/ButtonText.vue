@@ -45,7 +45,7 @@ export default {
 <style lang="scss">
   .button-text {
     margin: 3px;
-    padding: 5px 12px 7px;
+    padding: 5px 14px 7px;
     text-align: left;
     vertical-align: middle;
     line-height: 1.3;
@@ -58,14 +58,16 @@ export default {
       opacity: .7;
     }
 
-    &.active {
-      opacity: .85;
-    }
-
     &.solid {
+      font-size: 14px;
+      border: 2px solid black;
       border-radius: 3px;
-      background-color: map-get($colors, 'black');
-      color: map-get($colors, 'white');
+      background-color: white;
+
+      &.active {
+        background-color: map-get($colors, 'black');
+        color: map-get($colors, 'white');
+      }
     }
 
     &.bordered {
