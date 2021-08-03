@@ -32,6 +32,11 @@ export default {
 
     dispatch('_updateLocal');
   },
+  _saveList({ commit, dispatch }, list) {
+    commit('saveList', list);
+
+    dispatch('_updateLocal');
+  },
   _removeList({ commit, dispatch, getters }, listId) {
     if (getters.currentListId === listId) {
       const switchListId = getters.lists.length > 1
@@ -44,6 +49,9 @@ export default {
     commit('removeList', listId);
 
     dispatch('_updateLocal');
+  },
+  _setListForEditting({ commit }, id) {
+    commit('setListForEditting', id);
   },
   _filterList({ commit, dispatch, getters }, filters) {
     commit('filterList', {
@@ -92,10 +100,10 @@ export default {
       dispatch('_updateLocal');
     }
 
-    dispatch('_setActiveItem', null);
+    dispatch('_setItemForEditting', null);
   },
-  _setActiveItem({ commit, dispatch }, item) {
-    commit('setActiveItem', item);
+  _setItemForEditting({ commit, dispatch }, item) {
+    commit('setItemForEditting', item);
     dispatch('_setChangingStatus', true);
 
     if (!item) {
@@ -107,7 +115,7 @@ export default {
       currentListIndex: getters.currentListIndex,
       changedItem,
     });
-    dispatch('_setActiveItem', null);
+    dispatch('_setItemForEditting', null);
     dispatch('_updateLocal');
   },
   _startCreatingItem({ dispatch }) {

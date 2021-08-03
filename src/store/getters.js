@@ -7,7 +7,8 @@ export default {
   currentListItems: (state, getters) => getters.currentListObj?.items,
   currentListFilters: (state, getters) => getters.currentListObj?.filters,
   currentListCheckedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
-  activeItem: state => state.activeItem,
+  edittingListObj: state => state.lists.find(list => list.id === state.edittingListId),
+  edittingItemObj: state => state.edittingItemObj,
   listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,
   isChangingActive: state => state.isChangingActive,
@@ -35,7 +36,7 @@ export default {
     return getters.currentListItems.filter(item => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
       const isCategoryIntersection = !categories.length || categories
-        .indexOf(item.categories) !== -1;
+        .indexOf(item.category) !== -1;
 
       return areTagsIntersection && isCategoryIntersection;
     });

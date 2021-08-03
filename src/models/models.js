@@ -6,4 +6,21 @@ export default {
     this.roles = [];
     this.accessToken = null;
   },
+  List() {
+    this.name = null;
+    this.id = null;
+    this.items = [];
+    this.filters = {
+      tags: [],
+      categories: [],
+    };
+    this.isPrivate = true;
+  },
+  Item() {
+    this.id = null;
+    this.text = null;
+    this.details = null;
+    this.tags = [];
+    this.category = null;
+  },
 };

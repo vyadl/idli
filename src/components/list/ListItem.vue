@@ -10,8 +10,8 @@
   >
     <div
       class="inner"
-      :class="{ 'active' : activeItem && activeItem.id == item.id}"
-      @click.stop="_setActiveItem(item)"
+      :class="{ 'active' : edittingItemObj && edittingItemObj.id === item.id}"
+      @click.stop="setItemForEditting"
     >{{ item.text }}</div>
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
   props: ['item'],
   computed: {
     ...mapGetters({
-      activeItem: 'activeItem',
+      edittingItemObj: 'edittingItemObj',
       isCloudModeOn: 'isCloudModeOn',
       shuffleTrigger: 'shuffleTrigger',
       isStarsModeOn: 'isStarsModeOn',
@@ -57,11 +57,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      '_setActiveItem',
+      '_setItemForEditting',
       '_changeChangingListStatus',
     ]),
-    setactiveItem() {
-      this._setActiveItem(JSON.stringify(JSON.parse(this.item)));
+    setItemForEditting() {
+      this._setItemForEditting(this.item);
+      this.$modal.show('itemForm');
     },
   },
 };

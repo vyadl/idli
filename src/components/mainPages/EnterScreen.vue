@@ -2,6 +2,7 @@
   <div
     class="enter-screen"
     :class="{ parallax: isSidebarOpen }"
+    @click="_closeSidebar"
   >
     <img
       class="logo"
@@ -39,6 +40,7 @@ export default {
   methods: {
     ...mapActions({
       _openSidebar: '_openSidebar',
+      _closeSidebar: '_closeSidebar',
     }),
   },
 };

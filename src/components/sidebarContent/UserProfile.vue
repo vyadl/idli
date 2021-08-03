@@ -1,13 +1,16 @@
 <template>
-  <SidebarCard title="your profile">
-    <div class="user-profile">
-      <div class="username">{{ username }}</div>
+  <SidebarCard
+    class="user-profile"
+    title="your profile"
+  >
+      <div class="username">
+        {{ username }}
+      </div>
       <ButtonText
         style-type="bordered"
         text="sign out"
         @click="_signOut"
       />
-    </div>
   </SidebarCard>
 </template>
 

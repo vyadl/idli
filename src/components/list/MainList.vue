@@ -1,5 +1,8 @@
 <template>
-  <div class="main-list">
+  <div
+    class="main-list"
+    @click="_closeSidebar"
+  >
     <transition name="fade">
       <div
         class="preloader"
@@ -7,6 +10,12 @@
       >
       </div>
     </transition>
+    <div
+      class="list-title"
+      v-if="currentListName"
+    >
+      {{ currentListName }}
+    </div>
     <template v-if="isCloudModeOn && !isStarsModeOn">
       <ListItem
         v-for="item in finalList"
@@ -15,7 +24,10 @@
       />
     </template>
     <template v-else>
-      <div class="inner">
+      <div
+        class="items-container"
+        :class="{ parallax: isSidebarOpen }"
+      >
         <transition name="fade">
           <div v-if="isListShown">
             <ListItem
@@ -33,7 +45,7 @@
 <script>
 import ListItem from '@/components/list/ListItem.vue';
 import Utils from '@/utils/utils';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -45,13 +57,18 @@ export default {
   }),
   computed: {
     ...mapGetters({
+      listChanging: 'listChanging',
+      currentListObj: 'currentListObj',
       filteredList: 'filteredList',
       shuffleTrigger: 'shuffleTrigger',
+      isShuffled: 'isShuffled',
       isCloudModeOn: 'isCloudModeOn',
       isStarsModeOn: 'isStarsModeOn',
-      listChanging: 'listChanging',
-      isShuffled: 'isShuffled',
+      isSidebarOpen: 'isSidebarOpen',
     }),
+    currentListName() {
+      return this.currentListObj?.name;
+    },
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
@@ -75,17 +92,33 @@ export default {
       immediate: true,
     },
   },
+  methods: {
+    ...mapActions({
+      _closeSidebar: '_closeSidebar',
+    }),
+  },
 };
 </script>
 
 <style lang="scss">
   .main-list {
-    padding-top: 40px;
-    text-align: center;
+    height: 100vh;
 
-    .inner {
+    .list-title {
+      margin-bottom: 40px;
+      padding: 10px;
+      font-size: 14px;
+      color: #bbb;
+    }
+
+    .items-container {
       display: flex;
       flex-direction: column;
+      transition: transform .5s;
+
+      &.parallax {
+        transform: translateX(-20px);
+      }
     }
 
     .preloader {

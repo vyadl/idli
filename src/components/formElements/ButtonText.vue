@@ -4,7 +4,6 @@
     :class="[styleType, { active }]"
     :type="type"
     :disabled="disabled"
-    :stopPropagation="stopPropagation"
     @click="click($event)"
   >{{ text }}</button>
 </template>
@@ -55,6 +54,10 @@ export default {
     cursor: pointer;
     transition: opacity .2s;
 
+    &:hover {
+      opacity: .7;
+    }
+
     &.active {
       opacity: .85;
     }
@@ -73,8 +76,9 @@ export default {
       border-bottom: 1px solid map-get($colors, 'gray-2');
     }
 
-    &:hover {
-      opacity: .7;
+    &.line {
+      margin-bottom: 5px;
+      padding: 0;
     }
   }
 </style>

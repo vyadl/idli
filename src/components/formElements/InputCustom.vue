@@ -16,7 +16,10 @@
 <script>
 export default {
   props: {
-    label: String,
+    label: {
+      type: String,
+      default: '',
+    },
     type: {
       type: String,
       default: 'text',

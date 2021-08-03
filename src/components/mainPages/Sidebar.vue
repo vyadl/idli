@@ -9,34 +9,31 @@
     >
       <ButtonIcon
         icon-name="add"
-        @click="_startCreatingItem"
+        @click="openItemForm"
       />
     </div>
-    <div
-      class="open-sidebar-button"
-      :class="{ hide: isSidebarOpen }"
-      :disabled="isSidebarOpen"
-      @click="_openSidebar(isLoggedIn ? 'lists' : 'sign up')"
-    >
-      <div class="arrow"></div>
-    </div>
-    <div
-      class="sidebar-mode-buttons"
-      :class="{ show: isSidebarOpen }"
-    >
-      <ButtonText
-        style-type="solid"
-        v-for="mode in sidebarModes"
-        :key="mode"
-        :active="sidebarMode === mode"
-        :text="mode"
-        @click="_openSidebar(mode)"
-      />
+    <div class="sidebar-buttons">
+      <div class="mode-buttons">
+        <ButtonText
+          style-type="solid"
+          v-for="mode in sidebarModes"
+          :key="mode"
+          :active="sidebarMode === mode"
+          :text="mode"
+          @click="_openSidebar(mode)"
+        />
+      </div>
+      <div class="state-button">
+        <ButtonSign
+          style-type="arrow"
+          @click="changeSidebarState"
+        />
+      </div>
     </div>
     <div class="sidebar-content">
       <Filters v-if="sidebarMode === 'filters'" />
       <Visualization v-if="sidebarMode === 'visualization'" />
-      <Lists v-if="sidebarMode === 'lists'" />
+      <ListsList v-if="sidebarMode === 'lists'" />
       <UserProfile v-if="sidebarMode === 'profile'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
@@ -47,24 +44,26 @@
 <script>
 import Filters from '@/components/sidebarContent/Filters.vue';
 import Visualization from '@/components/sidebarContent/Visualization.vue';
-import Lists from '@/components/sidebarContent/Lists.vue';
+import ListsList from '@/components/sidebarContent/ListsList.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
 import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     Filters,
     Visualization,
-    Lists,
+    ListsList,
     UserProfile,
     RegistrationForm,
     AuthForm,
     ButtonIcon,
     ButtonText,
+    ButtonSign,
   },
   computed: {
     ...mapGetters({
@@ -78,19 +77,21 @@ export default {
         : ['sign up', 'sign in'];
     },
   },
-  mounted() {
-    document.addEventListener('click', event => {
-      if (!event.target.closest('.j-sidebar')) {
-        this._closeSidebar();
-      }
-    });
-  },
   methods: {
     ...mapActions({
-      _startCreatingItem: '_startCreatingItem',
       _openSidebar: '_openSidebar',
       _closeSidebar: '_closeSidebar',
     }),
+    openItemForm() {
+      this.$modal.show('itemForm');
+    },
+    changeSidebarState() {
+      if (this.isSidebarOpen) {
+        this._closeSidebar();
+      } else {
+        this._openSidebar(this.isLoggedIn ? 'lists' : 'sign up');
+      }
+    },
   },
 };
 </script>
@@ -111,6 +112,14 @@ export default {
     &.show {
       box-shadow: 15px 0 30px 0 gray;
       transform: translateX(0);
+
+      .mode-buttons {
+        transform: translateX(-110%);
+      }
+
+      .state-button {
+        transform: translateX(-180%) rotate(180deg);
+      }
     }
 
     .sidebar-content {
@@ -122,44 +131,23 @@ export default {
       overflow-x: hidden;
     }
 
-    .open-sidebar-button {
-      width: 25px;
-      height: 25px;
+    .sidebar-buttons {
       position: fixed;
       bottom: 30px;
-      cursor: pointer;
-      transform: translateX(-120%);
-      transition:
-        opacity .2s,
-        transform .3s;
-
-      &.hide {
-        z-index: -10;
-        opacity: 0;
-        transform: translateX(-200%);
-      }
     }
 
-    .arrow {
-      width: 100%;
-      height: 100%;
-      border-left: 5px solid map-get($colors, 'black');
-      border-top: 5px solid map-get($colors, 'black');
-      transform-origin: center center;
-      transform: rotate(-45deg);
-    }
-
-    .sidebar-mode-buttons {
-      position: fixed;
-      bottom: 30px;
+    .mode-buttons {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
+      margin-bottom: 15px;
       transition: transform .4s;
+    }
 
-      &.show {
-        transform: translateX(-120%);
-      }
+    .state-button {
+      width: fit-content;
+      transition: transform .4s;
+      transform: translateX(-100%);
     }
 
     .add-item-button {

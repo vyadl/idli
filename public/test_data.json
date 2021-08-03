@@ -8,96 +8,90 @@
         "text": "Они - ходячие генераторы мемов",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 1,
         "text": "Смешно шевелят ушами",
         "details": "",
         "tags": [1],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 2,
         "text": "Издают множество чудесных звуков",
         "details": "(Мурчат, например!)",
         "tags": [2, 1],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 3,
         "text": "Жмякают тебя лапками",
         "details": "",
         "tags": [1],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 4,
         "text": "Умеют обниматься",
         "details": "",
         "tags": [1],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 5,
         "text": "У них шершавый язык",
         "details": "",
         "tags": [2],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 6,
         "text": "Лежащий на тебе кот - уважительная причина не вставать с кровати",
         "details": "",
         "tags": [0,1],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 7,
         "text": "Могут избавить квартиру от мух",
         "details": "(Иногда и гостей)",
         "tags": [0],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 8,
         "text": "Всегда выслушают и не будут осуждать",
         "details": "(Наверное)",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 9,
         "text": "Умеют тыгыдык",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       }
     ],
     "filters": {
       "tags": [
         {
           "name": "Лайфхаки",
-          "value": 0,
           "id": 0
         },
         {
           "name": "Милота",
-          "value": 0,
           "id": 1
         },
         {
           "name": "Уникальная фича",
-          "value": 0,
           "id": 2
         }
       ],
       "categories": []
     },
-    "checkedFilters": {
-      "tags": [],
-      "categories": []
-    }
+    "isPrivate": true
   },
   {
     "name": "План на лето",
@@ -108,87 +102,84 @@
         "text": "Сравнить чай, заваренный в фильтр пакете и без него",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 1,
         "text": "Устроить фестиваль странных клипов",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 2,
         "text": "Сидеть на балконе и просить у облаков дождя",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 3,
         "text": "Потанцевать под песни начала 90х",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 4,
         "text": "Вытоптать спиральную тропинку на поляне",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 5,
         "text": "Дирижировать хором лягушек",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 6,
         "text": "Ходить босиком и вернуться домой не обуваясь",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 7,
         "text": "Любить свой город",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 8,
         "text": "Считать проходящих собак",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 9,
         "text": "Устроить сырный день",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 10,
         "text": "Качаться на качелях",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       }
     ],
     "filters": {
       "tags": [],
       "categories": []
     },
-    "checkedFilters": {
-      "tags": [],
-      "categories": []
-    }
+    "isPrivate": true
   },
   {
     "name": "Конституция республики Ужупис",
@@ -199,283 +190,280 @@
         "text": "1. Человек имеет право жить рядом с Вильняле, а Вильняле течь рядом с человеком.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 1,
         "text": "2. Человек имеет право на горячую воду, отопление зимой и черепичную крышу.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 2,
         "text": "3. Каждый имеет право умереть, но не обязан.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 3,
         "text": "4. Каждый имеет право ошибаться.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 4,
         "text": "5. Каждый имеет право быть единственным и неповторимым.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 5,
         "text": "6. Каждый имеет право любить.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 6,
         "text": "7. Каждый имеет право быть нелюбимым, но это не обязательно.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 7,
         "text": "8. Каждый имеет право быть неизвестным и не знаменитым.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 8,
         "text": "9. Каждый имеет право лениться и ничего не делать.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 9,
         "text": "10. Каждый имеет право любить и опекать кошку.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 10,
         "text": "11. Каждый имеет право заботиться о собаке до конца дней одного из них.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 11,
         "text": "12. Собака имеет право быть собакой.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 12,
         "text": "13. Кошка не обязана любить своего хозяина, но в трудную минуту обязана прийти ему на помощь.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 13,
         "text": "14. Каждый имеет право забывать, есть ли у него обязанности.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 14,
         "text": "15. Каждый имеет право сомневаться, но это — не обязанность.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 15,
         "text": "16. Каждый имеет право быть счастливым.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 16,
         "text": "17. Каждый имеет право быть несчастным.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 17,
         "text": "18. Каждый имеет право молчать.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 18,
         "text": "19. Каждый имеет право верить.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 19,
         "text": "20. Каждый имеет право осознавать свою ничтожность или своё величие.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 20,
         "text": "21. Никто не имеет права совершать насилие.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 21,
         "text": "22. Никто не имеет права покушаться на вечное.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 22,
         "text": "23. Каждый имеет право понимать.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 23,
         "text": "24. Каждый имеет право ничего не понимать.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 24,
         "text": "25. Каждый имеет право на любую национальность.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 25,
         "text": "26. Каждый имеет право праздновать или не праздновать свой день рождения.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 26,
         "text": "27. Каждый обязан помнить своё имя.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 27,
         "text": "28. Каждый может делиться тем, что у него есть.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 28,
         "text": "29. Никто не может делиться тем, чего не имеет.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 29,
         "text": "30. Каждый имеет право на братьев, сестер и родителей.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 30,
         "text": "31. Каждый может быть свободным.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 31,
         "text": "32. Каждый отвечает за свою свободу.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 32,
         "text": "33. Каждый имеет право плакать.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 33,
         "text": "34. Каждый имеет право быть непонятым.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 34,
         "text": "35. Никто не имеет права перекладывать вину на других.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 35,
         "text": "36. Каждый имеет право быть личностью.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 36,
         "text": "37. Каждый имеет право не иметь никаких прав.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 37,
         "text": "38. Каждый имеет право не бояться.",
         "details": "",
         "tags": [],
-        "categories": ""
+        "category": ""
       },
       {
         "id": 38,
         "text": "Заповеди",
         "details": "Не побеждай\nНе защищайся\nНе сдавайся",
         "tags": [],
-        "categories": ""
+        "category": ""
       }
     ],
     "filters": {
       "tags": [],
       "categories": []
     },
-    "checkedFilters": {
-      "tags": [],
-      "categories": []
-    }
+    "isPrivate": true
   },
   {
     "name": "Stars",
@@ -486,799 +474,777 @@
         "text": "Alpheratz",
         "details": "",
         "tags": [0, 3],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 1,
         "text": "Mirach",
         "details": "",
         "tags": [1],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 2,
         "text": "Almach",
         "details": "",
         "tags": [2],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 3,
         "text": "Sadiradra",
         "details": "",
         "tags": [3],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 4,
         "text": "Nembus",
         "details": "",
         "tags": [],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 5,
         "text": "Titawin",
         "details": "",
         "tags": [],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 6,
         "text": "Adhil",
         "details": "",
         "tags": [],
-        "categories": 0
+        "category": 0
       },
       {
         "id": 7,
         "text": "Sadalsuud",
         "details": "",
         "tags": [1],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 8,
         "text": "Sadalmelik",
         "details": "",
         "tags": [0],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 9,
         "text": "Skat",
         "details": "",
         "tags": [],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 10,
         "text": "Sadaltager",
         "details": "",
         "tags": [],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 11,
         "text": "Hydor",
         "details": "",
         "tags": [3],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 12,
         "text": "Albali",
         "details": "",
         "tags": [3],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 13,
         "text": "Sadachbia",
         "details": "",
         "tags": [2],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 14,
         "text": "Hydria",
         "details": "",
         "tags": [],
-        "categories": 1
+        "category": 1
       },
       {
         "id": 15,
         "text": "Tarf",
         "details": "",
         "tags": [1, 3],
-        "categories": 2
+        "category": 2
       },
       {
         "id": 16,
         "text": "Asellus Australis",
         "details": "",
         "tags": [],
-        "categories": 2
+        "category": 2
       },
       {
         "id": 17,
         "text": "Acubens",
         "details": "",
         "tags": [0, 3],
-        "categories": 2
+        "category": 2
       },
       {
         "id": 18,
         "text": "Asellus Borealis",
         "details": "",
         "tags": [2],
-        "categories": 2
+        "category": 2
       },
       {
         "id": 19,
         "text": "Tegmine",
         "details": "",
         "tags": [],
-        "categories": 2
+        "category": 2
       },
       {
         "id": 20,
         "text": "Schedar",
         "details": "",
         "tags": [0],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 21,
         "text": "Caph",
         "details": "",
         "tags": [1, 3],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 22,
         "text": "Tsih",
         "details": "",
         "tags": [2, 3],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 23,
         "text": "Ruchbah",
         "details": "",
         "tags": [3],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 24,
         "text": "Segin",
         "details": "",
         "tags": [3],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 25,
         "text": "Achird",
         "details": "",
         "tags": [3],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 26,
         "text": "Marfak",
         "details": "",
         "tags": [3],
-        "categories": 3
+        "category": 3
       },
       {
         "id": 27,
         "text": "Al-Ras al-Taum al-Mu'ahar",
         "details": "",
         "tags": [1, 3],
-        "categories": 4
+        "category": 4
       },
       {
         "id": 28,
         "text": "Al-Ras al-Taum al-Muqadim",
         "details": "",
         "tags": [0],
-        "categories": 4
+        "category": 4
       },
       {
         "id": 29,
         "text": "Alhena",
         "details": "",
         "tags": [2],
-        "categories": 4
+        "category": 4
       },
       {
         "id": 30,
         "text": "Tejat Posterior",
         "details": "",
         "tags": [3],
-        "categories": 4
+        "category": 4
       },
       {
         "id": 31,
         "text": "Mebsuta",
         "details": "",
         "tags": [],
-        "categories": 4
+        "category": 4
       },
       {
         "id": 32,
         "text": "Propus",
         "details": "",
         "tags": [3],
-        "categories": 4
+        "category": 4
       },
       {
         "id": 33,
         "text": "Alfard",
         "details": "",
         "tags": [0],
-        "categories": 5
+        "category": 5
       },
       {
         "id": 34,
         "text": "Dhanab al Shudja",
         "details": "",
         "tags": [2],
-        "categories": 5
+        "category": 5
       },
       {
         "id": 35,
         "text": "Hydrobius",
         "details": "",
         "tags": [],
-        "categories": 5
+        "category": 5
       },
       {
         "id": 36,
         "text": "Ashlesha",
         "details": "",
         "tags": [],
-        "categories": 5
+        "category": 5
       },
       {
         "id": 37,
         "text": "Ukdah",
         "details": "",
         "tags": [],
-        "categories": 5
+        "category": 5
       },
       {
         "id": 38,
         "text": "Zhang",
         "details": "",
         "tags": [],
-        "categories": 5
+        "category": 5
       },
       {
         "id": 39,
         "text": "Regulus",
         "details": "",
         "tags": [0],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 40,
         "text": "Denebola",
         "details": "",
         "tags": [1, 3],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 41,
         "text": "Algieba",
         "details": "",
         "tags": [2],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 42,
         "text": "Zosma",
         "details": "",
         "tags": [],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 43,
         "text": "Ras Elased",
         "details": "",
         "tags": [],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 44,
         "text": "Chertan",
         "details": "",
         "tags": [],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 45,
         "text": "Adhafera",
         "details": "",
         "tags": [],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 46,
         "text": "Al Jabhah",
         "details": "",
         "tags": [],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 47,
         "text": "Subra",
         "details": "",
         "tags": [],
-        "categories": 6
+        "category": 6
       },
       {
         "id": 48,
         "text": "Vega",
         "details": "",
         "tags": [0, 3],
-        "categories": 7
+        "category": 7
       },
       {
         "id": 49,
         "text": "Sulafat",
         "details": "",
         "tags": [2, 3],
-        "categories": 7
+        "category": 7
       },
       {
         "id": 50,
         "text": "Sheliak",
         "details": "",
         "tags": [1, 3],
-        "categories": 7
+        "category": 7
       },
       {
         "id": 51,
         "text": "Aladfar",
         "details": "",
         "tags": [],
-        "categories": 7
+        "category": 7
       },
       {
         "id": 52,
         "text": "Enif",
         "details": "",
         "tags": [],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 53,
         "text": "Scheat",
         "details": "",
         "tags": [1],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 54,
         "text": "Markab",
         "details": "",
         "tags": [0],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 55,
         "text": "Algenib",
         "details": "",
         "tags": [2],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 56,
         "text": "Matar",
         "details": "",
         "tags": [],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 57,
         "text": "Homam",
         "details": "",
         "tags": [],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 58,
         "text": "Sadalbari",
         "details": "",
         "tags": [],
-        "categories": 8
+        "category": 8
       },
       {
         "id": 59,
         "text": "Alpherg",
         "details": "",
         "tags": [3],
-        "categories": 9
+        "category": 9
       },
       {
         "id": 60,
         "text": "Simmah",
         "details": "",
         "tags": [2],
-        "categories": 9
+        "category": 9
       },
       {
         "id": 61,
         "text": "Dzaneb al Samkat",
         "details": "",
         "tags": [],
-        "categories": 9
+        "category": 9
       },
       {
         "id": 62,
         "text": "Torcular",
         "details": "",
         "tags": [],
-        "categories": 9
+        "category": 9
       },
       {
         "id": 63,
         "text": "Alrescha",
         "details": "",
         "tags": [0, 3],
-        "categories": 9
+        "category": 9
       },
       {
         "id": 64,
         "text": "Linteum",
         "details": "",
         "tags": [1],
-        "categories": 9
+        "category": 9
       },
       {
         "id": 65,
         "text": "Kaus Australis",
         "details": "",
         "tags": [],
-        "categories": 10
+        "category": 10
       },
       {
         "id": 66,
         "text": "Nunki",
         "details": "",
         "tags": [],
-        "categories": 10
+        "category": 10
       },
       {
         "id": 67,
         "text": "Ascella",
         "details": "",
         "tags": [],
-        "categories": 10
+        "category": 10
       },
       {
         "id": 68,
         "text": "Kaus Media",
         "details": "",
         "tags": [1],
-        "categories": 10
+        "category": 10
       },
       {
         "id": 69,
         "text": "Kaus Borealis",
         "details": "",
         "tags": [2],
-        "categories": 10
+        "category": 10
       },
       {
         "id": 70,
         "text": "Al Baldah",
         "details": "",
         "tags": [],
-        "categories": 10
+        "category": 10
       },
       {
         "id": 71,
         "text": "Antares",
         "details": "",
         "tags": [0, 3],
-        "categories": 11
+        "category": 11
       },
       {
         "id": 72,
         "text": "Shaula",
         "details": "",
         "tags": [3],
-        "categories": 11
+        "category": 11
       },
       {
         "id": 73,
         "text": "Sargas",
         "details": "",
         "tags": [3],
-        "categories": 11
+        "category": 11
       },
       {
         "id": 74,
         "text": "Dschubba",
         "details": "",
         "tags": [3],
-        "categories": 11
+        "category": 11
       },
       {
         "id": 75,
         "text": "Wei",
         "details": "",
         "tags": [3],
-        "categories": 11
+        "category": 11
       },
       {
         "id": 76,
         "text": "Girtab",
         "details": "",
         "tags": [3],
-        "categories": 11
+        "category": 11
       },
       {
         "id": 77,
         "text": "Aldebaran",
         "details": "",
         "tags": [0, 3],
-        "categories": 12
+        "category": 12
       },
       {
         "id": 78,
         "text": "El Nath",
         "details": "",
         "tags": [1],
-        "categories": 12
+        "category": 12
       },
       {
         "id": 79,
         "text": "Tianguan",
         "details": "",
         "tags": [3],
-        "categories": 12
+        "category": 12
       },
       {
         "id": 80,
         "text": "Chamukuy",
         "details": "",
         "tags": [3],
-        "categories": 12
+        "category": 12
       },
       {
         "id": 81,
         "text": "Ain",
         "details": "",
         "tags": [],
-        "categories": 12
+        "category": 12
       },
       {
         "id": 82,
         "text": "Alioth",
         "details": "",
         "tags": [3],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 83,
         "text": "Dubhe",
         "details": "",
         "tags": [0],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 84,
         "text": "Benetnasch",
         "details": "",
         "tags": [],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 85,
         "text": "Mizar",
         "details": "",
         "tags": [],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 86,
         "text": "Merak",
         "details": "",
         "tags": [1],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 87,
         "text": "Phad",
         "details": "",
         "tags": [2],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 88,
         "text": "Ta Tsun",
         "details": "",
         "tags": [],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 89,
         "text": "Tania Australis",
         "details": "",
         "tags": [3],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 90,
         "text": "Talitha",
         "details": "",
         "tags": [],
-        "categories": 13
+        "category": 13
       },
       {
         "id": 91,
         "text": "Polaris",
         "details": "",
         "tags": [0],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 92,
         "text": "Kochab",
         "details": "",
         "tags": [1],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 93,
         "text": "Pherkad",
         "details": "",
         "tags": [2],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 94,
         "text": "Ahfa al Farkadain",
         "details": "",
         "tags": [],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 95,
         "text": "Yildun",
         "details": "",
         "tags": [],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 96,
         "text": "Anwar al Farkadain",
         "details": "",
         "tags": [],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 97,
         "text": "Pherkad Minor",
         "details": "",
         "tags": [],
-        "categories": 14
+        "category": 14
       },
       {
         "id": 98,
         "text": "Baekdu",
         "details": "",
         "tags": [],
-        "categories": 14
+        "category": 14
       }
     ],
     "filters": {
       "tags": [
         {
           "name": "α",
-          "value": 0,
           "id": 0
         },
         {
           "name": "β",
-          "value": 0,
           "id": 1
         },
         {
           "name": "γ",
-          "value": 0,
           "id": 2
         },
         {
           "name": "Variable star",
-          "value": 0,
           "id": 3
         }
       ],
       "categories": [
         {
           "name": "Andromeda constellation",
-          "value": 0,
           "id": 0
         },
         {
           "name": "Aquarius constellation",
-          "value": 0,
           "id": 1
         },
         {
           "name": "Cancer constellation",
-          "value": 0,
           "id": 2
         },
         {
           "name": "Cassiopeia constellation",
-          "value": 0,
           "id": 3
         },
         {
           "name": "Gemini constellation",
-          "value": 0,
           "id": 4
         },
         {
           "name": "Hydra constellation",
-          "value": 0,
           "id": 5
         },
         {
           "name": "Leo constellation",
-          "value": 0,
           "id": 6
         },
         {
           "name": "Lyra constellation",
-          "value": 0,
           "id": 7
         },
         {
           "name": "Pegasus constellation",
-          "value": 0,
           "id": 8
         },
         {
           "name": "Pisces constellation",
-          "value": 0,
           "id": 9
         },
         {
           "name": "Sagittarius constellation",
-          "value": 0,
           "id": 10
         },
         {
           "name": "Scorpius constellation",
-          "value": 0,
           "id": 11
         },
         {
           "name": "Taurus constellation",
-          "value": 0,
           "id": 12
         },
         {
           "name": "Ursa Major constellation",
-          "value": 1,
           "id": 13
         },
         {
           "name": "Ursa Minor constellation",
-          "value": 0,
           "id": 14
         }
       ]
     },
-    "checkedFilters": {
-      "tags": [],
-      "categories": []
-    }
+    "isPrivate": true
   }
 ]
