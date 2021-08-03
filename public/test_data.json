@@ -91,7 +91,7 @@
       ],
       "categories": []
     },
-    "isPtrivate": true
+    "isPrivate": true
   },
   {
     "name": "План на лето",
@@ -179,7 +179,7 @@
       "tags": [],
       "categories": []
     },
-    "isPtrivate": true
+    "isPrivate": true
   },
   {
     "name": "Конституция республики Ужупис",
@@ -463,7 +463,7 @@
       "tags": [],
       "categories": []
     },
-    "isPtrivate": true
+    "isPrivate": true
   },
   {
     "name": "Stars",
@@ -1245,6 +1245,6 @@
         }
       ]
     },
-    "isPtrivate": true
+    "isPrivate": true
   }
 ]
