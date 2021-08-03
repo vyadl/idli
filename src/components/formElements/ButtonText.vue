@@ -55,6 +55,10 @@ export default {
     cursor: pointer;
     transition: opacity .2s;
 
+    &:hover {
+      opacity: .7;
+    }
+
     &.active {
       opacity: .85;
     }
@@ -76,10 +80,6 @@ export default {
     &.line {
       margin-bottom: 5px;
       padding: 0;
-    }
-
-    &:hover {
-      opacity: .7;
     }
   }
 </style>

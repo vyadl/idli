@@ -1,5 +1,8 @@
 <template>
-  <div class="main-list" @click="_closeSidebar">
+  <div
+    class="main-list"
+    @click="_closeSidebar"
+  >
     <transition name="fade">
       <div
         class="preloader"

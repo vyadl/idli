@@ -10,7 +10,7 @@
   >
     <div
       class="inner"
-      :class="{ 'active' : edittingItemObj && edittingItemObj.id == item.id}"
+      :class="{ 'active' : edittingItemObj && edittingItemObj.id === item.id}"
       @click.stop="setItemForEditting"
     >{{ item.text }}</div>
   </div>

@@ -14,10 +14,6 @@ export default {
       tags: [],
       categories: [],
     };
-    this.checkedFilters = {
-      tags: [],
-      categories: [],
-    };
     this.isPrivate = true;
   },
   Item() {
@@ -25,6 +21,6 @@ export default {
     this.text = null;
     this.details = null;
     this.tags = [];
-    this.categories = null;
+    this.category = null;
   },
 };

@@ -23,10 +23,10 @@
         />
       </div>
       <ButtonText
-      text="new list"
-      style-type="bordered"
-      @click="openListForm"
-    />
+        text="new list"
+        style-type="bordered"
+        @click="openListForm"
+      />
     </div>
     <TestData/>
   </SidebarCard>

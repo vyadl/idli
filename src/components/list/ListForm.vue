@@ -4,7 +4,7 @@
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
     @before-open="setListForEditting()"
-    @closed="clearData()"
+    @closed="clearData"
   >
     <template v-slot:main>
       <InputCustom
@@ -30,15 +30,16 @@
             <InputCustom
               v-model="tag.name"
             />
-            <div
+            <ButtonSign
               class="delete-filter-button"
+              style-type="cross"
               @click="deleteFilter('tags', index)"
-            ></div>
+            />
           </div>
-          <div
-            class="add-filter-button"
+          <ButtonSign
+            style-type="plus"
             @click="addFilter('tags')"
-          ></div>
+          />
         </div>
         <div class="categories">
           <h1 class="filters-header">
@@ -52,15 +53,16 @@
             <InputCustom
               v-model="category.name"
             />
-            <div
+            <ButtonSign
               class="delete-filter-button"
+              style-type="cross"
               @click="deleteFilter('categories', index)"
-            ></div>
+            />
           </div>
-          <div
-            class="add-filter-button"
+          <ButtonSign
+            style-type="plus"
             @click="addFilter('categories')"
-          ></div>
+          />
         </div>
       </div>
       <ErrorMessage
@@ -94,6 +96,7 @@ import ModalBasic from '@/components/modals/ModalBasic.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import models from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
@@ -104,6 +107,7 @@ export default {
     InputCustom,
     CheckboxCustom,
     ButtonText,
+    ButtonSign,
     ErrorMessage,
   },
   data: () => ({
@@ -146,11 +150,11 @@ export default {
     },
     verifyFilters() {
       const filtersNames = [];
+
       this.list.filters.tags.forEach(tag => filtersNames.push(tag.name));
       this.list.filters.categories.forEach(category => filtersNames.push(category.name));
-      const noRepeatFiltersNames = new Set(filtersNames);
 
-      return filtersNames.length === noRepeatFiltersNames.size;
+      return filtersNames.length === new Set(filtersNames).size;
     },
     deleteList(id) {
       this._removeList(id);
@@ -176,7 +180,7 @@ export default {
 <style lang="scss">
   .list-form {
     .private-option {
-      padding: 5 0;
+      padding: 5px 0;
     }
 
     .filters-container {
@@ -202,63 +206,7 @@ export default {
     }
 
     .delete-filter-button {
-      position: relative;
-      width: 15px;
-      height: 15px;
       margin-left: 10px;
-      cursor: pointer;
-
-      &::before,
-      &::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        width: 2px;
-        height: 100%;
-        background-color: map-get($colors, 'black');
-        transform-origin: center center;
-        transform: translateX(-50%);
-      }
-
-      &::before {
-        transform: rotate(45deg);
-      }
-
-      &::after {
-        transform: rotate(-45deg);
-      }
-
-      &:hover {
-        opacity: .7;
-      }
-    }
-
-    .add-filter-button {
-      position: relative;
-      width: 15px;
-      height: 15px;
-      padding: 5px;
-      cursor: pointer;
-
-      &::before,
-      &::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        width: 2px;
-        height: 100%;
-        background-color: map-get($colors, 'black');
-        transform-origin: center center;
-        transform: translateX(-50%);
-      }
-
-      &::before {
-        transform: rotate(90deg);
-      }
-
-      &:hover {
-        opacity: .7;
-      }
     }
   }
 </style>

@@ -4,7 +4,7 @@
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
     @before-open="setItemForEditting"
-    @closed="clearData()"
+    @closed="clearData"
   >
     <template v-slot:main>
       <InputCustom
@@ -32,7 +32,7 @@
           :value="category.id"
           :label="category.name"
           name="category"
-          v-model="item.categories"
+          v-model="item.category"
           @click="disableCategory(category.id)"
         />
       </div>
@@ -119,8 +119,8 @@ export default {
       this.closeItemForm();
     },
     disableCategory(id) {
-      if (this.item.categories === id) {
-        this.item.categories = '';
+      if (this.item.category === id) {
+        this.item.category = '';
       }
     },
   },

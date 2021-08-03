@@ -36,7 +36,7 @@ export default {
     return getters.currentListItems.filter(item => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
       const isCategoryIntersection = !categories.length || categories
-        .indexOf(item.categories) !== -1;
+        .indexOf(item.category) !== -1;
 
       return areTagsIntersection && isCategoryIntersection;
     });

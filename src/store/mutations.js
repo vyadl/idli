@@ -23,6 +23,7 @@ export default {
   },
   saveList(state, list) {
     const index = state.lists.findIndex(localList => localList.id === list.id);
+
     state.lists.splice(index, 1, list);
   },
   removeList(state, id) {

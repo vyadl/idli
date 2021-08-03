@@ -23,11 +23,11 @@
           @click="_openSidebar(mode)"
         />
       </div>
-      <div
-        class="open-button"
-        @click="isSidebarOpen ? _closeSidebar() : _openSidebar(isLoggedIn ? 'lists' : 'sign up')"
-      >
-        <div class="arrow"></div>
+      <div class="open-button">
+        <ButtonSign
+          style-type="arrow"
+          @click="isSidebarOpen ? _closeSidebar() : _openSidebar(isLoggedIn ? 'lists' : 'sign up')"
+        />
       </div>
     </div>
     <div class="sidebar-content">
@@ -50,6 +50,7 @@ import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
 import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -62,6 +63,7 @@ export default {
     AuthForm,
     ButtonIcon,
     ButtonText,
+    ButtonSign,
   },
   computed: {
     ...mapGetters({
@@ -109,11 +111,7 @@ export default {
       }
 
       .open-button {
-        transform: translateX(-180%);
-      }
-
-      .arrow {
-        transform: rotate(135deg);
+        transform: translateX(-180%) rotate(180deg);
       }
     }
 
@@ -140,20 +138,9 @@ export default {
     }
 
     .open-button {
-      width: 25px;
-      height: 25px;
-      cursor: pointer;
-      transform: translateX(-100%);
-    }
-
-    .arrow {
-      width: 100%;
-      height: 100%;
-      border-left: 5px solid map-get($colors, 'black');
-      border-top: 5px solid map-get($colors, 'black');
+      width: fit-content;
       transition: transform .4s;
-      transform-origin: center center;
-      transform: rotate(-45deg);
+      transform: translateX(-100%);
     }
 
     .add-item-button {
