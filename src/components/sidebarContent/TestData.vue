@@ -15,7 +15,7 @@
         v-for="list in testData"
         :key="list.name"
         :text="list.name"
-        :style-type="'solid'"
+        style-type="solid"
         @click="_addList(JSON.parse(JSON.stringify(list)))"
       />
     </div>

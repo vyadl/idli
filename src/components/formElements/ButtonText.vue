@@ -4,7 +4,6 @@
     :class="[styleType, { active }]"
     :type="type"
     :disabled="disabled"
-    :stopPropagation="stopPropagation"
     @click="click($event)"
   >{{ text }}</button>
 </template>

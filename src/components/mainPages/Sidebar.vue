@@ -23,10 +23,10 @@
           @click="_openSidebar(mode)"
         />
       </div>
-      <div class="open-button">
+      <div class="state-button">
         <ButtonSign
           style-type="arrow"
-          @click="isSidebarOpen ? _closeSidebar() : _openSidebar(isLoggedIn ? 'lists' : 'sign up')"
+          @click="changeSidebarState"
         />
       </div>
     </div>
@@ -85,6 +85,13 @@ export default {
     openItemForm() {
       this.$modal.show('itemForm');
     },
+    changeSidebarState() {
+      if (this.isSidebarOpen) {
+        this._closeSidebar();
+      } else {
+        this._openSidebar(this.isLoggedIn ? 'lists' : 'sign up');
+      }
+    },
   },
 };
 </script>
@@ -110,7 +117,7 @@ export default {
         transform: translateX(-110%);
       }
 
-      .open-button {
+      .state-button {
         transform: translateX(-180%) rotate(180deg);
       }
     }
@@ -137,7 +144,7 @@ export default {
       transition: transform .4s;
     }
 
-    .open-button {
+    .state-button {
       width: fit-content;
       transition: transform .4s;
       transform: translateX(-100%);

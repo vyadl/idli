@@ -3,7 +3,7 @@
     class="list-form"
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
-    @before-open="setListForEditting()"
+    @before-open="setListForEditting"
     @closed="clearData"
   >
     <template v-slot:main>
@@ -27,9 +27,7 @@
             v-for="(tag, index) in list.filters.tags"
             :key="index"
           >
-            <InputCustom
-              v-model="tag.name"
-            />
+            <InputCustom v-model="tag.name" />
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
@@ -50,9 +48,7 @@
             v-for="(category, index) in list.filters.categories"
             :key="index"
           >
-            <InputCustom
-              v-model="category.name"
-            />
+            <InputCustom v-model="category.name" />
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
