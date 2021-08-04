@@ -3,13 +3,6 @@
     class="main-list"
     @click="_closeSidebar"
   >
-    <transition name="fade">
-      <div
-        class="preloader"
-        v-if="listChanging"
-      >
-      </div>
-    </transition>
     <div
       class="list-title"
       v-if="currentListName"
@@ -57,7 +50,6 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      listChanging: 'listChanging',
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
       shuffleTrigger: 'shuffleTrigger',
@@ -119,16 +111,6 @@ export default {
       &.parallax {
         transform: translateX(-20px);
       }
-    }
-
-    .preloader {
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(#fff, .3);
     }
   }
 </style>

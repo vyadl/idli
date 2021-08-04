@@ -35,8 +35,9 @@ export default {
   setListForEditting(state, id) {
     state.edittingListId = id;
   },
-  filterList(state, { currentListIndex, filters }) {
-    state.lists[currentListIndex].checkedFilters = JSON.parse(JSON.stringify(filters));
+  filterList(state, { tags, categories }) {
+    state.checkedTags = tags;
+    state.checkedCategories = categories;
     state.mode.shuffle = false;
   },
   switchShuffleMode(state) {
@@ -84,55 +85,46 @@ export default {
       changedItem,
     );
   },
-  setChangingStatus(state, status) {
-    state.isChangingActive = status;
-  },
 
   // filters
 
-  addFilter(state, { name, type, filters }) {
-    const clonedTypedFilters = [...filters[type]];
+  addFilter(state, { currentListIndex, type, name }) {
+    const lastElementIndex = state.lists[currentListIndex][type].length - 1;
+    const newId = state.lists[currentListIndex][type].length
+      ? state.lists[currentListIndex][type][lastElementIndex].id + 1
+      : 0;
 
-    clonedTypedFilters.push({
+    state.lists[currentListIndex][type].push({
       name,
-      value: false,
-      id: filters[type].length ? filters[type][filters[type].length - 1].id + 1 : 0,
+      id: newId,
     });
-
-    Vue.set(filters, type, clonedTypedFilters);
   },
   changeFilter(state, {
+    currentListIndex,
     name,
     id,
     type,
-    filters,
   }) {
-    const clonedTypedFilters = [...filters[type]];
-    const filter = clonedTypedFilters.find(item => item.id === id);
+    const index = state.lists[currentListIndex][type].findIndex(filter => filter.id === id);
 
-    filter.name = name;
-    Vue.set(filters, type, clonedTypedFilters);
+    state.lists[currentListIndex][type][index].splice(index, 1, { name, id });
   },
-  removeFilter(state, { type, id, filters }) {
-    Vue.set(
-      filters,
-      type,
-      filters[type].filter(item => item.id !== id),
-    );
+  removeFilter(state, { currentListIndex, type, id }) {
+    state.lists[currentListIndex][type] = state.lists[currentListIndex][type]
+      .filter(filter => filter.id !== id);
   },
   removeFilterFromList(state, { currentListIndex, type, id }) {
     const currentListItems = state.lists[currentListIndex].items;
 
     currentListItems.forEach(item => {
       if (type === 'categories') {
-        item.categories = null; // eslint-disable-line no-param-reassign
+        item.category = null; // eslint-disable-line no-param-reassign
       } else {
-        const filterPosition = item.tags.indexOf(id);
-        const clonedFilters = [...item.tags];
+        const index = item.tags.indexOf(id);
+        const clonedTags = [...item.tags];
 
-        if (filterPosition !== -1) {
-          clonedFilters.splice(filterPosition, 1);
-          item.tags = clonedFilters; // eslint-disable-line no-param-reassign
+        if (index !== -1) {
+          item.tags = clonedTags.splice(index, 1); // eslint-disable-line no-param-reassign
         }
       }
     });
@@ -161,9 +153,6 @@ export default {
   },
   switchInvertMode(state) {
     state.isInvert = !state.isInvert;
-  },
-  changeChangingListStatus(state, status) {
-    state.listChanging = status;
   },
   setSettingsStatus(state, payload) {
     const statuses = state.settingsStatuses;

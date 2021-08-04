@@ -1,17 +1,17 @@
 export default {
   lists: state => state.lists,
+  checkedTags: state => state.checkedTags,
+  checkedCategories: state => state.checkedCategories,
   currentListObj: state => state.lists.find(list => list.id === state.currentListId),
   currentListIndex: (state, getters) => getters.lists
     .findIndex(list => list.id === getters.currentListId),
   currentListId: state => state.currentListId,
   currentListItems: (state, getters) => getters.currentListObj?.items,
-  currentListFilters: (state, getters) => getters.currentListObj?.filters,
-  currentListCheckedFilters: (state, getters) => getters.currentListObj?.checkedFilters,
+  currentListTags: (state, getters) => getters.currentListObj?.tags,
+  currentListCategories: (state, getters) => getters.currentListObj?.categories,
   edittingListObj: state => state.lists.find(list => list.id === state.edittingListId),
   edittingItemObj: state => state.edittingItemObj,
-  listChanging: state => state.listChanging,
   settingsStatuses: state => state.settingsStatuses,
-  isChangingActive: state => state.isChangingActive,
   isCloudModeOn: state => state.mode.cloud,
   isStarsModeOn: state => state.mode.stars,
   isInvert: state => state.isInvert,
@@ -31,7 +31,8 @@ export default {
       return [];
     }
 
-    const { tags, categories } = getters.currentListCheckedFilters;
+    const tags = getters.checkedTags;
+    const categories = getters.checkedCategories;
 
     return getters.currentListItems.filter(item => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));

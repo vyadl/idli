@@ -7,7 +7,7 @@
       <label
         class="g-label"
         :class="{'active': tag.value}"
-        v-for="tag in localFilters.tags"
+        v-for="tag in localTags"
         :key="tag.id"
       >
         {{ tag.name }}
@@ -26,7 +26,7 @@
         categories
       </div>
       <label
-        v-for="category in localFilters.categories"
+        v-for="category in localCategories"
         :key="category.id"
         class="g-label"
         :class="{'active': category.value}"
@@ -50,28 +50,28 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   data: () => ({
-    localFilters: {
-      tags: [],
-      categories: [],
-    },
+    localTags: [],
+    localCategories: [],
   }),
   computed: {
-    ...mapGetters(['currentListFilters']),
+    ...mapGetters({
+      currentListTags: 'currentListTags',
+      currentListCategories: 'currentListCategories',
+    }),
   },
   created() {
-    this.localFilters = this.currentListFilters;
+    this.localTags = [...this.currentListTags];
+    this.localCategories = [...this.currentListCategories];
   },
   methods: {
     ...mapActions(['_filterList']),
-    changeFilter() {
-      const filters = {
-        tags: this.localFilters.tags.filter(tag => tag.value).map(tag => tag.id),
-        categories: this.localFilters.categories
-          .filter(category => category.value).map(category => category.id),
-      };
+    // changeFilter() {
+    //   const tags = this.localTags.filter(tag => tag.value).map(tag => tag.id);
+    //   const categories = this.localFilters.categories
+    //     .filter(category => category.value).map(category => category.id);
 
-      this._filterList(filters);
-    },
+    //   this._filterList({ tags, categories });
+    // },
   },
 };
 </script>

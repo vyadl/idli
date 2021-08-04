@@ -9,12 +9,10 @@ export default {
   List() {
     this.name = null;
     this.id = null;
-    this.items = [];
-    this.filters = {
-      tags: [],
-      categories: [],
-    };
     this.isPrivate = true;
+    this.items = [];
+    this.tags = [];
+    this.categories = [];
   },
   Item() {
     this.id = null;

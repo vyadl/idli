@@ -3,7 +3,7 @@
     <div class="tags">
       <div class="g-setting-title small">tags</div>
       <div
-        v-for="tag in localFilters.tags"
+        v-for="tag in localTags"
         :key="tag.id"
       >
         <input
@@ -62,26 +62,27 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   data: () => ({
-    localFilters: {
-      tags: [],
-      categories: [],
-    },
+    localTags: [],
+    localCategories: [],
     newTag: '',
     newCategory: '',
   }),
   computed: {
-    ...mapGetters(['currentListFilters']),
+    ...mapGetters({
+      currentListTags: 'currentListTags',
+      currentListCategories: 'currentListCategories',
+    }),
   },
   watch: {
-    currentListFilters: {
-      handler() {
-        this.localFilters = JSON.parse(JSON.stringify(this.currentListFilters));
-      },
-      deep: true,
+    currentListTags: function currentListTagsHandler() {
+      this.setLocalFilters();
+    },
+    currentListCategories: function currentListCategoriesHandler() {
+      this.setLocalFilters();
     },
   },
   created() {
-    this.localFilters = JSON.parse(JSON.stringify(this.currentListFilters));
+    this.setLocalFilters();
   },
   methods: {
     ...mapActions([
@@ -89,6 +90,10 @@ export default {
       '_removeFilter',
       '_changeFilter',
     ]),
+    setLocalFilters() {
+      this.localTags = [...this.currentListTags];
+      this.localCategories = [...this.currentListCategories];
+    },
     removeFilter(type, id) {
       this._removeFilter({ type, id });
     },

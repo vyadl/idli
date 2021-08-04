@@ -1,3 +1,5 @@
+import models from '@/models/models';
+
 export default {
   _setState({ commit }, data) {
     commit('setState', data);
@@ -6,21 +8,13 @@ export default {
     if (localStorage.getItem('appLists')) {
       dispatch('_setInitialState', JSON.parse(localStorage.getItem('appLists')));
     } else {
-      dispatch('_addList', {
-        name: 'default',
-        id: null,
-        items: [],
-        filters: {
-          tags: [],
-          categories: [],
-        },
-        checkedFilters: {
-          tags: [],
-          categories: [],
-        },
-      });
+      const list = new models.List();
+      list.name = 'default';
+      dispatch('_addList', list);
     }
   },
+
+  // back
 
   // lists
 
@@ -53,11 +47,8 @@ export default {
   _setListForEditting({ commit }, id) {
     commit('setListForEditting', id);
   },
-  _filterList({ commit, dispatch, getters }, filters) {
-    commit('filterList', {
-      currentListIndex: getters.currentListIndex,
-      filters,
-    });
+  _filterList({ commit, dispatch }, { tags, categories }) {
+    commit('filterList', { tags, categories });
 
     dispatch('_updateLocal');
   },
@@ -80,7 +71,6 @@ export default {
       currentListIndex: getters.currentListIndex,
       newItem,
     });
-    dispatch('_setChangingStatus', false);
     dispatch('_updateLocal');
   },
   _setItems({ commit, dispatch, getters }, newItems) {
@@ -88,7 +78,6 @@ export default {
       currentListIndex: getters.currentListIndex,
       newItems,
     });
-    dispatch('_setChangingStatus', false);
     dispatch('_updateLocal');
   },
   _deleteItem({ commit, dispatch, getters }, item) {
@@ -102,13 +91,8 @@ export default {
 
     dispatch('_setItemForEditting', null);
   },
-  _setItemForEditting({ commit, dispatch }, item) {
+  _setItemForEditting({ commit }, item) {
     commit('setItemForEditting', item);
-    dispatch('_setChangingStatus', true);
-
-    if (!item) {
-      dispatch('_setChangingStatus', false);
-    }
   },
   _changeItem({ commit, dispatch, getters }, changedItem) {
     commit('changeItem', {
@@ -118,22 +102,19 @@ export default {
     dispatch('_setItemForEditting', null);
     dispatch('_updateLocal');
   },
-  _startCreatingItem({ dispatch }) {
-    dispatch('_setChangingStatus', true);
-  },
 
   // filters
 
-  _addFilter({ commit, dispatch, getters }, { name, type }) {
+  _addFilter({ commit, dispatch, getters }, { type, name }) {
     if (
       (['tags', 'categories'].includes(type))
       && typeof name === 'string'
       && name.length
     ) {
       commit('addFilter', {
-        name,
+        currentListIndex: getters.currentListIndex,
         type,
-        filters: getters.currentListFilters,
+        name,
       });
     }
 
@@ -141,19 +122,19 @@ export default {
   },
   _changeFilter({ commit, dispatch, getters }, { type, name, id }) {
     commit('changeFilter', {
+      currentListIndex: getters.currentListIndex,
       type,
       name,
       id,
-      filters: getters.currentListFilters,
     });
 
     dispatch('_updateLocal');
   },
   _removeFilter({ commit, dispatch, getters }, { type, id }) {
     commit('removeFilter', {
+      currentListIndex: getters.currentListIndex,
       type,
       id,
-      filters: getters.currentListFilters,
     });
     commit('removeFilterFromList', {
       currentListIndex: getters.currentListIndex,
@@ -167,9 +148,6 @@ export default {
 
   _changeChangingListStatus({ commit }, status) {
     commit('changeChangingListStatus', status);
-  },
-  _setChangingStatus({ commit }, isActive) {
-    commit('setChangingStatus', isActive);
   },
 
   // setting actions

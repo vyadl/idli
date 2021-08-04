@@ -17,7 +17,7 @@
       />
       <div class="filters-container">
         <CheckboxCustom
-          v-for="tag in currentListFilters.tags"
+          v-for="tag in currentListTags"
           :key="tag.id"
           :value="tag.id"
           :label="tag.name"
@@ -27,7 +27,7 @@
       </div>
       <div class="filters-container">
         <RadioCustom
-          v-for="category in currentListFilters.categories"
+          v-for="category in currentListCategories"
           :key="category.id"
           :value="category.id"
           :label="category.name"
@@ -83,7 +83,8 @@ export default {
   computed: {
     ...mapGetters({
       edittingItemObj: 'edittingItemObj',
-      currentListFilters: 'currentListFilters',
+      currentListTags: 'currentListTags',
+      currentListCategories: 'currentListCategories',
     }),
   },
   methods: {

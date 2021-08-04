@@ -2,6 +2,7 @@
   {
     "name": "Почему котики классные",
     "id": null,
+    "isPrivate": true,
     "items": [
       {
         "id": 0,
@@ -74,28 +75,26 @@
         "category": ""
       }
     ],
-    "filters": {
-      "tags": [
-        {
-          "name": "Лайфхаки",
-          "id": 0
-        },
-        {
-          "name": "Милота",
-          "id": 1
-        },
-        {
-          "name": "Уникальная фича",
-          "id": 2
-        }
-      ],
-      "categories": []
-    },
-    "isPrivate": true
+    "tags": [
+      {
+        "name": "Лайфхаки",
+        "id": 0
+      },
+      {
+        "name": "Милота",
+        "id": 1
+      },
+      {
+        "name": "Уникальная фича",
+        "id": 2
+      }
+    ],
+    "categories": []
   },
   {
     "name": "План на лето",
     "id": null,
+    "isPrivate": true,
     "items": [
       {
         "id": 0,
@@ -175,15 +174,13 @@
         "category": ""
       }
     ],
-    "filters": {
-      "tags": [],
-      "categories": []
-    },
-    "isPrivate": true
+    "tags": [],
+    "categories": []
   },
   {
     "name": "Конституция республики Ужупис",
     "id": null,
+    "isPrivate": true,
     "items": [
       {
         "id": 0,
@@ -459,15 +456,13 @@
         "category": ""
       }
     ],
-    "filters": {
-      "tags": [],
-      "categories": []
-    },
-    "isPrivate": true
+    "tags": [],
+    "categories": []
   },
   {
     "name": "Stars",
     "id": null,
+    "isPrivate": true,
     "items": [
       {
         "id": 0,
@@ -1163,88 +1158,85 @@
         "category": 14
       }
     ],
-    "filters": {
-      "tags": [
-        {
-          "name": "α",
-          "id": 0
-        },
-        {
-          "name": "β",
-          "id": 1
-        },
-        {
-          "name": "γ",
-          "id": 2
-        },
-        {
-          "name": "Variable star",
-          "id": 3
-        }
-      ],
-      "categories": [
-        {
-          "name": "Andromeda constellation",
-          "id": 0
-        },
-        {
-          "name": "Aquarius constellation",
-          "id": 1
-        },
-        {
-          "name": "Cancer constellation",
-          "id": 2
-        },
-        {
-          "name": "Cassiopeia constellation",
-          "id": 3
-        },
-        {
-          "name": "Gemini constellation",
-          "id": 4
-        },
-        {
-          "name": "Hydra constellation",
-          "id": 5
-        },
-        {
-          "name": "Leo constellation",
-          "id": 6
-        },
-        {
-          "name": "Lyra constellation",
-          "id": 7
-        },
-        {
-          "name": "Pegasus constellation",
-          "id": 8
-        },
-        {
-          "name": "Pisces constellation",
-          "id": 9
-        },
-        {
-          "name": "Sagittarius constellation",
-          "id": 10
-        },
-        {
-          "name": "Scorpius constellation",
-          "id": 11
-        },
-        {
-          "name": "Taurus constellation",
-          "id": 12
-        },
-        {
-          "name": "Ursa Major constellation",
-          "id": 13
-        },
-        {
-          "name": "Ursa Minor constellation",
-          "id": 14
-        }
-      ]
-    },
-    "isPrivate": true
+    "tags": [
+      {
+        "name": "α",
+        "id": 0
+      },
+      {
+        "name": "β",
+        "id": 1
+      },
+      {
+        "name": "γ",
+        "id": 2
+      },
+      {
+        "name": "Variable star",
+        "id": 3
+      }
+    ],
+    "categories": [
+      {
+        "name": "Andromeda constellation",
+        "id": 0
+      },
+      {
+        "name": "Aquarius constellation",
+        "id": 1
+      },
+      {
+        "name": "Cancer constellation",
+        "id": 2
+      },
+      {
+        "name": "Cassiopeia constellation",
+        "id": 3
+      },
+      {
+        "name": "Gemini constellation",
+        "id": 4
+      },
+      {
+        "name": "Hydra constellation",
+        "id": 5
+      },
+      {
+        "name": "Leo constellation",
+        "id": 6
+      },
+      {
+        "name": "Lyra constellation",
+        "id": 7
+      },
+      {
+        "name": "Pegasus constellation",
+        "id": 8
+      },
+      {
+        "name": "Pisces constellation",
+        "id": 9
+      },
+      {
+        "name": "Sagittarius constellation",
+        "id": 10
+      },
+      {
+        "name": "Scorpius constellation",
+        "id": 11
+      },
+      {
+        "name": "Taurus constellation",
+        "id": 12
+      },
+      {
+        "name": "Ursa Major constellation",
+        "id": 13
+      },
+      {
+        "name": "Ursa Minor constellation",
+        "id": 14
+      }
+    ]
   }
 ]

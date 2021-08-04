@@ -2,9 +2,10 @@ export default {
   lists: [],
   currentListId: null,
   edittingListId: null,
-  shuffledList: null,
-  listChanging: false,
+  checkedTags: [],
+  checkedCategories: [],
   edittingItemObj: null,
+  shuffledList: null,
   settingsStatuses: {
     filters: false,
     visualization: false,
@@ -24,7 +25,6 @@ export default {
     showByHover: true,
   },
   isInvert: false,
-  isChangingActive: false,
   sidebar: {
     isOpen: false,
     mode: null,

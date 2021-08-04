@@ -24,7 +24,7 @@
           </h1>
           <div
             class="filter"
-            v-for="(tag, index) in list.filters.tags"
+            v-for="(tag, index) in list.tags"
             :key="index"
           >
             <InputCustom v-model="tag.name" />
@@ -45,7 +45,7 @@
           </h1>
           <div
             class="filter"
-            v-for="(category, index) in list.filters.categories"
+            v-for="(category, index) in list.categories"
             :key="index"
           >
             <InputCustom v-model="category.name" />
@@ -136,10 +136,10 @@ export default {
       this.errorMessage = '';
     },
     deleteFilter(type, index) {
-      this.list.filters[type].splice(index, 1);
+      this.list[type].splice(index, 1);
     },
     addFilter(type) {
-      this.list.filters[type].push({
+      this.list[type].push({
         name: null,
         id: null,
       });
@@ -147,8 +147,8 @@ export default {
     verifyFilters() {
       const filtersNames = [];
 
-      this.list.filters.tags.forEach(tag => filtersNames.push(tag.name));
-      this.list.filters.categories.forEach(category => filtersNames.push(category.name));
+      this.list.tags.forEach(tag => filtersNames.push(tag.name));
+      this.list.categories.forEach(category => filtersNames.push(category.name));
 
       return filtersNames.length === new Set(filtersNames).size;
     },
