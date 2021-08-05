@@ -1,31 +1,46 @@
-import models from '@/models/models';
-
 export default {
-  _setState({ commit }, data) {
-    commit('setState', data);
+// back
+
+  _fetchListsForUser({ commit }) {
+    return this._vm.$axios.get(`${this._vm.$apiBasePath}lists`)
+      .then(response => { commit('setLists', response.data); })
+      .catch(error => { throw error; });
   },
-  _getInitialData({ dispatch }) {
-    if (localStorage.getItem('appLists')) {
-      dispatch('_setInitialState', JSON.parse(localStorage.getItem('appLists')));
-    } else {
-      const list = new models.List();
-      list.name = 'default';
-      dispatch('_addList', list);
+
+  _fetchListById({ commit }, id) {
+    return this._vm.$axios.get(`${this._vm.$apiBasePath}lists/${id}`)
+      .then(response => { commit('setCurrentListObj', response.data); })
+      .catch(error => { throw error; });
+  },
+
+  _addList({ commit, dispatch }, list) {
+    return this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, list)
+      .then(response => {
+        echo(1);
+        commit('addList', response.data);
+        commit('setCurrentListObj', response.data);
+        dispatch('_updateLocal');
+      })
+      .catch(error => { throw error; });
+  },
+
+  // local storage
+
+  _setDataFromLocalStorage({ commit }) {
+    const currentListId = localStorage.getItem('currentListId');
+
+    if (currentListId) {
+      commit('setCurrentListId', JSON.parse(currentListId));
     }
   },
-
-  // back
+  _updateLocal({ getters }) {
+    localStorage.setItem('currentListId', JSON.stringify({
+      currentListId: getters.currentListId,
+    }));
+  },
 
   // lists
 
-  _setInitialState({ commit }, lists) {
-    commit('setInitialState', lists);
-  },
-  _addList({ commit, dispatch }, list) {
-    commit('addList', list);
-
-    dispatch('_updateLocal');
-  },
   _saveList({ commit, dispatch }, list) {
     commit('saveList', list);
 
@@ -183,14 +198,5 @@ export default {
   _closeSidebar({ commit }) {
     commit('closeSidebar');
     commit('changeSidebarMode', null);
-  },
-
-  // local updates
-
-  _updateLocal({ getters }) {
-    localStorage.setItem('appLists', JSON.stringify({
-      lists: getters.lists,
-      currentListId: getters.currentListId,
-    }));
   },
 };

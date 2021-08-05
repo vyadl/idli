@@ -2,14 +2,16 @@ export default {
   lists: state => state.lists,
   checkedTags: state => state.checkedTags,
   checkedCategories: state => state.checkedCategories,
-  currentListObj: state => state.lists.find(list => list.id === state.currentListId),
+  currentListObj: state => state.currentListObj,
   currentListIndex: (state, getters) => getters.lists
     .findIndex(list => list.id === getters.currentListId),
   currentListId: state => state.currentListId,
   currentListItems: (state, getters) => getters.currentListObj?.items,
   currentListTags: (state, getters) => getters.currentListObj?.tags,
   currentListCategories: (state, getters) => getters.currentListObj?.categories,
-  edittingListObj: state => state.lists.find(list => list.id === state.edittingListId),
+  edittingListObj: state => state.lists.length
+    ? state.lists.find(list => list.id === state.edittingListId)
+    : null,
   edittingItemObj: state => state.edittingItemObj,
   settingsStatuses: state => state.settingsStatuses,
   isCloudModeOn: state => state.mode.cloud,

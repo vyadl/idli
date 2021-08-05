@@ -1,26 +1,19 @@
 import Vue from 'vue';
 
 export default {
-
-  // lists
-
-  addList(state, list) {
-    let { name } = list;
-    let isListNameSame = state.lists.some(localList => name === localList.name);
-
-    while (isListNameSame) {
-      name = `${name} (copy)`;
-      isListNameSame = state.lists
-        .some(localList => name === localList.name); // eslint-disable-line no-loop-func
-    }
-
-    list.name = name; // eslint-disable-line no-param-reassign
-    list.id = state.lists.length // eslint-disable-line no-param-reassign
-      ? state.lists[state.lists.length - 1].id + 1
-      : 0;
-    state.lists.push(list);
-    state.currentListId = list.id;
+  setCurrentListId(state, id) {
+    state.currentListId = id;
   },
+  setCurrentListObj(state, list) {
+    state.currentListObj = list;
+  },
+  setLists(state, lists) {
+    state.lists = lists;
+  },
+  addList(state, list) {
+    state.lists.push(list);
+  },
+
   saveList(state, list) {
     const index = state.lists.findIndex(localList => localList.id === list.id);
 
@@ -42,10 +35,6 @@ export default {
   },
   switchShuffleMode(state) {
     state.mode.shuffle = !state.mode.shuffle;
-  },
-  setInitialState(state, { lists, currentListId }) {
-    state.lists = lists;
-    state.currentListId = currentListId;
   },
   shuffleFilteredList(state) {
     state.shuffleTrigger = !state.shuffleTrigger;

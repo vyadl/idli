@@ -8,9 +8,7 @@ export default {
   },
   List() {
     this.name = null;
-    this.id = null;
     this.isPrivate = true;
-    this.items = [];
     this.tags = [];
     this.categories = [];
   },

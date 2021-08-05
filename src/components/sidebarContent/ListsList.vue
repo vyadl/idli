@@ -18,8 +18,7 @@
         <ButtonText
           style-type="line"
           :text="list.name"
-          :active="list.id === currentListId"
-          @click="_switchList(list.id)"
+          @click="_fetchListById(list.id)"
         />
       </div>
       <ButtonText
@@ -47,13 +46,13 @@ export default {
   computed: {
     ...mapGetters({
       lists: 'lists',
-      currentListId: 'currentListId',
+      currentListObj: 'currentListObj',
       edittingListObj: 'edittingListObj',
     }),
   },
   methods: {
     ...mapActions({
-      _switchList: '_switchList',
+      _fetchListById: '_fetchListById',
       _setListForEditting: '_setListForEditting',
     }),
     openListForm() {

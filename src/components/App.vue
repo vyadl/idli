@@ -41,13 +41,18 @@ export default {
   },
   created() {
     axiosSettings.initAxios();
-    this._initUser();
-    this._getInitialData();
+    this._setUserFromLocalStorage();
+    this._setDataFromLocalStorage();
+
+    if (this.isLoggedIn) {
+      this._fetchListsForUser();
+    }
   },
   methods: {
     ...mapActions({
-      _initUser: 'auth/_initUser',
-      _getInitialData: '_getInitialData',
+      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
+      _setDataFromLocalStorage: '_setDataFromLocalStorage',
+      _fetchListsForUser: '_fetchListsForUser',
     }),
   },
 };
