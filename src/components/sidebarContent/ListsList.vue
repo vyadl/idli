@@ -18,7 +18,7 @@
         <ButtonText
           style-type="line"
           :text="list.name"
-          @click="_fetchListById(list.id)"
+          @click="openList(list.id)"
         />
       </div>
       <ButtonText
@@ -46,14 +46,14 @@ export default {
   computed: {
     ...mapGetters({
       lists: 'lists',
-      currentListObj: 'currentListObj',
       edittingListObj: 'edittingListObj',
     }),
   },
   methods: {
     ...mapActions({
-      _fetchListById: '_fetchListById',
       _setListForEditting: '_setListForEditting',
+      _fetchListById: '_fetchListById',
+      _switchList: '_switchList',
     }),
     openListForm() {
       this.$modal.show('listForm');
@@ -61,6 +61,9 @@ export default {
     setListForEditting(id) {
       this._setListForEditting(id);
       this.openListForm();
+    },
+    openList(id) {
+      this._fetchListById(id).then(response => this._switchList(response.data));
     },
   },
 };

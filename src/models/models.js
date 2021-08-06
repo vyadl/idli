@@ -13,7 +13,6 @@ export default {
     this.categories = [];
   },
   Item() {
-    this.id = null;
     this.text = null;
     this.details = null;
     this.tags = [];

@@ -119,8 +119,8 @@ export default {
     ...mapActions({
       _setListForEditting: '_setListForEditting',
       _addList: '_addList',
-      _saveList: '_saveList',
-      _removeList: '_removeList',
+      _updateList: '_updateList',
+      _deleteList: '_deleteList',
     }),
     closeListForm() {
       this.$modal.hide('listForm');
@@ -153,13 +153,13 @@ export default {
       return filtersNames.length === new Set(filtersNames).size;
     },
     deleteList(id) {
-      this._removeList(id);
+      this._deleteList(id);
       this.closeListForm();
     },
     submitList() {
       if (this.verifyFilters()) {
         if (this.edittingListObj) {
-          this._saveList(this.list);
+          this._updateList(this.list);
         } else {
           this._addList(this.list);
         }

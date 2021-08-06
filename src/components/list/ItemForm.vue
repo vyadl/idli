@@ -91,7 +91,7 @@ export default {
     ...mapActions({
       _setItemForEditting: '_setItemForEditting',
       _addItem: '_addItem',
-      _changeItem: '_changeItem',
+      _updateItem: '_updateItem',
       _deleteItem: '_deleteItem',
     }),
     closeItemForm() {
@@ -108,7 +108,7 @@ export default {
     },
     saveItem() {
       if (this.edittingItemObj) {
-        this._changeItem(this.item);
+        this._updateItem(this.item);
       } else {
         this._addItem(this.item);
       }

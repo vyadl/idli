@@ -37,7 +37,7 @@
 
 <script>
 import ListItem from '@/components/list/ListItem.vue';
-import Utils from '@/utils/utils';
+import utils from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -64,7 +64,7 @@ export default {
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
-      return Utils.shuffleArray(this.filteredList);
+      return utils.shuffleArray(this.filteredList);
     },
     computedList() {
       return this.isShuffled ? this.shuffledList : this.filteredList;

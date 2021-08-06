@@ -1,8 +1,7 @@
 export default {
   lists: [],
   currentListObj: null,
-  currentListId: null,
-  edittingListId: null,
+  edittingListObj: null,
   checkedTags: [],
   checkedCategories: [],
   edittingItemObj: null,

@@ -1,9 +1,8 @@
 import Vue from 'vue';
 
 export default {
-  setCurrentListId(state, id) {
-    state.currentListId = id;
-  },
+  // lists
+
   setCurrentListObj(state, list) {
     state.currentListObj = list;
   },
@@ -13,20 +12,19 @@ export default {
   addList(state, list) {
     state.lists.push(list);
   },
-
-  saveList(state, list) {
+  setListForEditting(state, list) {
+    state.edittingListObj = list;
+  },
+  updateList(state, list) {
     const index = state.lists.findIndex(localList => localList.id === list.id);
 
     state.lists.splice(index, 1, list);
   },
-  removeList(state, id) {
+  deleteList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);
   },
-  switchList(state, id) {
-    state.currentListId = id;
-  },
-  setListForEditting(state, id) {
-    state.edittingListId = id;
+  switchList(state, list) {
+    state.currentListObj = list;
   },
   filterList(state, { tags, categories }) {
     state.checkedTags = tags;
@@ -42,6 +40,9 @@ export default {
 
   // items
 
+  setItems(state, { currentListIndex, newItems }) {
+    state.lists[currentListIndex].items = newItems;
+  },
   addItem(state, { currentListIndex, newItem }) {
     const currentListItems = state.lists[currentListIndex].items;
 
@@ -54,17 +55,10 @@ export default {
       id: newItemId,
     });
   },
-  setItems(state, { currentListIndex, newItems }) {
-    state.lists[currentListIndex].items = newItems;
-  },
-  deleteItem(state, { currentListIndex, id }) {
-    state.lists[currentListIndex].items = state.lists[currentListIndex].items
-      .filter(item => item.id !== id);
-  },
   setItemForEditting(state, item) {
     state.edittingItemObj = item;
   },
-  changeItem(state, { currentListIndex, changedItem }) {
+  updateItem(state, { currentListIndex, changedItem }) {
     const index = state.lists[currentListIndex].items
       .findIndex(item => item.id === changedItem.id);
 
@@ -73,6 +67,10 @@ export default {
       index,
       changedItem,
     );
+  },
+  deleteItem(state, { currentListIndex, id }) {
+    state.lists[currentListIndex].items = state.lists[currentListIndex].items
+      .filter(item => item.id !== id);
   },
 
   // filters
