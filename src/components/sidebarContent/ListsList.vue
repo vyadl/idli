@@ -23,8 +23,8 @@
         />
       </div>
       <ButtonText
-        text="new list"
-        style-type="solid"
+        text="add"
+        title="new list"
         @click="openListForm"
       />
     </div>
@@ -76,7 +76,7 @@ export default {
     .list {
       display: flex;
       align-items: center;
-      transform: translateX(-10%);
+      margin-bottom: 5px;
 
       &:hover {
         .edit-button {
@@ -85,7 +85,7 @@ export default {
       }
     }
 
-    button.edit-button {
+    .edit-button {
       opacity: 0;
     }
   }

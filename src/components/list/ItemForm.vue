@@ -38,19 +38,20 @@
       </div>
     </template>
     <template v-slot:buttons>
+      <div>
+        <ButtonText
+          class="modal-button"
+          text="save"
+          @click="saveItem"
+        />
+        <ButtonText
+          text="cancel"
+          @click="closeItemForm"
+        />
+      </div>
       <ButtonText
-        text="save"
-        style-type="bordered"
-        @click="saveItem"
-      />
-      <ButtonText
-        text="cancel"
-        style-type="bordered"
-        @click="closeItemForm"
-      />
-      <ButtonText
-        text="delete"
-        style-type="bordered"
+        text="delete item"
+        style-type="underline"
         v-if="edittingItemObj"
         @click="deleteItem(item)"
       />
@@ -133,6 +134,10 @@ export default {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
+    }
+
+    .modal-button {
+      margin-right: 10px;
     }
   }
 </style>

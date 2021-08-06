@@ -22,8 +22,8 @@ export default {
     .title {
       width: fit-content;
       margin: 0 auto 15px;
-      font-size: 14px;
-      color: #333;
+      font-size: map-get($text, 'title-font-size');
+      color: map-get($colors, 'black');
     }
   }
 </style>

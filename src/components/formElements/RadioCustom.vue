@@ -48,21 +48,36 @@ export default {
     display: block;
     width: fit-content;
     margin-bottom: 10px;
+    margin-right: 7px;
     cursor: pointer;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
 
     .input {
       display: none;
 
       &:checked {
         &+.label {
-          background-color: map-get($colors, 'gray-1');
+          background-color: map-get($colors, 'black');
+          color: map-get($colors, 'white');
         }
       }
     }
 
     .label {
-      padding: 5px;
-      background-color: map-get($colors, 'gray-3');
+      border: 2px solid map-get($colors, 'black');
+      border-radius: 25px;
+      padding: 3px 7px 5px;
+      background-color: map-get($colors, 'white');
+      font-size: 13px;
+      transition: background-color .3s;
+
+      &:hover {
+        background-color: map-get($colors, 'black');
+        color: map-get($colors, 'white');
+      }
     }
   }
 </style>

@@ -11,12 +11,16 @@
     <div class="buttons-container">
       <ButtonText
         text="sign up"
+        style-type="line"
+        active
         stop-propagation
         @click="_openSidebar('sign up')"
       />
-      <div>|</div>
+      <div> | </div>
       <ButtonText
         text="sign in"
+        style-type="line"
+        active
         stop-propagation
         @click="_openSidebar('sign in')"
       />

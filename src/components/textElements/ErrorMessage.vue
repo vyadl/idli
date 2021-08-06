@@ -15,9 +15,8 @@ export default {
 <style lang="scss">
   .error-message {
     width: 100%;
-    padding: 8px;
-    font-size: 10px;
-    background-color: map-get($colors, 'error-background');
+    padding: 5px 3px;
+    font-size: 13px;
     color: map-get($colors, 'error-text');
   }
 </style>

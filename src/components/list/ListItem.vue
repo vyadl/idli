@@ -146,7 +146,7 @@ export default {
 
     .inner {
       display: inline-block;
-      font-size: 16px;
+      font-size: map-get($text, 'title-font-size');
       margin-bottom: 10px;
       padding: 5px;
       transition: 0.2s box-shadow;

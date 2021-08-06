@@ -107,8 +107,8 @@ export default {
     .list-title {
       margin-bottom: 40px;
       padding: 10px;
-      font-size: 14px;
-      color: #bbb;
+      font-size: map-get($text, 'title-font-size');
+      color: map-get($colors, 'gray-light');
     }
 
     .items-container {

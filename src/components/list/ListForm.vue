@@ -14,6 +14,8 @@
       <div class="private-option">
         <CheckboxCustom
           label="private"
+          style-type="classic"
+          :title="list.isPrivate ? 'now you can`t share this list' : 'now you can share this list'"
           v-model="list.isPrivate"
         />
       </div>
@@ -31,11 +33,13 @@
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
+              title="delete tag"
               @click="deleteFilter('tags', index)"
             />
           </div>
           <ButtonSign
             style-type="plus"
+            title="add tag"
             @click="addFilter('tags')"
           />
         </div>
@@ -52,11 +56,13 @@
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
+              title="delete category"
               @click="deleteFilter('categories', index)"
             />
           </div>
           <ButtonSign
             style-type="plus"
+            title="add category"
             @click="addFilter('categories')"
           />
         </div>
@@ -65,23 +71,24 @@
         :message="errorMessage"
         v-if="errorMessage"
       />
-      <ButtonText
-        text="delete list"
-        style-type="solid"
-        v-if="edittingListObj"
-        @click="deleteList(list.id)"
-      />
     </template>
     <template v-slot:buttons>
+      <div>
+        <ButtonText
+          class="modal-button"
+          text="save"
+          @click="submitList"
+        />
+        <ButtonText
+          text="cancel"
+          @click="closeListForm"
+        />
+      </div>
       <ButtonText
-        text="save"
-        style-type="solid"
-        @click="submitList"
-      />
-      <ButtonText
-        text="cansel"
-        style-type="solid"
-        @click="closeListForm"
+        text="delete list"
+        style-type="underline"
+        v-if="edittingListObj"
+        @click="deleteList(list.id)"
       />
     </template>
   </ModalBasic>
@@ -176,7 +183,7 @@ export default {
 <style lang="scss">
   .list-form {
     .private-option {
-      padding: 5px 0;
+      padding: 8px 0 15px;
     }
 
     .filters-container {
@@ -193,7 +200,7 @@ export default {
 
     .filters-header {
       margin-bottom: 8px;
-      font-size: 12px;
+      text-align: center;
     }
 
     .filter {
@@ -203,6 +210,10 @@ export default {
 
     .delete-filter-button {
       margin-left: 10px;
+    }
+
+    .modal-button {
+      margin-right: 10px;
     }
   }
 </style>

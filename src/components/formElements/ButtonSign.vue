@@ -1,8 +1,9 @@
 <template>
   <button
     class="button-sign"
-    :class="[styleType, { active }]"
+    :class="[styleType, { big }]"
     :type="type"
+    :title="title"
     :disabled="disabled"
     @click="click($event)"
   ></button>
@@ -12,13 +13,17 @@
 export default {
   props: {
     styleType: String,
-    active: {
+    big: {
       type: Boolean,
       default: false,
     },
     type: {
       type: String,
       default: 'button',
+    },
+    title: {
+      type: String,
+      default: '',
     },
     disabled: {
       type: Boolean,
@@ -47,14 +52,6 @@ export default {
     cursor: pointer;
     transition: opacity .2s;
 
-    &:hover {
-      opacity: .7;
-    }
-
-    &.active {
-      opacity: .85;
-    }
-
     &.arrow {
       width: 20px;
       height: 20px;
@@ -67,8 +64,13 @@ export default {
     &.plus,
     &.cross {
       position: relative;
-      width: 15px;
-      height: 15px;
+
+      &:hover {
+        &::before,
+        &::after {
+          background-color: map-get($colors, 'gray-dark');
+        }
+      }
 
       &::before,
       &::after {
@@ -76,27 +78,47 @@ export default {
         position: absolute;
         top: 0;
         left: 50%;
-        width: 2px;
+        width: 1px;
         height: 100%;
         background-color: map-get($colors, 'black');
         transform-origin: center center;
-        transform: translateX(-50%);
+        transition: color .2s;
       }
     }
 
     &.plus {
+      width: 15px;
+      height: 15px;
+
+      &.big {
+        width: 22px;
+        height: 22px;
+
+        &::before,
+        &::after {
+          width: 2px;
+        }
+      }
+
       &::before {
-        transform: rotate(90deg);
+        transform: translateX(-50%) rotate(90deg);
+      }
+
+      &::after {
+        transform: translateX(-50%);
       }
     }
 
     &.cross {
+      width: 12px;
+      height: 12px;
+
       &::before {
-        transform: rotate(45deg);
+        transform: translateX(-50%) rotate(45deg);
       }
 
       &::after {
-        transform: rotate(-45deg);
+        transform: translateX(-50%) rotate(-45deg);
       }
     }
   }

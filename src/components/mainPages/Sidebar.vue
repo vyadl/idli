@@ -7,8 +7,10 @@
       class="add-item-button"
       v-if="isLoggedIn"
     >
-      <ButtonIcon
-        icon-name="add"
+      <ButtonSign
+        style-type="plus"
+        big
+        title="new item"
         @click="openItemForm"
       />
     </div>
@@ -16,7 +18,6 @@
       <div class="mode-buttons">
         <ButtonText
           class="mode-button"
-          style-type="solid"
           v-for="mode in sidebarModes"
           :key="mode"
           :active="sidebarMode === mode"
@@ -49,7 +50,6 @@ import ListsList from '@/components/sidebarContent/ListsList.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
-import ButtonIcon from '@/components/formElements/ButtonIcon.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -62,7 +62,6 @@ export default {
     UserProfile,
     RegistrationForm,
     AuthForm,
-    ButtonIcon,
     ButtonText,
     ButtonSign,
   },
@@ -115,11 +114,11 @@ export default {
       transform: translateX(0);
 
       .mode-buttons {
-        transform: translateX(-110%);
+        transform: translateX(-100%) translateX(-7px);
       }
 
       .state-button {
-        transform: translateX(-200%) rotate(180deg);
+        transform: translateX(-180%) rotate(180deg);
       }
     }
 
@@ -147,7 +146,7 @@ export default {
 
     .mode-button {
       position: relative;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
 
       &::before {
         content: '';
@@ -164,13 +163,13 @@ export default {
     .state-button {
       width: fit-content;
       transition: transform .4s;
-      transform: translateX(-150%);
+      transform: translateX(-110%);
     }
 
     .add-item-button {
       position: fixed;
-      top: 20px;
-      transform: translateX(-120%);
+      top: 10px;
+      transform: translateX(-100%) translateX(-10px);
     }
   }
 </style>

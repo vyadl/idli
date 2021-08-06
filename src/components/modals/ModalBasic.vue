@@ -59,18 +59,23 @@ export default {
     }
 
     .vm--modal {
-      padding: 25px;
+      padding: 28px;
     }
 
-    .header,
+    .header {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: map-get($text, 'title-font-size');
+    }
+
     .main {
-      margin-bottom: 10px;
+      margin-bottom: 25px;
     }
 
     .footer {
       display: flex;
-      justify-content: flex-start;
-      padding-top: 30px;
+      justify-content: space-between;
+      align-items: flex-end;
     }
   }
 </style>

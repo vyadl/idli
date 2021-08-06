@@ -3,6 +3,7 @@
     class="button-text"
     :class="[styleType, { active }]"
     :type="type"
+    :title="title"
     :disabled="disabled"
     @click="click($event)"
   >{{ text }}</button>
@@ -11,7 +12,10 @@
 <script>
 export default {
   props: {
-    styleType: String,
+    styleType: {
+      type: String,
+      default: 'bordered',
+    },
     active: {
       type: Boolean,
       default: false,
@@ -19,6 +23,10 @@ export default {
     type: {
       type: String,
       default: 'button',
+    },
+    title: {
+      type: String,
+      default: '',
     },
     disabled: {
       type: Boolean,
@@ -44,43 +52,80 @@ export default {
 
 <style lang="scss">
   .button-text {
-    margin: 3px;
     padding: 5px 14px 7px;
     text-align: left;
     vertical-align: middle;
     line-height: 1.3;
-    font-size: 12px;
     letter-spacing: .3px;
     cursor: pointer;
-    transition: opacity .2s;
 
-    &:hover {
-      opacity: .7;
-    }
-
-    &.solid {
-      font-size: 14px;
-      border: 2px solid black;
+    &.bordered {
+      border: 2px solid map-get($colors, 'black');
       border-radius: 3px;
-      background-color: white;
+      background-color: map-get($colors, 'white');
+      transition: background-color .3s;
 
-      &.active {
+      &.active,
+      &:hover {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
       }
+
+      &:disabled {
+        border-color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'gray-light');
+
+        &:hover {
+          background-color: transparent;
+        }
+      }
     }
 
-    &.bordered {
-      border: 3px solid map-get($colors, 'gray-2');
+    &.solid {
+      border: 2px solid map-get($colors, 'black');
+      border-radius: 3px;
+      background-color: map-get($colors, 'black');
+      color: map-get($colors, 'white');
+      transition: background-color .3s;
+
+      &.active,
+      &:hover {
+        border-color: map-get($colors, 'black');
+        background-color: map-get($colors, 'white');
+        color: map-get($colors, 'black');
+      }
+
+      &:disabled {
+        border-color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'gray-light');
+
+        &:hover {
+          background-color: transparent;
+        }
+      }
     }
 
     &.underline {
-      border-bottom: 1px solid map-get($colors, 'gray-2');
+      padding: 5px;
+      font-size: 13px;
+      text-decoration: underline;
+      color: map-get($colors, 'gray-dark');
+      transition: color .2s;
+
+      &:hover {
+        color: map-get($colors, 'gray-light');
+      }
     }
 
     &.line {
-      margin-bottom: 5px;
-      padding: 0;
+      padding: 3px;
+      color: map-get($colors, 'gray-light');
+      transition: color .2s;
+
+      &.active,
+      &:hover {
+        color: map-get($colors, 'black');
+      }
     }
   }
 </style>
