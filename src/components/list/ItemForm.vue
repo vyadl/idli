@@ -7,14 +7,16 @@
     @closed="clearData"
   >
     <template v-slot:main>
-      <InputCustom
-        label="item"
-        v-model="item.text"
-      />
-      <TextareaCustom
-        label="details"
-        v-model="item.details"
-      />
+      <div class="text-fields">
+        <InputCustom
+          label="item"
+          v-model="item.text"
+        />
+        <TextareaCustom
+          label="details"
+          v-model="item.details"
+        />
+      </div>
       <div class="filters-container">
         <CheckboxCustom
           v-for="tag in currentListFilters.tags"
@@ -130,6 +132,10 @@ export default {
 
 <style lang="scss">
   .item-form {
+    .text-fields {
+      margin-bottom: 25px;
+    }
+
     .filters-container {
       display: flex;
       justify-content: center;

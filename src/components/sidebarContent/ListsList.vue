@@ -9,10 +9,9 @@
         v-for="list in lists"
         :key="list.id"
       >
-        <ButtonText
-          style-type="line"
+        <ButtonSign
+          style-type="dots"
           class="edit-button"
-          text="···"
           @click="setListForEditting(list.id)"
         />
         <ButtonText
@@ -35,6 +34,7 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import TestData from '@/components/sidebarContent/TestData.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -42,6 +42,7 @@ export default {
   components: {
     SidebarCard,
     TestData,
+    ButtonSign,
     ButtonText,
   },
   computed: {
@@ -70,13 +71,18 @@ export default {
 <style lang="scss">
   .lists-list {
     .lists-container {
-      margin-bottom: 40px;
+      margin-bottom: 100px;
     }
 
     .list {
       display: flex;
       align-items: center;
-      margin-bottom: 5px;
+      width: fit-content;
+      transform: translateX(-15px);
+
+      &:last-of-type {
+        margin-bottom: 20px;
+      }
 
       &:hover {
         .edit-button {

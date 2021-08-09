@@ -61,6 +61,28 @@ export default {
       transform: rotate(-45deg);
     }
 
+    &.dots {
+      position: relative;
+      width: 17px;
+      height: 17px;
+
+      &:hover {
+        &::before {
+          color: map-get($colors, 'black');
+        }
+      }
+
+      &::before {
+        content: '...';
+        position: absolute;
+        font-size: 14px;
+        font-weight: 100;
+        color: map-get($colors, 'gray-light');
+        transform: translate(-2px, -9px) rotate(90deg);
+        transition: color .2s;
+      }
+    }
+
     &.plus,
     &.cross {
       position: relative;

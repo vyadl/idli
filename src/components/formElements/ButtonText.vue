@@ -106,7 +106,7 @@ export default {
     }
 
     &.underline {
-      padding: 5px;
+      padding: 5px 0;
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
@@ -118,7 +118,8 @@ export default {
     }
 
     &.line {
-      padding: 3px;
+      margin-bottom: 3px;
+      padding: 5px 0;
       color: map-get($colors, 'gray-light');
       transition: color .2s;
 

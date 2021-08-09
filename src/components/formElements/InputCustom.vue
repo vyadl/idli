@@ -74,7 +74,7 @@ export default {
 
       .input {
         width: 100%;
-        padding: 7px 3px 3px;
+        padding: 9px 3px 4px;
         border-bottom: 1px solid map-get($colors, 'gray-light');
         transition: border-color .3s;
 

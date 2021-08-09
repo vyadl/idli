@@ -3,10 +3,11 @@
     class="test-data"
     title="test data"
   >
-    <div
-      class="open-message"
+    <ButtonText
+      class="open-button"
+      :text="areTestListsShown ? 'hide test lists' : 'show test lists'"
       @click="areTestListsShown = !areTestListsShown"
-    >show test lists</div>
+    />
     <div
       class="test-list-buttons"
       v-if="areTestListsShown"
@@ -15,7 +16,7 @@
         v-for="list in testData"
         :key="list.name"
         :text="list.name"
-        style-type="solid"
+        style-type="line"
         @click="_addList(JSON.parse(JSON.stringify(list)))"
       />
     </div>
@@ -57,10 +58,8 @@ export default {
     align-items: center;
     width: 100%;
 
-    .open-message {
+    .open-button {
       margin-bottom: 10px;
-      color: map-get($colors, 'gray-1');
-      cursor: pointer;
     }
 
     .test-list-buttons {

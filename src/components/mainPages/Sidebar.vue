@@ -34,7 +34,7 @@
     </div>
     <div class="sidebar-content">
       <Filters v-if="sidebarMode === 'filters'" />
-      <Visualization v-if="sidebarMode === 'visualization'" />
+      <ListVisualization v-if="sidebarMode === 'visualization'" />
       <ListsList v-if="sidebarMode === 'lists'" />
       <UserProfile v-if="sidebarMode === 'profile'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
@@ -45,7 +45,7 @@
 
 <script>
 import Filters from '@/components/sidebarContent/Filters.vue';
-import Visualization from '@/components/sidebarContent/Visualization.vue';
+import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
 import ListsList from '@/components/sidebarContent/ListsList.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
@@ -57,7 +57,7 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   components: {
     Filters,
-    Visualization,
+    ListVisualization,
     ListsList,
     UserProfile,
     RegistrationForm,

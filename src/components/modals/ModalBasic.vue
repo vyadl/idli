@@ -3,6 +3,7 @@
     class="modal-basic"
     height="auto"
     :width="width"
+    :scrollable="true"
     :name="name"
     @before-open="beforeOpen"
     @closed="close"

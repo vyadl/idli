@@ -1,5 +1,5 @@
 export default {
   isLoggedIn: state => Boolean(state.user.id),
-  username: state => state.user.username,
+  user: state => state.user,
   isRequestProcessing: state => state.isRequestProcessing,
 };
