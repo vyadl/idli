@@ -31,7 +31,7 @@
       </div>
     </div>
     <div class="sidebar-content">
-      <Filters v-if="sidebarMode === 'filters'" />
+      <FiltersList v-if="sidebarMode === 'filters'" />
       <Visualization v-if="sidebarMode === 'visualization'" />
       <ListsList v-if="sidebarMode === 'lists'" />
       <UserProfile v-if="sidebarMode === 'profile'"/>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import Filters from '@/components/sidebarContent/Filters.vue';
+import FiltersList from '@/components/sidebarContent/FiltersList.vue';
 import Visualization from '@/components/sidebarContent/Visualization.vue';
 import ListsList from '@/components/sidebarContent/ListsList.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
@@ -55,7 +55,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    Filters,
+    FiltersList,
     Visualization,
     ListsList,
     UserProfile,

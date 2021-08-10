@@ -13,12 +13,12 @@
           style-type="line"
           class="edit-button"
           text="···"
-          @click="setListForEditting(list.id)"
+          @click="setListForEditting(list)"
         />
         <ButtonText
           style-type="line"
           :text="list.name"
-          @click="openList(list.id)"
+          @click="_fetchListById(list.id)"
         />
       </div>
       <ButtonText
@@ -53,17 +53,13 @@ export default {
     ...mapActions({
       _setListForEditting: '_setListForEditting',
       _fetchListById: '_fetchListById',
-      _switchList: '_switchList',
     }),
     openListForm() {
       this.$modal.show('listForm');
     },
-    setListForEditting(id) {
-      this._setListForEditting(id);
+    setListForEditting(list) {
+      this._setListForEditting(list);
       this.openListForm();
-    },
-    openList(id) {
-      this._fetchListById(id).then(response => this._switchList(response.data));
     },
   },
 };

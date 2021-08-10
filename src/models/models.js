@@ -14,7 +14,7 @@ export default {
   },
   Item() {
     this.text = null;
-    this.details = null;
+    this.details = '';
     this.tags = [];
     this.category = null;
   },

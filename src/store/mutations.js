@@ -1,13 +1,11 @@
-import Vue from 'vue';
-
 export default {
   // lists
 
-  setCurrentListObj(state, list) {
-    state.currentListObj = list;
-  },
   setLists(state, lists) {
     state.lists = lists;
+  },
+  setCurrentListId(state, id) {
+    state.currentListId = id;
   },
   addList(state, list) {
     state.lists.push(list);
@@ -23,9 +21,6 @@ export default {
   deleteList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);
   },
-  switchList(state, list) {
-    state.currentListObj = list;
-  },
   filterList(state, { tags, categories }) {
     state.checkedTags = tags;
     state.checkedCategories = categories;
@@ -40,81 +35,25 @@ export default {
 
   // items
 
-  setItems(state, { currentListIndex, newItems }) {
-    state.lists[currentListIndex].items = newItems;
+  setCurrentItems(state, items) {
+    state.currentListItems = items;
   },
-  addItem(state, { currentListIndex, newItem }) {
-    const currentListItems = state.lists[currentListIndex].items;
-
-    const newItemId = currentListItems.length
-      ? currentListItems[currentListItems.length - 1].id + 1
-      : 0;
-
-    state.lists[currentListIndex].items.push({
-      ...newItem,
-      id: newItemId,
-    });
+  addItem(state, item) {
+    state.currentListItems.push(item);
+  },
+  addItems(state, items) {
+    state.lists.find(list => list.id === state.currentListId).items = items;
   },
   setItemForEditting(state, item) {
     state.edittingItemObj = item;
   },
-  updateItem(state, { currentListIndex, changedItem }) {
-    const index = state.lists[currentListIndex].items
-      .findIndex(item => item.id === changedItem.id);
+  updateItem(state, item) {
+    const index = state.currentListItems.findIndex(localItem => localItem.id === item.id);
 
-    Vue.set(
-      state.lists[currentListIndex].items,
-      index,
-      changedItem,
-    );
+    state.currentListItems.splice(index, 1, item);
   },
-  deleteItem(state, { currentListIndex, id }) {
-    state.lists[currentListIndex].items = state.lists[currentListIndex].items
-      .filter(item => item.id !== id);
-  },
-
-  // filters
-
-  addFilter(state, { currentListIndex, type, name }) {
-    const lastElementIndex = state.lists[currentListIndex][type].length - 1;
-    const newId = state.lists[currentListIndex][type].length
-      ? state.lists[currentListIndex][type][lastElementIndex].id + 1
-      : 0;
-
-    state.lists[currentListIndex][type].push({
-      name,
-      id: newId,
-    });
-  },
-  changeFilter(state, {
-    currentListIndex,
-    name,
-    id,
-    type,
-  }) {
-    const index = state.lists[currentListIndex][type].findIndex(filter => filter.id === id);
-
-    state.lists[currentListIndex][type][index].splice(index, 1, { name, id });
-  },
-  removeFilter(state, { currentListIndex, type, id }) {
-    state.lists[currentListIndex][type] = state.lists[currentListIndex][type]
-      .filter(filter => filter.id !== id);
-  },
-  removeFilterFromList(state, { currentListIndex, type, id }) {
-    const currentListItems = state.lists[currentListIndex].items;
-
-    currentListItems.forEach(item => {
-      if (type === 'categories') {
-        item.category = null; // eslint-disable-line no-param-reassign
-      } else {
-        const index = item.tags.indexOf(id);
-        const clonedTags = [...item.tags];
-
-        if (index !== -1) {
-          item.tags = clonedTags.splice(index, 1); // eslint-disable-line no-param-reassign
-        }
-      }
-    });
+  deleteItem(state, id) {
+    state.currentListItems = state.currentListItems.filter(item => item.id !== id);
   },
 
   // settings
@@ -152,6 +91,9 @@ export default {
       }
     });
   },
+
+  // sidebar
+
   openSidebar(state) {
     state.sidebar.isOpen = true;
   },

@@ -16,7 +16,7 @@
         :key="list.name"
         :text="list.name"
         style-type="solid"
-        @click="_addList(JSON.parse(JSON.stringify(list)))"
+        @click="_addTestList(JSON.parse(JSON.stringify(list)))"
       />
     </div>
   </SidebarCard>
@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      _addList: '_addList',
+      _addTestList: '_addTestList',
     }),
   },
 };

@@ -1,90 +1,129 @@
 export default {
   // local storage
 
-  _setDataFromLocalStorage({ commit }) {
-    const currentListObj = localStorage.getItem('currentListObj');
+  _setDataFromLocalStorage({ commit, dispatch }) {
+    const currentListId = JSON.parse(localStorage.getItem('currentListId'));
 
-    if (currentListObj) {
-      commit('currentListObj', JSON.parse(currentListObj));
+    if (currentListId) {
+      commit('setCurrentListId', currentListId);
+      dispatch('_fetchListById', currentListId);
     }
   },
   _updateLocal({ getters }) {
-    localStorage.setItem('currentListObj', JSON.stringify({
-      currentListObj: getters.currentListObj,
-    }));
+    localStorage.setItem('currentListId', JSON.stringify(getters.currentListId));
   },
 
-  // lists (back)
+  // lists
 
   _fetchListsForUser({ commit }) {
     return this._vm.$axios.get(`${this._vm.$apiBasePath}lists`)
-      .then(response => { commit('setLists', response.data); })
-      .catch(error => { throw error; });
-  },
-  _fetchListById({ commit }, id) {
-    return this._vm.$axios.get(`${this._vm.$apiBasePath}lists/${id}`)
       .then(response => {
-        commit('setCurrentListObj', response.data);
-
-        return response;
+        commit('setLists', response.data);
       })
-      .catch(error => { throw error; });
+      .catch(error => {
+        throw error;
+      });
+  },
+  _fetchListById({ commit, dispatch, getters }, id) {
+    dispatch('_setCurrentListId', id);
+
+    if (getters.currentListObj.items.length) {
+      if (getters.currentListObj.items[0] instanceof Object) {
+        dispatch('_setCurrentItems', getters.currentListObj.items);
+      }
+    }
+
+    return this._vm.$axios.get(`${this._vm.$apiBasePath}list/${id}`)
+      .then(response => {
+        commit('updateList', response.data);
+        dispatch('_setCurrentItems', response.data.items);
+      })
+      .catch(error => {
+        throw error;
+      });
   },
   _addList({ commit, dispatch }, list) {
     return this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, list)
       .then(response => {
         commit('addList', response.data);
-        commit('setCurrentListObj', response.data);
-        dispatch('_updateLocal');
+        dispatch('_setCurrentListId', response.data.id);
       })
-      .catch(error => { throw error; });
+      .catch(error => {
+        throw error;
+      });
   },
-  _updateList({ commit }, list) {
-    const {
-      name,
-      isPrivate,
-      tags,
-      categories,
-    } = list;
+  _addTestList({ commit, dispatch }, list) {
+    const listDataToSend = {
+      name: list.name,
+      isPrivate: list.isPrivate,
+      tags: list.tags,
+      categories: list.categories,
+    };
 
-    return this._vm.$axios.patch(`${this._vm.$apiBasePath}list/update/${list.id}`, {
-      name,
-      isPrivate,
-      tags,
-      categories,
-    }).then(response => { commit('updateList', response.data); })
-      .catch(error => { throw error; });
+    return this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, listDataToSend)
+      .then(response => {
+        echo(1);
+        commit('addList', response.data);
+        dispatch('_setCurrentListId', response.data.id);
+
+        this._vm.$axios.post(`${this._vm.$apiBasePath}items/add-many/${response.data.id}`, { items: list.items })
+          .then(response => {
+            commit('addItems', response.data);
+            dispatch('_setCurrentItems', response.data);
+          })
+          .catch(error => {
+            throw error;
+          });
+      })
+      .catch(error => {
+        throw error;
+      });
   },
-  _deleteList({ commit, getters }, listId) {
+  _updateList({ commit, dispatch }, list) {
+    const listDataToSend = {
+      name: list.name,
+      isPrivate: list.isPrivate,
+      tags: list.tags,
+      categories: list.categories,
+    };
+
+    return this._vm.$axios.patch(`${this._vm.$apiBasePath}list/update/${list.id}`, listDataToSend)
+      .then(response => {
+        commit('updateList', response.data);
+        dispatch('_setCurrentItems', response.data.items);
+      })
+      .catch(error => {
+        throw error;
+      });
+  },
+  _deleteList({ commit, dispatch, getters }, listId) {
     return this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${listId}`)
       .then(() => {
         if (getters.currentListObj.id === listId) {
-          const switchListId = getters.lists.length > 1
+          const anotherListId = getters.lists.length > 1
             ? getters.lists.find(list => list.id !== listId).id
             : null;
 
-          commit('switchList', switchListId);
+          dispatch('_fetchListById', anotherListId);
         }
 
         commit('deleteList', listId);
       })
-      .catch(error => { throw error; });
+      .catch(error => {
+        throw error;
+      });
   },
 
-  // lists
-
-  _setListForEditting({ commit }, id) {
-    commit('setListForEditting', id);
+  _setCurrentListId({ commit, dispatch }, id) {
+    commit('setCurrentListId', id);
+    dispatch('_setCurrentItems', []);
+    dispatch('_updateLocal');
   },
-  _filterList({ commit, dispatch }, { tags, categories }) {
+  _setListForEditting({ commit }, list) {
+    commit('setListForEditting', list);
+  },
+  _filterList({ commit }, { tags, categories }) {
     commit('filterList', { tags, categories });
-
-    dispatch('_updateLocal');
-  },
-  _switchList({ commit, dispatch }, list) {
-    commit('switchList', list);
-
-    dispatch('_updateLocal');
   },
   _shuffleFilteredList({ commit, getters }) {
     commit('shuffleFilteredList', getters.filteredList);
@@ -93,110 +132,51 @@ export default {
     commit('switchShuffleMode');
   },
 
-  // items (back)
+  // items
 
   _addItem({ commit, getters }, item) {
     const listId = getters.currentListObj.id;
 
-    return this._vm.$axios.post(`${this._vm.$apiBasePath}item/add${listId}`, item)
+    return this._vm.$axios.post(`${this._vm.$apiBasePath}item/add/${listId}`, item)
       .then(response => {
-        commit('addItem', {
-          currentListIndex: getters.currentListIndex,
-          item: response.data,
-        });
+        commit('addItem', response.data);
       })
-      .catch(error => { throw error; });
-  },
-  _updateItem({ commit, dispatch, getters }, item) {
-    const listId = getters.currentListObj.id;
-    const {
-      text,
-      details,
-      tags,
-      category,
-    } = item;
-
-    return this._vm.$axios.patch(`${this._vm.$apiBasePath}item/update/${listId}/${item.id}`, {
-      text,
-      details,
-      tags,
-      category,
-    }).then(response => {
-      commit('updateItem', {
-        currentListIndex: getters.currentListIndex,
-        item: response.data,
+      .catch(error => {
+        throw error;
       });
-      dispatch('_setItemForEditting', null);
-    })
-      .catch(error => { throw error; });
   },
-  _deleteItem({ commit, dispatch, getters }, item) {
-    const listId = getters.currentListObj.id;
+  _updateItem({ commit, dispatch }, item) {
+    const itemDataToSend = {
+      text: item.text,
+      details: item.details,
+      tags: item.tags,
+      category: item.category,
+    };
 
-    return this._vm.$axios.delete(`${this._vm.$apiBasePath$}item/delete/${listId}/${item.id}`)
-      .then(() => {
-        commit('deleteItem', {
-          currentListIndex: getters.currentListIndex,
-          id: item.id,
-        });
-
+    return this._vm.$axios.patch(`${this._vm.$apiBasePath}item/update/${item.listId}/${item.id}`, itemDataToSend)
+      .then(response => {
+        commit('updateItem', response.data);
         dispatch('_setItemForEditting', null);
       })
-      .catch(error => { throw error; });
+      .catch(error => {
+        throw error;
+      });
   },
-
-  // items
-
-  _setItems({ commit, dispatch, getters }, newItems) {
-    commit('setItems', {
-      currentListIndex: getters.currentListIndex,
-      newItems,
-    });
-    dispatch('_updateLocal');
+  _deleteItem({ commit, dispatch }, item) {
+    return this._vm.$axios.delete(`${this._vm.$apiBasePath}item/delete/${item.listId}/${item.id}`)
+      .then(() => {
+        commit('deleteItem', item.id);
+        dispatch('_setItemForEditting', null);
+      })
+      .catch(error => {
+        throw error;
+      });
+  },
+  _setCurrentItems({ commit }, items) {
+    commit('setCurrentItems', items);
   },
   _setItemForEditting({ commit }, item) {
     commit('setItemForEditting', item);
-  },
-
-  // filters
-
-  _addFilter({ commit, dispatch, getters }, { type, name }) {
-    if (
-      (['tags', 'categories'].includes(type))
-      && typeof name === 'string'
-      && name.length
-    ) {
-      commit('addFilter', {
-        currentListIndex: getters.currentListIndex,
-        type,
-        name,
-      });
-    }
-
-    dispatch('_updateLocal');
-  },
-  _changeFilter({ commit, dispatch, getters }, { type, name, id }) {
-    commit('changeFilter', {
-      currentListIndex: getters.currentListIndex,
-      type,
-      name,
-      id,
-    });
-
-    dispatch('_updateLocal');
-  },
-  _removeFilter({ commit, dispatch, getters }, { type, id }) {
-    commit('removeFilter', {
-      currentListIndex: getters.currentListIndex,
-      type,
-      id,
-    });
-    commit('removeFilterFromList', {
-      currentListIndex: getters.currentListIndex,
-      type,
-      id,
-    });
-    dispatch('_updateLocal');
   },
 
   // changing statuses
@@ -205,25 +185,13 @@ export default {
     commit('changeChangingListStatus', status);
   },
 
-  // setting actions
-
-  _setSettingsStatus({ commit }, status) {
-    commit('setSettingsStatus', status);
-  },
-  _switchSettingStatus({ state, commit }, field) {
-    commit('setSettingsStatus', {
-      field,
-      value: !state.settingsStatuses[field],
-    });
-  },
-
   // visualization modes
 
-  _switchCloudMode({ commit }) {
-    commit('switchCloudMode');
-  },
   _switchInvertMode({ commit }) {
     commit('switchInvertMode');
+  },
+  _switchCloudMode({ commit }) {
+    commit('switchCloudMode');
   },
   _switchStarsMode({ commit }) {
     commit('switchStarsMode');

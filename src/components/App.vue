@@ -42,10 +42,9 @@ export default {
   created() {
     axiosSettings.initAxios();
     this._setUserFromLocalStorage();
-    this._setDataFromLocalStorage();
 
     if (this.isLoggedIn) {
-      this._fetchListsForUser();
+      this._fetchListsForUser().then(() => { this._setDataFromLocalStorage(); });
     }
   },
   methods: {

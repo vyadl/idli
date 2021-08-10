@@ -5,9 +5,9 @@
   >
     <div
       class="list-title"
-      v-if="currentListName"
+      v-if="currentListObj"
     >
-      {{ currentListName }}
+      {{ currentListObj.name }}
     </div>
     <template v-if="isCloudModeOn && !isStarsModeOn">
       <ListItem

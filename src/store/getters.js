@@ -1,15 +1,14 @@
 export default {
   lists: state => state.lists,
-  checkedTags: state => state.checkedTags,
-  checkedCategories: state => state.checkedCategories,
-  currentListObj: state => state.currentListObj,
-  currentListIndex: (state, getters) => getters.lists
-    .findIndex(list => list === getters.currentListObj),
-  currentListItems: (state, getters) => getters.currentListObj?.items,
+  currentListId: state => state.currentListId,
+  currentListObj: state => state.lists.find(list => list.id === state.currentListId),
   currentListTags: (state, getters) => getters.currentListObj?.tags,
   currentListCategories: (state, getters) => getters.currentListObj?.categories,
+  currentListItems: state => state.currentListItems,
   edittingListObj: state => state.edittingListObj,
   edittingItemObj: state => state.edittingItemObj,
+  checkedTags: state => state.checkedTags,
+  checkedCategories: state => state.checkedCategories,
   settingsStatuses: state => state.settingsStatuses,
   isCloudModeOn: state => state.mode.cloud,
   isStarsModeOn: state => state.mode.stars,
@@ -21,15 +20,7 @@ export default {
   filteredListLength: (state, getters) => getters.filteredList.length,
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
-
-  isAnySettingActive: (state, getters) => Object.values(getters.settingsStatuses)
-    .some(value => value),
-
   filteredList: (state, getters) => {
-    if (!getters.currentListItems) {
-      return [];
-    }
-
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;
 
