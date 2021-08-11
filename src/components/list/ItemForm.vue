@@ -4,6 +4,7 @@
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
     @before-open="setItemForEditting"
+    @before-close="checkRequestStatus($event)"
     @closed="clearData"
   >
     <template v-slot:main>
@@ -41,16 +42,19 @@
       <ButtonText
         text="save"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         @click="saveItem"
       />
       <ButtonText
         text="cancel"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         @click="closeItemForm"
       />
       <ButtonText
         text="delete"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         v-if="edittingItemObj"
         @click="deleteItem(item)"
       />
@@ -79,6 +83,7 @@ export default {
   },
   data: () => ({
     item: new models.Item(),
+    isRequestProcessing: false,
   }),
   computed: {
     ...mapGetters({
@@ -97,27 +102,40 @@ export default {
     closeItemForm() {
       this.$modal.hide('itemForm');
     },
-    clearData() {
-      this._setItemForEditting(null);
-      this.item = new models.Item();
-    },
     setItemForEditting() {
       if (this.edittingItemObj) {
         this.item = { ...this.edittingItemObj };
       }
     },
-    saveItem() {
-      if (this.edittingItemObj) {
-        this._updateItem(this.item);
-      } else {
-        this._addItem(this.item);
+    checkRequestStatus(event) {
+      if (this.isRequestProcessing) {
+        event.cancel();
       }
+    },
+    clearData() {
+      this._setItemForEditting(null);
+      this.item = new models.Item();
+    },
+    saveItem() {
+      this.isRequestProcessing = true;
 
-      this.closeItemForm();
+      if (this.edittingItemObj) {
+        this._updateItem(this.item).then(() => {
+          this.isRequestProcessing = false;
+          this.closeItemForm();
+        });
+      } else {
+        this._addItem(this.item).then(() => {
+          this.isRequestProcessing = false;
+          this.closeItemForm();
+        });
+      }
     },
     deleteItem(item) {
-      this._deleteItem(item);
-      this.closeItemForm();
+      this.isRequestProcessing = true;
+      this._deleteItem(item).then(() => {
+        this.closeItemForm();
+      });
     },
     disableCategory(id) {
       if (this.item.category === id) {

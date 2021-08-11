@@ -7,10 +7,4 @@ export default {
   signOut(state) {
     state.user = new models.User();
   },
-  startRequestProcessing(state) {
-    state.isRequestProcessing = true;
-  },
-  finishRequestProcessing(state) {
-    state.isRequestProcessing = false;
-  },
 };
