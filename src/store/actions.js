@@ -29,7 +29,7 @@ export default {
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj.items.length) {
-      if (typeof getters.currentListObj.items[0] === 'object') {
+      if (getters.currentListObj.items[0] instanceof Object) {
         dispatch('_setCurrentItems', getters.currentListObj.items);
       }
     }
