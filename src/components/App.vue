@@ -44,13 +44,12 @@ export default {
     this._setUserFromLocalStorage();
 
     if (this.isLoggedIn) {
-      this._fetchListsForUser().then(() => { this._setDataFromLocalStorage(); });
+      this._fetchListsForUser();
     }
   },
   methods: {
     ...mapActions({
       _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
-      _setDataFromLocalStorage: '_setDataFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
     }),
   },

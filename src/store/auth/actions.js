@@ -36,6 +36,7 @@ export default {
     commit('signOut');
     commit('closeSidebar', null, { root: true });
     localStorage.removeItem('user');
+    localStorage.removeItem('currentListId');
     axiosSettings.deleteAccessToken();
   },
   _setUserFromLocalStorage({ commit }) {

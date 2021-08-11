@@ -1,7 +1,7 @@
 export default {
   // local storage
 
-  _setDataFromLocalStorage({ commit, dispatch }) {
+  _setListIdFromLocalStorage({ commit, dispatch }) {
     const currentListId = JSON.parse(localStorage.getItem('currentListId'));
 
     if (currentListId) {
@@ -9,16 +9,17 @@ export default {
       dispatch('_fetchListById', currentListId);
     }
   },
-  _updateLocal({ getters }) {
+  _updateListIdInLocalStorage({ getters }) {
     localStorage.setItem('currentListId', JSON.stringify(getters.currentListId));
   },
 
   // lists
 
-  _fetchListsForUser({ commit }) {
+  _fetchListsForUser({ commit, dispatch }) {
     return this._vm.$axios.get(`${this._vm.$apiBasePath}lists`)
       .then(response => {
         commit('setLists', response.data);
+        dispatch('_setListIdFromLocalStorage');
       })
       .catch(error => {
         throw error;
@@ -52,32 +53,25 @@ export default {
         throw error;
       });
   },
-  _addTestList({ commit, dispatch }, list) {
+  async _addTestList({ commit, dispatch }, listToSend) {
     const listDataToSend = {
-      name: list.name,
-      isPrivate: list.isPrivate,
-      tags: list.tags,
-      categories: list.categories,
+      name: listToSend.name,
+      isPrivate: listToSend.isPrivate,
+      tags: listToSend.tags,
+      categories: listToSend.categories,
     };
+    const listResponse = await this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, listDataToSend);
+    const list = listResponse.data;
 
-    return this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, listDataToSend)
-      .then(response => {
-        echo(1);
-        commit('addList', response.data);
-        dispatch('_setCurrentListId', response.data.id);
+    commit('addList', list);
+    dispatch('_setCurrentListId', list.id);
 
-        this._vm.$axios.post(`${this._vm.$apiBasePath}items/add-many/${response.data.id}`, { items: list.items })
-          .then(response => {
-            commit('addItems', response.data);
-            dispatch('_setCurrentItems', response.data);
-          })
-          .catch(error => {
-            throw error;
-          });
-      })
-      .catch(error => {
-        throw error;
-      });
+    const itemsResponse = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}items/add-many/${list.id}`, { items: listToSend.items });
+    const items = itemsResponse.data;
+
+    commit('addItems', items);
+    dispatch('_setCurrentItems', items);
   },
   _updateList({ commit, dispatch }, list) {
     const listDataToSend = {
@@ -117,7 +111,7 @@ export default {
   _setCurrentListId({ commit, dispatch }, id) {
     commit('setCurrentListId', id);
     dispatch('_setCurrentItems', []);
-    dispatch('_updateLocal');
+    dispatch('_updateListIdInLocalStorage');
   },
   _setListForEditting({ commit }, list) {
     commit('setListForEditting', list);

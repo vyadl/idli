@@ -69,7 +69,7 @@ export default {
     resetFilters() {
       this.checkedTags = [];
       this.checkedCategories = [];
-      this._filterList([], []);
+      this.filterList();
     },
   },
 };
