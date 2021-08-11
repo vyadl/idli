@@ -13,13 +13,12 @@
           style-type="line"
           class="edit-button"
           text="···"
-          @click="setListForEditting(list.id)"
+          @click="setListForEditting(list)"
         />
         <ButtonText
           style-type="line"
           :text="list.name"
-          :active="list.id === currentListId"
-          @click="_switchList(list.id)"
+          @click="_fetchListById(list.id)"
         />
       </div>
       <ButtonText
@@ -47,20 +46,19 @@ export default {
   computed: {
     ...mapGetters({
       lists: 'lists',
-      currentListId: 'currentListId',
       edittingListObj: 'edittingListObj',
     }),
   },
   methods: {
     ...mapActions({
-      _switchList: '_switchList',
       _setListForEditting: '_setListForEditting',
+      _fetchListById: '_fetchListById',
     }),
     openListForm() {
       this.$modal.show('listForm');
     },
-    setListForEditting(id) {
-      this._setListForEditting(id);
+    setListForEditting(list) {
+      this._setListForEditting(list);
       this.openListForm();
     },
   },

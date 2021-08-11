@@ -3,18 +3,11 @@
     class="main-list"
     @click="_closeSidebar"
   >
-    <transition name="fade">
-      <div
-        class="preloader"
-        v-if="listChanging"
-      >
-      </div>
-    </transition>
     <div
       class="list-title"
-      v-if="currentListName"
+      v-if="currentListObj"
     >
-      {{ currentListName }}
+      {{ currentListObj.name }}
     </div>
     <template v-if="isCloudModeOn && !isStarsModeOn">
       <ListItem
@@ -44,7 +37,7 @@
 
 <script>
 import ListItem from '@/components/list/ListItem.vue';
-import Utils from '@/utils/utils';
+import utils from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -57,7 +50,6 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      listChanging: 'listChanging',
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
       shuffleTrigger: 'shuffleTrigger',
@@ -72,7 +64,7 @@ export default {
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
-      return Utils.shuffleArray(this.filteredList);
+      return utils.shuffleArray(this.filteredList);
     },
     computedList() {
       return this.isShuffled ? this.shuffledList : this.filteredList;
@@ -119,16 +111,6 @@ export default {
       &.parallax {
         transform: translateX(-20px);
       }
-    }
-
-    .preloader {
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(#fff, .3);
     }
   }
 </style>

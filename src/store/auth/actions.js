@@ -12,7 +12,7 @@ export default {
       })
       .finally(() => { commit('finishRequestProcessing'); });
   },
-  _signIn({ commit }, user) {
+  _signIn({ commit, dispatch }, user) {
     commit('startRequestProcessing');
 
     return this._vm.$axios.post(`${this._vm.$apiBasePath}auth/signin`, user)
@@ -21,6 +21,7 @@ export default {
         commit('changeSidebarMode', 'profile', { root: true });
         localStorage.setItem('user', JSON.stringify(response.data));
         axiosSettings.setAccessToken(response.data.accessToken);
+        dispatch('_fetchListsForUser', null, { root: true });
 
         return response;
       })
@@ -35,9 +36,10 @@ export default {
     commit('signOut');
     commit('closeSidebar', null, { root: true });
     localStorage.removeItem('user');
+    localStorage.removeItem('currentListId');
     axiosSettings.deleteAccessToken();
   },
-  _initUser({ commit }) {
+  _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');
 
     if (user) {

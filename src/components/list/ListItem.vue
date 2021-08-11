@@ -29,7 +29,6 @@ export default {
       isStarsModeOn: 'isStarsModeOn',
       starsSettings: 'starsSettings',
       isInvert: 'isInvert',
-      ListChanging: 'ListChanging',
     }),
     styles() {
       let styleObj = {};
@@ -49,11 +48,6 @@ export default {
 
       return this.isCloudModeOn || this.isStarsModeOn ? styleObj : {};
     },
-  },
-  mounted() {
-    if (this.listChanging) {
-      this._changeChangingListStatus(false);
-    }
   },
   methods: {
     ...mapActions([
