@@ -12,11 +12,12 @@
       v-if="areTestListsShown"
     >
       <ButtonText
+        style-type="solid"
         v-for="list in testData"
         :key="list.name"
         :text="list.name"
-        style-type="solid"
-        @click="_addTestList(JSON.parse(JSON.stringify(list)))"
+        :disabled="isRequestProcessing"
+        @click="addTestList(list)"
       />
     </div>
   </SidebarCard>
@@ -36,6 +37,7 @@ export default {
   data: () => ({
     areTestListsShown: false,
     testData: [],
+    isRequestProcessing: false,
   }),
   created() {
     axios.get('/test_data.json').then(({ data }) => {
@@ -46,6 +48,12 @@ export default {
     ...mapActions({
       _addTestList: '_addTestList',
     }),
+    addTestList(list) {
+      this.isRequestProcessing = true;
+      this._addTestList(list).then(() => {
+        this.isRequestProcessing = false;
+      });
+    },
   },
 };
 </script>

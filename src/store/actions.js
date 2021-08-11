@@ -2,7 +2,7 @@ export default {
   // local storage
 
   _setListIdFromLocalStorage({ commit, dispatch }) {
-    const currentListId = JSON.parse(localStorage.getItem('currentListId'));
+    const currentListId = localStorage.getItem('currentListId');
 
     if (currentListId) {
       commit('setCurrentListId', currentListId);
@@ -10,7 +10,7 @@ export default {
     }
   },
   _updateListIdInLocalStorage({ getters }) {
-    localStorage.setItem('currentListId', JSON.stringify(getters.currentListId));
+    localStorage.setItem('currentListId', getters.currentListId);
   },
 
   // lists
@@ -29,7 +29,7 @@ export default {
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj.items.length) {
-      if (getters.currentListObj.items[0] instanceof Object) {
+      if (typeof getters.currentListObj.items[0] === 'object') {
         dispatch('_setCurrentItems', getters.currentListObj.items);
       }
     }
@@ -53,35 +53,43 @@ export default {
         throw error;
       });
   },
-  async _addTestList({ commit, dispatch }, listToSend) {
-    const listDataToSend = {
-      name: listToSend.name,
-      isPrivate: listToSend.isPrivate,
-      tags: listToSend.tags,
-      categories: listToSend.categories,
-    };
-    const listResponse = await this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, listDataToSend);
-    const list = listResponse.data;
+  async _addTestList({ commit, dispatch }, {
+    name,
+    isPrivate,
+    tags,
+    categories,
+    items,
+  }) {
+    const { data: responseList } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}list/add`, {
+        name,
+        isPrivate,
+        tags,
+        categories,
+      });
 
-    commit('addList', list);
-    dispatch('_setCurrentListId', list.id);
+    commit('addList', responseList);
+    dispatch('_setCurrentListId', responseList.id);
 
-    const itemsResponse = await this._vm.$axios
-      .post(`${this._vm.$apiBasePath}items/add-many/${list.id}`, { items: listToSend.items });
-    const items = itemsResponse.data;
+    const { data: responseItems } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}items/add-many/${responseList.id}`, { items });
 
-    commit('addItems', items);
-    dispatch('_setCurrentItems', items);
+    commit('addItems', responseItems);
+    dispatch('_setCurrentItems', responseItems);
   },
-  _updateList({ commit, dispatch }, list) {
-    const listDataToSend = {
-      name: list.name,
-      isPrivate: list.isPrivate,
-      tags: list.tags,
-      categories: list.categories,
-    };
-
-    return this._vm.$axios.patch(`${this._vm.$apiBasePath}list/update/${list.id}`, listDataToSend)
+  _updateList({ commit, dispatch }, {
+    name,
+    isPrivate,
+    tags,
+    categories,
+    id,
+  }) {
+    return this._vm.$axios.patch(`${this._vm.$apiBasePath}list/update/${id}`, {
+      name,
+      isPrivate,
+      tags,
+      categories,
+    })
       .then(response => {
         commit('updateList', response.data);
         dispatch('_setCurrentItems', response.data.items);
@@ -139,15 +147,20 @@ export default {
         throw error;
       });
   },
-  _updateItem({ commit, dispatch }, item) {
-    const itemDataToSend = {
-      text: item.text,
-      details: item.details,
-      tags: item.tags,
-      category: item.category,
-    };
-
-    return this._vm.$axios.patch(`${this._vm.$apiBasePath}item/update/${item.listId}/${item.id}`, itemDataToSend)
+  _updateItem({ commit, dispatch }, {
+    text,
+    details,
+    tags,
+    category,
+    listId,
+    id,
+  }) {
+    return this._vm.$axios.patch(`${this._vm.$apiBasePath}item/update/${listId}/${id}`, {
+      text,
+      details,
+      tags,
+      category,
+    })
       .then(response => {
         commit('updateItem', response.data);
         dispatch('_setItemForEditting', null);
