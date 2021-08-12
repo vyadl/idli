@@ -69,7 +69,7 @@ export default {
     .label {
       border: 2px solid map-get($colors, 'black');
       border-radius: 25px;
-      padding: 3px 7px 5px;
+      padding: 5px 10px 6px;
       background-color: map-get($colors, 'white');
       font-size: 13px;
       transition: background-color .3s;

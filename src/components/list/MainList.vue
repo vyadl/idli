@@ -3,18 +3,11 @@
     class="main-list"
     @click="_closeSidebar"
   >
-    <transition name="fade">
-      <div
-        class="preloader"
-        v-if="listChanging"
-      >
-      </div>
-    </transition>
     <div
       class="list-title"
-      v-if="currentListName"
+      v-if="currentListObj"
     >
-      {{ currentListName }}
+      {{ currentListObj.name }}
     </div>
     <template v-if="isCloudModeOn && !isStarsModeOn">
       <ListItem
@@ -28,15 +21,13 @@
         class="items-container"
         :class="{ parallax: isSidebarOpen }"
       >
-        <transition name="fade">
-          <div v-if="isListShown">
-            <ListItem
-              v-for="item in finalList"
-              :key="item.id"
-              :item="item"
-            />
-          </div>
-        </transition>
+        <div v-if="isListShown">
+          <ListItem
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          />
+        </div>
       </div>
     </template>
   </div>
@@ -44,7 +35,7 @@
 
 <script>
 import ListItem from '@/components/list/ListItem.vue';
-import Utils from '@/utils/utils';
+import utils from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -52,12 +43,11 @@ export default {
     ListItem,
   },
   data: () => ({
-    isListShown: false,
+    isListShown: true,
     finalList: [],
   }),
   computed: {
     ...mapGetters({
-      listChanging: 'listChanging',
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
       shuffleTrigger: 'shuffleTrigger',
@@ -72,7 +62,7 @@ export default {
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
-      return Utils.shuffleArray(this.filteredList);
+      return utils.shuffleArray(this.filteredList);
     },
     computedList() {
       return this.isShuffled ? this.shuffledList : this.filteredList;
@@ -81,13 +71,8 @@ export default {
   watch: {
     computedList: {
       handler: function computedListHanler() {
-        this.isListShown = false;
-
-        setTimeout(() => {
-          this.finalList = [];
-          this.finalList = this.computedList;
-          this.isListShown = true;
-        }, 200);
+        this.finalList = [];
+        this.finalList = this.computedList;
       },
       immediate: true,
     },
@@ -119,16 +104,6 @@ export default {
       &.parallax {
         transform: translateX(-20px);
       }
-    }
-
-    .preloader {
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(#fff, .3);
     }
   }
 </style>

@@ -106,7 +106,7 @@ export default {
       .label {
         border: 2px solid map-get($colors, 'black');
         border-radius: 25px;
-        padding: 3px 7px 5px;
+        padding: 5px 10px 6px;
         background-color: map-get($colors, 'white');
         font-size: 13px;
         transition: background-color .3s;
@@ -131,7 +131,7 @@ export default {
 
       .label {
         position: relative;
-        margin-left: 22px;
+        margin-left: 25px;
         background-color: transparent;
 
         &::before,
@@ -143,23 +143,24 @@ export default {
 
         &::before {
           top: 50%;
-          left: -22px;
-          width: 14px;
-          height: 14px;
-          border: 2px solid map-get($colors, 'gray-light');
-          border-radius: 3px;
-          transform: translateY(-50%) translateY(1px);
+          left: -25px;
+          width: 18px;
+          height: 18px;
+          border: 2px solid map-get($colors, 'black');
+          border-radius: 2px;
+          transform: translateY(-50%);
         }
 
         &::after {
           top: 50%;
-          left: -22px;
-          width: 19px;
-          height: 15px;
+          left: -25px;
+          width: 10px;
+          height: 7px;
           border-left: 2px solid map-get($colors, 'black');
           border-bottom: 2px solid map-get($colors, 'black');
           opacity: 0;
-          transform: translateY(-50%) translate(-1px, -8px) rotate(-45deg);
+          transform-origin: center center;
+          transform: translateY(-50%) translate(4px, -1px) rotate(-45deg);
           transition: opacity .2s;
         }
       }

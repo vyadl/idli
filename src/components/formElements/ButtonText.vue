@@ -52,10 +52,10 @@ export default {
 
 <style lang="scss">
   .button-text {
-    padding: 5px 14px 7px;
+    padding: 7px 14px;
     text-align: left;
     vertical-align: middle;
-    line-height: 1.3;
+    line-height: 1.5;
     letter-spacing: .3px;
     cursor: pointer;
 
@@ -112,20 +112,20 @@ export default {
       color: map-get($colors, 'gray-dark');
       transition: color .2s;
 
-      &:hover {
+      &:hover,
+      &:disabled {
         color: map-get($colors, 'gray-light');
       }
     }
 
     &.line {
-      margin-bottom: 3px;
       padding: 5px 0;
-      color: map-get($colors, 'gray-light');
+      color: map-get($colors, 'black');
       transition: color .2s;
 
       &.active,
       &:hover {
-        color: map-get($colors, 'black');
+        color: map-get($colors, 'gray-dark');
       }
     }
   }

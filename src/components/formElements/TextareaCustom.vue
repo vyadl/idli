@@ -32,7 +32,7 @@ export default {
     margin-bottom: 15px;
 
     .label {
-      font-size: 13px;
+      font-size: 12px;
       color: map-get($colors, 'gray-dark');
     }
 

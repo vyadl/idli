@@ -4,7 +4,7 @@
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
     @before-open="setItemForEditting"
-    @closed="clearData"
+    @closed="resetData"
   >
     <template v-slot:main>
       <div class="text-fields">
@@ -17,9 +17,10 @@
           v-model="item.details"
         />
       </div>
-      <div class="filters-container">
+      <div class="filters-container tags">
+        <h1 class="filters-title">tags:</h1>
         <CheckboxCustom
-          v-for="tag in currentListFilters.tags"
+          v-for="tag in currentListTags"
           :key="tag.id"
           :value="tag.id"
           :label="tag.name"
@@ -28,8 +29,9 @@
         />
       </div>
       <div class="filters-container">
+        <h1 class="filters-title">category:</h1>
         <RadioCustom
-          v-for="category in currentListFilters.categories"
+          v-for="category in currentListCategories"
           :key="category.id"
           :value="category.id"
           :label="category.name"
@@ -38,22 +40,29 @@
           @click="disableCategory(category.id)"
         />
       </div>
+      <ErrorMessage
+        :message="errorMessage"
+        v-if="errorMessage.length"
+      />
     </template>
     <template v-slot:buttons>
       <div>
         <ButtonText
           class="modal-button"
           text="save"
+          :disabled="isRequestProcessing"
           @click="saveItem"
         />
         <ButtonText
           text="cancel"
+          :disabled="isRequestProcessing"
           @click="closeItemForm"
         />
       </div>
       <ButtonText
         text="delete item"
         style-type="underline"
+        :disabled="isRequestProcessing"
         v-if="edittingItemObj"
         @click="deleteItem(item)"
       />
@@ -68,6 +77,7 @@ import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import models from '@/models/models';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -79,47 +89,64 @@ export default {
     CheckboxCustom,
     RadioCustom,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     item: new models.Item(),
+    isRequestProcessing: false,
+    errorMessage: '',
   }),
   computed: {
     ...mapGetters({
       edittingItemObj: 'edittingItemObj',
-      currentListFilters: 'currentListFilters',
+      currentListTags: 'currentListTags',
+      currentListCategories: 'currentListCategories',
     }),
   },
   methods: {
     ...mapActions({
       _setItemForEditting: '_setItemForEditting',
       _addItem: '_addItem',
-      _changeItem: '_changeItem',
+      _updateItem: '_updateItem',
       _deleteItem: '_deleteItem',
     }),
     closeItemForm() {
       this.$modal.hide('itemForm');
-    },
-    clearData() {
-      this._setItemForEditting(null);
-      this.item = new models.Item();
     },
     setItemForEditting() {
       if (this.edittingItemObj) {
         this.item = { ...this.edittingItemObj };
       }
     },
+    resetData() {
+      this._setItemForEditting(null);
+      this.item = new models.Item();
+    },
     saveItem() {
-      if (this.edittingItemObj) {
-        this._changeItem(this.item);
-      } else {
-        this._addItem(this.item);
-      }
-
-      this.closeItemForm();
+      this.isRequestProcessing = true;
+      this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
+        .then(() => {
+          this.closeItemForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
     deleteItem(item) {
-      this._deleteItem(item);
-      this.closeItemForm();
+      this.isRequestProcessing = true;
+      this._deleteItem(item)
+        .then(() => {
+          this.closeItemForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
     disableCategory(id) {
       if (this.item.category === id) {
@@ -138,8 +165,17 @@ export default {
 
     .filters-container {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: flex-start;
       flex-wrap: wrap;
+    }
+
+    .tags {
+      margin-bottom: 15px;
+    }
+
+    .filters-title {
+      padding: 5px 10px 6px 0;
     }
 
     .modal-button {

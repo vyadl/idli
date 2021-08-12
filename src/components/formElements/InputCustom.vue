@@ -1,5 +1,5 @@
 <template>
-  <label class="input-custom second">
+  <label class="input-custom">
     <div class="label">
       {{ label }}
     </div>
@@ -44,43 +44,19 @@ export default {
     width: 100%;
     margin-bottom: 15px;
 
-    &.first {
-      .label {
-        margin-bottom: 15px;
-      }
-
-      .input {
-        width: 100%;
-        padding: 5px;
-        border-bottom: 1px solid map-get($colors, 'gray-1');
-        outline: 8px solid transparent;
-        background-color: transparent;
-        transition:
-          outline .2s,
-          background-color .2s;
-
-        &:focus {
-          outline-color: map-get($colors, 'gray-4');
-          background-color: map-get($colors, 'gray-4');
-        }
-      }
+    .label {
+      font-size: 12px;
+      color: map-get($colors, 'gray-dark');
     }
 
-    &.second {
-      .label {
-        font-size: 13px;
-        color: map-get($colors, 'gray-dark');
-      }
+    .input {
+      width: 100%;
+      padding: 9px 3px 4px;
+      border-bottom: 1px solid map-get($colors, 'gray-light');
+      transition: border-color .3s;
 
-      .input {
-        width: 100%;
-        padding: 9px 3px 4px;
-        border-bottom: 1px solid map-get($colors, 'gray-light');
-        transition: border-color .3s;
-
-        &:focus {
-          border-color: map-get($colors, 'black');
-        }
+      &:focus {
+        border-color: map-get($colors, 'black');
       }
     }
   }

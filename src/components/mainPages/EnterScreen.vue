@@ -16,7 +16,7 @@
         stop-propagation
         @click="_openSidebar('sign up')"
       />
-      <div> | </div>
+      <div class="divider">|</div>
       <ButtonText
         text="sign in"
         style-type="line"
@@ -74,6 +74,10 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    .divider {
+      padding: 0 5px;
     }
   }
 </style>

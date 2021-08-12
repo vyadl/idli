@@ -29,7 +29,6 @@ export default {
       isStarsModeOn: 'isStarsModeOn',
       starsSettings: 'starsSettings',
       isInvert: 'isInvert',
-      ListChanging: 'ListChanging',
     }),
     styles() {
       let styleObj = {};
@@ -49,11 +48,6 @@ export default {
 
       return this.isCloudModeOn || this.isStarsModeOn ? styleObj : {};
     },
-  },
-  mounted() {
-    if (this.listChanging) {
-      this._changeChangingListStatus(false);
-    }
   },
   methods: {
     ...mapActions([
@@ -149,10 +143,13 @@ export default {
       font-size: map-get($text, 'title-font-size');
       margin-bottom: 10px;
       padding: 5px;
-      transition: 0.2s box-shadow;
+      transition: .2s text-shadow;
 
       &.active {
-        box-shadow: 0 0 3px 0 rgba(#222, 0.4);
+        // box-shadow: 0 0 3px 0 rgba(#222, 0.4);
+        text-shadow:
+          .5px 0 currentColor,
+          .5px 0 1px currentColor;
       }
     }
   }

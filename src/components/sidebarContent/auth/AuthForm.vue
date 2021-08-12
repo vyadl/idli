@@ -35,7 +35,7 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -48,13 +48,9 @@ export default {
       username: '',
       password: '',
     },
+    isRequestProcessing: false,
     errorMessage: '',
   }),
-  computed: {
-    ...mapGetters({
-      isRequestProcessing: 'auth/isRequestProcessing',
-    }),
-  },
   methods: {
     ...mapActions({
       _signIn: 'auth/_signIn',
@@ -63,8 +59,14 @@ export default {
       this.errorMessage = '';
     },
     signIn(signInData) {
+      this.isRequestProcessing = true;
       this._signIn(signInData)
-        .catch(error => { this.errorMessage = error.response.data.message; });
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };

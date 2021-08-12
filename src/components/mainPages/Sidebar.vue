@@ -33,8 +33,8 @@
       </div>
     </div>
     <div class="sidebar-content">
-      <Filters v-if="sidebarMode === 'filters'" />
       <ListVisualization v-if="sidebarMode === 'visualization'" />
+      <FiltersList v-if="sidebarMode === 'filters'" />
       <ListsList v-if="sidebarMode === 'lists'" />
       <UserProfile v-if="sidebarMode === 'profile'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Filters from '@/components/sidebarContent/Filters.vue';
+import FiltersList from '@/components/sidebarContent/FiltersList.vue';
 import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
 import ListsList from '@/components/sidebarContent/ListsList.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
@@ -56,8 +56,8 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    Filters,
     ListVisualization,
+    FiltersList,
     ListsList,
     UserProfile,
     RegistrationForm,
@@ -114,11 +114,11 @@ export default {
       transform: translateX(0);
 
       .mode-buttons {
-        transform: translateX(-100%) translateX(-7px);
+        transform: translateX(-100%) translateX(-15px);
       }
 
       .state-button {
-        transform: translateX(-180%) rotate(180deg);
+        transform: translateX(-200%) rotate(180deg);
       }
     }
 
@@ -133,14 +133,14 @@ export default {
 
     .sidebar-buttons {
       position: fixed;
-      bottom: 30px;
+      bottom: 40px;
     }
 
     .mode-buttons {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      margin-bottom: 8px;
+      margin-bottom: 15px;
       transition: transform .4s;
     }
 
@@ -163,13 +163,13 @@ export default {
     .state-button {
       width: fit-content;
       transition: transform .4s;
-      transform: translateX(-110%);
+      transform: translateX(-120%);
     }
 
     .add-item-button {
       position: fixed;
-      top: 10px;
-      transform: translateX(-100%) translateX(-10px);
+      top: 5px;
+      transform: translateX(-100%) translateX(-5px);
     }
   }
 </style>

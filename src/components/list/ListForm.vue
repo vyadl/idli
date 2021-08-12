@@ -4,7 +4,7 @@
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
     @before-open="setListForEditting"
-    @closed="clearData"
+    @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
@@ -26,7 +26,7 @@
           </h1>
           <div
             class="filter"
-            v-for="(tag, index) in list.filters.tags"
+            v-for="(tag, index) in list.tags"
             :key="index"
           >
             <InputCustom v-model="tag.name" />
@@ -49,7 +49,7 @@
           </h1>
           <div
             class="filter"
-            v-for="(category, index) in list.filters.categories"
+            v-for="(category, index) in list.categories"
             :key="index"
           >
             <InputCustom v-model="category.name" />
@@ -77,16 +77,19 @@
         <ButtonText
           class="modal-button"
           text="save"
-          @click="submitList"
+          :disabled="isRequestProcessing"
+          @click="saveList"
         />
         <ButtonText
           text="cancel"
+          :disabled="isRequestProcessing"
           @click="closeListForm"
         />
       </div>
       <ButtonText
         text="delete list"
         style-type="underline"
+        :disabled="isRequestProcessing"
         v-if="edittingListObj"
         @click="deleteList(list.id)"
       />
@@ -115,6 +118,7 @@ export default {
   },
   data: () => ({
     list: new models.List(),
+    isRequestProcessing: false,
     errorMessage: '',
   }),
   computed: {
@@ -126,8 +130,8 @@ export default {
     ...mapActions({
       _setListForEditting: '_setListForEditting',
       _addList: '_addList',
-      _saveList: '_saveList',
-      _removeList: '_removeList',
+      _updateList: '_updateList',
+      _deleteList: '_deleteList',
     }),
     closeListForm() {
       this.$modal.hide('listForm');
@@ -137,16 +141,16 @@ export default {
         this.list = { ...this.edittingListObj };
       }
     },
-    clearData() {
+    resetData() {
       this._setListForEditting(null);
       this.list = new models.List();
       this.errorMessage = '';
     },
     deleteFilter(type, index) {
-      this.list.filters[type].splice(index, 1);
+      this.list[type].splice(index, 1);
     },
     addFilter(type) {
-      this.list.filters[type].push({
+      this.list[type].push({
         name: null,
         id: null,
       });
@@ -154,27 +158,40 @@ export default {
     verifyFilters() {
       const filtersNames = [];
 
-      this.list.filters.tags.forEach(tag => filtersNames.push(tag.name));
-      this.list.filters.categories.forEach(category => filtersNames.push(category.name));
+      this.list.tags.forEach(tag => filtersNames.push(tag.name));
+      this.list.categories.forEach(category => filtersNames.push(category.name));
 
       return filtersNames.length === new Set(filtersNames).size;
     },
-    deleteList(id) {
-      this._removeList(id);
-      this.closeListForm();
-    },
-    submitList() {
+    saveList() {
       if (this.verifyFilters()) {
-        if (this.edittingListObj) {
-          this._saveList(this.list);
-        } else {
-          this._addList(this.list);
-        }
-
-        this.closeListForm();
+        this.isRequestProcessing = true;
+        this[this.edittingListObj ? '_updateList' : '_addList'](this.list)
+          .then(() => {
+            this.closeListForm();
+          })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
+          .finally(() => {
+            this.isRequestProcessing = false;
+          });
       } else {
         this.errorMessage = 'same names in filters';
       }
+    },
+    deleteList(id) {
+      this.isRequestProcessing = true;
+      this._deleteList(id)
+        .then(() => {
+          this.closeListForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };

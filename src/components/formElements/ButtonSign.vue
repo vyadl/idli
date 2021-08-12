@@ -48,6 +48,7 @@ export default {
 
 <style lang="scss">
   .button-sign {
+    display: block;
     padding: 0;
     cursor: pointer;
     transition: opacity .2s;
@@ -75,16 +76,63 @@ export default {
       &::before {
         content: '...';
         position: absolute;
-        font-size: 14px;
-        font-weight: 100;
+        font-weight: 600;
+        letter-spacing: 1px;
         color: map-get($colors, 'gray-light');
-        transform: translate(-2px, -9px) rotate(90deg);
+        transform: translate(-5px, -9px) rotate(90deg);
         transition: color .2s;
       }
     }
 
-    &.plus,
+    &.plus {
+      position: relative;
+      width: 15px;
+      height: 15px;
+
+      &.big {
+        width: 45px;
+        height: 45px;
+
+        &::before,
+        &::after {
+          width: 2px;
+          height: 25px;
+        }
+      }
+
+      &:hover,
+      &:disabled {
+        &::before,
+        &::after {
+          background-color: map-get($colors, 'gray-dark');
+        }
+      }
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        background-color: map-get($colors, 'black');
+        transform-origin: center center;
+        transition: color .2s;
+      }
+
+      &::before {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+
+      &::after {
+        transform: translate(-50%, -50%);
+      }
+    }
+
     &.cross {
+      width: 12px;
+      height: 12px;
       position: relative;
 
       &:hover {
@@ -106,34 +154,6 @@ export default {
         transform-origin: center center;
         transition: color .2s;
       }
-    }
-
-    &.plus {
-      width: 15px;
-      height: 15px;
-
-      &.big {
-        width: 22px;
-        height: 22px;
-
-        &::before,
-        &::after {
-          width: 2px;
-        }
-      }
-
-      &::before {
-        transform: translateX(-50%) rotate(90deg);
-      }
-
-      &::after {
-        transform: translateX(-50%);
-      }
-    }
-
-    &.cross {
-      width: 12px;
-      height: 12px;
 
       &::before {
         transform: translateX(-50%) rotate(45deg);

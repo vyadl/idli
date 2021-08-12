@@ -10,20 +10,22 @@
         :key="list.id"
       >
         <ButtonSign
-          style-type="dots"
           class="edit-button"
-          @click="setListForEditting(list.id)"
+          :class="{ active:  list.id === currentListId }"
+          style-type="dots"
+          @click="setListForEditting(list)"
         />
         <ButtonText
           style-type="line"
           :text="list.name"
           :active="list.id === currentListId"
-          @click="_switchList(list.id)"
+          @click="fetchListById(list.id)"
         />
       </div>
-      <ButtonText
-        text="add"
+      <ButtonSign
         title="new list"
+        style-type="plus"
+        :disabled="isRequestProcessing"
         @click="openListForm"
       />
     </div>
@@ -45,6 +47,9 @@ export default {
     ButtonSign,
     ButtonText,
   },
+  data: () => ({
+    isRequestProcessing: false,
+  }),
   computed: {
     ...mapGetters({
       lists: 'lists',
@@ -54,15 +59,22 @@ export default {
   },
   methods: {
     ...mapActions({
-      _switchList: '_switchList',
       _setListForEditting: '_setListForEditting',
+      _fetchListById: '_fetchListById',
     }),
     openListForm() {
       this.$modal.show('listForm');
     },
-    setListForEditting(id) {
-      this._setListForEditting(id);
+    setListForEditting(list) {
+      this._setListForEditting(list);
       this.openListForm();
+    },
+    fetchListById(id) {
+      this.isRequestProcessing = true;
+      this._fetchListById(id)
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };
@@ -78,7 +90,7 @@ export default {
       display: flex;
       align-items: center;
       width: fit-content;
-      transform: translateX(-15px);
+      transform: translateX(-16px);
 
       &:last-of-type {
         margin-bottom: 20px;
@@ -93,6 +105,10 @@ export default {
 
     .edit-button {
       opacity: 0;
+
+      &.active {
+        opacity: 1;
+      }
     }
   }
 </style>
