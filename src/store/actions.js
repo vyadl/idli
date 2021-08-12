@@ -36,7 +36,8 @@ export default {
     dispatch('_setCurrentItems', responseList.items);
   },
   async _addList({ commit, dispatch }, list) {
-    const { data: responseList } = await this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, list);
+    const { data: responseList } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}list/add`, list);
 
     commit('addList', responseList);
     dispatch('_setCurrentListId', responseList.id);
@@ -87,11 +88,11 @@ export default {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
 
     if (getters.currentListObj.id === id) {
-      const anotherid = getters.lists.length > 1
+      const anotherId = getters.lists.length > 1
         ? getters.lists.find(list => list.id !== id).id
         : null;
 
-      dispatch('_fetchListById', anotherid);
+      dispatch('_fetchListById', anotherId);
     }
 
     commit('deleteList', id);
@@ -144,6 +145,7 @@ export default {
   },
   async _deleteItem({ commit, dispatch }, item) {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/delete/${item.listId}/${item.id}`);
+
     commit('deleteItem', item.id);
     dispatch('_setItemForEditting', null);
   },

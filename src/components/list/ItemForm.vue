@@ -4,7 +4,7 @@
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
     @before-open="setItemForEditting"
-    @closed="clearData"
+    @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
@@ -113,7 +113,7 @@ export default {
         this.item = { ...this.edittingItemObj };
       }
     },
-    clearData() {
+    resetData() {
       this._setItemForEditting(null);
       this.item = new models.Item();
     },

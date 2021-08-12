@@ -77,7 +77,9 @@ export default {
         this.clearMessage();
         this.isRequestProcessing = true;
         this._signUp(user)
-          .catch(error => { this.errorMessage = error.response.data.message; })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
           .finally(() => {
             this.isRequestProcessing = false;
           });

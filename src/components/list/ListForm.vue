@@ -4,7 +4,7 @@
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
     @before-open="setListForEditting"
-    @closed="clearData"
+    @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
@@ -134,7 +134,7 @@ export default {
         this.list = { ...this.edittingListObj };
       }
     },
-    clearData() {
+    resetData() {
       this._setListForEditting(null);
       this.list = new models.List();
       this.errorMessage = '';

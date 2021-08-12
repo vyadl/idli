@@ -7,6 +7,10 @@
       class="open-message"
       @click="areTestListsShown = !areTestListsShown"
     >show test lists</div>
+    <ErrorMessage
+      :message="errorMessage"
+      v-if="errorMessage"
+    />
     <div
       class="test-list-buttons"
       v-if="areTestListsShown"
@@ -26,6 +30,7 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 
@@ -33,11 +38,13 @@ export default {
   components: {
     SidebarCard,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     areTestListsShown: false,
     testData: [],
     isRequestProcessing: false,
+    errorMessage: '',
   }),
   created() {
     axios.get('/test_data.json').then(({ data }) => {
@@ -50,9 +57,13 @@ export default {
     }),
     addTestList(list) {
       this.isRequestProcessing = true;
-      this._addTestList(list).finally(() => {
-        this.isRequestProcessing = false;
-      });
+      this._addTestList(list)
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };
