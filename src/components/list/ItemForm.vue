@@ -36,6 +36,10 @@
           @click="disableCategory(category.id)"
         />
       </div>
+      <ErrorMessage
+        :message="errorMessage"
+        v-if="errorMessage.length"
+      />
     </template>
     <template v-slot:buttons>
       <ButtonText
@@ -68,6 +72,7 @@ import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import models from '@/models/models';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -79,10 +84,12 @@ export default {
     CheckboxCustom,
     RadioCustom,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     item: new models.Item(),
     isRequestProcessing: false,
+    errorMessage: '',
   }),
   computed: {
     ...mapGetters({
@@ -112,25 +119,29 @@ export default {
     },
     saveItem() {
       this.isRequestProcessing = true;
-
-      if (this.edittingItemObj) {
-        this._updateItem(this.item).finally(() => {
-          this.isRequestProcessing = false;
+      this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
+        .then(() => {
           this.closeItemForm();
-        });
-      } else {
-        this._addItem(this.item).finally(() => {
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
           this.isRequestProcessing = false;
-          this.closeItemForm();
         });
-      }
     },
     deleteItem(item) {
       this.isRequestProcessing = true;
-      this._deleteItem(item).finally(() => {
-        this.closeItemForm();
-        this.isRequestProcessing = false;
-      });
+      this._deleteItem(item)
+        .then(() => {
+          this.closeItemForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
     disableCategory(id) {
       if (this.item.category === id) {

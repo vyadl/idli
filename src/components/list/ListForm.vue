@@ -159,28 +159,32 @@ export default {
     saveList() {
       if (this.verifyFilters()) {
         this.isRequestProcessing = true;
-
-        if (this.edittingListObj) {
-          this._updateList(this.list).finally(() => {
-            this.isRequestProcessing = false;
+        this[this.edittingListObj ? '_updateList' : '_addList'](this.list)
+          .then(() => {
             this.closeListForm();
-          });
-        } else {
-          this._addList(this.list).finally(() => {
+          })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
+          .finally(() => {
             this.isRequestProcessing = false;
-            this.closeListForm();
           });
-        }
       } else {
         this.errorMessage = 'same names in filters';
       }
     },
     deleteList(id) {
       this.isRequestProcessing = true;
-      this._deleteList(id).finally(() => {
-        this.isRequestProcessing = false;
-        this.closeListForm();
-      });
+      this._deleteList(id)
+        .then(() => {
+          this.closeListForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };
