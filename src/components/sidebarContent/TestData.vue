@@ -50,7 +50,7 @@ export default {
     }),
     addTestList(list) {
       this.isRequestProcessing = true;
-      this._addTestList(list).then(() => {
+      this._addTestList(list).finally(() => {
         this.isRequestProcessing = false;
       });
     },

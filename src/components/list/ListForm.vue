@@ -4,7 +4,6 @@
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
     @before-open="setListForEditting"
-    @before-close="checkRequestStatus($event)"
     @closed="clearData"
   >
     <template v-slot:main>
@@ -135,11 +134,6 @@ export default {
         this.list = { ...this.edittingListObj };
       }
     },
-    checkRequestStatus(event) {
-      if (this.isRequestProcessing) {
-        event.cancel();
-      }
-    },
     clearData() {
       this._setListForEditting(null);
       this.list = new models.List();
@@ -163,15 +157,16 @@ export default {
       return filtersNames.length === new Set(filtersNames).size;
     },
     saveList() {
-      this.isRequestProcessing = true;
       if (this.verifyFilters()) {
+        this.isRequestProcessing = true;
+
         if (this.edittingListObj) {
-          this._updateList(this.list).then(() => {
+          this._updateList(this.list).finally(() => {
             this.isRequestProcessing = false;
             this.closeListForm();
           });
         } else {
-          this._addList(this.list).then(() => {
+          this._addList(this.list).finally(() => {
             this.isRequestProcessing = false;
             this.closeListForm();
           });
@@ -182,7 +177,7 @@ export default {
     },
     deleteList(id) {
       this.isRequestProcessing = true;
-      this._deleteList(id).then(() => {
+      this._deleteList(id).finally(() => {
         this.isRequestProcessing = false;
         this.closeListForm();
       });

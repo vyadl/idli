@@ -5,7 +5,6 @@
     :width="width"
     :name="name"
     @before-open="beforeOpen"
-    @before-close="beforeClose($event)"
     @closed="close"
   >
     <header
@@ -42,9 +41,6 @@ export default {
   methods: {
     beforeOpen() {
       this.$emit('before-open');
-    },
-    beforeClose(event) {
-      this.$emit('before-close', event);
     },
     close() {
       this.$emit('closed');

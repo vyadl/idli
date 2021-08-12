@@ -4,7 +4,6 @@
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
     @before-open="setItemForEditting"
-    @before-close="checkRequestStatus($event)"
     @closed="clearData"
   >
     <template v-slot:main>
@@ -107,11 +106,6 @@ export default {
         this.item = { ...this.edittingItemObj };
       }
     },
-    checkRequestStatus(event) {
-      if (this.isRequestProcessing) {
-        event.cancel();
-      }
-    },
     clearData() {
       this._setItemForEditting(null);
       this.item = new models.Item();
@@ -120,12 +114,12 @@ export default {
       this.isRequestProcessing = true;
 
       if (this.edittingItemObj) {
-        this._updateItem(this.item).then(() => {
+        this._updateItem(this.item).finally(() => {
           this.isRequestProcessing = false;
           this.closeItemForm();
         });
       } else {
-        this._addItem(this.item).then(() => {
+        this._addItem(this.item).finally(() => {
           this.isRequestProcessing = false;
           this.closeItemForm();
         });
@@ -133,8 +127,9 @@ export default {
     },
     deleteItem(item) {
       this.isRequestProcessing = true;
-      this._deleteItem(item).then(() => {
+      this._deleteItem(item).finally(() => {
         this.closeItemForm();
+        this.isRequestProcessing = false;
       });
     },
     disableCategory(id) {
