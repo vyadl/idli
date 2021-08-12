@@ -15,17 +15,13 @@ export default {
 
   // lists
 
-  _fetchListsForUser({ commit, dispatch }) {
-    return this._vm.$axios.get(`${this._vm.$apiBasePath}lists`)
-      .then(response => {
-        commit('setLists', response.data);
-        dispatch('_setListIdFromLocalStorage');
-      })
-      .catch(error => {
-        throw error;
-      });
+  async _fetchListsForUser({ commit, dispatch }) {
+    const { data: responseLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists`);
+
+    commit('setLists', responseLists);
+    dispatch('_setListIdFromLocalStorage');
   },
-  _fetchListById({ commit, dispatch, getters }, id) {
+  async _fetchListById({ commit, dispatch, getters }, id) {
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj.items.length) {
@@ -34,24 +30,17 @@ export default {
       }
     }
 
-    return this._vm.$axios.get(`${this._vm.$apiBasePath}list/${id}`)
-      .then(response => {
-        commit('updateList', response.data);
-        dispatch('_setCurrentItems', response.data.items);
-      })
-      .catch(error => {
-        throw error;
-      });
+    const { data: responseList } = await this._vm.$axios.get(`${this._vm.$apiBasePath}list/${id}`);
+
+    commit('updateList', responseList);
+    dispatch('_setCurrentItems', responseList.items);
   },
-  _addList({ commit, dispatch }, list) {
-    return this._vm.$axios.post(`${this._vm.$apiBasePath}list/add`, list)
-      .then(response => {
-        commit('addList', response.data);
-        dispatch('_setCurrentListId', response.data.id);
-      })
-      .catch(error => {
-        throw error;
-      });
+  async _addList({ commit, dispatch }, list) {
+    const { data: responseList } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}list/add`, list);
+
+    commit('addList', responseList);
+    dispatch('_setCurrentListId', responseList.id);
   },
   async _addTestList({ commit, dispatch }, {
     name,
@@ -77,45 +66,37 @@ export default {
     commit('addItems', responseItems);
     dispatch('_setCurrentItems', responseItems);
   },
-  _updateList({ commit, dispatch }, {
+  async _updateList({ commit, dispatch }, {
     name,
     isPrivate,
     tags,
     categories,
     id,
   }) {
-    return this._vm.$axios.patch(`${this._vm.$apiBasePath}list/update/${id}`, {
-      name,
-      isPrivate,
-      tags,
-      categories,
-    })
-      .then(response => {
-        commit('updateList', response.data);
-        dispatch('_setCurrentItems', response.data.items);
-      })
-      .catch(error => {
-        throw error;
+    const { data: responseList } = await this._vm.$axios
+      .patch(`${this._vm.$apiBasePath}list/update/${id}`, {
+        name,
+        isPrivate,
+        tags,
+        categories,
       });
+
+    commit('updateList', responseList);
+    dispatch('_setCurrentItems', responseList.items);
   },
-  _deleteList({ commit, dispatch, getters }, listId) {
-    return this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${listId}`)
-      .then(() => {
-        if (getters.currentListObj.id === listId) {
-          const anotherListId = getters.lists.length > 1
-            ? getters.lists.find(list => list.id !== listId).id
-            : null;
+  async _deleteList({ commit, dispatch, getters }, id) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
 
-          dispatch('_fetchListById', anotherListId);
-        }
+    if (getters.currentListObj.id === id) {
+      const anotherId = getters.lists.length > 1
+        ? getters.lists.find(list => list.id !== id).id
+        : null;
 
-        commit('deleteList', listId);
-      })
-      .catch(error => {
-        throw error;
-      });
+      dispatch('_fetchListById', anotherId);
+    }
+
+    commit('deleteList', id);
   },
-
   _setCurrentListId({ commit, dispatch }, id) {
     commit('setCurrentListId', id);
     dispatch('_setCurrentItems', []);
@@ -136,18 +117,14 @@ export default {
 
   // items
 
-  _addItem({ commit, getters }, item) {
+  async _addItem({ commit, getters }, item) {
     const listId = getters.currentListObj.id;
+    const { data: responseItem } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}item/add/${listId}`, item);
 
-    return this._vm.$axios.post(`${this._vm.$apiBasePath}item/add/${listId}`, item)
-      .then(response => {
-        commit('addItem', response.data);
-      })
-      .catch(error => {
-        throw error;
-      });
+    commit('addItem', responseItem);
   },
-  _updateItem({ commit, dispatch }, {
+  async _updateItem({ commit, dispatch }, {
     text,
     details,
     tags,
@@ -155,29 +132,22 @@ export default {
     listId,
     id,
   }) {
-    return this._vm.$axios.patch(`${this._vm.$apiBasePath}item/update/${listId}/${id}`, {
-      text,
-      details,
-      tags,
-      category,
-    })
-      .then(response => {
-        commit('updateItem', response.data);
-        dispatch('_setItemForEditting', null);
-      })
-      .catch(error => {
-        throw error;
+    const { data: responseItem } = await this._vm.$axios
+      .patch(`${this._vm.$apiBasePath}item/update/${listId}/${id}`, {
+        text,
+        details,
+        tags,
+        category,
       });
+
+    commit('updateItem', responseItem);
+    dispatch('_setItemForEditting', null);
   },
-  _deleteItem({ commit, dispatch }, item) {
-    return this._vm.$axios.delete(`${this._vm.$apiBasePath}item/delete/${item.listId}/${item.id}`)
-      .then(() => {
-        commit('deleteItem', item.id);
-        dispatch('_setItemForEditting', null);
-      })
-      .catch(error => {
-        throw error;
-      });
+  async _deleteItem({ commit, dispatch }, item) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/delete/${item.listId}/${item.id}`);
+
+    commit('deleteItem', item.id);
+    dispatch('_setItemForEditting', null);
   },
   _setCurrentItems({ commit }, items) {
     commit('setCurrentItems', items);

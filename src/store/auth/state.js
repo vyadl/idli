@@ -6,5 +6,4 @@ export default {
     roles: [],
     accessToken: null,
   },
-  isRequestProcessing: false,
 };

@@ -4,7 +4,7 @@
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
     @before-open="setItemForEditting"
-    @closed="clearData"
+    @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
@@ -36,21 +36,28 @@
           @click="disableCategory(category.id)"
         />
       </div>
+      <ErrorMessage
+        :message="errorMessage"
+        v-if="errorMessage.length"
+      />
     </template>
     <template v-slot:buttons>
       <ButtonText
         text="save"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         @click="saveItem"
       />
       <ButtonText
         text="cancel"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         @click="closeItemForm"
       />
       <ButtonText
         text="delete"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         v-if="edittingItemObj"
         @click="deleteItem(item)"
       />
@@ -65,6 +72,7 @@ import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import models from '@/models/models';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -76,9 +84,12 @@ export default {
     CheckboxCustom,
     RadioCustom,
     ButtonText,
+    ErrorMessage,
   },
   data: () => ({
     item: new models.Item(),
+    isRequestProcessing: false,
+    errorMessage: '',
   }),
   computed: {
     ...mapGetters({
@@ -97,27 +108,40 @@ export default {
     closeItemForm() {
       this.$modal.hide('itemForm');
     },
-    clearData() {
-      this._setItemForEditting(null);
-      this.item = new models.Item();
-    },
     setItemForEditting() {
       if (this.edittingItemObj) {
         this.item = { ...this.edittingItemObj };
       }
     },
+    resetData() {
+      this._setItemForEditting(null);
+      this.item = new models.Item();
+    },
     saveItem() {
-      if (this.edittingItemObj) {
-        this._updateItem(this.item);
-      } else {
-        this._addItem(this.item);
-      }
-
-      this.closeItemForm();
+      this.isRequestProcessing = true;
+      this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
+        .then(() => {
+          this.closeItemForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
     deleteItem(item) {
-      this._deleteItem(item);
-      this.closeItemForm();
+      this.isRequestProcessing = true;
+      this._deleteItem(item)
+        .then(() => {
+          this.closeItemForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
     disableCategory(id) {
       if (this.item.category === id) {

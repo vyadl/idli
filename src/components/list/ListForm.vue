@@ -4,7 +4,7 @@
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
     @before-open="setListForEditting"
-    @closed="clearData"
+    @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
@@ -68,6 +68,7 @@
       <ButtonText
         text="delete list"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         v-if="edittingListObj"
         @click="deleteList(list.id)"
       />
@@ -76,11 +77,13 @@
       <ButtonText
         text="save"
         style-type="bordered"
-        @click="submitList"
+        :disabled="isRequestProcessing"
+        @click="saveList"
       />
       <ButtonText
         text="cansel"
         style-type="bordered"
+        :disabled="isRequestProcessing"
         @click="closeListForm"
       />
     </template>
@@ -108,6 +111,7 @@ export default {
   },
   data: () => ({
     list: new models.List(),
+    isRequestProcessing: false,
     errorMessage: '',
   }),
   computed: {
@@ -130,7 +134,7 @@ export default {
         this.list = { ...this.edittingListObj };
       }
     },
-    clearData() {
+    resetData() {
       this._setListForEditting(null);
       this.list = new models.List();
       this.errorMessage = '';
@@ -152,22 +156,35 @@ export default {
 
       return filtersNames.length === new Set(filtersNames).size;
     },
-    deleteList(id) {
-      this._deleteList(id);
-      this.closeListForm();
-    },
-    submitList() {
+    saveList() {
       if (this.verifyFilters()) {
-        if (this.edittingListObj) {
-          this._updateList(this.list);
-        } else {
-          this._addList(this.list);
-        }
-
-        this.closeListForm();
+        this.isRequestProcessing = true;
+        this[this.edittingListObj ? '_updateList' : '_addList'](this.list)
+          .then(() => {
+            this.closeListForm();
+          })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
+          .finally(() => {
+            this.isRequestProcessing = false;
+          });
       } else {
         this.errorMessage = 'same names in filters';
       }
+    },
+    deleteList(id) {
+      this.isRequestProcessing = true;
+      this._deleteList(id)
+        .then(() => {
+          this.closeListForm();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };
