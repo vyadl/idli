@@ -51,7 +51,7 @@ export default {
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
       shuffleTrigger: 'shuffleTrigger',
-      isShuffled: 'isShuffled',
+      sorting: 'sorting',
       isCloudModeOn: 'isCloudModeOn',
       isStarsModeOn: 'isStarsModeOn',
       isSidebarOpen: 'isSidebarOpen',
@@ -65,7 +65,7 @@ export default {
       return utils.shuffleArray(this.filteredList);
     },
     computedList() {
-      return this.isShuffled ? this.shuffledList : this.filteredList;
+      return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
     },
   },
   watch: {

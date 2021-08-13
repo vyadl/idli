@@ -3,13 +3,16 @@
     class="list-form"
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
-    @before-open="setListForEditting"
+    @before-open="setData"
+    @opened="focusOnInput"
     @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
         label="name"
+        required
         v-model="list.name"
+        ref="listName"
       />
       <div class="private-option">
         <CheckboxCustom
@@ -29,7 +32,11 @@
             v-for="(tag, index) in list.tags"
             :key="index"
           >
-            <InputCustom v-model="tag.name" />
+            <InputCustom
+              required
+              v-model="tag.name"
+              ref="tagsInput"
+            />
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
@@ -52,7 +59,11 @@
             v-for="(category, index) in list.categories"
             :key="index"
           >
-            <InputCustom v-model="category.name" />
+            <InputCustom
+              required
+              v-model="category.name"
+              ref="categoriesInput"
+            />
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
@@ -136,9 +147,14 @@ export default {
     closeListForm() {
       this.$modal.hide('listForm');
     },
-    setListForEditting() {
+    setData() {
       if (this.edittingListObj) {
-        this.list = { ...this.edittingListObj };
+        this.list = JSON.parse(JSON.stringify(this.edittingListObj));
+      }
+    },
+    focusOnInput() {
+      if (!this.edittingListObj) {
+        this.$refs.listName.focus();
       }
     },
     resetData() {
@@ -153,6 +169,11 @@ export default {
       this.list[type].push({
         name: null,
         id: null,
+      });
+      this.$nextTick(() => {
+        const refName = `${type}Input`;
+
+        this.$refs[refName][this.$refs[refName].length - 1].focus();
       });
     },
     verifyFilters() {

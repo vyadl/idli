@@ -1,39 +1,37 @@
 <template>
-  <SidebarCard
-    class="list-visualization"
-    title="visualization"
-  >
-    <div class="visualization">
+  <div class="list-visualization">
+    <SidebarCard title="sorting">
       <CheckboxCustom
         label="shuffle mode"
         v-model="localIsShuffled"
-        @change="_switchShuffleMode"
+        @change="_switchShuffleMode(localIsShuffled)"
       />
       <ButtonText
         text="randomize it!"
         v-if="isShuffled"
         @click="_shuffleFilteredList"
       />
+    </SidebarCard>
+    <SidebarCard title="modes">
       <CheckboxCustom
         label="cloud mode"
         v-model="localCloudMode"
-        @change="_switchCloudMode"
+        @change="_switchCloudMode(localCloudMode)"
       />
       <CheckboxCustom
         label="stars mode"
-        v-if="isCloudModeOn"
-        :class="{ 'active': isStarsModeOn }"
         v-model="localStarsMode"
-        @change="_switchStarsMode"
+        @change="_switchStarsMode(localStarsMode)"
       />
+    </SidebarCard>
+    <SidebarCard title="theme">
       <CheckboxCustom
         label="invert"
-        :class="{ 'active': isInvert }"
         v-model="localInvertMode"
-        @change="_switchInvertMode"
+        @change="_switchInvertMode(localInvertMode)"
       />
-    </div>
-  </SidebarCard>
+    </SidebarCard>
+  </div>
 </template>
 
 <script>
@@ -49,10 +47,13 @@ export default {
     ButtonText,
   },
   data: () => ({
-    localCloudMode: 0,
-    localInvertMode: 0,
-    localStarsMode: 0,
-    localIsShuffled: 0,
+    sortings: ['default', 'shuffle'],
+    modes: ['list', 'cloud', 'stars'],
+    themes: ['default', 'invert'],
+    localCloudMode: false,
+    localInvertMode: false,
+    localStarsMode: false,
+    localIsShuffled: false,
   }),
   computed: {
     ...mapGetters([
@@ -61,6 +62,12 @@ export default {
       'isInvert',
       'isShuffled',
     ]),
+  },
+  created() {
+    this.localCloudMode = this.isCloudModeOn;
+    this.localInvertMode = this.isInvert;
+    this.localStarsMode = this.isStarsModeOn;
+    this.localIsShuffled = this.isShuffled;
   },
   methods: {
     ...mapActions([

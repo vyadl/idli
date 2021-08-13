@@ -2,8 +2,8 @@
   <div
     class="app"
     :class="{
-      'cloud-mode': isCloudModeOn || isStarsModeOn,
-      'invert': isInvert,
+      'cloud-mode': theme === 'cloud' || theme === 'stars',
+      'invert': theme === 'invert',
     }"
   >
     <EnterScreen v-if="!isLoggedIn"/>
@@ -33,9 +33,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isCloudModeOn: 'isCloudModeOn',
-      isStarsModeOn: 'isStarsModeOn',
-      isInvert: 'isInvert',
+      mode: 'mode',
+      theme: 'theme',
       isLoggedIn: 'auth/isLoggedIn',
     }),
   },

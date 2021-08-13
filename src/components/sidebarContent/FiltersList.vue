@@ -4,32 +4,43 @@
     title="filters"
   >
     <h1 class="filters-title">tags</h1>
+    <InfoMessage
+      :message="tagsInfoMessage"
+      v-if="tagsInfoMessage"
+    />
     <div class="filters-container">
       <CheckboxCustom
         v-for="tag in currentListTags"
         :key="tag.id"
         :value="tag.id"
         :label="tag.name"
-        v-model="checkedTags"
+        v-model="localCheckedTags"
         @change="filterList"
       />
     </div>
     <h1 class="filters-title">categories</h1>
+    <InfoMessage
+      :message="categoriesInfoMessage"
+      v-if="categoriesInfoMessage"
+    />
     <div class="filters-container">
       <CheckboxCustom
         v-for="category in currentListCategories"
         :key="category.id"
         :value="category.id"
         :label="category.name"
-        v-model="checkedCategories"
+        v-model="localCheckedCategories"
         @change="filterList"
       />
     </div>
-    <ButtonText
-      text="reset filters"
-      @click="resetFilters"
-    />
-    <div>{{ filteredListLength }}</div>
+    <div class="bottom">
+      <div class="items-count">selected: {{ filteredListLength }}</div>
+      <ButtonText
+        text="reset filters"
+        style-type="underline"
+        @click="resetFilters"
+      />
+    </div>
   </SidebarCard>
 </template>
 
@@ -37,6 +48,7 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -44,17 +56,30 @@ export default {
     SidebarCard,
     CheckboxCustom,
     ButtonText,
+    InfoMessage,
   },
   data: () => ({
-    checkedTags: [],
-    checkedCategories: [],
+    localCheckedTags: [],
+    localCheckedCategories: [],
   }),
   computed: {
     ...mapGetters({
+      checkedTags: 'checkedTags',
+      checkedCategories: 'checkedCategories',
       currentListTags: 'currentListTags',
       currentListCategories: 'currentListCategories',
       filteredListLength: 'filteredListLength',
     }),
+    tagsInfoMessage() {
+      return !this.currentListTags.length ? 'no tags in this list' : '';
+    },
+    categoriesInfoMessage() {
+      return !this.currentListCategories.length ? 'no categories in this list' : '';
+    },
+  },
+  created() {
+    this.localCheckedTags = this.checkedTags;
+    this.localCheckedCategories = this.checkedCategories;
   },
   methods: {
     ...mapActions({
@@ -62,13 +87,13 @@ export default {
     }),
     filterList() {
       this._filterList({
-        tags: this.checkedTags,
-        categories: this.checkedCategories,
+        tags: this.localCheckedTags,
+        categories: this.localCheckedCategories,
       });
     },
     resetFilters() {
-      this.checkedTags = [];
-      this.checkedCategories = [];
+      this.localCheckedTags = [];
+      this.localCheckedCategories = [];
       this.filterList();
     },
   },
@@ -78,7 +103,28 @@ export default {
 <style lang="scss">
   .filters-list {
     .filters-title {
-      font-size: 17px;
+      margin-bottom: 10px;
+    }
+
+    .filters-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding-top: 15px;
+    }
+
+    .items-count {
+      font-size: 13px;
+      color: map-get($colors, 'gray-dark');
     }
   }
 </style>

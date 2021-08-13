@@ -3,21 +3,28 @@
     class="item-form"
     name="itemForm"
     :header-text="edittingItemObj ? '' : 'new item'"
-    @before-open="setItemForEditting"
+    @before-open="setData"
+    @opened="focusOnInput"
     @closed="resetData"
   >
     <template v-slot:main>
       <div class="text-fields">
         <InputCustom
           label="item"
+          required
           v-model="item.text"
+          ref="itemName"
         />
         <TextareaCustom
           label="details"
           v-model="item.details"
         />
       </div>
-      <div class="filters-container tags">
+      <div
+        class="filters-container"
+        :class="{ indent: areCurrentListTags && areCurrentListCategories }"
+        v-if="areCurrentListTags"
+      >
         <h1 class="filters-title">tags:</h1>
         <CheckboxCustom
           v-for="tag in currentListTags"
@@ -28,7 +35,10 @@
           v-model="item.tags"
         />
       </div>
-      <div class="filters-container">
+      <div
+        class="filters-container"
+        v-if="areCurrentListCategories"
+      >
         <h1 class="filters-title">category:</h1>
         <RadioCustom
           v-for="category in currentListCategories"
@@ -93,6 +103,8 @@ export default {
   },
   data: () => ({
     item: new models.Item(),
+    areCurrentListTags: false,
+    areCurrentListCategories: false,
     isRequestProcessing: false,
     errorMessage: '',
   }),
@@ -113,9 +125,17 @@ export default {
     closeItemForm() {
       this.$modal.hide('itemForm');
     },
-    setItemForEditting() {
+    setData() {
+      this.areCurrentListTags = Boolean(this.currentListTags.length);
+      this.areCurrentListCategories = Boolean(this.currentListCategories.length);
+
       if (this.edittingItemObj) {
-        this.item = { ...this.edittingItemObj };
+        this.item = JSON.parse(JSON.stringify(this.edittingItemObj));
+      }
+    },
+    focusOnInput() {
+      if (!this.edittingItemObj) {
+        this.$refs.itemName.focus();
       }
     },
     resetData() {
@@ -168,10 +188,10 @@ export default {
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
-    }
 
-    .tags {
-      margin-bottom: 15px;
+      &.indent {
+        margin-bottom: 10px;
+      }
     }
 
     .filters-title {

@@ -48,22 +48,29 @@ export default {
 
 <style lang="scss">
   .button-sign {
+    position: relative;
     display: block;
     padding: 0;
     cursor: pointer;
     transition: opacity .2s;
 
     &.arrow {
-      width: 20px;
-      height: 20px;
-      border-left: 3px solid map-get($colors, 'black');
-      border-top: 3px solid map-get($colors, 'black');
-      transform-origin: center center;
-      transform: rotate(-45deg);
+      width: 45px;
+      height: 45px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-left: 3px solid map-get($colors, 'black');
+        border-top: 3px solid map-get($colors, 'black');
+        transform-origin: center center;
+        transform: translate(-5px, -10px) rotate(-45deg);
+      }
     }
 
     &.dots {
-      position: relative;
       width: 17px;
       height: 17px;
 
@@ -85,7 +92,6 @@ export default {
     }
 
     &.plus {
-      position: relative;
       width: 15px;
       height: 15px;
 
@@ -133,7 +139,6 @@ export default {
     &.cross {
       width: 12px;
       height: 12px;
-      position: relative;
 
       &:hover {
         &::before,

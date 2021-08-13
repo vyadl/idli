@@ -6,6 +6,7 @@
     :scrollable="true"
     :name="name"
     @before-open="beforeOpen"
+    @opened="open"
     @closed="close"
   >
     <header
@@ -42,6 +43,9 @@ export default {
   methods: {
     beforeOpen() {
       this.$emit('before-open');
+    },
+    open() {
+      this.$emit('opened');
     },
     close() {
       this.$emit('closed');

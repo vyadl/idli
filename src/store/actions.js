@@ -107,12 +107,6 @@ export default {
   _filterList({ commit }, { tags, categories }) {
     commit('filterList', { tags, categories });
   },
-  _shuffleFilteredList({ commit, getters }) {
-    commit('shuffleFilteredList', getters.filteredList);
-  },
-  _switchShuffleMode({ commit }) {
-    commit('switchShuffleMode');
-  },
 
   // items
 
@@ -161,16 +155,23 @@ export default {
     commit('changeChangingListStatus', status);
   },
 
-  // visualization modes
+  // visualization
 
-  _switchInvertMode({ commit }) {
-    commit('switchInvertMode');
+  _shuffleFilteredList({ commit }) {
+    commit('shuffleFilteredList');
   },
-  _switchCloudMode({ commit }) {
-    commit('switchCloudMode');
+  _setSorting({ commit }, sorting) {
+    commit('setSorting', sorting);
   },
-  _switchStarsMode({ commit }) {
-    commit('switchStarsMode');
+  _setMode({ commit }, mode) {
+    commit('setMode', mode);
+    
+    if (mode === 'cloud' || mode === 'stars') {
+      commit('setSorting', 'shuffle');
+    }
+  },
+  _setTheme({ commit }, theme) {
+    commit('setTheme', theme);
   },
 
   // sidebar

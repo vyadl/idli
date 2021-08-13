@@ -9,6 +9,7 @@
       :value="value"
       :required="required"
       @input="input($event)"
+      ref="input"
     >
   </label>
 </template>
@@ -33,6 +34,9 @@ export default {
   methods: {
     input(event) {
       this.$emit('input', event.target.value);
+    },
+    focus() {
+      this.$refs.input.focus();
     },
   },
 };

@@ -2,10 +2,10 @@
   <div
     class="list-item"
     :class="{
-    'cloud-mode': isCloudModeOn,
-    'stars-mode': isStarsModeOn,
-    'invert': isInvert,
-  }"
+      'cloud-mode': mode === 'cloud',
+      'stars-mode': mode === 'stars',
+      'invert': theme === 'invert',
+    }"
     :style="styles"
   >
     <div
@@ -24,11 +24,10 @@ export default {
   computed: {
     ...mapGetters({
       edittingItemObj: 'edittingItemObj',
-      isCloudModeOn: 'isCloudModeOn',
       shuffleTrigger: 'shuffleTrigger',
-      isStarsModeOn: 'isStarsModeOn',
+      mode: 'mode',
       starsSettings: 'starsSettings',
-      isInvert: 'isInvert',
+      theme: 'theme',
     }),
     styles() {
       let styleObj = {};
@@ -120,7 +119,7 @@ export default {
       .inner {
         opacity: 0;
         transform: scale(0);
-        transition: opacity 0.2s;
+        transition: opacity .2s;
       }
     }
 

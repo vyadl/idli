@@ -4,9 +4,30 @@
   box-sizing: border-box;
 }
 
+html {
+  margin-right: calc(-1 * (100vw - 100%));
+  overflow-x: hidden;
+}
+
 body {
   font: 500 15px Montserrat, Verdana, sans-serif;
   color: map-get($colors, 'gray-text');
+}
+
+input, 
+button {
+  &:focus,
+  &:active {
+    outline: none;
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .35s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 
 .g-hidden {

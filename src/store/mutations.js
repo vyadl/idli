@@ -24,13 +24,6 @@ export default {
   filterList(state, { tags, categories }) {
     state.checkedTags = tags;
     state.checkedCategories = categories;
-    state.mode.shuffle = false;
-  },
-  switchShuffleMode(state) {
-    state.mode.shuffle = !state.mode.shuffle;
-  },
-  shuffleFilteredList(state) {
-    state.shuffleTrigger = !state.shuffleTrigger;
   },
 
   // items
@@ -56,41 +49,43 @@ export default {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);
   },
 
-  // settings
+  // visualization
 
-  switchCloudMode(state) {
-    state.mode.cloud = !state.mode.cloud;
-    state.mode.list = !state.mode.cloud;
-
-    if (!state.mode.cloud) {
-      state.mode.stars = false;
-    } else {
-      state.mode.shuffle = true;
-    }
+  shuffleFilteredList(state) {
+    state.shuffleTrigger = !state.shuffleTrigger;
   },
-  switchStarsMode(state) {
-    state.mode.stars = !state.mode.stars;
-    state.mode.list = !state.mode.stars;
-
-    if (state.mode.stars) {
-      state.mode.cloud = true;
-      state.mode.shuffle = true;
-    }
+  setSorting(state, sorting) {
+    state.sorting = sorting;
   },
-  switchInvertMode(state) {
-    state.isInvert = !state.isInvert;
+  setMode(state, mode) {
+    state.mode = mode;
   },
-  setSettingsStatus(state, payload) {
-    const statuses = state.settingsStatuses;
-
-    statuses[payload.field] = payload.value;
-
-    Object.keys(statuses).forEach(statusField => {
-      if (statusField !== payload.field) {
-        statuses[statusField] = false;
-      }
-    });
+  setTheme(state, theme) {
+    state.theme = theme;
   },
+  // switchCloudMode(state, value) {
+  //   state.mode.cloud = value;
+  //   state.mode.list = !state.mode.cloud;
+
+  //   // if (!state.mode.cloud) {
+  //   //   state.mode.stars = false;
+  //   // } else {
+  //     // state.mode.shuffle = true;
+  //   // }
+  //   if (state.mode.cloud) {
+  //     state.mode.shuffle = true;
+  //   }
+  // },
+  // switchStarsMode(state, value) {
+  //   state.mode.stars = value;
+  //   // state.mode.cloud = !state.mode.cloud;
+  //   state.mode.list = !state.mode.stars;
+
+  //   if (state.mode.stars) {
+  //     // state.mode.cloud = true;
+  //     state.mode.shuffle = true;
+  //   }
+  // },
 
   // sidebar
 

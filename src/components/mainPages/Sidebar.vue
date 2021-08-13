@@ -118,7 +118,7 @@ export default {
       }
 
       .state-button {
-        transform: translateX(-200%) rotate(180deg);
+        transform: translateX(-110%) rotate(180deg);
       }
     }
 
@@ -140,7 +140,7 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       transition: transform .4s;
     }
 
@@ -163,7 +163,7 @@ export default {
     .state-button {
       width: fit-content;
       transition: transform .4s;
-      transform: translateX(-120%);
+      transform: translateX(-100%);
     }
 
     .add-item-button {
