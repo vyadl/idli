@@ -1,7 +1,10 @@
 <template>
   <div
     class="sidebar j-sidebar"
-    :class="{ 'show': isSidebarOpen }"
+    :class="{
+      show: isSidebarOpen,
+      'invert-theme': isInvert,
+    }"
   >
     <div
       class="add-item-button"
@@ -103,14 +106,14 @@ export default {
     right: 0;
     width: 300px;
     height: 100vh;
-    background-color: white;
+    background-color: map-get($colors, 'white');
     transform: translateX(300px);
     transition:
       transform .5s,
       box-shadow .7s;
 
     &.show {
-      box-shadow: 15px 0 30px 0 gray;
+      box-shadow: 15px 0 30px 0 map-get($colors, 'gray-light');
       transform: translateX(0);
 
       .mode-buttons {
@@ -156,7 +159,7 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        box-shadow: -5px 0 12px 12px white;
+        box-shadow: -5px 0 12px 12px map-get($colors, 'white');
       }
     }
 
@@ -170,6 +173,22 @@ export default {
       position: fixed;
       top: 5px;
       transform: translateX(-100%) translateX(-5px);
+    }
+
+    &.invert-theme {
+      border-left: 2px solid map-get($colors, 'white');
+      background-color: map-get($colors, 'black');
+      color: map-get($colors, 'white');
+
+      &.show {
+        box-shadow: none;
+      }
+
+      .mode-button{
+        &::before{
+          box-shadow: -5px 0 12px 12px map-get($colors, 'black');
+        }
+      }
     }
   }
 </style>

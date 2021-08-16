@@ -1,5 +1,8 @@
 <template>
-  <label class="radio-custom">
+  <label
+    class="radio-custom"
+    :class="{ 'invert-theme': isInvert }"
+  >
     <input
       type="radio"
       class="input"
@@ -21,7 +24,9 @@ export default {
     event: 'change',
   },
   props: {
-    value: Number,
+    value: {
+      type: [Number, String],
+    },
     modelValue: {
       default: '',
     },
@@ -71,12 +76,34 @@ export default {
       border-radius: 25px;
       padding: 5px 10px 6px;
       background-color: map-get($colors, 'white');
-      font-size: 13px;
+      font-size: 14px;
       transition: background-color .3s;
 
       &:hover {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
+      }
+    }
+
+    &.invert-theme {
+      .input {
+        &:checked {
+          &+.label {
+            background-color: map-get($colors, 'white');
+            color: map-get($colors, 'black');
+          }
+        }
+      }
+
+      .label {
+        border-color: map-get($colors, 'white');
+        background-color: map-get($colors, 'black');
+        color: map-get($colors, 'white');
+
+        &:hover {
+          background-color: map-get($colors, 'white');
+          color: map-get($colors, 'black');
+        }
       }
     }
   }

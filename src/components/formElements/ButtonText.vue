@@ -1,7 +1,13 @@
 <template>
   <button
     class="button-text"
-    :class="[styleType, { active }]"
+    :class="[
+      styleType,
+      {
+        active,
+        'invert-theme': isInvert,
+      }
+    ]"
     :type="type"
     :title="title"
     :disabled="disabled"
@@ -63,36 +69,14 @@ export default {
       border: 2px solid map-get($colors, 'black');
       border-radius: 3px;
       background-color: map-get($colors, 'white');
-      transition: background-color .3s;
+      transition:
+        background-color .3s .05s,
+        color .2s .05s;
 
       &.active,
       &:hover {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
-      }
-
-      &:disabled {
-        border-color: map-get($colors, 'gray-light');
-        color: map-get($colors, 'gray-light');
-
-        &:hover {
-          background-color: transparent;
-        }
-      }
-    }
-
-    &.solid {
-      border: 2px solid map-get($colors, 'black');
-      border-radius: 3px;
-      background-color: map-get($colors, 'black');
-      color: map-get($colors, 'white');
-      transition: background-color .3s;
-
-      &.active,
-      &:hover {
-        border-color: map-get($colors, 'black');
-        background-color: map-get($colors, 'white');
-        color: map-get($colors, 'black');
       }
 
       &:disabled {
@@ -126,6 +110,43 @@ export default {
       &.active,
       &:hover {
         color: map-get($colors, 'gray-dark');
+      }
+    }
+
+    &.invert-theme {
+      &.bordered {
+        border-color: map-get($colors, 'white');
+        background-color: map-get($colors, 'black');
+        color: map-get($colors, 'white');
+
+        &.active,
+        &:hover {
+          background-color: map-get($colors, 'white');
+          color: map-get($colors, 'black');
+        }
+
+        &:disabled {
+          border-color: map-get($colors, 'gray-dark');
+          color: map-get($colors, 'gray-dark');
+        }
+      }
+
+      &.underline {
+        color: map-get($colors, 'gray-light');
+
+        &:hover,
+        &:disabled {
+          color: map-get($colors, 'gray-dark');
+        }
+      }
+
+      &.line {
+        color: map-get($colors, 'white');
+
+        &.active,
+        &:hover {
+          color: map-get($colors, 'gray-light');
+        }
       }
     }
   }

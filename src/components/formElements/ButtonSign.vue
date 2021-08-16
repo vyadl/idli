@@ -1,7 +1,13 @@
 <template>
   <button
     class="button-sign"
-    :class="[styleType, { big }]"
+    :class="[
+      styleType,
+      {
+        big,
+        'invert-theme': isInvert
+      }
+    ]"
     :type="type"
     :title="title"
     :disabled="disabled"
@@ -166,6 +172,42 @@ export default {
 
       &::after {
         transform: translateX(-50%) rotate(-45deg);
+      }
+    }
+
+    &.invert-theme {
+      &.arrow {
+        &::before {
+          border-color: map-get($colors, 'white');
+        }
+      }
+
+      &.dots {
+        &:hover {
+          &::before {
+            color: map-get($colors, 'gray-light');
+          }
+        }
+
+        &::before {
+          color: map-get($colors, 'white');
+        }
+      }
+
+      &.plus,
+      &.cross {
+        &:hover,
+        &:disabled {
+          &::before,
+          &::after {
+            background-color: map-get($colors, 'gray-light');
+          }
+        }
+
+        &::before,
+        &::after {
+          background-color: map-get($colors, 'white');
+        }
       }
     }
   }

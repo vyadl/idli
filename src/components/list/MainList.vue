@@ -9,14 +9,7 @@
     >
       {{ currentListObj.name }}
     </div>
-    <template v-if="isCloudModeOn && !isStarsModeOn">
-      <ListItem
-        v-for="item in finalList"
-        :key="item.id"
-        :item="item"
-      />
-    </template>
-    <template v-else>
+    <template v-if="mode === 'list'">
       <div
         class="items-container"
         :class="{ parallax: isSidebarOpen }"
@@ -29,6 +22,13 @@
           />
         </div>
       </div>
+    </template>
+    <template v-else>
+      <ListItem
+        v-for="item in finalList"
+        :key="item.id"
+        :item="item"
+      />
     </template>
   </div>
 </template>
@@ -50,11 +50,10 @@ export default {
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
-      shuffleTrigger: 'shuffleTrigger',
-      sorting: 'sorting',
-      isCloudModeOn: 'isCloudModeOn',
-      isStarsModeOn: 'isStarsModeOn',
       isSidebarOpen: 'isSidebarOpen',
+      sorting: 'sorting',
+      mode: 'mode',
+      shuffleTrigger: 'shuffleTrigger',
     }),
     currentListName() {
       return this.currentListObj?.name;
@@ -65,12 +64,12 @@ export default {
       return utils.shuffleArray(this.filteredList);
     },
     computedList() {
-      return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
+      return this.sorting === 'shuffle' ? this.shuffledList : this.filteredList;
     },
   },
   watch: {
     computedList: {
-      handler: function computedListHanler() {
+      handler: function computedListHandler() {
         this.finalList = [];
         this.finalList = this.computedList;
       },
@@ -87,7 +86,7 @@ export default {
 
 <style lang="scss">
   .main-list {
-    height: 100vh;
+    min-height: 100vh;
 
     .list-title {
       margin-bottom: 40px;

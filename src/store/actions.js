@@ -149,12 +149,6 @@ export default {
     commit('setItemForEditting', item);
   },
 
-  // changing statuses
-
-  _changeChangingListStatus({ commit }, status) {
-    commit('changeChangingListStatus', status);
-  },
-
   // visualization
 
   _shuffleFilteredList({ commit }) {
@@ -165,9 +159,11 @@ export default {
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-    
+
     if (mode === 'cloud' || mode === 'stars') {
       commit('setSorting', 'shuffle');
+    } else {
+      commit('setSorting', 'default');
     }
   },
   _setTheme({ commit }, theme) {

@@ -1,7 +1,10 @@
 <template>
   <label
     class="checkbox-custom"
-    :class="styleType"
+    :class="[
+      styleType,
+      { 'invert-theme': isInvert },
+    ]"
   >
     <input
       type="checkbox"
@@ -108,7 +111,7 @@ export default {
         border-radius: 25px;
         padding: 5px 10px 6px;
         background-color: map-get($colors, 'white');
-        font-size: 13px;
+        font-size: 14px;
         transition: background-color .3s;
 
         &:hover {
@@ -162,6 +165,41 @@ export default {
           transform-origin: center center;
           transform: translateY(-50%) translate(4px, -1px) rotate(-45deg);
           transition: opacity .2s;
+        }
+      }
+    }
+
+    &.invert-theme {
+      &.custom {
+        .input {
+          &:checked {
+            &+.label {
+              background-color: map-get($colors, 'white');
+              color: map-get($colors, 'black');
+            }
+          }
+        }
+
+        .label {
+          border-color: map-get($colors, 'white');
+          background-color: map-get($colors, 'black');
+          color: map-get($colors, 'white');
+
+          &:hover {
+            background-color: map-get($colors, 'white');
+            color: map-get($colors, 'black');
+          }
+        }
+      }
+
+      &.classic {
+        .label {
+          color: map-get($colors, 'white');
+
+          &::before,
+          &::after {
+            border-color: map-get($colors, 'white');
+          }
         }
       }
     }

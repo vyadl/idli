@@ -10,15 +10,11 @@ export default {
   checkedTags: state => state.checkedTags,
   checkedCategories: state => state.checkedCategories,
   sorting: state => state.sorting,
-  mode: state => state.mode,
-  theme: state => state.theme,
-  // isCloudModeOn: state => state.mode.cloud,
-  // isStarsModeOn: state => state.mode.stars,
-  // isInvert: state => state.isInvert,
-  starsSettings: state => state.starsSettings,
   shuffleTrigger: state => state.shuffleTrigger,
-  // isShuffled: state => state.mode.shuffle,
-  filteredListLength: (state, getters) => getters.filteredList.length,
+  mode: state => state.mode,
+  starsSettings: state => state.starsSettings,
+  theme: state => state.theme,
+  isInvert: state => state.theme === 'invert',
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
   filteredList: (state, getters) => {
@@ -33,4 +29,5 @@ export default {
       return areTagsIntersection && isCategoryIntersection;
     });
   },
+  filteredListLength: (state, getters) => getters.filteredList.length,
 };

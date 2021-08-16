@@ -51,9 +51,6 @@ export default {
 
   // visualization
 
-  shuffleFilteredList(state) {
-    state.shuffleTrigger = !state.shuffleTrigger;
-  },
   setSorting(state, sorting) {
     state.sorting = sorting;
   },
@@ -62,6 +59,9 @@ export default {
   },
   setTheme(state, theme) {
     state.theme = theme;
+  },
+  shuffleFilteredList(state) {
+    state.shuffleTrigger = !state.shuffleTrigger;
   },
   // switchCloudMode(state, value) {
   //   state.mode.cloud = value;

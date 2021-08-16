@@ -1,5 +1,8 @@
 <template>
-  <label class="textarea-custom">
+  <label
+    class="textarea-custom"
+    :class="{ 'invert-theme': isInvert }"
+  >
     <div class="label">
       {{ label }}
     </div>
@@ -44,6 +47,21 @@ export default {
 
       &:focus {
         border-color: map-get($colors, 'black');
+      }
+    }
+
+    &.invert-theme {
+      .label {
+        color: map-get($colors, 'gray-light');
+      }
+
+      .textarea {
+        border-color: map-get($colors, 'gray-dark');
+        color: map-get($colors, 'white');
+
+        &:focus {
+          border-color: map-get($colors, 'white');
+        }
       }
     }
   }

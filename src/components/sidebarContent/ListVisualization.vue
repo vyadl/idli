@@ -1,82 +1,129 @@
 <template>
   <div class="list-visualization">
-    <SidebarCard title="sorting">
-      <CheckboxCustom
-        label="shuffle mode"
-        v-model="localIsShuffled"
-        @change="_switchShuffleMode(localIsShuffled)"
+    <SidebarCard
+      class="sorting"
+      title="sorting"
+    >
+      <RadioCustom
+        v-for="sorting in sortings"
+        :key="sorting"
+        :value="sorting"
+        :label="sorting"
+        name="sorting"
+        v-model="localSorting"
+        @change="_setSorting(sorting)"
       />
       <ButtonText
+        class="sorting-action"
         text="randomize it!"
-        v-if="isShuffled"
+        style-type="underline"
+        v-if="sorting === 'shuffle'"
         @click="_shuffleFilteredList"
       />
     </SidebarCard>
     <SidebarCard title="modes">
-      <CheckboxCustom
-        label="cloud mode"
-        v-model="localCloudMode"
-        @change="_switchCloudMode(localCloudMode)"
-      />
-      <CheckboxCustom
-        label="stars mode"
-        v-model="localStarsMode"
-        @change="_switchStarsMode(localStarsMode)"
-      />
+      <div class="buttons-container">
+        <RadioCustom
+          v-for="mode in modes"
+          :key="mode"
+          :value="mode"
+          :label="mode"
+          name="mode"
+          v-model="localMode"
+          @change="_setMode(mode)"
+        />
+      </div>
     </SidebarCard>
     <SidebarCard title="theme">
-      <CheckboxCustom
-        label="invert"
-        v-model="localInvertMode"
-        @change="_switchInvertMode(localInvertMode)"
-      />
+      <div class="buttons-container">
+        <RadioCustom
+          v-for="theme in themes"
+          :key="theme"
+          :value="theme"
+          :label="theme"
+          name="theme"
+          v-model="localTheme"
+          @change="_setTheme(theme)"
+        />
+      </div>
     </SidebarCard>
   </div>
 </template>
 
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
-import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     SidebarCard,
-    CheckboxCustom,
+    RadioCustom,
     ButtonText,
   },
   data: () => ({
     sortings: ['default', 'shuffle'],
     modes: ['list', 'cloud', 'stars'],
     themes: ['default', 'invert'],
-    localCloudMode: false,
-    localInvertMode: false,
-    localStarsMode: false,
-    localIsShuffled: false,
+    localSorting: '',
+    localMode: '',
+    localTheme: '',
   }),
   computed: {
-    ...mapGetters([
-      'isCloudModeOn',
-      'isStarsModeOn',
-      'isInvert',
-      'isShuffled',
-    ]),
+    ...mapGetters({
+      sorting: 'sorting',
+      mode: 'mode',
+      theme: 'theme',
+    }),
   },
-  created() {
-    this.localCloudMode = this.isCloudModeOn;
-    this.localInvertMode = this.isInvert;
-    this.localStarsMode = this.isStarsModeOn;
-    this.localIsShuffled = this.isShuffled;
+  watch: {
+    sorting: {
+      handler: function sortingHandler() {
+        this.localSorting = this.sorting;
+      },
+      immediate: true,
+    },
+    mode: {
+      handler: function modeHandler() {
+        this.localMode = this.mode;
+      },
+      immediate: true,
+    },
+    theme: {
+      handler: function themeHandler() {
+        this.localTheme = this.theme;
+      },
+      immediate: true,
+    },
   },
   methods: {
-    ...mapActions([
-      '_shuffleFilteredList',
-      '_switchCloudMode',
-      '_switchStarsMode',
-      '_switchInvertMode',
-      '_switchShuffleMode',
-    ]),
+    ...mapActions({
+      _setSorting: '_setSorting',
+      _setMode: '_setMode',
+      _setTheme: '_setTheme',
+      _shuffleFilteredList: '_shuffleFilteredList',
+    }),
   },
 };
 </script>
+
+<style lang="scss">
+  .list-visualization {
+    .sorting {
+      position: relative;
+    }
+
+    .sorting-action {
+      position: absolute;
+      top: 35px;
+      right: 0;
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  }
+</style>

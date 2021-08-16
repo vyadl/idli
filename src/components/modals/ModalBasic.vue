@@ -1,6 +1,7 @@
 <template>
   <modal
     class="modal-basic"
+    :class="{ 'invert-theme': isInvert }"
     height="auto"
     :width="width"
     :scrollable="true"
@@ -81,6 +82,15 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+    }
+
+    &.invert-theme {
+      .vm--modal {
+        border: 2px solid map-get($colors, 'white');
+        background-color: map-get($colors, 'black');
+        box-shadow: none;
+        color: map-get($colors, 'white');
+      }
     }
   }
 </style>

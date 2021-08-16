@@ -1,5 +1,8 @@
 <template>
-  <label class="input-custom">
+  <label
+    class="input-custom"
+    :class="{ 'invert-theme': isInvert }"
+  >
     <div class="label">
       {{ label }}
     </div>
@@ -61,6 +64,21 @@ export default {
 
       &:focus {
         border-color: map-get($colors, 'black');
+      }
+    }
+
+    &.invert-theme {
+      .label {
+        color: map-get($colors, 'gray-light');
+      }
+
+      .input {
+        border-color: map-get($colors, 'gray-dark');
+        color: map-get($colors, 'white');
+
+        &:focus {
+          border-color: map-get($colors, 'white');
+        }
       }
     }
   }
