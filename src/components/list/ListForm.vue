@@ -10,7 +10,6 @@
     <template v-slot:main>
       <InputCustom
         label="name"
-        required
         v-model="list.name"
         ref="listName"
       />
@@ -33,7 +32,6 @@
             :key="index"
           >
             <InputCustom
-              required
               v-model="tag.name"
               ref="tagsInput"
             />
@@ -60,7 +58,6 @@
             :key="index"
           >
             <InputCustom
-              required
               v-model="category.name"
               ref="categoriesInput"
             />
@@ -79,15 +76,15 @@
         </div>
       </div>
       <ErrorMessage
-        :message="errorMessage"
         v-if="errorMessage"
+        :message="errorMessage"
       />
     </template>
     <template v-slot:buttons>
       <div>
         <ButtonText
           class="modal-button"
-          text="save"
+          :text="edittingListObj ? 'save' : 'add'"
           :disabled="isRequestProcessing"
           @click="saveList"
         />
@@ -98,10 +95,10 @@
         />
       </div>
       <ButtonText
+        v-if="edittingListObj"
         text="delete list"
         style-type="underline"
         :disabled="isRequestProcessing"
-        v-if="edittingListObj"
         @click="deleteList(list.id)"
       />
     </template>

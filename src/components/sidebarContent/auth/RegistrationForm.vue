@@ -5,39 +5,39 @@
   >
     <InputCustom
       label="username"
-      required
       v-model="user.username"
+      required
       @input="clearMessage"
     />
     <InputCustom
       label="e-mail"
       type="email"
-      required
       v-model="user.email"
+      required
       @input="clearMessage"
     />
     <InputCustom
       label="password"
       type="password"
-      required
       v-model="user.password"
+      required
     />
     <InputCustom
       label="confirm password"
       type="password"
-      required
       v-model="passwordToCheck"
+      required
     />
     <div class="message-container">
       <ErrorMessage
+        v-if="errorMessage"
         :message="errorMessage"
-        v-if="errorMessage.length"
       />
     </div>
     <ButtonText
+      text="sign up"
       style-type="bordered"
       type="submit"
-      text="sign up"
       :disabled="isRequestProcessing"
     />
   </form>

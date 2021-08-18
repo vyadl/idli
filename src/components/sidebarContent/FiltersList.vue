@@ -1,46 +1,53 @@
 <template>
   <SidebarCard
     class="filters-list"
+    :class="{ 'invert-theme': isInvert }"
     title="filters"
   >
-    <h1 class="filters-title">tags</h1>
-    <InfoMessage
-      :message="tagsInfoMessage"
-      v-if="tagsInfoMessage"
-    />
-    <div class="filters-container">
-      <CheckboxCustom
-        v-for="tag in currentListTags"
-        :key="tag.id"
-        :value="tag.id"
-        :label="tag.name"
-        v-model="localCheckedTags"
-        @change="filterList"
+    <template v-if="currentListObj">
+      <h1 class="filters-title">tags</h1>
+      <InfoMessage
+        v-if="tagsInfoMessage"
+        :message="tagsInfoMessage"
       />
-    </div>
-    <h1 class="filters-title">categories</h1>
-    <InfoMessage
-      :message="categoriesInfoMessage"
-      v-if="categoriesInfoMessage"
-    />
-    <div class="filters-container">
-      <CheckboxCustom
-        v-for="category in currentListCategories"
-        :key="category.id"
-        :value="category.id"
-        :label="category.name"
-        v-model="localCheckedCategories"
-        @change="filterList"
+      <div class="filters-container">
+        <CheckboxCustom
+          v-for="tag in currentListTags"
+          :key="tag.id"
+          :label="tag.name"
+          :value="tag.id"
+          v-model="localCheckedTags"
+          @change="filterList"
+        />
+      </div>
+      <h1 class="filters-title">categories</h1>
+      <InfoMessage
+        v-if="categoriesInfoMessage"
+        :message="categoriesInfoMessage"
       />
-    </div>
-    <div class="bottom">
-      <div class="items-count">selected: {{ filteredListLength }}</div>
-      <ButtonText
-        text="reset filters"
-        style-type="underline"
-        @click="resetFilters"
-      />
-    </div>
+      <div class="filters-container">
+        <CheckboxCustom
+          v-for="category in currentListCategories"
+          :key="category.id"
+          :label="category.name"
+          :value="category.id"
+          v-model="localCheckedCategories"
+          @change="filterList"
+        />
+      </div>
+      <div class="bottom">
+        <div class="items-count">selected: {{ filteredListLength }}</div>
+        <ButtonText
+          v-if="localCheckedTags.length || localCheckedCategories.length"
+          text="reset filters"
+          style-type="underline"
+          @click="resetFilters"
+        />
+      </div>
+    </template>
+    <template v-else>
+      <InfoMessage message="to manage filters you should create list" />
+    </template>
   </SidebarCard>
 </template>
 
@@ -64,6 +71,7 @@ export default {
   }),
   computed: {
     ...mapGetters({
+      currentListObj: 'currentListObj',
       checkedTags: 'checkedTags',
       checkedCategories: 'checkedCategories',
       currentListTags: 'currentListTags',
@@ -71,10 +79,10 @@ export default {
       filteredListLength: 'filteredListLength',
     }),
     tagsInfoMessage() {
-      return !this.currentListTags.length ? 'no tags in this list' : '';
+      return !this.currentListTags?.length ? 'no tags in this list' : '';
     },
     categoriesInfoMessage() {
-      return !this.currentListCategories.length ? 'no categories in this list' : '';
+      return !this.currentListCategories?.length ? 'no categories in this list' : '';
     },
   },
   created() {
@@ -84,6 +92,7 @@ export default {
   methods: {
     ...mapActions({
       _filterList: '_filterList',
+      _resetFilters: '_resetFilters',
     }),
     filterList() {
       this._filterList({
@@ -94,7 +103,7 @@ export default {
     resetFilters() {
       this.localCheckedTags = [];
       this.localCheckedCategories = [];
-      this.filterList();
+      this._resetFilters();
     },
   },
 };
@@ -117,14 +126,21 @@ export default {
     .bottom {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       width: 100%;
       padding-top: 15px;
     }
 
     .items-count {
+      padding: 5px 0;
+      line-height: 1.5;
       font-size: 13px;
       color: map-get($colors, 'gray-dark');
+    }
+
+    &.invert-theme {
+      .items-count {
+        color: map-get($colors, 'gray-light');
+      }
     }
   }
 </style>

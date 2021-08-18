@@ -25,6 +25,10 @@ export default {
     state.checkedTags = tags;
     state.checkedCategories = categories;
   },
+  resetFilters(state) {
+    state.checkedTags = [];
+    state.checkedCategories = [];
+  },
 
   // items
 
@@ -63,29 +67,6 @@ export default {
   shuffleFilteredList(state) {
     state.shuffleTrigger = !state.shuffleTrigger;
   },
-  // switchCloudMode(state, value) {
-  //   state.mode.cloud = value;
-  //   state.mode.list = !state.mode.cloud;
-
-  //   // if (!state.mode.cloud) {
-  //   //   state.mode.stars = false;
-  //   // } else {
-  //     // state.mode.shuffle = true;
-  //   // }
-  //   if (state.mode.cloud) {
-  //     state.mode.shuffle = true;
-  //   }
-  // },
-  // switchStarsMode(state, value) {
-  //   state.mode.stars = value;
-  //   // state.mode.cloud = !state.mode.cloud;
-  //   state.mode.list = !state.mode.stars;
-
-  //   if (state.mode.stars) {
-  //     // state.mode.cloud = true;
-  //     state.mode.shuffle = true;
-  //   }
-  // },
 
   // sidebar
 

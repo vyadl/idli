@@ -16,15 +16,16 @@
           @click="setListForEditting(list)"
         />
         <ButtonText
-          style-type="line"
+          class="list-name"
           :text="list.name"
+          style-type="line"
           :active="list.id === currentListId"
           @click="fetchListById(list.id)"
         />
       </div>
       <ButtonSign
-        title="new list"
         style-type="plus"
+        title="new list"
         :disabled="isRequestProcessing"
         @click="openListForm"
       />
@@ -49,6 +50,7 @@ export default {
   },
   data: () => ({
     isRequestProcessing: false,
+    listRequest: null,
   }),
   computed: {
     ...mapGetters({
@@ -71,7 +73,15 @@ export default {
     },
     fetchListById(id) {
       this.isRequestProcessing = true;
-      this._fetchListById(id)
+
+      if (this.listRequest) {
+        this.listRequest.cancel();
+      }
+
+      const source = this.$axios.CancelToken.source();
+
+      this.listRequest = source;
+      this._fetchListById({ id, token: source.token })
         .finally(() => {
           this.isRequestProcessing = false;
         });
@@ -90,6 +100,7 @@ export default {
       display: flex;
       align-items: center;
       width: fit-content;
+      margin-bottom: 5px;
       transform: translateX(-16px);
 
       &:last-of-type {
@@ -109,6 +120,10 @@ export default {
       &.active {
         opacity: 1;
       }
+    }
+
+    .list-name {
+      max-width: 220px;
     }
   }
 </style>

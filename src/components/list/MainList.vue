@@ -9,27 +9,27 @@
     >
       {{ currentListObj.name }}
     </div>
-    <template v-if="mode === 'list'">
-      <div
-        class="items-container"
-        :class="{ parallax: isSidebarOpen }"
-      >
-        <div v-if="isListShown">
+    <div
+      class="items-container"
+      :class="{ parallax: isSidebarOpen }"
+    >
+      <template v-if="mode === 'list'">
+        <div class="list-mode">
           <ListItem
             v-for="item in finalList"
             :key="item.id"
             :item="item"
           />
         </div>
-      </div>
-    </template>
-    <template v-else>
-      <ListItem
-        v-for="item in finalList"
-        :key="item.id"
-        :item="item"
-      />
-    </template>
+      </template>
+      <template v-else>
+        <ListItem
+          v-for="item in finalList"
+          :key="item.id"
+          :item="item"
+        />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -43,7 +43,6 @@ export default {
     ListItem,
   },
   data: () => ({
-    isListShown: true,
     finalList: [],
   }),
   computed: {
@@ -55,9 +54,6 @@ export default {
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
     }),
-    currentListName() {
-      return this.currentListObj?.name;
-    },
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
@@ -89,20 +85,23 @@ export default {
     min-height: 100vh;
 
     .list-title {
-      margin-bottom: 40px;
       padding: 10px;
       font-size: map-get($text, 'title-font-size');
       color: map-get($colors, 'gray-light');
     }
 
     .items-container {
-      display: flex;
-      flex-direction: column;
       transition: transform .5s;
 
       &.parallax {
         transform: translateX(-20px);
       }
+    }
+
+    .list-mode {
+      display: flex;
+      flex-direction: column;
+      padding: 50px;
     }
   }
 </style>

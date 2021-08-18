@@ -5,15 +5,15 @@
   >
     <div class="user-info">
       <div class="info-field">
-        username: {{ user.username }}
+        username:  {{ user.username }}
       </div>
       <div class="info-field">
-        e-mail: {{ user.email }}
+        e-mail:  {{ user.email }}
       </div>
     </div>
     <ButtonText
-      style-type="underline"
       text="sign out"
+      style-type="underline"
       @click="_signOut"
     />
   </SidebarCard>

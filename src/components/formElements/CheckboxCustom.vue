@@ -7,8 +7,8 @@
     ]"
   >
     <input
-      type="checkbox"
       class="input"
+      type="checkbox"
       :value="value"
       :checked="isChecked"
       @change="change"
@@ -29,24 +29,24 @@ export default {
     event: 'change',
   },
   props: {
-    value: Number,
-    modelValue: {
-      default: false,
-    },
     label: String,
-    trueValue: {
-      default: true,
-    },
-    falseValue: {
-      default: false,
+    styleType: {
+      type: String,
+      default: 'custom',
     },
     title: {
       type: String,
       default: '',
     },
-    styleType: {
-      type: String,
-      default: 'custom',
+    value: Number,
+    modelValue: {
+      default: false,
+    },
+    trueValue: {
+      default: true,
+    },
+    falseValue: {
+      default: false,
     },
   },
   computed: {
@@ -112,7 +112,9 @@ export default {
         padding: 5px 10px 6px;
         background-color: map-get($colors, 'white');
         font-size: 14px;
-        transition: background-color .3s;
+        transition:
+          background-color .3s .05s,
+          color .2s .05s;
 
         &:hover {
           background-color: map-get($colors, 'black');

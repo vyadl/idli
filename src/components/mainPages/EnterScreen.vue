@@ -12,7 +12,6 @@
       <ButtonText
         text="sign up"
         style-type="line"
-        active
         stop-propagation
         @click="_openSidebar('sign up')"
       />
@@ -20,7 +19,6 @@
       <ButtonText
         text="sign in"
         style-type="line"
-        active
         stop-propagation
         @click="_openSidebar('sign in')"
       />
@@ -57,7 +55,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     transition: transform .5s;
 
       &.parallax {

@@ -1,26 +1,28 @@
 <template>
-  <SidebarCard
-    class="test-data"
-  >
+  <SidebarCard class="test-data">
     <ButtonText
-      class="open-button"
-      style-type="underline"
       :text="areTestListsShown ? 'hide test lists' : 'show test lists'"
+      style-type="underline"
       @click="areTestListsShown = !areTestListsShown"
     />
     <ErrorMessage
-      :message="errorMessage"
       v-if="errorMessage"
+      :message="errorMessage"
     />
     <div
-      class="test-list-buttons"
+      class="buttons-container"
       v-if="areTestListsShown"
     >
+      <InfoMessage
+        class="info-message"
+        message="choosing test list will copy it to your lists"
+      />
       <ButtonText
-        style-type="line"
+        class="list-name"
         v-for="list in testData"
         :key="list.name"
         :text="list.name"
+        style-type="line"
         :disabled="isRequestProcessing"
         @click="addTestList(list)"
       />
@@ -32,6 +34,7 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { mapGetters, mapActions } from 'vuex';
 import axios from 'axios';
 
@@ -40,6 +43,7 @@ export default {
     SidebarCard,
     ButtonText,
     ErrorMessage,
+    InfoMessage,
   },
   data: () => ({
     areTestListsShown: false,
@@ -64,6 +68,7 @@ export default {
     }),
     addTestList(list) {
       this.isRequestProcessing = true;
+      this.errorMessage = '';
       this._addTestList(list)
         .catch(error => {
           this.errorMessage = error.response.data.message;
@@ -82,12 +87,16 @@ export default {
     flex-direction: column;
     width: 100%;
 
-    .open-button {
+    .buttons-container {
+      width: 100%;
+    }
+
+    .info-message {
       margin-bottom: 10px;
     }
 
-    .test-list-buttons {
-      width: 100%;
+    .list-name {
+      margin-bottom: 5px;
     }
   }
 </style>

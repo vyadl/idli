@@ -2,7 +2,7 @@
   <ModalBasic
     class="item-form"
     name="itemForm"
-    :header-text="edittingItemObj ? '' : 'new item'"
+    :header-text="edittingItemObj ? 'edit item' : 'new item'"
     @before-open="setData"
     @opened="focusOnInput"
     @closed="resetData"
@@ -11,7 +11,6 @@
       <div class="text-fields">
         <InputCustom
           label="item"
-          required
           v-model="item.text"
           ref="itemName"
         />
@@ -29,10 +28,10 @@
         <CheckboxCustom
           v-for="tag in currentListTags"
           :key="tag.id"
-          :value="tag.id"
           :label="tag.name"
-          name="tags"
+          :value="tag.id"
           v-model="item.tags"
+          name="tags"
         />
       </div>
       <div
@@ -43,23 +42,23 @@
         <RadioCustom
           v-for="category in currentListCategories"
           :key="category.id"
-          :value="category.id"
           :label="category.name"
-          name="category"
+          :value="category.id"
           v-model="item.category"
+          name="category"
           @click="disableCategory(category.id)"
         />
       </div>
       <ErrorMessage
-        :message="errorMessage"
         v-if="errorMessage.length"
+        :message="errorMessage"
       />
     </template>
     <template v-slot:buttons>
       <div>
         <ButtonText
           class="modal-button"
-          text="save"
+          :text="edittingItemObj ? 'save' : 'add'"
           :disabled="isRequestProcessing"
           @click="saveItem"
         />
@@ -70,10 +69,10 @@
         />
       </div>
       <ButtonText
+        v-if="edittingItemObj"
         text="delete item"
         style-type="underline"
         :disabled="isRequestProcessing"
-        v-if="edittingItemObj"
         @click="deleteItem(item)"
       />
     </template>
@@ -141,6 +140,7 @@ export default {
     resetData() {
       this._setItemForEditting(null);
       this.item = new models.Item();
+      this.errorMessage = '';
     },
     saveItem() {
       this.isRequestProcessing = true;

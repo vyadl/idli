@@ -25,11 +25,9 @@ export default {
   props: ['item'],
   computed: {
     ...mapGetters({
-      edittingItemObj: 'edittingItemObj',
       mode: 'mode',
-      theme: 'theme',
       shuffleTrigger: 'shuffleTrigger',
-      starsSettings: 'starsSettings',
+      edittingItemObj: 'edittingItemObj',
     }),
     styles() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions

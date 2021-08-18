@@ -4,8 +4,8 @@
     :class="{ 'invert-theme': isInvert }"
   >
     <input
-      type="radio"
       class="input"
+      type="radio"
       :value="value"
       :checked="isChecked"
       @change="change"
@@ -24,13 +24,11 @@ export default {
     event: 'change',
   },
   props: {
-    value: {
-      type: [Number, String],
-    },
+    label: String,
+    value: [Number, String],
     modelValue: {
       default: '',
     },
-    label: String,
   },
   computed: {
     isChecked() {
@@ -77,7 +75,9 @@ export default {
       padding: 5px 10px 6px;
       background-color: map-get($colors, 'white');
       font-size: 14px;
-      transition: background-color .3s;
+      transition:
+        background-color .3s .05s,
+        color .2s .05s;
 
       &:hover {
         background-color: map-get($colors, 'black');
