@@ -2,8 +2,8 @@
   <div
     class="app"
     :class="{
-      'cloud-mode': isCloudModeOn || isStarsModeOn,
-      'invert': isInvert,
+      'cloud-mode': mode === 'cloud' || mode === 'stars',
+      'inverted-theme': isInverted,
     }"
   >
     <EnterScreen v-if="!isLoggedIn"/>
@@ -33,10 +33,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isCloudModeOn: 'isCloudModeOn',
-      isStarsModeOn: 'isStarsModeOn',
-      isInvert: 'isInvert',
       isLoggedIn: 'auth/isLoggedIn',
+      mode: 'mode',
+      theme: 'theme',
     }),
   },
   created() {
@@ -44,7 +43,7 @@ export default {
     this._setUserFromLocalStorage();
 
     if (this.isLoggedIn) {
-      this._fetchListsForUser();
+      setTimeout(this._fetchListsForUser, 500);
     }
   },
   methods: {
@@ -59,7 +58,7 @@ export default {
 <style lang="scss">
   .app {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
 
     &.cloud-mode {
       position: fixed;
@@ -68,9 +67,9 @@ export default {
       left: 0;
     }
 
-    &.invert {
-      background-color: #000;
-      color: #fff;
+    &.inverted-theme {
+      background-color: map-get($colors, 'black');
+      color: map-get($colors, 'white');
     }
   }
 </style>

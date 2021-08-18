@@ -1,5 +1,8 @@
 <template>
-  <label class="textarea-custom">
+  <label
+    class="textarea-custom"
+    :class="{ 'inverted-theme': isInverted }"
+  >
     <div class="label">
       {{ label }}
     </div>
@@ -32,22 +35,33 @@ export default {
     margin-bottom: 15px;
 
     .label {
-      margin-bottom: 10px;
+      font-size: 12px;
+      color: map-get($colors, 'gray-dark');
     }
 
     .textarea {
       width: 100%;
       padding: 5px;
-      border-bottom: 1px solid map-get($colors, 'gray-1');
-      outline: 6px solid map-get($colors, 'gray-4');
-      background-color: map-get($colors, 'gray-4');
-      transition:
-        outline .2s,
-        background-color .2s;
+      border-bottom: 1px solid map-get($colors, 'gray-light');
+      transition: border-color .3s;
 
       &:focus {
-        outline-color: transparent;
-        background-color: transparent;;
+        border-color: map-get($colors, 'black');
+      }
+    }
+
+    &.inverted-theme {
+      .label {
+        color: map-get($colors, 'gray-light');
+      }
+
+      .textarea {
+        border-color: map-get($colors, 'gray-dark');
+        color: map-get($colors, 'white');
+
+        &:focus {
+          border-color: map-get($colors, 'white');
+        }
       }
     }
   }

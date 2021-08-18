@@ -1,8 +1,11 @@
 <template>
-  <label class="radio-custom">
+  <label
+    class="radio-custom"
+    :class="{ 'inverted-theme': isInverted }"
+  >
     <input
-      type="radio"
       class="input"
+      type="radio"
       :value="value"
       :checked="isChecked"
       @change="change"
@@ -21,11 +24,11 @@ export default {
     event: 'change',
   },
   props: {
-    value: Number,
+    label: String,
+    value: [Number, String],
     modelValue: {
       default: '',
     },
-    label: String,
   },
   computed: {
     isChecked() {
@@ -48,21 +51,60 @@ export default {
     display: block;
     width: fit-content;
     margin-bottom: 10px;
+    margin-right: 7px;
     cursor: pointer;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
 
     .input {
       display: none;
 
       &:checked {
         &+.label {
-          background-color: map-get($colors, 'gray-1');
+          background-color: map-get($colors, 'black');
+          color: map-get($colors, 'white');
         }
       }
     }
 
     .label {
-      padding: 5px;
-      background-color: map-get($colors, 'gray-3');
+      border: 2px solid map-get($colors, 'black');
+      border-radius: 25px;
+      padding: 5px 10px 6px;
+      background-color: map-get($colors, 'white');
+      font-size: 14px;
+      transition:
+        background-color .3s .05s,
+        color .2s .05s;
+
+      &:hover {
+        background-color: map-get($colors, 'black');
+        color: map-get($colors, 'white');
+      }
+    }
+
+    &.inverted-theme {
+      .input {
+        &:checked {
+          &+.label {
+            background-color: map-get($colors, 'white');
+            color: map-get($colors, 'black');
+          }
+        }
+      }
+
+      .label {
+        border-color: map-get($colors, 'white');
+        background-color: map-get($colors, 'black');
+        color: map-get($colors, 'white');
+
+        &:hover {
+          background-color: map-get($colors, 'white');
+          color: map-get($colors, 'black');
+        }
+      }
     }
   }
 </style>

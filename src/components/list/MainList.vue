@@ -9,29 +9,27 @@
     >
       {{ currentListObj.name }}
     </div>
-    <template v-if="isCloudModeOn && !isStarsModeOn">
-      <ListItem
-        v-for="item in finalList"
-        :key="item.id"
-        :item="item"
-      />
-    </template>
-    <template v-else>
-      <div
-        class="items-container"
-        :class="{ parallax: isSidebarOpen }"
-      >
-        <transition name="fade">
-          <div v-if="isListShown">
-            <ListItem
-              v-for="item in finalList"
-              :key="item.id"
-              :item="item"
-            />
-          </div>
-        </transition>
-      </div>
-    </template>
+    <div
+      class="items-container"
+      :class="{ parallax: isSidebarOpen }"
+    >
+      <template v-if="mode === 'list'">
+        <div class="list-mode">
+          <ListItem
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          />
+        </div>
+      </template>
+      <template v-else>
+        <ListItem
+          v-for="item in finalList"
+          :key="item.id"
+          :item="item"
+        />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -45,41 +43,31 @@ export default {
     ListItem,
   },
   data: () => ({
-    isListShown: false,
     finalList: [],
   }),
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
-      shuffleTrigger: 'shuffleTrigger',
-      isShuffled: 'isShuffled',
-      isCloudModeOn: 'isCloudModeOn',
-      isStarsModeOn: 'isStarsModeOn',
       isSidebarOpen: 'isSidebarOpen',
+      sorting: 'sorting',
+      mode: 'mode',
+      shuffleTrigger: 'shuffleTrigger',
     }),
-    currentListName() {
-      return this.currentListObj?.name;
-    },
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
       return utils.shuffleArray(this.filteredList);
     },
     computedList() {
-      return this.isShuffled ? this.shuffledList : this.filteredList;
+      return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
     },
   },
   watch: {
     computedList: {
-      handler: function computedListHanler() {
-        this.isListShown = false;
-
-        setTimeout(() => {
-          this.finalList = [];
-          this.finalList = this.computedList;
-          this.isListShown = true;
-        }, 200);
+      handler: function computedListHandler() {
+        this.finalList = [];
+        this.finalList = this.computedList;
       },
       immediate: true,
     },
@@ -94,23 +82,26 @@ export default {
 
 <style lang="scss">
   .main-list {
-    height: 100vh;
+    min-height: 100vh;
 
     .list-title {
-      margin-bottom: 40px;
       padding: 10px;
-      font-size: 14px;
-      color: #bbb;
+      font-size: map-get($text, 'title-font-size');
+      color: map-get($colors, 'gray-light');
     }
 
     .items-container {
-      display: flex;
-      flex-direction: column;
       transition: transform .5s;
 
       &.parallax {
         transform: translateX(-20px);
       }
+    }
+
+    .list-mode {
+      display: flex;
+      flex-direction: column;
+      padding: 50px;
     }
   }
 </style>

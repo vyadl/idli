@@ -1,5 +1,5 @@
 <template>
-  <div class="error-message">
+  <div class="info-message">
     {{ message }}
   </div>
 </template>
@@ -13,10 +13,10 @@ export default {
 </script>
 
 <style lang="scss">
-  .error-message {
+  .info-message {
     width: 100%;
     padding: 5px 0;
-    font-size: 13px;
-    color: map-get($colors, 'error-text');
+    font-size: 12px;
+    color: map-get($colors, 'gray-light');
   }
 </style>

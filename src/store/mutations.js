@@ -24,13 +24,10 @@ export default {
   filterList(state, { tags, categories }) {
     state.checkedTags = tags;
     state.checkedCategories = categories;
-    state.mode.shuffle = false;
   },
-  switchShuffleMode(state) {
-    state.mode.shuffle = !state.mode.shuffle;
-  },
-  shuffleFilteredList(state) {
-    state.shuffleTrigger = !state.shuffleTrigger;
+  resetFilters(state) {
+    state.checkedTags = [];
+    state.checkedCategories = [];
   },
 
   // items
@@ -56,40 +53,19 @@ export default {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);
   },
 
-  // settings
+  // visualization
 
-  switchCloudMode(state) {
-    state.mode.cloud = !state.mode.cloud;
-    state.mode.list = !state.mode.cloud;
-
-    if (!state.mode.cloud) {
-      state.mode.stars = false;
-    } else {
-      state.mode.shuffle = true;
-    }
+  setSorting(state, sorting) {
+    state.sorting = sorting;
   },
-  switchStarsMode(state) {
-    state.mode.stars = !state.mode.stars;
-    state.mode.list = !state.mode.stars;
-
-    if (state.mode.stars) {
-      state.mode.cloud = true;
-      state.mode.shuffle = true;
-    }
+  setMode(state, mode) {
+    state.mode = mode;
   },
-  switchInvertMode(state) {
-    state.isInvert = !state.isInvert;
+  setTheme(state, theme) {
+    state.theme = theme;
   },
-  setSettingsStatus(state, payload) {
-    const statuses = state.settingsStatuses;
-
-    statuses[payload.field] = payload.value;
-
-    Object.keys(statuses).forEach(statusField => {
-      if (statusField !== payload.field) {
-        statuses[statusField] = false;
-      }
-    });
+  shuffleFilteredList(state) {
+    state.shuffleTrigger = !state.shuffleTrigger;
   },
 
   // sidebar

@@ -1,25 +1,28 @@
 <template>
-  <SidebarCard
-    class="test-data"
-    title="test data"
-  >
-    <div
-      class="open-message"
+  <SidebarCard class="test-data">
+    <ButtonText
+      :text="areTestListsShown ? 'hide test lists' : 'show test lists'"
+      style-type="underline"
       @click="areTestListsShown = !areTestListsShown"
-    >show test lists</div>
+    />
     <ErrorMessage
-      :message="errorMessage"
       v-if="errorMessage"
+      :message="errorMessage"
     />
     <div
-      class="test-list-buttons"
+      class="buttons-container"
       v-if="areTestListsShown"
     >
+      <InfoMessage
+        class="info-message"
+        message="choosing test list will copy it to your lists"
+      />
       <ButtonText
-        style-type="solid"
+        class="list-name"
         v-for="list in testData"
         :key="list.name"
         :text="list.name"
+        style-type="line"
         :disabled="isRequestProcessing"
         @click="addTestList(list)"
       />
@@ -31,7 +34,8 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import { mapActions } from 'vuex';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
+import { mapGetters, mapActions } from 'vuex';
 import axios from 'axios';
 
 export default {
@@ -39,6 +43,7 @@ export default {
     SidebarCard,
     ButtonText,
     ErrorMessage,
+    InfoMessage,
   },
   data: () => ({
     areTestListsShown: false,
@@ -46,10 +51,16 @@ export default {
     isRequestProcessing: false,
     errorMessage: '',
   }),
+  computed: {
+    ...mapGetters({
+      lists: 'lists',
+    }),
+  },
   created() {
     axios.get('/test_data.json').then(({ data }) => {
       this.testData = data;
     });
+    this.areTestListsShown = !this.lists.length;
   },
   methods: {
     ...mapActions({
@@ -57,6 +68,7 @@ export default {
     }),
     addTestList(list) {
       this.isRequestProcessing = true;
+      this.errorMessage = '';
       this._addTestList(list)
         .catch(error => {
           this.errorMessage = error.response.data.message;
@@ -73,17 +85,18 @@ export default {
   .test-data {
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
 
-    .open-message {
-      margin-bottom: 10px;
-      color: map-get($colors, 'gray-1');
-      cursor: pointer;
+    .buttons-container {
+      width: 100%;
     }
 
-    .test-list-buttons {
-      width: 100%;
+    .info-message {
+      margin-bottom: 10px;
+    }
+
+    .list-name {
+      margin-bottom: 5px;
     }
   }
 </style>

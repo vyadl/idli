@@ -1,10 +1,13 @@
 <template>
   <modal
     class="modal-basic"
+    :class="{ 'inverted-theme': isInverted }"
+    :name="name"
     height="auto"
     :width="width"
-    :name="name"
+    scrollable
     @before-open="beforeOpen"
+    @opened="open"
     @closed="close"
   >
     <header
@@ -42,6 +45,9 @@ export default {
     beforeOpen() {
       this.$emit('before-open');
     },
+    open() {
+      this.$emit('opened');
+    },
     close() {
       this.$emit('closed');
     },
@@ -58,18 +64,42 @@ export default {
       width: 100vw;
     }
 
-    .vm--modal {
-      padding: 25px;
+    .vm--overlay {
+      background: rgba(map-get($colors, 'black'), 0.4);
     }
 
-    .header,
+    .vm--modal {
+      padding: 28px;
+      box-shadow: 0 10px 90px -30px map-get($colors, 'black');
+    }
+
+    .header {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: map-get($text, 'title-font-size');
+    }
+
     .main {
-      margin-bottom: 10px;
+      margin-bottom: 25px;
     }
 
     .footer {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    &.inverted-theme {
+      .vm--overlay {
+        background: rgba(map-get($colors, 'black'), 0.7);
+      }
+
+      .vm--modal {
+        border: 2px solid map-get($colors, 'white');
+        background-color: map-get($colors, 'black');
+        box-shadow: none;
+        color: map-get($colors, 'white');
+      }
     }
   }
 </style>

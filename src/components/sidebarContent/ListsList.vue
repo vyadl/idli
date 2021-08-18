@@ -9,21 +9,24 @@
         v-for="list in lists"
         :key="list.id"
       >
-        <ButtonText
-          style-type="line"
+        <ButtonSign
           class="edit-button"
-          text="···"
+          :class="{ active:  list.id === currentListId }"
+          style-type="dots"
           @click="setListForEditting(list)"
         />
         <ButtonText
-          style-type="line"
+          class="list-name"
           :text="list.name"
-          @click="_fetchListById(list.id)"
+          style-type="line"
+          :active="list.id === currentListId"
+          @click="fetchListById(list.id)"
         />
       </div>
-      <ButtonText
-        text="new list"
-        style-type="bordered"
+      <ButtonSign
+        style-type="plus"
+        title="new list"
+        :disabled="isRequestProcessing"
         @click="openListForm"
       />
     </div>
@@ -34,6 +37,7 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import TestData from '@/components/sidebarContent/TestData.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -41,11 +45,17 @@ export default {
   components: {
     SidebarCard,
     TestData,
+    ButtonSign,
     ButtonText,
   },
+  data: () => ({
+    isRequestProcessing: false,
+    listRequest: null,
+  }),
   computed: {
     ...mapGetters({
       lists: 'lists',
+      currentListId: 'currentListId',
       edittingListObj: 'edittingListObj',
     }),
   },
@@ -61,6 +71,21 @@ export default {
       this._setListForEditting(list);
       this.openListForm();
     },
+    fetchListById(id) {
+      this.isRequestProcessing = true;
+
+      if (this.listRequest) {
+        this.listRequest.cancel();
+      }
+
+      const source = this.$axios.CancelToken.source();
+
+      this.listRequest = source;
+      this._fetchListById({ id, cancelToken: source.token })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
+    },
   },
 };
 </script>
@@ -68,13 +93,19 @@ export default {
 <style lang="scss">
   .lists-list {
     .lists-container {
-      margin-bottom: 40px;
+      margin-bottom: 100px;
     }
 
     .list {
       display: flex;
       align-items: center;
-      transform: translateX(-10%);
+      width: fit-content;
+      margin-bottom: 5px;
+      transform: translateX(-16px);
+
+      &:last-of-type {
+        margin-bottom: 20px;
+      }
 
       &:hover {
         .edit-button {
@@ -83,8 +114,16 @@ export default {
       }
     }
 
-    button.edit-button {
+    .edit-button {
       opacity: 0;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+
+    .list-name {
+      max-width: 220px;
     }
   }
 </style>

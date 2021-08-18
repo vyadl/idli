@@ -6,11 +6,8 @@ export default {
 
     if (currentListId) {
       commit('setCurrentListId', currentListId);
-      dispatch('_fetchListById', currentListId);
+      dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
-  },
-  _updateListIdInLocalStorage({ getters }) {
-    localStorage.setItem('currentListId', getters.currentListId);
   },
 
   // lists
@@ -21,19 +18,20 @@ export default {
     commit('setLists', responseLists);
     dispatch('_setListIdFromLocalStorage');
   },
-  async _fetchListById({ commit, dispatch, getters }, id) {
+  async _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     dispatch('_setCurrentListId', id);
 
-    if (getters.currentListObj.items.length) {
+    if (getters.currentListObj?.items.length) {
       if (getters.currentListObj.items[0] instanceof Object) {
-        dispatch('_setCurrentItems', getters.currentListObj.items);
+        commit('setCurrentItems', getters.currentListObj.items);
       }
     }
 
-    const { data: responseList } = await this._vm.$axios.get(`${this._vm.$apiBasePath}list/${id}`);
+    const { data: responseList } = await this._vm.$axios
+      .get(`${this._vm.$apiBasePath}list/${id}`, { cancelToken });
 
     commit('updateList', responseList);
-    dispatch('_setCurrentItems', responseList.items);
+    commit('setCurrentItems', responseList.items);
   },
   async _addList({ commit, dispatch }, list) {
     const { data: responseList } = await this._vm.$axios
@@ -64,9 +62,9 @@ export default {
       .post(`${this._vm.$apiBasePath}items/add-many/${responseList.id}`, { items });
 
     commit('addItems', responseItems);
-    dispatch('_setCurrentItems', responseItems);
+    commit('setCurrentItems', responseItems);
   },
-  async _updateList({ commit, dispatch }, {
+  async _updateList({ commit }, {
     name,
     isPrivate,
     tags,
@@ -82,25 +80,29 @@ export default {
       });
 
     commit('updateList', responseList);
-    dispatch('_setCurrentItems', responseList.items);
+    commit('setCurrentItems', responseList.items);
   },
   async _deleteList({ commit, dispatch, getters }, id) {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
 
     if (getters.currentListObj.id === id) {
-      const anotherId = getters.lists.length > 1
-        ? getters.lists.find(list => list.id !== id).id
-        : null;
+      if (getters.lists.length > 1) {
+        const anotherId = getters.lists.find(list => list.id !== id).id;
 
-      dispatch('_fetchListById', anotherId);
+        dispatch('_fetchListById', { id: anotherId, cancelToken: null });
+      } else {
+        commit('setCurrentItems', []);
+        localStorage.removeItem('currentListId');
+      }
     }
 
     commit('deleteList', id);
   },
-  _setCurrentListId({ commit, dispatch }, id) {
+  _setCurrentListId({ commit, dispatch, getters }, id) {
     commit('setCurrentListId', id);
-    dispatch('_setCurrentItems', []);
-    dispatch('_updateListIdInLocalStorage');
+    commit('setCurrentItems', []);
+    dispatch('_resetFilters');
+    localStorage.setItem('currentListId', getters.currentListId);
   },
   _setListForEditting({ commit }, list) {
     commit('setListForEditting', list);
@@ -108,11 +110,8 @@ export default {
   _filterList({ commit }, { tags, categories }) {
     commit('filterList', { tags, categories });
   },
-  _shuffleFilteredList({ commit, getters }) {
-    commit('shuffleFilteredList', getters.filteredList);
-  },
-  _switchShuffleMode({ commit }) {
-    commit('switchShuffleMode');
+  _resetFilters({ commit }) {
+    commit('resetFilters');
   },
 
   // items
@@ -149,29 +148,28 @@ export default {
     commit('deleteItem', item.id);
     dispatch('_setItemForEditting', null);
   },
-  _setCurrentItems({ commit }, items) {
-    commit('setCurrentItems', items);
-  },
   _setItemForEditting({ commit }, item) {
     commit('setItemForEditting', item);
   },
 
-  // changing statuses
+  // visualization
 
-  _changeChangingListStatus({ commit }, status) {
-    commit('changeChangingListStatus', status);
+  _shuffleFilteredList({ commit }) {
+    commit('shuffleFilteredList');
   },
+  _setSorting({ commit }, sorting) {
+    commit('setSorting', sorting);
 
-  // visualization modes
-
-  _switchInvertMode({ commit }) {
-    commit('switchInvertMode');
+    if (sorting === 'default') {
+      commit('setMode', 'list');
+    }
   },
-  _switchCloudMode({ commit }) {
-    commit('switchCloudMode');
+  _setMode({ commit }, mode) {
+    commit('setMode', mode);
+    commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
   },
-  _switchStarsMode({ commit }) {
-    commit('switchStarsMode');
+  _setTheme({ commit }, theme) {
+    commit('setTheme', theme);
   },
 
   // sidebar

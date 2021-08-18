@@ -1,5 +1,8 @@
 <template>
-  <label class="input-custom">
+  <label
+    class="input-custom"
+    :class="{ 'inverted-theme': isInverted }"
+  >
     <div class="label">
       {{ label }}
     </div>
@@ -9,6 +12,7 @@
       :value="value"
       :required="required"
       @input="input($event)"
+      ref="input"
     >
   </label>
 </template>
@@ -34,6 +38,9 @@ export default {
     input(event) {
       this.$emit('input', event.target.value);
     },
+    focus() {
+      this.$refs.input.focus();
+    },
   },
 };
 </script>
@@ -42,25 +49,36 @@ export default {
   .input-custom {
     display: block;
     width: 100%;
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 
     .label {
-      margin-bottom: 10px;
+      font-size: 12px;
+      color: map-get($colors, 'gray-dark');
     }
 
     .input {
       width: 100%;
-      padding: 5px;
-      border-bottom: 1px solid map-get($colors, 'gray-1');
-      outline: 6px solid map-get($colors, 'gray-4');
-      background-color: map-get($colors, 'gray-4');
-      transition:
-        outline .2s,
-        background-color .2s;
+      padding: 9px 3px 4px;
+      border-bottom: 1px solid map-get($colors, 'gray-light');
+      transition: border-color .3s;
 
       &:focus {
-        outline-color: transparent;
-        background-color: transparent;;
+        border-color: map-get($colors, 'black');
+      }
+    }
+
+    &.inverted-theme {
+      .label {
+        color: map-get($colors, 'gray-light');
+      }
+
+      .input {
+        border-color: map-get($colors, 'gray-dark');
+        color: map-get($colors, 'white');
+
+        &:focus {
+          border-color: map-get($colors, 'white');
+        }
       }
     }
   }

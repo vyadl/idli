@@ -12,7 +12,7 @@ export default {
         .post(`${this._vm.$apiBasePath}auth/signin`, user);
 
       commit('signIn', responseUser);
-      commit('changeSidebarMode', 'profile', { root: true });
+      commit('changeSidebarMode', 'lists', { root: true });
       localStorage.setItem('user', JSON.stringify(responseUser));
       axiosSettings.setAccessToken(responseUser.accessToken);
       dispatch('_fetchListsForUser', null, { root: true });

@@ -1,11 +1,11 @@
 $colors: (
   'black': #000,
-  'gray-text': #333,
-  'gray-1': #777,
-  'gray-2': #aaa,
-  'gray-3': #ccc,
-  'gray-4': #eee,
+  'gray-dark': #555,
+  'gray-light': #aaa,
   'white': #fff,
-  'error-text': #fc7575,
-  'error-background': #ffd3d3,
+  'error-text': #da470d,
+);
+
+$text: (
+  'title-font-size': 17px,
 );

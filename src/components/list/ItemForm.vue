@@ -2,63 +2,77 @@
   <ModalBasic
     class="item-form"
     name="itemForm"
-    :header-text="edittingItemObj ? '' : 'new item'"
-    @before-open="setItemForEditting"
+    :header-text="edittingItemObj ? 'edit item' : 'new item'"
+    @before-open="setData"
+    @opened="focusOnInput"
     @closed="resetData"
   >
     <template v-slot:main>
-      <InputCustom
-        label="item"
-        v-model="item.text"
-      />
-      <TextareaCustom
-        label="details"
-        v-model="item.details"
-      />
-      <div class="filters-container">
+      <div class="text-fields">
+        <InputCustom
+          label="item"
+          v-model="item.text"
+          ref="itemName"
+        />
+        <TextareaCustom
+          label="details"
+          v-model="item.details"
+        />
+      </div>
+      <div
+        class="filters-container"
+        :class="{ indent: areCurrentListTags && areCurrentListCategories }"
+        v-if="areCurrentListTags"
+      >
+        <h1 class="filters-title">tags:</h1>
         <CheckboxCustom
           v-for="tag in currentListTags"
           :key="tag.id"
-          :value="tag.id"
           :label="tag.name"
-          name="tags"
+          :value="tag.id"
           v-model="item.tags"
+          name="tags"
         />
       </div>
-      <div class="filters-container">
+      <div
+        class="filters-container"
+        v-if="areCurrentListCategories"
+      >
+        <h1 class="filters-title">category:</h1>
         <RadioCustom
           v-for="category in currentListCategories"
           :key="category.id"
-          :value="category.id"
           :label="category.name"
-          name="category"
+          :value="category.id"
           v-model="item.category"
+          name="category"
           @click="disableCategory(category.id)"
         />
       </div>
       <ErrorMessage
-        :message="errorMessage"
         v-if="errorMessage.length"
+        :message="errorMessage"
       />
     </template>
     <template v-slot:buttons>
+      <div>
+        <ButtonText
+          class="modal-button"
+          :text="edittingItemObj ? 'save' : 'add'"
+          :disabled="isRequestProcessing"
+          @click="saveItem"
+        />
+        <ButtonText
+          text="cancel"
+          :disabled="isRequestProcessing"
+          @click="closeItemForm"
+        />
+      </div>
       <ButtonText
-        text="save"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
-        @click="saveItem"
-      />
-      <ButtonText
-        text="cancel"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
-        @click="closeItemForm"
-      />
-      <ButtonText
-        text="delete"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
         v-if="edittingItemObj"
+        text="delete item"
+        style-type="underline"
+        :disabled="isRequestProcessing"
         @click="deleteItem(item)"
       />
     </template>
@@ -88,6 +102,8 @@ export default {
   },
   data: () => ({
     item: new models.Item(),
+    areCurrentListTags: false,
+    areCurrentListCategories: false,
     isRequestProcessing: false,
     errorMessage: '',
   }),
@@ -108,14 +124,23 @@ export default {
     closeItemForm() {
       this.$modal.hide('itemForm');
     },
-    setItemForEditting() {
+    setData() {
+      this.areCurrentListTags = Boolean(this.currentListTags.length);
+      this.areCurrentListCategories = Boolean(this.currentListCategories.length);
+
       if (this.edittingItemObj) {
-        this.item = { ...this.edittingItemObj };
+        this.item = JSON.parse(JSON.stringify(this.edittingItemObj));
+      }
+    },
+    focusOnInput() {
+      if (!this.edittingItemObj) {
+        this.$refs.itemName.focus();
       }
     },
     resetData() {
       this._setItemForEditting(null);
       this.item = new models.Item();
+      this.errorMessage = '';
     },
     saveItem() {
       this.isRequestProcessing = true;
@@ -154,10 +179,27 @@ export default {
 
 <style lang="scss">
   .item-form {
+    .text-fields {
+      margin-bottom: 25px;
+    }
+
     .filters-container {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: flex-start;
       flex-wrap: wrap;
+
+      &.indent {
+        margin-bottom: 10px;
+      }
+    }
+
+    .filters-title {
+      padding: 5px 10px 6px 0;
+    }
+
+    .modal-button {
+      margin-right: 10px;
     }
   }
 </style>

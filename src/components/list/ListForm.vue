@@ -3,17 +3,21 @@
     class="list-form"
     name="listForm"
     :header-text="edittingListObj ? 'edit list' : 'new list'"
-    @before-open="setListForEditting"
+    @before-open="setData"
+    @opened="focusOnInput"
     @closed="resetData"
   >
     <template v-slot:main>
       <InputCustom
         label="name"
         v-model="list.name"
+        ref="listName"
       />
       <div class="private-option">
         <CheckboxCustom
           label="private"
+          style-type="classic"
+          :title="list.isPrivate ? 'now you can`t share this list' : 'now you can share this list'"
           v-model="list.isPrivate"
         />
       </div>
@@ -27,15 +31,20 @@
             v-for="(tag, index) in list.tags"
             :key="index"
           >
-            <InputCustom v-model="tag.name" />
+            <InputCustom
+              v-model="tag.name"
+              ref="tagsInput"
+            />
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
+              title="delete tag"
               @click="deleteFilter('tags', index)"
             />
           </div>
           <ButtonSign
             style-type="plus"
+            title="add tag"
             @click="addFilter('tags')"
           />
         </div>
@@ -48,43 +57,49 @@
             v-for="(category, index) in list.categories"
             :key="index"
           >
-            <InputCustom v-model="category.name" />
+            <InputCustom
+              v-model="category.name"
+              ref="categoriesInput"
+            />
             <ButtonSign
               class="delete-filter-button"
               style-type="cross"
+              title="delete category"
               @click="deleteFilter('categories', index)"
             />
           </div>
           <ButtonSign
             style-type="plus"
+            title="add category"
             @click="addFilter('categories')"
           />
         </div>
       </div>
       <ErrorMessage
-        :message="errorMessage"
         v-if="errorMessage"
-      />
-      <ButtonText
-        text="delete list"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
-        v-if="edittingListObj"
-        @click="deleteList(list.id)"
+        :message="errorMessage"
       />
     </template>
     <template v-slot:buttons>
+      <div>
+        <ButtonText
+          class="modal-button"
+          :text="edittingListObj ? 'save' : 'add'"
+          :disabled="isRequestProcessing"
+          @click="saveList"
+        />
+        <ButtonText
+          text="cancel"
+          :disabled="isRequestProcessing"
+          @click="closeListForm"
+        />
+      </div>
       <ButtonText
-        text="save"
-        style-type="bordered"
+        v-if="edittingListObj"
+        text="delete list"
+        style-type="underline"
         :disabled="isRequestProcessing"
-        @click="saveList"
-      />
-      <ButtonText
-        text="cansel"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
-        @click="closeListForm"
+        @click="deleteList(list.id)"
       />
     </template>
   </ModalBasic>
@@ -129,9 +144,14 @@ export default {
     closeListForm() {
       this.$modal.hide('listForm');
     },
-    setListForEditting() {
+    setData() {
       if (this.edittingListObj) {
-        this.list = { ...this.edittingListObj };
+        this.list = JSON.parse(JSON.stringify(this.edittingListObj));
+      }
+    },
+    focusOnInput() {
+      if (!this.edittingListObj) {
+        this.$refs.listName.focus();
       }
     },
     resetData() {
@@ -146,6 +166,11 @@ export default {
       this.list[type].push({
         name: null,
         id: null,
+      });
+      this.$nextTick(() => {
+        const refName = `${type}Input`;
+
+        this.$refs[refName][this.$refs[refName].length - 1].focus();
       });
     },
     verifyFilters() {
@@ -193,7 +218,7 @@ export default {
 <style lang="scss">
   .list-form {
     .private-option {
-      padding: 5px 0;
+      padding: 8px 0 15px;
     }
 
     .filters-container {
@@ -210,7 +235,7 @@ export default {
 
     .filters-header {
       margin-bottom: 8px;
-      font-size: 12px;
+      text-align: center;
     }
 
     .filter {
@@ -220,6 +245,10 @@ export default {
 
     .delete-filter-button {
       margin-left: 10px;
+    }
+
+    .modal-button {
+      margin-right: 10px;
     }
   }
 </style>
