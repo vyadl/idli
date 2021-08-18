@@ -1,4 +1,4 @@
-import axiosSettings from '@/settings/axiosSettings'; // eslint-disable-line
+import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line
 
 export default {
   async _signUp({ commit }, user) {
@@ -14,7 +14,7 @@ export default {
       commit('signIn', responseUser);
       commit('changeSidebarMode', 'lists', { root: true });
       localStorage.setItem('user', JSON.stringify(responseUser));
-      axiosSettings.setAccessToken(responseUser.accessToken);
+      setAccessToken(responseUser.accessToken);
       dispatch('_fetchListsForUser', null, { root: true });
     } catch (error) {
       localStorage.removeItem('user');
@@ -27,7 +27,7 @@ export default {
     commit('closeSidebar', null, { root: true });
     localStorage.removeItem('user');
     localStorage.removeItem('currentListId');
-    axiosSettings.deleteAccessToken();
+    deleteAccessToken();
   },
   _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');

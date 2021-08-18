@@ -26,7 +26,7 @@ import MainList from '@/components/list/MainList.vue';
 import Sidebar from '@/components/mainPages/Sidebar.vue';
 import ListForm from '@/components/list/ListForm.vue';
 import ItemForm from '@/components/list/ItemForm.vue';
-import axiosSettings from '@/settings/axiosSettings';
+import { initAxios } from '@/settings/axiosSettings';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -46,7 +46,7 @@ export default {
     }),
   },
   created() {
-    axiosSettings.initAxios();
+    initAxios();
     this._setUserFromLocalStorage();
 
     if (this.isLoggedIn) {

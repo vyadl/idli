@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   User() {
     this.id = null;
     this.username = null;

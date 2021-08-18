@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   shuffleArray(arr) {
     const newArr = JSON.parse(JSON.stringify(arr));
 

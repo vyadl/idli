@@ -29,18 +29,18 @@ axios.interceptors.response.use(
   },
 );
 
-export default {
-  initAxios() {
-    const user = JSON.parse(localStorage.getItem('user'));
+export const initAxios = function initAxios() {
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    if (user) {
-      axios.defaults.headers.common['x-access-token'] = user.accessToken;
-    }
-  },
-  setAccessToken(token) {
-    axios.defaults.headers.common['x-access-token'] = token;
-  },
-  deleteAccessToken() {
-    delete axios.defaults.headers.common['x-access-token'];
-  },
+  if (user) {
+    axios.defaults.headers.common['x-access-token'] = user.accessToken;
+  }
+};
+
+export const setAccessToken = function setAccessToken(token) {
+  axios.defaults.headers.common['x-access-token'] = token;
+};
+
+export const deleteAccessToken = function deleteAccessToken() {
+  delete axios.defaults.headers.common['x-access-token'];
 };
