@@ -1,47 +1,33 @@
 export default {
   lists: state => state.lists,
-  listObj: (state, getters) => state.lists[state.currentListId],
-  list: (state, getters) => getters.listObj.items,
   currentListId: state => state.currentListId,
-  doesTestListExist: state => Object.keys(state.lists).some(key => key === 'test'),
-  filters: (state, getters) => getters.listObj.filters,
-  checkedFilters: (state, getters) => getters.listObj.checkedFilters,
-  activeItem: state => state.activeItem,
-  listChanging: state => state.listChanging,
-  settingsStatuses: state => state.settingsStatuses,
-  isChangingActive: state => state.isChangingActive,
-  isCloudModeOn: state => state.mode.cloud,
-  isStarsModeOn: state => state.mode.stars,
-  isInvert: state => state.isInvert,
-  starsSettings: state => state.starsSettings,
+  currentListObj: state => state.lists.find(list => list.id === state.currentListId),
+  currentListTags: (state, getters) => getters.currentListObj?.tags,
+  currentListCategories: (state, getters) => getters.currentListObj?.categories,
+  currentListItems: state => state.currentListItems,
+  edittingListObj: state => state.edittingListObj,
+  edittingItemObj: state => state.edittingItemObj,
+  checkedTags: state => state.checkedTags,
+  checkedCategories: state => state.checkedCategories,
+  sorting: state => state.sorting,
   shuffleTrigger: state => state.shuffleTrigger,
-  isShuffled: state => state.mode.shuffle,
   mode: state => state.mode,
-  listLength: (state, getters) => {
-    return getters.filteredList.length;
-  },
-
-  isSettingActive: (state, getters) => {
-    for (let status in getters.settingsStatuses) {
-      if (getters.settingsStatuses[status]) {
-        return true;
-      }
-    }
-
-    return false;
-  },
-
+  theme: state => state.theme,
+  isInverted: state => state.theme === 'inverted',
+  isSidebarOpen: state => state.sidebar.isOpen,
+  sidebarMode: state => state.sidebar.mode,
+  requestsNumber: state => state.requestsNumber,
   filteredList: (state, getters) => {
-    const listValues = Object.values(getters.list);
-    const filters = getters.checkedFilters;
-    const tags = filters.tags;
-    const types = filters.types;
+    const tags = getters.checkedTags;
+    const categories = getters.checkedCategories;
 
-    return listValues.filter((item) => {
-      const areTagsIntersection = !tags.length || tags.every(tag => item.tags.indexOf(tag) !== -1);
-      const isTypeIntersection = !types.length || types.indexOf(item.type) !== -1;
+    return getters.currentListItems.filter(item => {
+      const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
+      const isCategoryIntersection = !categories.length || categories
+        .indexOf(item.category) !== -1;
 
-      return areTagsIntersection && isTypeIntersection;
+      return areTagsIntersection && isCategoryIntersection;
     });
   },
+  filteredListLength: (state, getters) => getters.filteredList.length,
 };

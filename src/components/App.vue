@@ -1,68 +1,108 @@
 <template>
-  <div 
+  <div
     class="app"
-    :class="{ 
-      'app--cloud-mode': isCloudModeOn || isStarsModeOn, 
-      'app--invert': isInvert,
+    :class="{
+      'cloud-mode': ['cloud', 'stars'].includes(mode),
+      'inverted-theme': isInverted,
     }"
   >
-    <div class="app__title">{{ listObj.name }}</div>
-    <settings></settings>
     <transition name="fade">
-      <save-item v-if="isChangingActive"></save-item>
+      <div
+        class="preloader"
+        v-if="requestsNumber"
+      ></div>
     </transition>
-    <main-list></main-list>
+    <EnterScreen v-if="!isLoggedIn"/>
+    <MainList v-else />
+    <Sidebar />
+    <ListForm />
+    <ItemForm />
   </div>
 </template>
 
 <script>
-import SaveItem from './SaveItem.vue';
-import MainList from './MainList.vue';
-import Settings from './Settings.vue';
+import EnterScreen from '@/components/mainPages/EnterScreen.vue';
+import MainList from '@/components/list/MainList.vue';
+import Sidebar from '@/components/mainPages/Sidebar.vue';
+import ListForm from '@/components/list/ListForm.vue';
+import ItemForm from '@/components/list/ItemForm.vue';
+import { initAxios } from '@/settings/axiosSettings';
 import { mapGetters, mapActions } from 'vuex';
 
-  export default {
-    name: 'App',
-    components: {
-      SaveItem,
-      MainList,
-      Settings,
-    },
+export default {
+  components: {
+    EnterScreen,
+    MainList,
+    Sidebar,
+    ListForm,
+    ItemForm,
+  },
+  computed: {
+    ...mapGetters({
+      mode: 'mode',
+      theme: 'theme',
+      requestsNumber: 'requestsNumber',
+      isLoggedIn: 'auth/isLoggedIn',
+    }),
+  },
+  created() {
+    initAxios();
+    this._setUserFromLocalStorage();
 
-    created() {
-      this._getInitialData();
-    },
-
-    computed: {
-      ...mapGetters(['isCloudModeOn', 'isStarsModeOn', 'isInvert', 'isChangingActive', 'listObj']),
-    },
-
-    methods: {
-      ...mapActions(['_getInitialData']),
+    if (this.isLoggedIn) {
+      setTimeout(this._fetchListsForUser, 500);
     }
-  }
+  },
+  methods: {
+    ...mapActions({
+      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
+      _fetchListsForUser: '_fetchListsForUser',
+    }),
+  },
+};
 </script>
 
-<style scoped lang="scss">
-.app {
-  font: 12px Verdana, sans-serif;
-  &--cloud-mode {
-    position: fixed;
+<style lang="scss">
+  .app {
     width: 100%;
-    height: 100%;
-    overflow: hidden;
-    top: 0;
-    left: 0;
-  }
-  &--invert {
-    background-color: #000;
-    color: #fff;
-  }
+    min-height: 100vh;
 
-  &__title {
-    color: #bbb;
-    font-size: 14px;
-    padding: 10px;
+    .preloader {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: map-get($colors, 'white');
+
+      &::before {
+        content: '';
+        position: absolute;
+        height: 2px;
+        background-color: map-get($colors, 'black');
+        animation: loading  2s infinite cubic-bezier(0.45, 0, 0.55, 1);
+      }
+    }
+
+    &.cloud-mode {
+      position: fixed;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+    }
+
+    &.inverted-theme {
+      background-color: map-get($colors, 'black');
+      color: map-get($colors, 'white');
+
+      .preloader {
+        background-color: map-get($colors, 'black');
+
+        &::before {
+          background-color: map-get($colors, 'white');
+        }
+      }
+    }
   }
-}
 </style>

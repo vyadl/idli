@@ -1,189 +1,191 @@
 export default {
-  _setState({ commit }, data) {
-    commit('setState', data);
-  },
+  // local storage
 
-  _getInitialData({ dispatch }, userI) {
-    if (localStorage.getItem('appLists')) {
-      dispatch('_setInitialState', JSON.parse(localStorage.getItem('appLists')));
-    } else {
-      dispatch('_addList', { name: 'default' });
+  _setListIdFromLocalStorage({ commit, dispatch }) {
+    const currentListId = localStorage.getItem('currentListId');
+
+    if (currentListId) {
+      commit('setCurrentListId', currentListId);
+      dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
   },
 
-  // list actions
+  // lists
 
-  _setInitialState({ commit }, payload) {
-    commit('setInitialState', payload);
+  async _fetchListsForUser({ commit, dispatch }) {
+    const { data: responseLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists`);
+
+    commit('setLists', responseLists);
+    dispatch('_setListIdFromLocalStorage');
   },
+  async _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
+    dispatch('_setCurrentListId', id);
 
-  _addList({ commit, dispatch }, payload) {
-    commit('addList', payload);
-
-    dispatch('_updateLocal');
-  },
-
-  _removeList({ commit, dispatch }, payload) {
-    commit('removeList', payload);
-
-    dispatch('_updateLocal');
-  },
-
-  _filterList({ commit, dispatch }, filters) {
-    commit('filterList', filters);
-
-    dispatch('_updateLocal');
-  },
-
-  _switchList({ commit, dispatch }, id) {
-    commit('switchList', id);
-
-    dispatch('_updateLocal');
-  },
-
-  _shuffleFilteredList({ commit, getters }) {
-    commit('shuffleFilteredList', getters.filteredList);
-  },
-
-  _switchShuffleMode({ commit }) {
-    commit('switchShuffleMode');
-  },
-
-  _setList({ commit, dispatch, getters }, list) {
-    const areMoreNewItems = Object.keys(list).length > Object.keys(getters.list).length;
-    
-    if (areMoreNewItems) {
-      commit('changeChangingListStatus', true);
+    if (getters.currentListObj?.items.length) {
+      if (getters.currentListObj.items[0] instanceof Object) {
+        commit('setCurrentItems', getters.currentListObj.items);
+      }
     }
-    
-    setTimeout(() => {
-      setTimeout(() => {
-        commit('setList', list);
-        dispatch('_updateLocalList');
-      }, 5);
-    }, 5);
+
+    const { data: responseList } = await this._vm.$axios
+      .get(`${this._vm.$apiBasePath}list/${id}`, { cancelToken });
+
+    commit('updateList', responseList);
+    commit('setCurrentItems', responseList.items);
   },
+  async _addList({ commit, dispatch }, list) {
+    const { data: responseList } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}list/add`, list);
 
-  // filter actions
-
-  _addFilter({ commit, dispatch, getters }, payload) {
-    if (
-      (payload.type === 'tags' || payload.type === 'types') 
-      && typeof payload.name === 'string' 
-      && payload.name.length
-    ) {
-      commit('addFilter', {
-        ...payload,
-        filters: getters.filters,
+    commit('addList', responseList);
+    dispatch('_setCurrentListId', responseList.id);
+  },
+  async _addTestList({ commit, dispatch }, {
+    name,
+    isPrivate,
+    tags,
+    categories,
+    items,
+  }) {
+    const { data: responseList } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}list/add`, {
+        name,
+        isPrivate,
+        tags,
+        categories,
       });
+
+    commit('addList', responseList);
+    dispatch('_setCurrentListId', responseList.id);
+
+    const { data: responseItems } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}items/add-many/${responseList.id}`, { items });
+
+    commit('addItems', responseItems);
+    commit('setCurrentItems', responseItems);
+  },
+  async _updateList({ commit }, {
+    name,
+    isPrivate,
+    tags,
+    categories,
+    id,
+  }) {
+    const { data: responseList } = await this._vm.$axios
+      .patch(`${this._vm.$apiBasePath}list/update/${id}`, {
+        name,
+        isPrivate,
+        tags,
+        categories,
+      });
+
+    commit('updateList', responseList);
+    commit('setCurrentItems', responseList.items);
+  },
+  async _deleteList({ commit, dispatch, getters }, id) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
+
+    if (getters.currentListObj.id === id) {
+      if (getters.lists.length > 1) {
+        const anotherId = getters.lists.find(list => list.id !== id).id;
+
+        dispatch('_fetchListById', { id: anotherId, cancelToken: null });
+      } else {
+        commit('setCurrentItems', []);
+        localStorage.removeItem('currentListId');
+      }
     }
 
-    dispatch('_updateLocal');
+    commit('deleteList', id);
+  },
+  _setCurrentListId({ commit, dispatch, getters }, id) {
+    commit('setCurrentListId', id);
+    commit('setCurrentItems', []);
+    dispatch('_resetFilters');
+    localStorage.setItem('currentListId', getters.currentListId);
+  },
+  _setListForEditting({ commit }, list) {
+    commit('setListForEditting', list);
+  },
+  _filterList({ commit }, { tags, categories }) {
+    commit('filterList', { tags, categories });
+  },
+  _resetFilters({ commit }) {
+    commit('resetFilters');
   },
 
-  _changeFilter({ commit, dispatch, getters }, payload) {
-    commit('changeFilter', {
-      ...payload,
-      filters: getters.filters,
-    });
+  // items
 
-    dispatch('_updateLocal');
+  async _addItem({ commit, getters }, item) {
+    const listId = getters.currentListObj.id;
+    const { data: responseItem } = await this._vm.$axios
+      .post(`${this._vm.$apiBasePath}item/add/${listId}`, item);
+
+    commit('addItem', responseItem);
+  },
+  async _updateItem({ commit, dispatch }, {
+    text,
+    details,
+    tags,
+    category,
+    listId,
+    id,
+  }) {
+    const { data: responseItem } = await this._vm.$axios
+      .patch(`${this._vm.$apiBasePath}item/update/${listId}/${id}`, {
+        text,
+        details,
+        tags,
+        category,
+      });
+
+    commit('updateItem', responseItem);
+    dispatch('_setItemForEditting', null);
+  },
+  async _deleteItem({ commit, dispatch }, item) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/delete/${item.listId}/${item.id}`);
+
+    commit('deleteItem', item.id);
+    dispatch('_setItemForEditting', null);
+  },
+  _setItemForEditting({ commit }, item) {
+    commit('setItemForEditting', item);
   },
 
-  _removeFilter({ commit, dispatch, getters }, payload) {
-    commit('removeFilter', {
-      ...payload,
-      filters: getters.filters,
-    });
-    commit('removeFilterFromList', payload);
-    dispatch('_updateLocal');
+  // visualization
+
+  _shuffleFilteredList({ commit }) {
+    commit('shuffleFilteredList');
   },
+  _setSorting({ commit }, sorting) {
+    commit('setSorting', sorting);
 
-  // item actions
-
-  _addItem({ commit, dispatch }, newItem) {
-    commit('addItem', newItem);
-    dispatch('_setChangingStatus', false);
-    dispatch('_updateLocal');
-  },
-
-  _setItems({ commit, dispatch }, newItems) {
-    commit('setItems', newItems);
-    dispatch('_setChangingStatus', false);
-    dispatch('_updateLocal');
-  },
-
-  _deleteItem({ commit, dispatch }, item) {
-    if (item) {
-      commit('deleteItem', item.id);
-      dispatch('_updateLocal');
+    if (sorting === 'default') {
+      commit('setMode', 'list');
     }
-    
-    dispatch('_setActiveItem', null);
+  },
+  _setMode({ commit }, mode) {
+    commit('setMode', mode);
+    commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
+  },
+  _setTheme({ commit }, theme) {
+    commit('setTheme', theme);
   },
 
-  _setActiveItem({ commit, dispatch }, item) {
-    commit('setActiveItem', item);
-    dispatch('_setChangingStatus', true);
+  // sidebar
 
-    if (!item) {
-      dispatch('_setChangingStatus', false);
-    }
+  _openSidebar({ commit }, mode) {
+    commit('openSidebar');
+    commit('changeSidebarMode', mode);
+  },
+  _closeSidebar({ commit }) {
+    commit('closeSidebar');
+    commit('changeSidebarMode', null);
   },
 
-  _changeItem({ commit, dispatch }, changedItem) {
-    commit('changeItem', changedItem);
-    dispatch('_setActiveItem', null);
-    dispatch('_updateLocal');
-  },
+  // requests
 
-  _startCreatingItem({ dispatch }) {
-    dispatch('_setChangingStatus', true);
-  },
-
-  // changing statuses
-
-  _changeChangingListStatus({ commit }, status) {
-    commit('changeChangingListStatus', status);
-  },
-
-  _setChangingStatus({ commit }, isActive) {
-    commit('setChangingStatus', isActive);
-  },
-
-  // setting actions
-
-  _setSettingsStatus({ commit }, status) {
-    commit('setSettingsStatus', status)
-  },
-
-  _switchSettingStatus({ state, commit }, field) {
-    commit('setSettingsStatus', {
-      field,
-      value: !state.settingsStatuses[field],
-    });
-  },
-
-  // visualization modes
-
-  _switchCloudMode({ commit }) {
-    commit('switchCloudMode');
-  },
-
-  _switchInvertMode({ commit }) {
-    commit('switchInvertMode');
-  },
-
-  _switchStarsMode({ commit }) {
-    commit('switchStarsMode');
-  },
-
-  // local updates
-
-  _updateLocal({ getters }) {
-    localStorage.setItem('appLists', JSON.stringify({
-      lists: getters.lists,
-      currentListId: getters.currentListId,
-    }));
+  _decreaseRequestsNumber({ commit }) {
+    commit('decreaseRequestsNumber');
   },
 };
