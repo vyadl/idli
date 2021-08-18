@@ -88,7 +88,7 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import models from '@/models/models';
+import { Item } from '@/models/models';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -102,7 +102,7 @@ export default {
     ErrorMessage,
   },
   data: () => ({
-    item: new models.Item(),
+    item: new Item(),
     areCurrentListTags: false,
     areCurrentListCategories: false,
     isRequestProcessing: false,
@@ -140,7 +140,7 @@ export default {
     },
     resetData() {
       this._setItemForEditting(null);
-      this.item = new models.Item();
+      this.item = new Item();
     },
     saveItem() {
       this.isRequestProcessing = true;

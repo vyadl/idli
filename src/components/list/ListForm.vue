@@ -115,7 +115,7 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import models from '@/models/models';
+import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -128,7 +128,7 @@ export default {
     ErrorMessage,
   },
   data: () => ({
-    list: new models.List(),
+    list: new List(),
     isRequestProcessing: false,
     errorMessage: '',
   }),
@@ -159,7 +159,7 @@ export default {
     },
     resetData() {
       this._setListForEditting(null);
-      this.list = new models.List();
+      this.list = new List();
       this.errorMessage = '';
     },
     deleteFilter(type, index) {
