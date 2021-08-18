@@ -16,7 +16,7 @@ export default {
   isInverted: state => state.theme === 'inverted',
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
-  isAnyRequestProcessing: state => state.isAnyRequestProcessing,
+  requestsNumber: state => state.requestsNumber,
   filteredList: (state, getters) => {
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;

@@ -9,7 +9,7 @@
     <transition name="fade">
       <div
         class="preloader"
-        v-if="isAnyRequestProcessing"
+        v-if="requestsNumber"
       ></div>
     </transition>
     <EnterScreen v-if="!isLoggedIn"/>
@@ -41,7 +41,7 @@ export default {
     ...mapGetters({
       mode: 'mode',
       theme: 'theme',
-      isAnyRequestProcessing: 'isAnyRequestProcessing',
+      requestsNumber: 'requestsNumber',
       isLoggedIn: 'auth/isLoggedIn',
     }),
   },

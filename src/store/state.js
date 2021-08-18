@@ -14,6 +14,5 @@ export default {
     isOpen: false,
     mode: null,
   },
-  isAnyRequestProcessing: false,
   requestsNumber: 0,
 };

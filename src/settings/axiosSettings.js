@@ -6,7 +6,6 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$apiBasePath = process.env.VUE_APP_API_BASE_PATH;
 
 axios.interceptors.request.use(config => {
-  store.commit('setRequestStatus', true);
   store.commit('increaseRequestsNumber');
 
   return config;
@@ -15,10 +14,6 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(
   response => {
     store.commit('decreaseRequestsNumber');
-
-    if (store.state.requestsNumber === 0) {
-      store.commit('setRequestStatus', false);
-    }
 
     return response;
   },
@@ -29,10 +24,6 @@ axios.interceptors.response.use(
     }
 
     store.commit('decreaseRequestsNumber');
-
-    if (store.state.requestsNumber === 0) {
-      store.commit('setRequestStatus', false);
-    }
 
     throw error;
   },

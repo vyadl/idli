@@ -82,9 +82,6 @@ export default {
 
   // requests
 
-  setRequestStatus(state, status) {
-    state.isAnyRequestProcessing = status;
-  },
   increaseRequestsNumber(state) {
     state.requestsNumber++;
   },
