@@ -3,7 +3,7 @@
     class="sidebar"
     :class="{
       show: isSidebarOpen,
-      'invert-theme': isInvert,
+      'inverted-theme': isInverted,
     }"
   >
     <div
@@ -176,7 +176,7 @@ export default {
       transform: translateX(-100%) translateX(-5px);
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       border-left: 1px solid map-get($colors, 'gray-light');
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
@@ -185,8 +185,8 @@ export default {
         box-shadow: none;
       }
 
-      .mode-button{
-        &::before{
+      .mode-button {
+        &::before {
           box-shadow: -5px 0 12px 12px map-get($colors, 'black');
         }
       }

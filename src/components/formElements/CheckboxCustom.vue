@@ -3,7 +3,7 @@
     class="checkbox-custom"
     :class="[
       styleType,
-      { 'invert-theme': isInvert },
+      { 'inverted-theme': isInverted },
     ]"
   >
     <input
@@ -171,7 +171,7 @@ export default {
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       &.custom {
         .input {
           &:checked {

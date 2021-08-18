@@ -60,7 +60,7 @@ export default {
       return utils.shuffleArray(this.filteredList);
     },
     computedList() {
-      return this.sorting === 'shuffle' ? this.shuffledList : this.filteredList;
+      return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
     },
   },
   watch: {

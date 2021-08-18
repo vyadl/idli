@@ -60,7 +60,7 @@ export default {
     axios.get('/test_data.json').then(({ data }) => {
       this.testData = data;
     });
-    this.areTestListsShown = Boolean(!this.lists.length);
+    this.areTestListsShown = !this.lists.length;
   },
   methods: {
     ...mapActions({

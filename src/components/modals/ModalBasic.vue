@@ -1,11 +1,11 @@
 <template>
   <modal
     class="modal-basic"
-    :class="{ 'invert-theme': isInvert }"
+    :class="{ 'inverted-theme': isInverted }"
     :name="name"
     height="auto"
     :width="width"
-    :scrollable="true"
+    scrollable
     @before-open="beforeOpen"
     @opened="open"
     @closed="close"
@@ -89,7 +89,7 @@ export default {
       align-items: flex-end;
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       .vm--overlay {
         background: rgba(map-get($colors, 'black'), 0.7);
       }

@@ -14,7 +14,7 @@ export default {
   mode: state => state.mode,
   starsSettings: state => state.starsSettings,
   theme: state => state.theme,
-  isInvert: state => state.theme === 'invert',
+  isInverted: state => state.theme === 'inverted',
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
   filteredList: (state, getters) => {

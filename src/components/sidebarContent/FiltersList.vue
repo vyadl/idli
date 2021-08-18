@@ -1,7 +1,7 @@
 <template>
   <SidebarCard
     class="filters-list"
-    :class="{ 'invert-theme': isInvert }"
+    :class="{ 'inverted-theme': isInverted }"
     title="filters"
   >
     <template v-if="currentListObj">
@@ -137,7 +137,7 @@ export default {
       color: map-get($colors, 'gray-dark');
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       .items-count {
         color: map-get($colors, 'gray-light');
       }

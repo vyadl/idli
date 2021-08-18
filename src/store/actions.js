@@ -6,7 +6,7 @@ export default {
 
     if (currentListId) {
       commit('setCurrentListId', currentListId);
-      dispatch('_fetchListById', { id: currentListId, token: null });
+      dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
   },
 
@@ -18,7 +18,7 @@ export default {
     commit('setLists', responseLists);
     dispatch('_setListIdFromLocalStorage');
   },
-  async _fetchListById({ commit, dispatch, getters }, { id, token }) {
+  async _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj?.items.length) {
@@ -28,7 +28,7 @@ export default {
     }
 
     const { data: responseList } = await this._vm.$axios
-      .get(`${this._vm.$apiBasePath}list/${id}`, { cancelToken: token });
+      .get(`${this._vm.$apiBasePath}list/${id}`, { cancelToken });
 
     commit('updateList', responseList);
     commit('setCurrentItems', responseList.items);
@@ -89,7 +89,7 @@ export default {
       if (getters.lists.length > 1) {
         const anotherId = getters.lists.find(list => list.id !== id).id;
 
-        dispatch('_fetchListById', { id: anotherId, token: null });
+        dispatch('_fetchListById', { id: anotherId, cancelToken: null });
       } else {
         commit('setCurrentItems', []);
         localStorage.removeItem('currentListId');
@@ -166,12 +166,7 @@ export default {
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-
-    if (mode === 'cloud' || mode === 'stars') {
-      commit('setSorting', 'shuffle');
-    } else {
-      commit('setSorting', 'default');
-    }
+    commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);

@@ -15,7 +15,7 @@
       />
       <ButtonText
         class="sorting-action"
-        v-if="sorting === 'shuffle'"
+        v-if="sorting === 'shuffled'"
         text="randomize it!"
         style-type="underline"
         @click="_shuffleFilteredList"
@@ -63,9 +63,9 @@ export default {
     ButtonText,
   },
   data: () => ({
-    sortings: ['default', 'shuffle'],
+    sortings: ['default', 'shuffled'],
     modes: ['list', 'cloud', 'stars'],
-    themes: ['default', 'invert'],
+    themes: ['default', 'inverted'],
     localSorting: '',
     localMode: '',
     localTheme: '',

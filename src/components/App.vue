@@ -3,7 +3,7 @@
     class="app"
     :class="{
       'cloud-mode': mode === 'cloud' || mode === 'stars',
-      'invert-theme': isInvert,
+      'inverted-theme': isInverted,
     }"
   >
     <EnterScreen v-if="!isLoggedIn"/>
@@ -67,7 +67,7 @@ export default {
       left: 0;
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
     }

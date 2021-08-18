@@ -1,7 +1,7 @@
 <template>
   <label
     class="radio-custom"
-    :class="{ 'invert-theme': isInvert }"
+    :class="{ 'inverted-theme': isInverted }"
   >
     <input
       class="input"
@@ -85,7 +85,7 @@ export default {
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       .input {
         &:checked {
           &+.label {

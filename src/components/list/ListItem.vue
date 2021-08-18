@@ -4,7 +4,7 @@
     :class="{
       'cloud-mode': mode === 'cloud',
       'stars-mode': mode === 'stars',
-      'invert-theme': isInvert,
+      'inverted-theme': isInverted,
     }"
     :style="styles"
   >
@@ -47,7 +47,7 @@ export default {
         };
       }
 
-      return this.mode === 'cloud' || this.mode === 'stars' ? styleObj : {};
+      return ['cloud', 'stars'].includes(this.mode) ? styleObj : {};
     },
   },
   methods: {
@@ -138,7 +138,7 @@ export default {
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       &::before {
         background-color: map-get($colors, 'black');
       }

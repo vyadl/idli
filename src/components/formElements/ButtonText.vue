@@ -5,7 +5,7 @@
       styleType,
       {
         active,
-        'invert-theme': isInvert,
+        'inverted-theme': isInverted,
       }
     ]"
     :title="title"
@@ -114,7 +114,7 @@ export default {
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       &.bordered {
         border-color: map-get($colors, 'white');
         background-color: map-get($colors, 'black');

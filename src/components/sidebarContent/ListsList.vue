@@ -81,7 +81,7 @@ export default {
       const source = this.$axios.CancelToken.source();
 
       this.listRequest = source;
-      this._fetchListById({ id, token: source.token })
+      this._fetchListById({ id, cancelToken: source.token })
         .finally(() => {
           this.isRequestProcessing = false;
         });
