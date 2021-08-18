@@ -182,4 +182,10 @@ export default {
     commit('closeSidebar');
     commit('changeSidebarMode', null);
   },
+
+  // requests
+
+  _decreaseRequestsNumber({ commit }) {
+    commit('decreaseRequestsNumber');
+  },
 };

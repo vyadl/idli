@@ -79,4 +79,13 @@ export default {
   changeSidebarMode(state, mode) {
     state.sidebar.mode = mode;
   },
+
+  // requests
+
+  increaseRequestsNumber(state) {
+    state.requestsNumber++;
+  },
+  decreaseRequestsNumber(state) {
+    state.requestsNumber--;
+  },
 };

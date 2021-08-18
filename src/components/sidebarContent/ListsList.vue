@@ -63,6 +63,7 @@ export default {
     ...mapActions({
       _setListForEditting: '_setListForEditting',
       _fetchListById: '_fetchListById',
+      _decreaseRequestsNumber: '_decreaseRequestsNumber',
     }),
     openListForm() {
       this.$modal.show('listForm');
@@ -76,6 +77,7 @@ export default {
 
       if (this.listRequest) {
         this.listRequest.cancel();
+        this._decreaseRequestsNumber();
       }
 
       const source = this.$axios.CancelToken.source();
@@ -83,6 +85,7 @@ export default {
       this.listRequest = source;
       this._fetchListById({ id, cancelToken: source.token })
         .finally(() => {
+          this.listRequest = null;
           this.isRequestProcessing = false;
         });
     },
