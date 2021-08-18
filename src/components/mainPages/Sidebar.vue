@@ -38,7 +38,7 @@
     <div class="sidebar-content">
       <ListVisualization v-if="sidebarMode === 'visualization'" />
       <FiltersList v-if="sidebarMode === 'filters'" />
-      <ListsList v-if="sidebarMode === 'lists'" />
+      <AppLists v-if="sidebarMode === 'lists'" />
       <UserProfile v-if="sidebarMode === 'profile'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
@@ -49,7 +49,7 @@
 <script>
 import FiltersList from '@/components/sidebarContent/FiltersList.vue';
 import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
-import ListsList from '@/components/sidebarContent/ListsList.vue';
+import AppLists from '@/components/sidebarContent/AppLists.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
@@ -61,7 +61,7 @@ export default {
   components: {
     ListVisualization,
     FiltersList,
-    ListsList,
+    AppLists,
     UserProfile,
     RegistrationForm,
     AuthForm,
