@@ -13,7 +13,10 @@
         v-model="list.name"
         ref="listName"
       />
-      <div class="private-option">
+      <div
+        class="private-option"
+        v-if="false"
+      >
         <CheckboxCustom
           label="private"
           style-type="classic"
@@ -226,6 +229,7 @@ export default {
       justify-content: space-between;
       width: 100%;
       margin-bottom: 15px;
+      padding-top: 10px;
     }
 
     .tags,

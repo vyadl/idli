@@ -79,4 +79,16 @@ export default {
   changeSidebarMode(state, mode) {
     state.sidebar.mode = mode;
   },
+
+  // requests
+
+  setRequestStatus(state, status) {
+    state.isAnyRequestProcessing = status;
+  },
+  increaseRequestsNumber(state) {
+    state.requestsNumber++;
+  },
+  decreaseRequestsNumber(state) {
+    state.requestsNumber--;
+  },
 };
