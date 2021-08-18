@@ -1,7 +1,7 @@
 <template>
   <div
     class="sidebar-card"
-    :class="{ 'invert-theme': isInvert }"
+    :class="{ 'inverted-theme': isInverted }"
   >
     <h1 class="title">
       {{ title }}
@@ -30,7 +30,7 @@ export default {
       color: map-get($colors, 'black');
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       .title {
         color: map-get($colors, 'white');
       }

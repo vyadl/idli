@@ -10,13 +10,9 @@ export default {
   mode: 'list',
   theme: 'default',
   shuffleTrigger: false,
-  starsSettings: {
-    sizeRange: [1, 9],
-    colors: 1,
-    showByHover: true,
-  },
   sidebar: {
     isOpen: false,
     mode: null,
   },
+  requestsNumber: 0,
 };

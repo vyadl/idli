@@ -5,11 +5,11 @@
       styleType,
       {
         active,
-        'invert-theme': isInvert,
+        'inverted-theme': isInverted,
       }
     ]"
-    :type="type"
     :title="title"
+    :type="type"
     :disabled="disabled"
     @click="click($event)"
   >{{ text }}</button>
@@ -18,6 +18,7 @@
 <script>
 export default {
   props: {
+    text: String,
     styleType: {
       type: String,
       default: 'bordered',
@@ -26,19 +27,18 @@ export default {
       type: Boolean,
       default: false,
     },
-    type: {
-      type: String,
-      default: 'button',
-    },
     title: {
       type: String,
       default: '',
+    },
+    type: {
+      type: String,
+      default: 'button',
     },
     disabled: {
       type: Boolean,
       default: false,
     },
-    text: String,
     stopPropagation: {
       type: Boolean,
       default: false,
@@ -104,16 +104,17 @@ export default {
 
     &.line {
       padding: 5px 0;
+      line-height: 1.3;
       color: map-get($colors, 'black');
       transition: color .2s;
 
       &.active,
       &:hover {
-        color: map-get($colors, 'gray-dark');
+        color: map-get($colors, 'gray-light');
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       &.bordered {
         border-color: map-get($colors, 'white');
         background-color: map-get($colors, 'black');

@@ -5,27 +5,27 @@
   >
     <InputCustom
       label="username"
-      required
       v-model="signInData.username"
+      required
       @input="clearMessage"
     />
     <InputCustom
       label="password"
       type="password"
-      required
       v-model="signInData.password"
+      required
       @input="clearMessage"
     />
     <div class="message-container">
       <ErrorMessage
+        v-if="errorMessage"
         :message="errorMessage"
-        v-if="errorMessage.length"
       />
     </div>
     <ButtonText
+      text="sign in"
       style-type="bordered"
       type="submit"
-      text="sign in"
       :disabled="isRequestProcessing"
     />
   </form>

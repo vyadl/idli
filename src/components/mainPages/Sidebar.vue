@@ -1,14 +1,14 @@
 <template>
   <div
-    class="sidebar j-sidebar"
+    class="sidebar"
     :class="{
       show: isSidebarOpen,
-      'invert-theme': isInvert,
+      'inverted-theme': isInverted,
     }"
   >
     <div
       class="add-item-button"
-      v-if="isLoggedIn"
+      v-if="isLoggedIn && currentListObj"
     >
       <ButtonSign
         style-type="plus"
@@ -23,8 +23,8 @@
           class="mode-button"
           v-for="mode in sidebarModes"
           :key="mode"
-          :active="sidebarMode === mode"
           :text="mode"
+          :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
       </div>
@@ -73,6 +73,7 @@ export default {
       isSidebarOpen: 'isSidebarOpen',
       sidebarMode: 'sidebarMode',
       isLoggedIn: 'auth/isLoggedIn',
+      currentListObj: 'currentListObj',
     }),
     sidebarModes() {
       return this.isLoggedIn
@@ -175,8 +176,8 @@ export default {
       transform: translateX(-100%) translateX(-5px);
     }
 
-    &.invert-theme {
-      border-left: 2px solid map-get($colors, 'white');
+    &.inverted-theme {
+      border-left: 1px solid map-get($colors, 'gray-light');
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
 
@@ -184,8 +185,8 @@ export default {
         box-shadow: none;
       }
 
-      .mode-button{
-        &::before{
+      .mode-button {
+        &::before {
           box-shadow: -5px 0 12px 12px map-get($colors, 'black');
         }
       }

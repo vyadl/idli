@@ -10,11 +10,13 @@
     <template v-slot:main>
       <InputCustom
         label="name"
-        required
         v-model="list.name"
         ref="listName"
       />
-      <div class="private-option">
+      <div
+        class="private-option"
+        v-if="false"
+      >
         <CheckboxCustom
           label="private"
           style-type="classic"
@@ -33,7 +35,6 @@
             :key="index"
           >
             <InputCustom
-              required
               v-model="tag.name"
               ref="tagsInput"
             />
@@ -60,7 +61,6 @@
             :key="index"
           >
             <InputCustom
-              required
               v-model="category.name"
               ref="categoriesInput"
             />
@@ -79,15 +79,15 @@
         </div>
       </div>
       <ErrorMessage
-        :message="errorMessage"
         v-if="errorMessage"
+        :message="errorMessage"
       />
     </template>
     <template v-slot:buttons>
       <div>
         <ButtonText
           class="modal-button"
-          text="save"
+          :text="edittingListObj ? 'save' : 'add'"
           :disabled="isRequestProcessing"
           @click="saveList"
         />
@@ -98,10 +98,10 @@
         />
       </div>
       <ButtonText
+        v-if="edittingListObj"
         text="delete list"
         style-type="underline"
         :disabled="isRequestProcessing"
-        v-if="edittingListObj"
         @click="deleteList(list.id)"
       />
     </template>
@@ -229,6 +229,7 @@ export default {
       justify-content: space-between;
       width: 100%;
       margin-bottom: 15px;
+      padding-top: 10px;
     }
 
     .tags,

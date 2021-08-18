@@ -2,10 +2,16 @@
   <div
     class="app"
     :class="{
-      'cloud-mode': mode === 'cloud' || mode === 'stars',
-      'invert-theme': isInvert,
+      'cloud-mode': ['cloud', 'stars'].includes(mode),
+      'inverted-theme': isInverted,
     }"
   >
+    <transition name="fade">
+      <div
+        class="preloader"
+        v-if="requestsNumber"
+      ></div>
+    </transition>
     <EnterScreen v-if="!isLoggedIn"/>
     <MainList v-else />
     <Sidebar />
@@ -33,9 +39,10 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLoggedIn: 'auth/isLoggedIn',
       mode: 'mode',
       theme: 'theme',
+      requestsNumber: 'requestsNumber',
+      isLoggedIn: 'auth/isLoggedIn',
     }),
   },
   created() {
@@ -60,6 +67,24 @@ export default {
     width: 100%;
     min-height: 100vh;
 
+    .preloader {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: map-get($colors, 'white');
+
+      &::before {
+        content: '';
+        position: absolute;
+        height: 2px;
+        background-color: map-get($colors, 'black');
+        animation: loading  2s infinite cubic-bezier(0.45, 0, 0.55, 1);
+      }
+    }
+
     &.cloud-mode {
       position: fixed;
       overflow: hidden;
@@ -67,9 +92,17 @@ export default {
       left: 0;
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
+
+      .preloader {
+        background-color: map-get($colors, 'black');
+
+        &::before {
+          background-color: map-get($colors, 'white');
+        }
+      }
     }
   }
 </style>

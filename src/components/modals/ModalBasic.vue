@@ -1,11 +1,11 @@
 <template>
   <modal
     class="modal-basic"
-    :class="{ 'invert-theme': isInvert }"
+    :class="{ 'inverted-theme': isInverted }"
+    :name="name"
     height="auto"
     :width="width"
-    :scrollable="true"
-    :name="name"
+    scrollable
     @before-open="beforeOpen"
     @opened="open"
     @closed="close"
@@ -64,8 +64,13 @@ export default {
       width: 100vw;
     }
 
+    .vm--overlay {
+      background: rgba(map-get($colors, 'black'), 0.4);
+    }
+
     .vm--modal {
       padding: 28px;
+      box-shadow: 0 10px 90px -30px map-get($colors, 'black');
     }
 
     .header {
@@ -84,7 +89,11 @@ export default {
       align-items: flex-end;
     }
 
-    &.invert-theme {
+    &.inverted-theme {
+      .vm--overlay {
+        background: rgba(map-get($colors, 'black'), 0.7);
+      }
+
       .vm--modal {
         border: 2px solid map-get($colors, 'white');
         background-color: map-get($colors, 'black');

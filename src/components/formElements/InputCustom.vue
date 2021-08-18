@@ -1,7 +1,7 @@
 <template>
   <label
     class="input-custom"
-    :class="{ 'invert-theme': isInvert }"
+    :class="{ 'inverted-theme': isInverted }"
   >
     <div class="label">
       {{ label }}
@@ -67,7 +67,7 @@ export default {
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       .label {
         color: map-get($colors, 'gray-light');
       }

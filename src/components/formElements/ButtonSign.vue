@@ -5,11 +5,11 @@
       styleType,
       {
         big,
-        'invert-theme': isInvert
+        'inverted-theme': isInverted
       }
     ]"
-    :type="type"
     :title="title"
+    :type="type"
     :disabled="disabled"
     @click="click($event)"
   ></button>
@@ -23,13 +23,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    type: {
-      type: String,
-      default: 'button',
-    },
     title: {
       type: String,
       default: '',
+    },
+    type: {
+      type: String,
+      default: 'button',
     },
     disabled: {
       type: Boolean,
@@ -175,7 +175,7 @@ export default {
       }
     }
 
-    &.invert-theme {
+    &.inverted-theme {
       &.arrow {
         &::before {
           border-color: map-get($colors, 'white');

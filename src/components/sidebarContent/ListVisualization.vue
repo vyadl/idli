@@ -7,17 +7,17 @@
       <RadioCustom
         v-for="sorting in sortings"
         :key="sorting"
-        :value="sorting"
         :label="sorting"
-        name="sorting"
+        :value="sorting"
         v-model="localSorting"
+        name="sorting"
         @change="_setSorting(sorting)"
       />
       <ButtonText
         class="sorting-action"
+        v-if="sorting === 'shuffled'"
         text="randomize it!"
         style-type="underline"
-        v-if="sorting === 'shuffle'"
         @click="_shuffleFilteredList"
       />
     </SidebarCard>
@@ -26,10 +26,10 @@
         <RadioCustom
           v-for="mode in modes"
           :key="mode"
-          :value="mode"
           :label="mode"
-          name="mode"
+          :value="mode"
           v-model="localMode"
+          name="mode"
           @change="_setMode(mode)"
         />
       </div>
@@ -39,10 +39,10 @@
         <RadioCustom
           v-for="theme in themes"
           :key="theme"
-          :value="theme"
           :label="theme"
-          name="theme"
+          :value="theme"
           v-model="localTheme"
+          name="theme"
           @change="_setTheme(theme)"
         />
       </div>
@@ -63,9 +63,9 @@ export default {
     ButtonText,
   },
   data: () => ({
-    sortings: ['default', 'shuffle'],
+    sortings: ['default', 'shuffled'],
     modes: ['list', 'cloud', 'stars'],
-    themes: ['default', 'invert'],
+    themes: ['default', 'inverted'],
     localSorting: '',
     localMode: '',
     localTheme: '',
