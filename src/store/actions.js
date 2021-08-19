@@ -18,6 +18,11 @@ export default {
     commit('setLists', responseLists);
     dispatch('_setListIdFromLocalStorage');
   },
+  async _fetchTestLists({ commit }) {
+    const { data: responseLists } = await this._vm.$axios.get('/test_data.json');
+
+    commit('setTestLists', responseLists);
+  },
   async _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     dispatch('_setCurrentListId', id);
 

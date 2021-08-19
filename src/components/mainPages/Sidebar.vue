@@ -133,6 +133,7 @@ export default {
       padding: 30px;
       overflow-y: auto;
       overflow-x: hidden;
+      background-color: map-get($colors, 'white');
     }
 
     .sidebar-buttons {
@@ -183,6 +184,10 @@ export default {
 
       &.show {
         box-shadow: none;
+      }
+
+      .sidebar-content {
+        background-color: map-get($colors, 'black');
       }
 
       .mode-button {

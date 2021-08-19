@@ -1,4 +1,4 @@
-import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line
+import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
 
 export default {
   async _signUp({ commit }, user) {

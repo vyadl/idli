@@ -1,5 +1,6 @@
 export default {
   lists: state => state.lists,
+  testLists: state => state.testLists,
   currentListId: state => state.currentListId,
   currentListObj: state => state.lists.find(list => list.id === state.currentListId),
   currentListTags: (state, getters) => getters.currentListObj?.tags,

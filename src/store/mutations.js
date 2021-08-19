@@ -4,6 +4,9 @@ export default {
   setLists(state, lists) {
     state.lists = lists;
   },
+  setTestLists(state, lists) {
+    state.testLists = lists;
+  },
   setCurrentListId(state, id) {
     state.currentListId = id;
   },

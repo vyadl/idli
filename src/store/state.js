@@ -1,5 +1,6 @@
 export default {
   lists: [],
+  testLists: [],
   currentListId: null,
   currentListItems: [],
   edittingListObj: null,
