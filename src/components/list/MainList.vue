@@ -7,7 +7,7 @@
       class="list-title"
       v-if="currentListObj"
     >
-      {{ currentListObj.name }}
+      {{ currentListObj.title }}
     </div>
     <div
       class="items-container"

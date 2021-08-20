@@ -18,10 +18,10 @@
         message="choosing test list will copy it to your lists"
       />
       <ButtonText
-        class="list-name"
+        class="list-title"
         v-for="list in testLists"
-        :key="list.name"
-        :text="list.name"
+        :key="list.title"
+        :text="list.title"
         style-type="line"
         :disabled="isRequestProcessing"
         @click="addTestList(list)"
@@ -91,7 +91,7 @@ export default {
       margin-bottom: 10px;
     }
 
-    .list-name {
+    .list-title {
       margin-bottom: 5px;
     }
   }

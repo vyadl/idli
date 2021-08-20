@@ -13,7 +13,7 @@
       :class="{ active : edittingItemObj && edittingItemObj.id === item.id }"
       @click.stop="setItemForEditting"
     >
-      {{ item.text }}
+      {{ item.title }}
     </div>
   </div>
 </template>

@@ -16,8 +16,8 @@
           @click="setListForEditting(list)"
         />
         <ButtonText
-          class="list-name"
-          :text="list.name"
+          class="list-title"
+          :text="list.title"
           style-type="line"
           :active="list.id === currentListId"
           @click="fetchListById(list.id)"
@@ -129,7 +129,7 @@ export default {
       }
     }
 
-    .list-name {
+    .list-title {
       max-width: 220px;
     }
   }

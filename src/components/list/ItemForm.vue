@@ -14,9 +14,9 @@
         <div class="text-fields">
           <InputCustom
             label="item"
-            v-model="item.text"
+            v-model="item.title"
             required
-            ref="itemName"
+            ref="itemTitle"
           />
           <TextareaCustom
             label="details"
@@ -32,7 +32,7 @@
           <CheckboxCustom
             v-for="tag in currentListTags"
             :key="tag.id"
-            :label="tag.name"
+            :label="tag.title"
             :value="tag.id"
             v-model="item.tags"
             name="tags"
@@ -46,7 +46,7 @@
           <RadioCustom
             v-for="category in currentListCategories"
             :key="category.id"
-            :label="category.name"
+            :label="category.title"
             :value="category.id"
             v-model="item.category"
             name="category"
@@ -139,7 +139,7 @@ export default {
     },
     focusOnInput() {
       if (!this.edittingItemObj) {
-        this.$refs.itemName.focus();
+        this.$refs.itemTitle.focus();
       }
     },
     resetData() {

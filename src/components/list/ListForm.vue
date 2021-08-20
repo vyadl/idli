@@ -12,10 +12,10 @@
     >
       <template v-slot:main>
         <InputCustom
-          label="name"
-          v-model="list.name"
+          label="title"
+          v-model="list.title"
           required
-          ref="listName"
+          ref="listTitle"
         />
         <div
           class="private-option"
@@ -38,7 +38,7 @@
               :key="index"
             >
               <InputCustom
-                v-model="tag.name"
+                v-model="tag.title"
                 required
                 ref="tagsInput"
               />
@@ -65,7 +65,7 @@
               :key="index"
             >
               <InputCustom
-                v-model="category.name"
+                v-model="category.title"
                 required
                 ref="categoriesInput"
               />
@@ -161,7 +161,7 @@ export default {
     },
     focusOnInput() {
       if (!this.edittingListObj) {
-        this.$refs.listName.focus();
+        this.$refs.listTitle.focus();
       }
     },
     resetData() {
@@ -174,36 +174,36 @@ export default {
     },
     addFilter(type) {
       this.list[type].push({
-        name: null,
+        title: null,
         id: null,
       });
       this.$nextTick(() => {
-        const refName = `${type}Input`;
+        const ref = `${type}Input`;
 
-        this.$refs[refName][this.$refs[refName].length - 1].focus();
+        this.$refs[ref][this.$refs[ref].length - 1].focus();
       });
     },
-    isListNameUnique() {
-      const isListNameUnique = !this.lists.some(storeList => storeList.name === this.list.name);
+    isListTitleUnique() {
+      const isListTitleUnique = !this.lists.some(storeList => storeList.title === this.list.title);
 
-      this.errorMessage = isListNameUnique ? '' : 'you already have a list with this name';
+      this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
 
-      return isListNameUnique;
+      return isListTitleUnique;
     },
-    areFiltersNamesUnique() {
-      const filtersNames = [];
+    areFiltersTitlesUnique() {
+      const filtersTitles = [];
 
-      this.list.tags.forEach(tag => filtersNames.push(tag.name));
-      this.list.categories.forEach(category => filtersNames.push(category.name));
+      this.list.tags.forEach(tag => filtersTitles.push(tag.title));
+      this.list.categories.forEach(category => filtersTitles.push(category.title));
 
-      const areFiltersNamesUnique = filtersNames.length === new Set(filtersNames).size;
+      const areFiltersTitlesUnique = filtersTitles.length === new Set(filtersTitles).size;
 
-      this.errorMessage = areFiltersNamesUnique ? '' : 'you have filters with same names';
+      this.errorMessage = areFiltersTitlesUnique ? '' : 'you have filters with same titles';
 
-      return areFiltersNamesUnique;
+      return areFiltersTitlesUnique;
     },
     saveList() {
-      if (this.isListNameUnique() && this.areFiltersNamesUnique()) {
+      if (this.isListTitleUnique() && this.areFiltersTitlesUnique()) {
         this.isRequestProcessing = true;
         this[this.edittingListObj ? '_updateList' : '_addList'](this.list)
           .then(() => {
