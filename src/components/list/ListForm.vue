@@ -1,7 +1,7 @@
 <template>
   <form
     class="list-form"
-    @submit.prevent="saveList"
+    @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <ModalBasic
       name="listForm"
@@ -107,7 +107,7 @@
           text="delete list"
           style-type="underline"
           :disabled="isRequestProcessing"
-          @click="deleteList(list.id)"
+          @click="deleteList()"
         />
       </template>
     </ModalBasic>
@@ -202,10 +202,10 @@ export default {
 
       return areFiltersTitlesUnique;
     },
-    saveList() {
+    addList() {
       if (this.isListTitleUnique() && this.areFiltersTitlesUnique()) {
         this.isRequestProcessing = true;
-        this[this.edittingListObj ? '_updateList' : '_addList'](this.list)
+        this._addList(this.list)
           .then(() => {
             this.closeListForm();
           })
@@ -217,9 +217,24 @@ export default {
           });
       }
     },
-    deleteList(id) {
+    updateList() {
+      if (this.areFiltersTitlesUnique()) {
+        this.isRequestProcessing = true;
+        this._updateList(this.list)
+          .then(() => {
+            this.closeListForm();
+          })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
+          .finally(() => {
+            this.isRequestProcessing = false;
+          });
+      }
+    },
+    deleteList() {
       this.isRequestProcessing = true;
-      this._deleteList(id)
+      this._deleteList(this.list.id)
         .then(() => {
           this.closeListForm();
         })
