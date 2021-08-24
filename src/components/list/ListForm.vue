@@ -178,9 +178,9 @@ export default {
         id: null,
       });
       this.$nextTick(() => {
-        const ref = this.$refs[`${type}Input`];
+        const filterInputsRefs = this.$refs[`${type}Input`];
 
-        ref[ref.length - 1].focus();
+        filterInputsRefs[filterInputsRefs.length - 1].focus();
       });
     },
     validateListTitle() {
@@ -191,16 +191,34 @@ export default {
       return isListTitleUnique;
     },
     validateFiltersTitles() {
-      const filtersTitles = [];
+      let isValidationSuccesfull = true;
+      const filtersTitles = new Set();
 
-      this.list.tags.forEach(tag => filtersTitles.push(tag.title));
-      this.list.categories.forEach(category => filtersTitles.push(category.title));
+      isValidationSuccesfull = !this.list.tags.some(tag => {
+        const isSameTitleTag = filtersTitles.has(tag.title);
 
-      const areFiltersTitlesUnique = filtersTitles.length === new Set(filtersTitles).size;
+        if (!isSameTitleTag) {
+          filtersTitles.add(tag.title);
+        }
 
-      this.errorMessage = areFiltersTitlesUnique ? '' : 'you have filters with same titles';
+        return isSameTitleTag;
+      });
 
-      return areFiltersTitlesUnique;
+      if (isValidationSuccesfull) {
+        isValidationSuccesfull = !this.list.categories.some(category => {
+          const isSameTitleCategory = filtersTitles.has(category.title);
+
+          if (!isSameTitleCategory) {
+            filtersTitles.add(category.title);
+          }
+
+          return isSameTitleCategory;
+        });
+      }
+
+      this.errorMessage = isValidationSuccesfull ? '' : 'you have filters with same titles';
+
+      return isValidationSuccesfull;
     },
     addList() {
       if (this.validateListTitle() && this.validateFiltersTitles()) {

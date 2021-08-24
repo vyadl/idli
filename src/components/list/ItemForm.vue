@@ -25,8 +25,8 @@
         </div>
         <div
           class="filters-container"
-          :class="{ indent: areCurrentListTags && areCurrentListCategories }"
-          v-if="areCurrentListTags"
+          :class="{ indent: isAnyTagExist && isAnyCategoryExist }"
+          v-if="isAnyTagExist"
         >
           <h1 class="filters-title">tags:</h1>
           <CheckboxCustom
@@ -40,7 +40,7 @@
         </div>
         <div
           class="filters-container"
-          v-if="areCurrentListCategories"
+          v-if="isAnyCategoryExist"
         >
           <h1 class="filters-title">category:</h1>
           <RadioCustom
@@ -107,8 +107,8 @@ export default {
   },
   data: () => ({
     item: new Item(),
-    areCurrentListTags: false,
-    areCurrentListCategories: false,
+    isAnyTagExist: false,
+    isAnyCategoryExist: false,
     isRequestProcessing: false,
     errorMessage: '',
   }),
@@ -130,8 +130,8 @@ export default {
       this.$modal.hide('itemForm');
     },
     setData() {
-      this.areCurrentListTags = Boolean(this.currentListTags.length);
-      this.areCurrentListCategories = Boolean(this.currentListCategories.length);
+      this.isAnyTagExist = Boolean(this.currentListTags.length);
+      this.isAnyCategoryExist = Boolean(this.currentListCategories.length);
 
       if (this.edittingItemObj) {
         this.item = JSON.parse(JSON.stringify(this.edittingItemObj));
