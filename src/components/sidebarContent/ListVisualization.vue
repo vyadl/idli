@@ -5,13 +5,13 @@
       title="sorting"
     >
       <RadioCustom
-        v-for="sorting in sortings"
-        :key="sorting"
-        :label="sorting"
-        :value="sorting"
-        v-model="localSorting"
+        v-for="title in sortingTitles"
+        :key="title"
+        :label="title"
+        :value="title"
+        :model-value="sorting"
         name="sorting"
-        @change="_setSorting(sorting)"
+        @change="_setSorting(title)"
       />
       <ButtonText
         class="sorting-action"
@@ -21,29 +21,29 @@
         @click="_shuffleFilteredList"
       />
     </SidebarCard>
-    <SidebarCard title="modes">
+    <SidebarCard title="modeTitles">
       <div class="buttons-container">
         <RadioCustom
-          v-for="mode in modes"
-          :key="mode"
-          :label="mode"
-          :value="mode"
-          v-model="localMode"
+          v-for="title in modeTitles"
+          :key="title"
+          :label="title"
+          :value="title"
+          :model-value="mode"
           name="mode"
-          @change="_setMode(mode)"
+          @change="_setMode(title)"
         />
       </div>
     </SidebarCard>
     <SidebarCard title="theme">
       <div class="buttons-container">
         <RadioCustom
-          v-for="theme in themes"
-          :key="theme"
-          :label="theme"
-          :value="theme"
-          v-model="localTheme"
+          v-for="title in themeTitles"
+          :key="title"
+          :label="title"
+          :value="title"
+          :model-value="theme"
           name="theme"
-          @change="_setTheme(theme)"
+          @change="_setTheme(title)"
         />
       </div>
     </SidebarCard>
@@ -63,12 +63,9 @@ export default {
     ButtonText,
   },
   data: () => ({
-    sortings: ['default', 'shuffled'],
-    modes: ['list', 'cloud', 'stars'],
-    themes: ['default', 'inverted'],
-    localSorting: '',
-    localMode: '',
-    localTheme: '',
+    sortingTitles: ['default', 'shuffled'],
+    modeTitles: ['list', 'cloud', 'stars'],
+    themeTitles: ['default', 'inverted'],
   }),
   computed: {
     ...mapGetters({
@@ -76,26 +73,6 @@ export default {
       mode: 'mode',
       theme: 'theme',
     }),
-  },
-  watch: {
-    sorting: {
-      handler: function sortingHandler() {
-        this.localSorting = this.sorting;
-      },
-      immediate: true,
-    },
-    mode: {
-      handler: function modeHandler() {
-        this.localMode = this.mode;
-      },
-      immediate: true,
-    },
-    theme: {
-      handler: function themeHandler() {
-        this.localTheme = this.theme;
-      },
-      immediate: true,
-    },
   },
   methods: {
     ...mapActions({
