@@ -107,7 +107,7 @@
           text="delete list"
           style-type="underline"
           :disabled="isRequestProcessing"
-          @click="deleteList()"
+          @click="deleteList"
         />
       </template>
     </ModalBasic>
@@ -178,19 +178,19 @@ export default {
         id: null,
       });
       this.$nextTick(() => {
-        const ref = `${type}Input`;
+        const ref = this.$refs[`${type}Input`];
 
-        this.$refs[ref][this.$refs[ref].length - 1].focus();
+        ref[ref.length - 1].focus();
       });
     },
-    isListTitleUnique() {
+    validateListTitle() {
       const isListTitleUnique = !this.lists.some(storeList => storeList.title === this.list.title);
 
       this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
 
       return isListTitleUnique;
     },
-    areFiltersTitlesUnique() {
+    validateFiltersTitles() {
       const filtersTitles = [];
 
       this.list.tags.forEach(tag => filtersTitles.push(tag.title));
@@ -203,7 +203,7 @@ export default {
       return areFiltersTitlesUnique;
     },
     addList() {
-      if (this.isListTitleUnique() && this.areFiltersTitlesUnique()) {
+      if (this.validateListTitle() && this.validateFiltersTitles()) {
         this.isRequestProcessing = true;
         this._addList(this.list)
           .then(() => {
@@ -218,7 +218,7 @@ export default {
       }
     },
     updateList() {
-      if (this.areFiltersTitlesUnique()) {
+      if (this.validateFiltersTitles()) {
         this.isRequestProcessing = true;
         this._updateList(this.list)
           .then(() => {

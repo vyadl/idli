@@ -178,7 +178,6 @@ export default {
     }
 
     &.inverted-theme {
-      border-left: 1px solid map-get($colors, 'gray-light');
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
 
@@ -187,6 +186,7 @@ export default {
       }
 
       .sidebar-content {
+        border-left: 1px solid map-get($colors, 'gray-light');
         background-color: map-get($colors, 'black');
       }
 
