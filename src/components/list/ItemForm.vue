@@ -130,8 +130,8 @@ export default {
       this.$modal.hide('itemForm');
     },
     setData() {
-      this.isAnyTagExist = Boolean(this.currentListTags.length);
-      this.isAnyCategoryExist = Boolean(this.currentListCategories.length);
+      this.isAnyTagExist = !!this.currentListTags.length;
+      this.isAnyCategoryExist = !!this.currentListCategories.length;
 
       if (this.edittingItemObj) {
         this.item = JSON.parse(JSON.stringify(this.edittingItemObj));

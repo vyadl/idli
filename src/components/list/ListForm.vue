@@ -169,16 +169,16 @@ export default {
       this.list = new List();
       this.errorMessage = '';
     },
-    deleteFilter(type, index) {
-      this.list[type].splice(index, 1);
+    deleteFilter(filtersType, index) {
+      this.list[filtersType].splice(index, 1);
     },
-    addFilter(type) {
-      this.list[type].push({
+    addFilter(filtersType) {
+      this.list[filtersType].push({
         title: null,
         id: null,
       });
       this.$nextTick(() => {
-        const filterInputsRefs = this.$refs[`${type}Input`];
+        const filterInputsRefs = this.$refs[`${filtersType}Input`];
 
         filterInputsRefs[filterInputsRefs.length - 1].focus();
       });
@@ -190,35 +190,30 @@ export default {
 
       return isListTitleUnique;
     },
-    validateFiltersTitles() {
-      let isValidationSuccesfull = true;
-      const filtersTitles = new Set();
+    checkFiltersTitlesIntersections(filtersType, filtersTitles) {
+      return this.list[filtersType].some(filter => {
+        const isSameTitleFilter = filtersTitles.has(filter.title);
 
-      isValidationSuccesfull = !this.list.tags.some(tag => {
-        const isSameTitleTag = filtersTitles.has(tag.title);
-
-        if (!isSameTitleTag) {
-          filtersTitles.add(tag.title);
+        if (!isSameTitleFilter) {
+          filtersTitles.add(filter.title);
         }
 
-        return isSameTitleTag;
+        return isSameTitleFilter;
       });
+    },
+    validateFiltersTitles() {
+      let isValid = true;
+      const filtersTitles = new Set();
 
-      if (isValidationSuccesfull) {
-        isValidationSuccesfull = !this.list.categories.some(category => {
-          const isSameTitleCategory = filtersTitles.has(category.title);
+      isValid = !this.checkFiltersTitlesIntersections('tags', filtersTitles);
 
-          if (!isSameTitleCategory) {
-            filtersTitles.add(category.title);
-          }
-
-          return isSameTitleCategory;
-        });
+      if (isValid) {
+        isValid = !this.checkFiltersTitlesIntersections('categories', filtersTitles);
       }
 
-      this.errorMessage = isValidationSuccesfull ? '' : 'you have filters with same titles';
+      this.errorMessage = isValid ? '' : 'you have filters with same titles';
 
-      return isValidationSuccesfull;
+      return isValid;
     },
     addList() {
       if (this.validateListTitle() && this.validateFiltersTitles()) {
