@@ -18,6 +18,11 @@ export default {
     commit('setLists', responseLists);
     dispatch('_setListIdFromLocalStorage');
   },
+  async _fetchTestLists({ commit }) {
+    const { data: responseLists } = await this._vm.$axios.get('/test_data.json');
+
+    commit('setTestLists', responseLists);
+  },
   async _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     dispatch('_setCurrentListId', id);
 
@@ -41,7 +46,7 @@ export default {
     dispatch('_setCurrentListId', responseList.id);
   },
   async _addTestList({ commit, dispatch }, {
-    name,
+    title,
     isPrivate,
     tags,
     categories,
@@ -49,7 +54,7 @@ export default {
   }) {
     const { data: responseList } = await this._vm.$axios
       .post(`${this._vm.$apiBasePath}list/add`, {
-        name,
+        title,
         isPrivate,
         tags,
         categories,
@@ -65,7 +70,7 @@ export default {
     commit('setCurrentItems', responseItems);
   },
   async _updateList({ commit }, {
-    name,
+    title,
     isPrivate,
     tags,
     categories,
@@ -73,7 +78,7 @@ export default {
   }) {
     const { data: responseList } = await this._vm.$axios
       .patch(`${this._vm.$apiBasePath}list/update/${id}`, {
-        name,
+        title,
         isPrivate,
         tags,
         categories,
@@ -124,7 +129,7 @@ export default {
     commit('addItem', responseItem);
   },
   async _updateItem({ commit, dispatch }, {
-    text,
+    title,
     details,
     tags,
     category,
@@ -133,7 +138,7 @@ export default {
   }) {
     const { data: responseItem } = await this._vm.$axios
       .patch(`${this._vm.$apiBasePath}item/update/${listId}/${id}`, {
-        text,
+        title,
         details,
         tags,
         category,

@@ -1,4 +1,4 @@
 export default {
-  isLoggedIn: state => Boolean(state.user.id),
+  isLoggedIn: state => !!state.user.id,
   user: state => state.user,
 };

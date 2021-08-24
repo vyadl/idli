@@ -14,7 +14,7 @@
         <CheckboxCustom
           v-for="tag in currentListTags"
           :key="tag.id"
-          :label="tag.name"
+          :label="tag.title"
           :value="tag.id"
           v-model="localCheckedTags"
           @change="filterList"
@@ -29,7 +29,7 @@
         <CheckboxCustom
           v-for="category in currentListCategories"
           :key="category.id"
-          :label="category.name"
+          :label="category.title"
           :value="category.id"
           v-model="localCheckedCategories"
           @change="filterList"

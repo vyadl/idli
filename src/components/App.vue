@@ -48,6 +48,7 @@ export default {
   created() {
     initAxios();
     this._setUserFromLocalStorage();
+    this._fetchTestLists();
 
     if (this.isLoggedIn) {
       setTimeout(this._fetchListsForUser, 500);
@@ -56,6 +57,7 @@ export default {
   methods: {
     ...mapActions({
       _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
+      _fetchTestLists: '_fetchTestLists',
       _fetchListsForUser: '_fetchListsForUser',
     }),
   },

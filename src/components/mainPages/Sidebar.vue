@@ -133,6 +133,7 @@ export default {
       padding: 30px;
       overflow-y: auto;
       overflow-x: hidden;
+      background-color: map-get($colors, 'white');
     }
 
     .sidebar-buttons {
@@ -177,12 +178,16 @@ export default {
     }
 
     &.inverted-theme {
-      border-left: 1px solid map-get($colors, 'gray-light');
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
 
       &.show {
         box-shadow: none;
+      }
+
+      .sidebar-content {
+        border-left: 1px solid map-get($colors, 'gray-light');
+        background-color: map-get($colors, 'black');
       }
 
       .mode-button {

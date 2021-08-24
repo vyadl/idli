@@ -18,10 +18,10 @@
         message="choosing test list will copy it to your lists"
       />
       <ButtonText
-        class="list-name"
-        v-for="list in testData"
-        :key="list.name"
-        :text="list.name"
+        class="list-title"
+        v-for="list in testLists"
+        :key="list.title"
+        :text="list.title"
         style-type="line"
         :disabled="isRequestProcessing"
         @click="addTestList(list)"
@@ -36,7 +36,6 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { mapGetters, mapActions } from 'vuex';
-import axios from 'axios';
 
 export default {
   components: {
@@ -47,19 +46,16 @@ export default {
   },
   data: () => ({
     areTestListsShown: false,
-    testData: [],
     isRequestProcessing: false,
     errorMessage: '',
   }),
   computed: {
     ...mapGetters({
+      testLists: 'testLists',
       lists: 'lists',
     }),
   },
   created() {
-    axios.get('/test_data.json').then(({ data }) => {
-      this.testData = data;
-    });
     this.areTestListsShown = !this.lists.length;
   },
   methods: {
@@ -95,7 +91,7 @@ export default {
       margin-bottom: 10px;
     }
 
-    .list-name {
+    .list-title {
       margin-bottom: 5px;
     }
   }
