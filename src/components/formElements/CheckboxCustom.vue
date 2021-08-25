@@ -38,7 +38,7 @@ export default {
       type: String,
       default: '',
     },
-    value: Number,
+    value: [Number, Boolean],
     modelValue: {
       default: false,
     },

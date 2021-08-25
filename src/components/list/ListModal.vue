@@ -4,7 +4,7 @@
     @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <ModalBasic
-      name="listForm"
+      name="listModal"
       :header-text="edittingListObj ? 'edit list' : 'new list'"
       @before-open="setData"
       @opened="focusOnInput"
@@ -99,7 +99,7 @@
           <ButtonText
             text="cancel"
             :disabled="isRequestProcessing"
-            @click="closeListForm"
+            @click="closeListModal"
           />
         </div>
         <ButtonText
@@ -151,8 +151,8 @@ export default {
       _updateList: '_updateList',
       _deleteList: '_deleteList',
     }),
-    closeListForm() {
-      this.$modal.hide('listForm');
+    closeListModal() {
+      this.$modal.hide('listModal');
     },
     setData() {
       if (this.edittingListObj) {
@@ -220,7 +220,7 @@ export default {
         this.isRequestProcessing = true;
         this._addList(this.list)
           .then(() => {
-            this.closeListForm();
+            this.closeListModal();
           })
           .catch(error => {
             this.errorMessage = error.response.data.message;
@@ -235,7 +235,7 @@ export default {
         this.isRequestProcessing = true;
         this._updateList(this.list)
           .then(() => {
-            this.closeListForm();
+            this.closeListModal();
           })
           .catch(error => {
             this.errorMessage = error.response.data.message;
@@ -249,7 +249,7 @@ export default {
       this.isRequestProcessing = true;
       this._deleteList(this.list.id)
         .then(() => {
-          this.closeListForm();
+          this.closeListModal();
         })
         .catch(error => {
           this.errorMessage = error.response.data.message;

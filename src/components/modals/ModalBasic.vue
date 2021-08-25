@@ -6,6 +6,7 @@
     height="auto"
     :width="width"
     scrollable
+    transition="modal"
     @before-open="beforeOpen"
     @opened="open"
     @closed="close"
@@ -21,7 +22,10 @@
     <main class="main">
       <slot name="main"/>
     </main>
-    <footer class="footer">
+    <footer
+      class="footer"
+      v-if="isFooterShown"
+    >
       <slot name="buttons" />
     </footer>
   </modal>
@@ -39,6 +43,10 @@ export default {
     headerText: {
       type: String,
       default: '',
+    },
+    isFooterShown: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {
@@ -79,14 +87,11 @@ export default {
       font-size: map-get($text, 'title-font-size');
     }
 
-    .main {
-      margin-bottom: 25px;
-    }
-
     .footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      padding-top: 30px;
     }
 
     &.inverted-theme {

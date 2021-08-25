@@ -15,8 +15,8 @@
     <EnterScreen v-if="!isLoggedIn"/>
     <MainList v-else />
     <Sidebar />
-    <ListForm />
-    <ItemForm />
+    <ListModal />
+    <ItemModal />
   </div>
 </template>
 
@@ -24,8 +24,8 @@
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
 import Sidebar from '@/components/mainPages/Sidebar.vue';
-import ListForm from '@/components/list/ListForm.vue';
-import ItemForm from '@/components/list/ItemForm.vue';
+import ListModal from '@/components/list/ListModal.vue';
+import ItemModal from '@/components/list/ItemModal.vue';
 import { initAxios } from '@/settings/axiosSettings';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -34,8 +34,8 @@ export default {
     EnterScreen,
     MainList,
     Sidebar,
-    ListForm,
-    ItemForm,
+    ListModal,
+    ItemModal,
   },
   computed: {
     ...mapGetters({
@@ -48,6 +48,7 @@ export default {
   created() {
     initAxios();
     this._setUserFromLocalStorage();
+    this._setSettingsFromLocalStorage();
     this._fetchTestLists();
 
     if (this.isLoggedIn) {
@@ -57,6 +58,7 @@ export default {
   methods: {
     ...mapActions({
       _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
+      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
       _fetchTestLists: '_fetchTestLists',
       _fetchListsForUser: '_fetchListsForUser',
     }),

@@ -15,6 +15,7 @@ export default {
   mode: state => state.mode,
   theme: state => state.theme,
   isInverted: state => state.theme === 'inverted',
+  settings: state => state.settings,
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
   requestsNumber: state => state.requestsNumber,

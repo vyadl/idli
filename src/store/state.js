@@ -11,6 +11,9 @@ export default {
   mode: 'list',
   theme: 'default',
   shuffleTrigger: false,
+  settings: {
+    isItemFormInSidebar: false,
+  },
   sidebar: {
     isOpen: false,
     mode: null,
