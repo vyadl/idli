@@ -193,4 +193,43 @@ export default {
   _decreaseRequestsNumber({ commit }) {
     commit('decreaseRequestsNumber');
   },
+
+  // bin
+
+  async _fetchRemovedLists({ commit }) {
+    const { data: removedLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists/deleted`);
+
+    commit('setRemovedLists', removedLists);
+  },
+
+  async _fetchRemovedItems({ commit }) {
+    const { data: removedItems } = await this._vm.$axios.get(`${this._vm.$apiBasePath}items/deleted`);
+
+    commit('setRemovedItems', removedItems);
+  },
+
+  async _restoreList({ dispatch }, listId) {
+    await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore/${listId}`);
+
+    dispatch('_fetchRemovedLists');
+    dispatch('_fetchListsForUser');
+  },
+
+  async _restoreItem({ dispatch }, itemId) {
+    await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore/${itemId}`);
+
+    dispatch('_fetchRemovedItems');
+  },
+
+  async _hardDeleteList({ dispatch }, listId) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/hard-delete/${listId}`);
+
+    dispatch('_fetchRemovedLists');
+  },
+
+  async _hardDeleteItem({ dispatch }, itemId) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete/${itemId}`);
+
+    dispatch('_fetchRemovedItems');
+  },
 };

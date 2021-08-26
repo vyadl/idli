@@ -91,4 +91,14 @@ export default {
   decreaseRequestsNumber(state) {
     state.requestsNumber--;
   },
+
+  // bin
+
+  setRemovedLists(state, lists) {
+    state.removedLists = lists;
+  },
+
+  setRemovedItems(state, items) {
+    state.removedItems = items;
+  },
 };

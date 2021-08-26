@@ -18,6 +18,8 @@ export default {
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
   requestsNumber: state => state.requestsNumber,
+  removedLists: state => state.removedLists,
+  removedItems: state => state.removedItems,
   filteredList: (state, getters) => {
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;

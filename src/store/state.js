@@ -11,6 +11,8 @@ export default {
   mode: 'list',
   theme: 'default',
   shuffleTrigger: false,
+  removedLists: [],
+  removedItems: [],
   sidebar: {
     isOpen: false,
     mode: null,

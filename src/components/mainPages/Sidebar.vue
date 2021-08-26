@@ -24,6 +24,8 @@
           v-for="mode in sidebarModes"
           :key="mode"
           :text="mode"
+          :style-type="mode === 'bin' ? 'underline' : 'bordered'"
+          :small="mode === 'bin'"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
@@ -42,6 +44,7 @@
       <UserProfile v-if="sidebarMode === 'profile'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
+      <AppBin v-if="sidebarMode === 'bin'" />
     </div>
   </div>
 </template>
@@ -50,6 +53,7 @@
 import FiltersList from '@/components/sidebarContent/FiltersList.vue';
 import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
 import AppLists from '@/components/sidebarContent/AppLists.vue';
+import AppBin from '@/components/sidebarContent/bin/AppBin.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
@@ -65,6 +69,7 @@ export default {
     UserProfile,
     RegistrationForm,
     AuthForm,
+    AppBin,
     ButtonText,
     ButtonSign,
   },
@@ -77,7 +82,7 @@ export default {
     }),
     sidebarModes() {
       return this.isLoggedIn
-        ? ['filters', 'visualization', 'lists', 'profile']
+        ? ['filters', 'visualization', 'lists', 'profile', 'bin']
         : ['sign up', 'sign in'];
     },
   },
