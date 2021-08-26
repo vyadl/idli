@@ -1,6 +1,7 @@
 <template>
   <SidebarCard
     class="app-lists"
+    :class="{ 'inverted-theme': isInverted }"
     title="lists"
   >
     <div class="lists-container">
@@ -131,6 +132,22 @@ export default {
 
     .list-title {
       max-width: 220px;
+      border-bottom: 2px solid map-get($colors, 'white');
+      transition: border-color .2s;
+
+      &.active {
+        border-color: map-get($colors, 'black');
+      }
+    }
+
+    &.inverted-theme {
+      .list-title {
+        border-color: map-get($colors, 'black');
+
+        &.active {
+          border-color: map-get($colors, 'white');
+        }
+      }
     }
   }
 </style>

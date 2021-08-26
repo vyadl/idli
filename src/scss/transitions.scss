@@ -24,3 +24,11 @@
   opacity: 0;
   transform: translateY(40px);
 }
+
+.notification-enter-active {
+  transition: opacity .2s;
+}
+
+.notification-leave-to {
+  opacity: 0;
+}

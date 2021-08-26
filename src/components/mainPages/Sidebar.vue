@@ -2,13 +2,13 @@
   <div
     class="sidebar"
     :class="{
-      show: isSidebarOpen,
+      shown: isSidebarOpen,
       'inverted-theme': isInverted,
     }"
   >
     <div
       class="add-item-button"
-      v-if="isLoggedIn && currentListObj"
+      v-if="isLoggedIn && currentListObj && mode !== 'focus'"
     >
       <ButtonSign
         style-type="plus"
@@ -28,7 +28,10 @@
           @click="_openSidebar(mode)"
         />
       </div>
-      <div class="state-button">
+      <div
+        class="state-button"
+        v-if="mode !== 'focus'"
+      >
         <ButtonSign
           style-type="arrow"
           @click="changeSidebarState"
@@ -73,6 +76,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      mode: 'mode',
       isSidebarOpen: 'isSidebarOpen',
       sidebarMode: 'sidebarMode',
       isLoggedIn: 'auth/isLoggedIn',
@@ -95,11 +99,9 @@ export default {
       this.$modal.show('itemModal');
     },
     changeSidebarState() {
-      if (this.isSidebarOpen) {
-        this._closeSidebar();
-      } else {
-        this._openSidebar(this.isLoggedIn ? 'lists' : 'sign up');
-      }
+      this.isSidebarOpen
+        ? this._closeSidebar()
+        : this._openSidebar(this.isLoggedIn ? this.sidebarMode : 'sign up');
     },
     createNewItem() {
       this._setItemForEditting(null);
@@ -122,7 +124,7 @@ export default {
       transform .5s,
       box-shadow .7s;
 
-    &.show {
+    &.shown {
       box-shadow: 15px 0 30px 0 map-get($colors, 'gray-light');
       transform: translateX(0);
 
@@ -190,7 +192,7 @@ export default {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
 
-      &.show {
+      &.shown {
         box-shadow: none;
       }
 

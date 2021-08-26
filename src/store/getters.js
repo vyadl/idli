@@ -18,6 +18,7 @@ export default {
   settings: state => state.settings,
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,
+  notification: state => state.notification,
   requestsNumber: state => state.requestsNumber,
   filteredList: (state, getters) => {
     const tags = getters.checkedTags;

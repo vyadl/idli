@@ -5,30 +5,24 @@
   >
     <div
       class="list-title"
+      :class="{ hided: mode === 'focus' }"
       v-if="currentListObj"
     >
       {{ currentListObj.title }}
     </div>
     <div
       class="items-container"
-      :class="{ parallax: isSidebarOpen }"
+      :class="{
+        parallax: isSidebarOpen,
+        'list-principle': listModePrinciple === 'list',
+        'cloud-principle': listModePrinciple === 'cloud',
+      }"
     >
-      <template v-if="mode === 'list'">
-        <div class="list-mode">
-          <ListItem
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-          />
-        </div>
-      </template>
-      <template v-else>
-        <ListItem
-          v-for="item in finalList"
-          :key="item.id"
-          :item="item"
-        />
-      </template>
+      <ListItem
+        v-for="item in finalList"
+        :key="item.id"
+        :item="item"
+      />
     </div>
   </div>
 </template>
@@ -54,6 +48,9 @@ export default {
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
     }),
+    listModePrinciple() {
+      return ['list', 'focus'].includes(this.mode) ? 'list' : 'cloud';
+    },
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
@@ -82,12 +79,25 @@ export default {
 
 <style lang="scss">
   .main-list {
+    width: 100%;
     min-height: 100vh;
 
     .list-title {
       padding: 10px;
       font-size: map-get($text, 'title-font-size');
       color: map-get($colors, 'gray-light');
+
+      &.hided {
+        opacity: 0;
+      }
+    }
+
+    .focus-mode-message {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      padding: 20px;
+      transform: translateX(-50%);
     }
 
     .items-container {
@@ -96,12 +106,21 @@ export default {
       &.parallax {
         transform: translateX(-20px);
       }
-    }
 
-    .list-mode {
-      display: flex;
-      flex-direction: column;
-      padding: 50px;
+      &.list-principle {
+        display: flex;
+        flex-direction: column;
+        padding: 50px;
+      }
+
+      &.cloud-principle {
+        position: fixed;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-height: 100vh;
+      }
     }
   }
 </style>
