@@ -71,6 +71,15 @@ export default {
     state.shuffleTrigger = !state.shuffleTrigger;
   },
 
+  // settings
+
+  setSettings(state, settings) {
+    state.settings = settings;
+  },
+  switchItemFormLocation(state) {
+    state.settings.isItemFormInSidebar = !state.settings.isItemFormInSidebar;
+  },
+
   // sidebar
 
   openSidebar(state) {

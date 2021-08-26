@@ -9,6 +9,16 @@ export default {
       dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
   },
+  _saveSettingsInLocalStorage({ getters }) {
+    localStorage.setItem('settings', JSON.stringify(getters.settings));
+  },
+  _setSettingsFromLocalStorage({ commit }) {
+    const settings = localStorage.getItem('settings');
+
+    if (settings) {
+      commit('setSettings', JSON.parse(settings));
+    }
+  },
 
   // lists
 
@@ -175,6 +185,13 @@ export default {
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
+  },
+
+  // settings
+
+  _switchItemFormLocation({ commit, dispatch }) {
+    commit('switchItemFormLocation');
+    dispatch('_saveSettingsInLocalStorage');
   },
 
   // sidebar

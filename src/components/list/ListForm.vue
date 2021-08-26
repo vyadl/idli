@@ -3,119 +3,116 @@
     class="list-form"
     @submit.prevent="edittingListObj ? updateList() : addList()"
   >
-    <ModalBasic
-      name="listForm"
-      :header-text="edittingListObj ? 'edit list' : 'new list'"
-      @before-open="setData"
-      @opened="focusOnInput"
-      @closed="resetData"
+    <InputCustom
+      label="title"
+      v-model="list.title"
+      :disabled="isRequestProcessing"
+      required
+      ref="listTitle"
+    />
+    <div
+      class="private-option"
+      v-if="false"
     >
-      <template v-slot:main>
-        <InputCustom
-          label="title"
-          v-model="list.title"
-          required
-          ref="listTitle"
-        />
+      <CheckboxCustom
+        label="private"
+        style-type="classic"
+        v-model="list.isPrivate"
+        :disabled="isRequestProcessing"
+      />
+    </div>
+    <div class="filters-container">
+      <div class="tags">
+        <h1 class="filters-header">
+          tags
+        </h1>
         <div
-          class="private-option"
-          v-if="false"
+          class="filter"
+          v-for="(tag, index) in list.tags"
+          :key="index"
         >
-          <CheckboxCustom
-            label="private"
-            style-type="classic"
-            v-model="list.isPrivate"
-          />
-        </div>
-        <div class="filters-container">
-          <div class="tags">
-            <h1 class="filters-header">
-              tags
-            </h1>
-            <div
-              class="filter"
-              v-for="(tag, index) in list.tags"
-              :key="index"
-            >
-              <InputCustom
-                v-model="tag.title"
-                required
-                ref="tagsInput"
-              />
-              <ButtonSign
-                class="delete-filter-button"
-                style-type="cross"
-                title="delete tag"
-                @click="deleteFilter('tags', index)"
-              />
-            </div>
-            <ButtonSign
-              style-type="plus"
-              title="add tag"
-              @click="addFilter('tags')"
-            />
-          </div>
-          <div class="categories">
-            <h1 class="filters-header">
-              categories
-            </h1>
-            <div
-              class="filter"
-              v-for="(category, index) in list.categories"
-              :key="index"
-            >
-              <InputCustom
-                v-model="category.title"
-                required
-                ref="categoriesInput"
-              />
-              <ButtonSign
-                class="delete-filter-button"
-                style-type="cross"
-                title="delete category"
-                @click="deleteFilter('categories', index)"
-              />
-            </div>
-            <ButtonSign
-              style-type="plus"
-              title="add category"
-              @click="addFilter('categories')"
-            />
-          </div>
-        </div>
-        <ErrorMessage
-          v-if="errorMessage"
-          :message="errorMessage"
-        />
-      </template>
-      <template v-slot:buttons>
-        <div>
-          <ButtonText
-            class="modal-button"
-            :text="edittingListObj ? 'save' : 'add'"
-            type="submit"
+          <InputCustom
+            v-model="tag.title"
+            required
             :disabled="isRequestProcessing"
+            ref="tagsInput"
           />
-          <ButtonText
-            text="cancel"
+          <ButtonSign
+            class="delete-filter-button"
+            style-type="cross"
+            title="delete tag"
             :disabled="isRequestProcessing"
-            @click="closeListForm"
+            @click="deleteFilter('tags', index)"
           />
         </div>
-        <ButtonText
-          v-if="edittingListObj"
-          text="delete list"
-          style-type="underline"
+        <ButtonSign
+          style-type="plus"
+          title="add tag"
           :disabled="isRequestProcessing"
-          @click="deleteList"
+          @click="addFilter('tags')"
         />
-      </template>
-    </ModalBasic>
+      </div>
+      <div class="categories">
+        <h1 class="filters-header">
+          categories
+        </h1>
+        <div
+          class="filter"
+          v-for="(category, index) in list.categories"
+          :key="index"
+        >
+          <InputCustom
+            v-model="category.title"
+            required
+            :disabled="isRequestProcessing"
+            ref="categoriesInput"
+          />
+          <ButtonSign
+            class="delete-filter-button"
+            style-type="cross"
+            title="delete category"
+            :disabled="isRequestProcessing"
+            @click="deleteFilter('categories', index)"
+          />
+        </div>
+        <ButtonSign
+          style-type="plus"
+          title="add category"
+          :disabled="isRequestProcessing"
+          @click="addFilter('categories')"
+        />
+      </div>
+    </div>
+    <ErrorMessage
+      v-if="errorMessage"
+      :message="errorMessage"
+    />
+    <div class="buttons-container">
+      <div>
+        <ButtonText
+          class="modal-button"
+          :text="edittingListObj ? 'save' : 'add'"
+          type="submit"
+          :disabled="isRequestProcessing"
+        />
+        <ButtonText
+          text="cancel"
+          :disabled="isRequestProcessing"
+          @click="closeListModal"
+        />
+      </div>
+      <ButtonText
+        v-if="edittingListObj"
+        text="delete list"
+        style-type="underline"
+        :disabled="isRequestProcessing"
+        @click="deleteList"
+      />
+    </div>
   </form>
 </template>
 
 <script>
-import ModalBasic from '@/components/modals/ModalBasic.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -126,7 +123,6 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
-    ModalBasic,
     InputCustom,
     CheckboxCustom,
     ButtonText,
@@ -134,7 +130,7 @@ export default {
     ErrorMessage,
   },
   data: () => ({
-    list: new List(),
+    list: null,
     isRequestProcessing: false,
     errorMessage: '',
   }),
@@ -144,6 +140,24 @@ export default {
       lists: 'lists',
     }),
   },
+  watch: {
+    edittingListObj: {
+      handler: function edittingItemObjHandler() {
+        this.list = this.edittingListObj
+          ? JSON.parse(JSON.stringify(this.edittingListObj))
+          : new List();
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    if (!this.edittingListObj) {
+      this.$refs.listTitle.focus();
+    }
+  },
+  destroyed() {
+    this.resetData();
+  },
   methods: {
     ...mapActions({
       _setListForEditting: '_setListForEditting',
@@ -151,18 +165,8 @@ export default {
       _updateList: '_updateList',
       _deleteList: '_deleteList',
     }),
-    closeListForm() {
-      this.$modal.hide('listForm');
-    },
-    setData() {
-      if (this.edittingListObj) {
-        this.list = JSON.parse(JSON.stringify(this.edittingListObj));
-      }
-    },
-    focusOnInput() {
-      if (!this.edittingListObj) {
-        this.$refs.listTitle.focus();
-      }
+    closeListModal() {
+      this.$modal.hide('listModal');
     },
     resetData() {
       this._setListForEditting(null);
@@ -220,7 +224,7 @@ export default {
         this.isRequestProcessing = true;
         this._addList(this.list)
           .then(() => {
-            this.closeListForm();
+            this.closeListModal();
           })
           .catch(error => {
             this.errorMessage = error.response.data.message;
@@ -235,7 +239,7 @@ export default {
         this.isRequestProcessing = true;
         this._updateList(this.list)
           .then(() => {
-            this.closeListForm();
+            this.closeListModal();
           })
           .catch(error => {
             this.errorMessage = error.response.data.message;
@@ -249,7 +253,7 @@ export default {
       this.isRequestProcessing = true;
       this._deleteList(this.list.id)
         .then(() => {
-          this.closeListForm();
+          this.closeListModal();
         })
         .catch(error => {
           this.errorMessage = error.response.data.message;
@@ -293,6 +297,13 @@ export default {
 
     .delete-filter-button {
       margin-left: 10px;
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 30px;
     }
 
     .modal-button {

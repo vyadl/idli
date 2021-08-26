@@ -22,6 +22,7 @@ module.exports = {
     'no-confusing-arrow': 'off',
     'arrow-parens': 'off',
     'no-plusplus': 'off',
+    'no-unused-expressions': ["error", { "allowTernary": true }],
   },
 
   globals: {
