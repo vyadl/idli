@@ -29,8 +29,6 @@ export default {
     UserProfile,
     CheckboxCustom,
   },
-  data: () => ({
-  }),
   computed: {
     ...mapGetters({
       settings: 'settings',
