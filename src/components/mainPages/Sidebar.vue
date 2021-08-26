@@ -14,7 +14,7 @@
         style-type="plus"
         big
         title="new item"
-        @click="settings.isItemFormInSidebar ? _openSidebar('item') : openItemModal()"
+        @click="settings.isItemFormInSidebar ? createNewItem() : openItemModal()"
       />
     </div>
     <div class="sidebar-buttons">
@@ -42,7 +42,7 @@
       <AppSettings v-if="sidebarMode === 'settings'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
-      <ItemForm v-if="sidebarMode === 'item'" />
+      <ItemSidebar v-if="sidebarMode === 'item'" />
     </div>
   </div>
 </template>
@@ -54,7 +54,7 @@ import AppLists from '@/components/sidebarContent/AppLists.vue';
 import AppSettings from '@/components/sidebarContent/AppSettings.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
-import ItemForm from '@/components/list/ItemForm.vue';
+import ItemSidebar from '@/components/sidebarContent/ItemSidebar.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -67,7 +67,7 @@ export default {
     AppSettings,
     RegistrationForm,
     AuthForm,
-    ItemForm,
+    ItemSidebar,
     ButtonText,
     ButtonSign,
   },
@@ -89,6 +89,7 @@ export default {
     ...mapActions({
       _openSidebar: '_openSidebar',
       _closeSidebar: '_closeSidebar',
+      _setItemForEditting: '_setItemForEditting',
     }),
     openItemModal() {
       this.$modal.show('itemModal');
@@ -99,6 +100,10 @@ export default {
       } else {
         this._openSidebar(this.isLoggedIn ? 'lists' : 'sign up');
       }
+    },
+    createNewItem() {
+      this._setItemForEditting(null);
+      this._openSidebar('item');
     },
   },
 };

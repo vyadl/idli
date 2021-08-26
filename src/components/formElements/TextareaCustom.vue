@@ -9,6 +9,7 @@
     <textarea
       class="textarea"
       :value="value"
+      :disabled="disabled"
       @input="input($event)"
     ></textarea>
   </label>
@@ -19,6 +20,10 @@ export default {
   props: {
     label: String,
     value: String,
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     input(event) {

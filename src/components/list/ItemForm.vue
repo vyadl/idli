@@ -1,18 +1,21 @@
 <template>
   <form
     class="item-form"
+    v-if="item"
     @submit.prevent="saveItem"
   >
     <div class="text-fields">
       <InputCustom
         label="item"
         v-model="item.title"
+        :disabled="isRequestProcessing"
         required
         ref="itemTitle"
       />
       <TextareaCustom
         label="details"
         v-model="item.details"
+        :disabled="isRequestProcessing"
       />
     </div>
     <div
@@ -27,6 +30,7 @@
         :label="tag.title"
         :value="tag.id"
         v-model="item.tags"
+        :disabled="isRequestProcessing"
         name="tags"
       />
     </div>
@@ -41,6 +45,7 @@
         :label="category.title"
         :value="category.id"
         v-model="item.category"
+        :disabled="isRequestProcessing"
         name="category"
         @click="disableCategory(category.id)"
       />
@@ -118,14 +123,12 @@ export default {
   watch: {
     edittingItemObj: {
       handler: function edittingItemObjHandler() {
-        this.item = JSON.parse(JSON.stringify(this.edittingItemObj));
+        this.item = this.edittingItemObj
+          ? JSON.parse(JSON.stringify(this.edittingItemObj))
+          : new Item();
       },
+      immediate: true,
     },
-  },
-  created() {
-    this.item = this.edittingItemObj
-      ? JSON.parse(JSON.stringify(this.edittingItemObj))
-      : new Item();
   },
   mounted() {
     if (!this.edittingItemObj) {
@@ -155,7 +158,7 @@ export default {
       this.isRequestProcessing = true;
       this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
         .then(() => {
-          this.settings.isItemFormInSidebar ? this.resetData() : this.closeItemModal();
+          this.settings.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
         })
         .catch(error => {
           this.errorMessage = error.response.data.message;

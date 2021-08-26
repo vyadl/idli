@@ -3,14 +3,16 @@
     class="app-settings"
     title="settings"
   >
-    <CheckboxCustom
-      label="create and edit items inside the sidebar"
-      style-type="classic"
-      :value="false"
-      :model-value="settings.isItemFormInSidebar"
-      name="isItemFormInSidebar"
-      @change="_switchItemFormLocation"
-    />
+    <div class="options-container">
+      <CheckboxCustom
+        label="create and edit items inside the sidebar"
+        style-type="classic"
+        :value="false"
+        :model-value="settings.isItemFormInSidebar"
+        name="isItemFormInSidebar"
+        @change="_switchItemFormLocation"
+      />
+    </div>
     <UserProfile />
   </SidebarCard>
 </template>
@@ -41,3 +43,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+  .app-settings {
+    .options-container {
+      margin-bottom: 100px;
+    }
+  }
+</style>

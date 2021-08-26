@@ -24,8 +24,8 @@
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
 import Sidebar from '@/components/mainPages/Sidebar.vue';
-import ListModal from '@/components/list/ListModal.vue';
-import ItemModal from '@/components/list/ItemModal.vue';
+import ListModal from '@/components/modals/ListModal.vue';
+import ItemModal from '@/components/modals/ItemModal.vue';
 import { initAxios } from '@/settings/axiosSettings';
 import { mapGetters, mapActions } from 'vuex';
 

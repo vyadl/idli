@@ -7,27 +7,18 @@
     :width="width"
     scrollable
     transition="modal"
-    @before-open="beforeOpen"
-    @opened="open"
-    @closed="close"
   >
     <header
       class="header"
-      v-if="headerText"
+      v-if="title"
     >
       <h1 class="title">
-        {{ headerText }}
+        {{ title }}
       </h1>
     </header>
     <main class="main">
-      <slot name="main"/>
+      <slot />
     </main>
-    <footer
-      class="footer"
-      v-if="isFooterShown"
-    >
-      <slot name="buttons" />
-    </footer>
   </modal>
 </template>
 
@@ -40,24 +31,13 @@ export default {
       type: Number,
       default: 500,
     },
-    headerText: {
+    title: {
       type: String,
       default: '',
     },
     isFooterShown: {
       type: Boolean,
       default: true,
-    },
-  },
-  methods: {
-    beforeOpen() {
-      this.$emit('before-open');
-    },
-    open() {
-      this.$emit('opened');
-    },
-    close() {
-      this.$emit('closed');
     },
   },
 };
@@ -85,13 +65,6 @@ export default {
       margin-bottom: 20px;
       text-align: center;
       font-size: map-get($text, 'title-font-size');
-    }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding-top: 30px;
     }
 
     &.inverted-theme {

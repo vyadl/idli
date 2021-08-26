@@ -1,12 +1,10 @@
 <template>
   <ModalBasic
+    class="item-modal"
     name="itemModal"
-    :header-text="edittingItemObj ? 'edit item' : 'new item'"
-    :isFooterShown="false"
+    :title="edittingItemObj ? 'edit item' : 'new item'"
   >
-    <template v-slot:main>
-      <ItemForm />
-    </template>
+    <ItemForm />
   </ModalBasic>
 </template>
 
