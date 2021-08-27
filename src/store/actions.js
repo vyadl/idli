@@ -1,4 +1,12 @@
 export default {
+  _setHotkeys({ dispatch, getters }) {
+    document.addEventListener('keydown', event => {
+      if (event.code === 'Escape' && getters.mode === 'focus') {
+        dispatch('_setMode', 'list');
+      }
+    });
+  },
+
   // local storage
 
   _setListIdFromLocalStorage({ commit, dispatch }) {
@@ -179,9 +187,13 @@ export default {
       commit('setMode', 'list');
     }
   },
-  _setMode({ commit }, mode) {
+  _setMode({ commit, dispatch }, mode) {
     commit('setMode', mode);
     commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
+
+    if (mode === 'focus') {
+      dispatch('_setNotification', 'press Esc to exit focus mode');
+    }
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
@@ -202,7 +214,12 @@ export default {
   },
   _closeSidebar({ commit }) {
     commit('closeSidebar');
-    commit('changeSidebarMode', null);
+  },
+
+  // notifications
+
+  _setNotification({ commit }, text) {
+    commit('setNotification', text);
   },
 
   // requests

@@ -92,6 +92,12 @@ export default {
     state.sidebar.mode = mode;
   },
 
+  // notifications
+
+  setNotification(state, text) {
+    state.notification = text;
+  },
+
   // requests
 
   increaseRequestsNumber(state) {
