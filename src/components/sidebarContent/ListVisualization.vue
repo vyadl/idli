@@ -64,7 +64,7 @@ export default {
   },
   data: () => ({
     sortingTitles: ['default', 'shuffled'],
-    modeTitles: ['list', 'cloud', 'stars'],
+    modeTitles: ['list', 'cloud', 'stars', 'focus'],
     themeTitles: ['default', 'inverted'],
   }),
   computed: {

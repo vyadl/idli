@@ -120,12 +120,12 @@ export default {
     &.line {
       padding: 5px 0;
       line-height: 1.3;
-      color: map-get($colors, 'black');
+      color: map-get($colors, 'gray-dark');
       transition: color .2s;
 
       &.active,
       &:hover {
-        color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'black');
       }
     }
 
@@ -157,11 +157,11 @@ export default {
       }
 
       &.line {
-        color: map-get($colors, 'white');
+        color: map-get($colors, 'gray-light');
 
         &.active,
         &:hover {
-          color: map-get($colors, 'gray-light');
+          color: map-get($colors, 'white');
         }
       }
     }

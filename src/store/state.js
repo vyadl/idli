@@ -18,7 +18,8 @@ export default {
   },
   sidebar: {
     isOpen: false,
-    mode: null,
+    mode: 'lists',
   },
+  notification: '',
   requestsNumber: 0,
 };
