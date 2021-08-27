@@ -1,22 +1,23 @@
 <template>
   <div
     class="main-list"
+    :class="`${globalTheme}-theme`"
     @click="_closeSidebar"
   >
     <div
       class="list-title"
-      :class="{ hidden: mode === 'focus' }"
+      :class="{ hidden: isFocusOnList }"
       v-if="currentListObj"
     >
       {{ currentListObj.title }}
     </div>
     <div
       class="items-container"
-      :class="{
-        parallax: isSidebarOpen,
-        'list-principle': listModePrinciple === 'list',
-        'cloud-principle': listModePrinciple === 'cloud',
-      }"
+      :class="[
+        `${mode}-mode`,
+        { parallax: isSidebarOpen },
+      ]"
+      :style="styles"
     >
       <ListItem
         v-for="item in finalList"
@@ -43,13 +44,29 @@ export default {
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
-      isSidebarOpen: 'isSidebarOpen',
       sorting: 'sorting',
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
+      listAlign: 'listAlign',
+      areItemDetailsShown: 'areItemDetailsShown',
+      isFocusOnList: 'isFocusOnList',
+      isSidebarOpen: 'isSidebarOpen',
     }),
-    listModePrinciple() {
-      return ['list', 'focus'].includes(this.mode) ? 'list' : 'cloud';
+    styles() {
+      let styles = {};
+
+      if (this.mode === 'list') {
+        const alignStyles = {
+          left: 'flex-start',
+          center: 'center',
+          right: 'flex-end',
+          random: null,
+        };
+
+        styles = { 'align-items': alignStyles[this.listAlign] };
+      }
+
+      return styles;
     },
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
@@ -92,34 +109,27 @@ export default {
       }
     }
 
-    .focus-mode-message {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      padding: 20px;
-      transform: translateX(-50%);
-    }
-
     .items-container {
       transition: transform .5s;
 
-      &.parallax {
-        transform: translateX(-20px);
-      }
-
-      &.list-principle {
+      &.list-mode {
         display: flex;
         flex-direction: column;
         padding: 50px;
       }
 
-      &.cloud-principle {
+      &.cloud-mode,
+      &.stars-mode {
         position: fixed;
         overflow: hidden;
         top: 0;
         left: 0;
         width: 100%;
         min-height: 100vh;
+      }
+
+      &.parallax {
+        transform: translateX(-20px);
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <label
     class="textarea-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <div class="label">
       {{ label }}

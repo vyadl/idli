@@ -21,7 +21,7 @@
         @click="_shuffleFilteredList"
       />
     </SidebarCard>
-    <SidebarCard title="modeTitles">
+    <SidebarCard title="mode">
       <div class="buttons-container">
         <RadioCustom
           v-for="title in modeTitles"
@@ -33,6 +33,28 @@
           @change="_setMode(title)"
         />
       </div>
+      <div
+        class="buttons-container"
+        v-if="mode === 'list'"
+      >
+        <RadioCustom
+          v-for="title in listAlignTitles"
+          :key="title"
+          :label="title"
+          :value="title"
+          :model-value="listAlign"
+          name="listAlign"
+          @change="_setListAlign(title)"
+        />
+      </div>
+      <CheckboxCustom
+        v-if="mode === 'list'"
+        label="show items' details"
+        style-type="classic"
+        :value="false"
+        :model-value="areItemDetailsShown"
+        @change="_changeItemDetailsShowingMode"
+      />
     </SidebarCard>
     <SidebarCard title="theme">
       <div class="buttons-container">
@@ -53,6 +75,7 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
+import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -60,18 +83,22 @@ export default {
   components: {
     SidebarCard,
     RadioCustom,
+    CheckboxCustom,
     ButtonText,
   },
   data: () => ({
     sortingTitles: ['default', 'shuffled'],
-    modeTitles: ['list', 'cloud', 'stars', 'focus'],
+    modeTitles: ['list', 'cloud', 'stars'],
     themeTitles: ['default', 'inverted'],
+    listAlignTitles: ['left', 'center', 'right', 'random'],
   }),
   computed: {
     ...mapGetters({
       sorting: 'sorting',
       mode: 'mode',
       theme: 'theme',
+      listAlign: 'listAlign',
+      areItemDetailsShown: 'areItemDetailsShown',
     }),
   },
   methods: {
@@ -80,6 +107,8 @@ export default {
       _setMode: '_setMode',
       _setTheme: '_setTheme',
       _shuffleFilteredList: '_shuffleFilteredList',
+      _setListAlign: '_setListAlign',
+      _changeItemDetailsShowingMode: '_changeItemDetailsShowingMode',
     }),
   },
 };

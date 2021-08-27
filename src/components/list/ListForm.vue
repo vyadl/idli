@@ -136,8 +136,8 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      edittingListObj: 'edittingListObj',
       lists: 'lists',
+      edittingListObj: 'edittingListObj',
     }),
   },
   watch: {
@@ -160,10 +160,10 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setListForEditting: '_setListForEditting',
       _addList: '_addList',
       _updateList: '_updateList',
       _deleteList: '_deleteList',
+      _setListForEditting: '_setListForEditting',
     }),
     closeListModal() {
       this.$modal.hide('listModal');

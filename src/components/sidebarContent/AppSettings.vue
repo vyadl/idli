@@ -8,9 +8,17 @@
         label="create and edit items inside the sidebar"
         style-type="classic"
         :value="false"
-        :model-value="settings.isItemFormInSidebar"
+        :model-value="isItemFormInSidebar"
         name="isItemFormInSidebar"
         @change="_switchItemFormLocation"
+      />
+      <CheckboxCustom
+        label="focus on list"
+        style-type="classic"
+        :value="false"
+        :model-value="isFocusOnList"
+        name="isFocusOnList"
+        @change="_switchFocusMode"
       />
     </div>
     <UserProfile />
@@ -31,12 +39,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      settings: 'settings',
+      isItemFormInSidebar: 'isItemFormInSidebar',
+      isFocusOnList: 'isFocusOnList',
     }),
   },
   methods: {
     ...mapActions({
       _switchItemFormLocation: '_switchItemFormLocation',
+      _switchFocusMode: '_switchFocusMode',
     }),
   },
 };

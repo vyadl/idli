@@ -1,7 +1,7 @@
 <template>
   <modal
     class="modal-basic"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
     :name="name"
     height="auto"
     :width="width"

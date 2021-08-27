@@ -1,7 +1,7 @@
 <template>
   <label
     class="radio-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <input
       class="input"

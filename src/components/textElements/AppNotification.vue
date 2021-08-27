@@ -1,10 +1,10 @@
 <template>
   <div
     class="app-notification"
-    :class="{
-      shown: isNotificationShown,
-      'inverted-theme': isInverted,
-    }"
+    :class="[
+      { shown: isNotificationShown },
+      `${globalTheme}-theme`,
+    ]"
   >
     <div class="text">
       {{ notification }}

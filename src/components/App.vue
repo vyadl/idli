@@ -1,7 +1,7 @@
 <template>
   <div
     class="app"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <transition name="fade">
       <div
@@ -39,7 +39,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      theme: 'theme',
       notification: 'notification',
       requestsNumber: 'requestsNumber',
       isLoggedIn: 'auth/isLoggedIn',
@@ -58,11 +57,11 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
-      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
       _setHotkeys: '_setHotkeys',
-      _fetchTestLists: '_fetchTestLists',
+      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
+      _fetchTestLists: '_fetchTestLists',
+      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
     }),
   },
 };

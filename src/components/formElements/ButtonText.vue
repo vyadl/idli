@@ -3,11 +3,8 @@
     class="button-text"
     :class="[
       styleType,
-      {
-        small,
-        active,
-        'inverted-theme': isInverted,
-      }
+      { small, active },
+      `${globalTheme}-theme`,
     ]"
     :title="title"
     :type="type"

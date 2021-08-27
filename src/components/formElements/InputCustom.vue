@@ -1,7 +1,7 @@
 <template>
   <label
     class="input-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <div class="label">
       {{ label }}
