@@ -15,6 +15,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 
+const RESET_NOTIFICATION_TIME = 4500;
+
 export default {
   data: () => ({
     isNotificationShown: false,
@@ -29,10 +31,11 @@ export default {
       handler: function notificationHandler() {
         if (this.notification) {
           this.isNotificationShown = true;
+
           setTimeout(() => {
             this.isNotificationShown = false;
             this._setNotification('');
-          }, 4500);
+          }, RESET_NOTIFICATION_TIME);
         }
       },
       immediate: true,

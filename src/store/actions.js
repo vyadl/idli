@@ -1,7 +1,7 @@
 export default {
-  _setHotkeys({ dispatch }) {
+  _setHotkeys({ dispatch, getters }) {
     document.addEventListener('keydown', event => {
-      if (event.code === 'Escape') {
+      if (event.code === 'Escape' && getters.mode === 'focus') {
         dispatch('_setMode', 'list');
       }
     });

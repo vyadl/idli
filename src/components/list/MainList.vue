@@ -5,7 +5,7 @@
   >
     <div
       class="list-title"
-      :class="{ hided: mode === 'focus' }"
+      :class="{ hidden: mode === 'focus' }"
       v-if="currentListObj"
     >
       {{ currentListObj.title }}
@@ -87,7 +87,7 @@ export default {
       font-size: map-get($text, 'title-font-size');
       color: map-get($colors, 'gray-light');
 
-      &.hided {
+      &.hidden {
         opacity: 0;
       }
     }
