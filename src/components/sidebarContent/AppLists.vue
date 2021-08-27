@@ -1,6 +1,6 @@
 <template>
   <SidebarCard
-    class="lists-list"
+    class="app-lists"
     title="lists"
   >
     <div class="lists-container">
@@ -27,7 +27,7 @@
         style-type="plus"
         title="new list"
         :disabled="isRequestProcessing"
-        @click="openListForm"
+        @click="openListModal"
       />
     </div>
     <TestData/>
@@ -65,12 +65,12 @@ export default {
       _fetchListById: '_fetchListById',
       _decreaseRequestsNumber: '_decreaseRequestsNumber',
     }),
-    openListForm() {
-      this.$modal.show('listForm');
+    openListModal() {
+      this.$modal.show('listModal');
     },
     setListForEditting(list) {
       this._setListForEditting(list);
-      this.openListForm();
+      this.openListModal();
     },
     fetchListById(id) {
       this.isRequestProcessing = true;
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .lists-list {
+  .app-lists {
     .lists-container {
       margin-bottom: 100px;
     }

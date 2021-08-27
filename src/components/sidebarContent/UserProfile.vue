@@ -1,8 +1,6 @@
 <template>
-  <SidebarCard
-    class="user-profile"
-    title="your profile"
-  >
+  <div class="user-profile">
+    <h1 class="profile-title">your profile</h1>
     <div class="user-info">
       <div class="info-field">
         username:  {{ user.username }}
@@ -16,17 +14,15 @@
       style-type="underline"
       @click="_signOut"
     />
-  </SidebarCard>
+  </div>
 </template>
 
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
     ButtonText,
   },
   computed: {
@@ -47,6 +43,12 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
+    .profile-title {
+      width: 100%;
+      margin-bottom: 15px;
+      text-align: center;
+    }
 
     .user-info {
       margin-bottom: 15px;

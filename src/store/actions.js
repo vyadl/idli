@@ -9,6 +9,16 @@ export default {
       dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
   },
+  _saveSettingsInLocalStorage({ getters }) {
+    localStorage.setItem('settings', JSON.stringify(getters.settings));
+  },
+  _setSettingsFromLocalStorage({ commit }) {
+    const settings = localStorage.getItem('settings');
+
+    if (settings) {
+      commit('setSettings', JSON.parse(settings));
+    }
+  },
 
   // lists
 
@@ -177,6 +187,13 @@ export default {
     commit('setTheme', theme);
   },
 
+  // settings
+
+  _switchItemFormLocation({ commit, dispatch }) {
+    commit('switchItemFormLocation');
+    dispatch('_saveSettingsInLocalStorage');
+  },
+
   // sidebar
 
   _openSidebar({ commit }, mode) {
@@ -215,8 +232,8 @@ export default {
     dispatch('_fetchListsForUser');
   },
 
-  async _restoreItem({ dispatch }, itemId) {
-    await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore/${itemId}`);
+  async _restoreItem({ dispatch }, { listId, itemId }) {
+    await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore/${listId}/${itemId}`);
 
     dispatch('_fetchRemovedItems');
   },
@@ -227,8 +244,8 @@ export default {
     dispatch('_fetchRemovedLists');
   },
 
-  async _hardDeleteItem({ dispatch }, itemId) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete/${itemId}`);
+  async _hardDeleteItem({ dispatch }, { listId, itemId }) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete/${listId}/${itemId}`);
 
     dispatch('_fetchRemovedItems');
   },

@@ -25,8 +25,8 @@
           v-for="item in removedItems"
           :key="item.id"
           :item="item"
-          @delete="_hardDeleteItem(item.id)"
-          @restore="_restoreItem(item.id)"
+          @delete="_hardDeleteItem({ itemId: item.id, listId: item.listId })"
+          @restore="_restoreItem({ itemId: item.id, listId: item.listId })"
         />
       </div>
     </SidebarCard>

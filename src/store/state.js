@@ -13,6 +13,9 @@ export default {
   shuffleTrigger: false,
   removedLists: [],
   removedItems: [],
+  settings: {
+    isItemFormInSidebar: false,
+  },
   sidebar: {
     isOpen: false,
     mode: null,

@@ -14,7 +14,7 @@
         style-type="plus"
         big
         title="new item"
-        @click="openItemForm"
+        @click="settings.isItemFormInSidebar ? createNewItem() : openItemModal()"
       />
     </div>
     <div class="sidebar-buttons">
@@ -41,10 +41,11 @@
       <ListVisualization v-if="sidebarMode === 'visualization'" />
       <FiltersList v-if="sidebarMode === 'filters'" />
       <AppLists v-if="sidebarMode === 'lists'" />
-      <UserProfile v-if="sidebarMode === 'profile'"/>
+      <AppSettings v-if="sidebarMode === 'settings'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
       <AppBin v-if="sidebarMode === 'bin'" />
+      <ItemSidebar v-if="sidebarMode === 'item'" />
     </div>
   </div>
 </template>
@@ -54,9 +55,10 @@ import FiltersList from '@/components/sidebarContent/FiltersList.vue';
 import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
 import AppLists from '@/components/sidebarContent/AppLists.vue';
 import AppBin from '@/components/sidebarContent/bin/AppBin.vue';
-import UserProfile from '@/components/sidebarContent/UserProfile.vue';
+import AppSettings from '@/components/sidebarContent/AppSettings.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
+import ItemSidebar from '@/components/sidebarContent/ItemSidebar.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -66,10 +68,11 @@ export default {
     ListVisualization,
     FiltersList,
     AppLists,
-    UserProfile,
+    AppSettings,
     RegistrationForm,
     AuthForm,
     AppBin,
+    ItemSidebar,
     ButtonText,
     ButtonSign,
   },
@@ -79,10 +82,11 @@ export default {
       sidebarMode: 'sidebarMode',
       isLoggedIn: 'auth/isLoggedIn',
       currentListObj: 'currentListObj',
+      settings: 'settings',
     }),
     sidebarModes() {
       return this.isLoggedIn
-        ? ['filters', 'visualization', 'lists', 'profile', 'bin']
+        ? ['filters', 'visualization', 'lists', 'profile', 'settings', 'bin']
         : ['sign up', 'sign in'];
     },
   },
@@ -90,9 +94,10 @@ export default {
     ...mapActions({
       _openSidebar: '_openSidebar',
       _closeSidebar: '_closeSidebar',
+      _setItemForEditting: '_setItemForEditting',
     }),
-    openItemForm() {
-      this.$modal.show('itemForm');
+    openItemModal() {
+      this.$modal.show('itemModal');
     },
     changeSidebarState() {
       if (this.isSidebarOpen) {
@@ -100,6 +105,10 @@ export default {
       } else {
         this._openSidebar(this.isLoggedIn ? 'lists' : 'sign up');
       }
+    },
+    createNewItem() {
+      this._setItemForEditting(null);
+      this._openSidebar('item');
     },
   },
 };

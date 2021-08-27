@@ -27,7 +27,6 @@ export default {
       width: fit-content;
       margin: 0 auto 20px;
       font-size: map-get($text, 'title-font-size');
-      color: map-get($colors, 'black');
     }
 
     &.inverted-theme {

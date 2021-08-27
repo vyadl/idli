@@ -28,6 +28,7 @@ export default {
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
       edittingItemObj: 'edittingItemObj',
+      settings: 'settings',
     }),
     styles() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
@@ -53,10 +54,13 @@ export default {
   methods: {
     ...mapActions({
       _setItemForEditting: '_setItemForEditting',
+      _openSidebar: '_openSidebar',
     }),
     setItemForEditting() {
       this._setItemForEditting(this.item);
-      this.$modal.show('itemForm');
+      this.settings.isItemFormInSidebar
+        ? this._openSidebar('item')
+        : this.$modal.show('itemModal');
     },
   },
 };

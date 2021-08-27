@@ -4,6 +4,7 @@
     :class="[
       styleType,
       {
+        small,
         active,
         'inverted-theme': isInverted,
       }
@@ -22,6 +23,10 @@ export default {
     styleType: {
       type: String,
       default: 'bordered',
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     active: {
       type: Boolean,
@@ -73,6 +78,11 @@ export default {
         background-color .3s .05s,
         color .2s .05s;
 
+      &.small {
+        padding: 3px 10px 4px;
+        font-size: 13px;
+      }
+
       &.active,
       &:hover {
         background-color: map-get($colors, 'black');
@@ -95,6 +105,11 @@ export default {
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
       transition: color .2s;
+
+      &.small {
+        padding: 3px 0;
+        font-size: 11px;
+      }
 
       &:hover,
       &:disabled {
