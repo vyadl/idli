@@ -211,8 +211,8 @@ export default {
     commit('switchFocusMode');
     dispatch('_saveSettingsInLocalStorage');
   },
-  _swichSidebarAndListIntersection({ commit }) {
-    commit('swichSidebarAndListIntersection');
+  _switchSidebarAndListIntersection({ commit }) {
+    commit('switchSidebarAndListIntersection');
   },
 
   // sidebar

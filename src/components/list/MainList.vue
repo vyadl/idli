@@ -165,7 +165,6 @@ export default {
       }
 
       &.move-to-left {
-        // transform: translateX(-280px);
         margin-right: 280px;
       }
 

@@ -88,7 +88,7 @@ export default {
   switchFocusMode(state) {
     state.settings.isFocusOnList = !state.settings.isFocusOnList;
   },
-  swichSidebarAndListIntersection(state) {
+  switchSidebarAndListIntersection(state) {
     state.settings.isListUnderSidebar = !state.settings.isListUnderSidebar;
   },
 

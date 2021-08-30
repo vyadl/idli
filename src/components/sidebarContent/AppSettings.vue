@@ -26,7 +26,7 @@
         :value="true"
         :model-value="isListUnderSidebar"
         name="isListUnderSidebar"
-        @change="_swichSidebarAndListIntersection"
+        @change="_switchSidebarAndListIntersection"
       />
     </div>
     <UserProfile />
@@ -56,7 +56,7 @@ export default {
     ...mapActions({
       _switchItemFormLocation: '_switchItemFormLocation',
       _switchFocusMode: '_switchFocusMode',
-      _swichSidebarAndListIntersection: '_swichSidebarAndListIntersection',
+      _switchSidebarAndListIntersection: '_switchSidebarAndListIntersection',
     }),
   },
 };
