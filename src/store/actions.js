@@ -56,6 +56,12 @@ export default {
     commit('updateList', responseList);
     commit('setCurrentItems', responseList.items);
   },
+  async _fetchCurrentItems({ commit, getters }) {
+    const { data: responseList } = await this._vm.$axios
+      .get(`${this._vm.$apiBasePath}list/${getters.currentListId}`);
+
+    commit('setCurrentItems', responseList.items);
+  },
   async _addList({ commit, dispatch }, list) {
     const { data: responseList } = await this._vm.$axios
       .post(`${this._vm.$apiBasePath}list/add`, list);
@@ -106,9 +112,9 @@ export default {
     commit('setCurrentItems', responseList.items);
   },
   async _deleteList({ commit, dispatch, getters }, id) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
+    const res = await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
 
-    if (getters.currentListObj.id === id) {
+    if (getters.currentListObj?.id === id) {
       if (getters.lists.length > 1) {
         const anotherId = getters.lists.find(list => list.id !== id).id;
 
@@ -120,6 +126,7 @@ export default {
     }
 
     commit('deleteList', id);
+    dispatch('_fetchRemovedLists');
   },
   _setCurrentListId({ commit, dispatch, getters }, id) {
     commit('setCurrentListId', id);
@@ -170,6 +177,7 @@ export default {
 
     commit('deleteItem', item.id);
     dispatch('_setItemForEditting', null);
+    dispatch('_fetchRemovedItems');
   },
   _setItemForEditting({ commit }, item) {
     commit('setItemForEditting', item);
@@ -192,7 +200,7 @@ export default {
     commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
 
     if (mode === 'focus') {
-      dispatch('_setNotification', 'press Esc to exit focus mode');
+      dispatch('_setNotification', { text: 'press Esc to exit focus mode' });
     }
   },
   _setTheme({ commit }, theme) {
@@ -218,8 +226,8 @@ export default {
 
   // notifications
 
-  _setNotification({ commit }, text) {
-    commit('setNotification', text);
+  _setNotification({ commit }, notification) {
+    commit('setNotification', notification);
   },
 
   // requests
@@ -242,17 +250,24 @@ export default {
     commit('setRemovedItems', removedItems);
   },
 
-  async _restoreList({ dispatch }, listId) {
-    await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore/${listId}`);
+  async _restoreList({ dispatch, getters }, listId) {
+    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore/${listId}`);
 
-    dispatch('_fetchRemovedLists');
-    dispatch('_fetchListsForUser');
+    await dispatch('_fetchingAfterBinActions', false);
+
+    if (getters.lists.length) {
+      dispatch('_fetchCurrentItems');
+    }
+
+    return res;
   },
 
   async _restoreItem({ dispatch }, { listId, itemId }) {
-    await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore/${listId}/${itemId}`);
+    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore/${listId}/${itemId}`);
 
-    dispatch('_fetchRemovedItems');
+    dispatch('_fetchingAfterBinActions', true);
+
+    return res;
   },
 
   async _hardDeleteList({ dispatch }, listId) {
@@ -265,5 +280,48 @@ export default {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete/${listId}/${itemId}`);
 
     dispatch('_fetchRemovedItems');
+  },
+
+  async _hardDeleteAllItems({ dispatch }) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete-all`);
+
+    dispatch('_fetchRemovedItems');
+  },
+
+  async _restoreAllItems({ dispatch }) {
+    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore-all`);
+
+    dispatch('_fetchingAfterBinActions', true);
+
+    return res;
+  },
+
+  async _hardDeleteAllLists({ dispatch }) {
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/hard-delete-all`);
+
+    dispatch('_fetchRemovedLists');
+  },
+
+  async _restoreAllLists({ dispatch, getters }) {
+    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore-all`);
+    console.log(getters.currentListObj);
+    await dispatch('_fetchingAfterBinActions', false);
+    
+    console.log(getters.currentListObj);
+    if (getters.currentListObj) {
+      dispatch('_fetchCurrentItems');
+    }
+
+    return res;
+  },
+
+  async _fetchingAfterBinActions({ dispatch }, isItem) {
+    if (isItem) {
+      dispatch('_fetchCurrentItems');
+      dispatch('_fetchRemovedItems');
+    } else {
+      dispatch('_fetchListsForUser');
+      dispatch('_fetchRemovedLists');
+    }
   },
 };

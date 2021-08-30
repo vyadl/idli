@@ -20,6 +20,9 @@ export default {
     isOpen: false,
     mode: 'lists',
   },
-  notification: '',
+  notification: {
+    time: null,
+    text: '',
+  },
   requestsNumber: 0,
 };

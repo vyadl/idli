@@ -4,18 +4,20 @@
       {{ item.title }}
     </div>
     <div class="deleted-at">
-      {{ item.deletedAt | getFormattedDate }}
+      deleted at {{ item.deletedAt | getFormattedDate }}
     </div>
     <div class="buttons">
       <ButtonText
         text="restore"
         small
+        :disabled="disabled"
         @click="restore"
       />
       <ButtonText
         text="delete"
         style-type="underline"
         small
+        :disabled="disabled"
         @click="remove"
       />
     </div>
@@ -34,6 +36,10 @@ export default {
     item: {
       type: Object,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   filters: {
@@ -69,9 +75,16 @@ export default {
   .common-deleted-item {
     font-size: 12px;
     margin-bottom: 15px;
+    opacity: .8;
+    transition: opacity .2s;
+
+    &:hover {
+      opacity: 1;
+    }
 
     .title {
       margin-bottom: 10px;
+      font-weight: bold;
     }
 
     .deleted-at {

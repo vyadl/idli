@@ -256,6 +256,7 @@ export default {
           this.closeListModal();
         })
         .catch(error => {
+          echo(error);
           this.errorMessage = error.response.data.message;
         })
         .finally(() => {
