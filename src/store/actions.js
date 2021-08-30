@@ -211,6 +211,9 @@ export default {
     commit('switchFocusMode');
     dispatch('_saveSettingsInLocalStorage');
   },
+  _swichSidebarAndListIntersection({ commit }) {
+    commit('swichSidebarAndListIntersection');
+  },
 
   // sidebar
 
@@ -218,8 +221,12 @@ export default {
     commit('openSidebar');
     commit('changeSidebarMode', mode);
   },
-  _closeSidebar({ commit }) {
+  _closeSidebar({ commit, getters }) {
     commit('closeSidebar');
+
+    if (getters.sidebarMode === 'item') {
+      commit('changeSidebarMode', 'lists');
+    }
   },
 
   // notifications

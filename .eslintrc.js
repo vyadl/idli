@@ -23,6 +23,8 @@ module.exports = {
     'arrow-parens': 'off',
     'no-plusplus': 'off',
     'no-unused-expressions': ["error", { "allowTernary": true }],
+    'import/no-extraneous-dependencies': ["error", {"devDependencies": false }],
+
   },
 
   globals: {

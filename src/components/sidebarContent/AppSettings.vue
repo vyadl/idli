@@ -20,6 +20,14 @@
         name="isFocusOnList"
         @change="_switchFocusMode"
       />
+      <CheckboxCustom
+        label="sidebar overlaps the list"
+        style-type="classic"
+        :value="true"
+        :model-value="isListUnderSidebar"
+        name="isListUnderSidebar"
+        @change="_swichSidebarAndListIntersection"
+      />
     </div>
     <UserProfile />
   </SidebarCard>
@@ -41,12 +49,14 @@ export default {
     ...mapGetters({
       isItemFormInSidebar: 'isItemFormInSidebar',
       isFocusOnList: 'isFocusOnList',
+      isListUnderSidebar: 'isListUnderSidebar',
     }),
   },
   methods: {
     ...mapActions({
       _switchItemFormLocation: '_switchItemFormLocation',
       _switchFocusMode: '_switchFocusMode',
+      _swichSidebarAndListIntersection: '_swichSidebarAndListIntersection',
     }),
   },
 };

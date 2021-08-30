@@ -18,6 +18,7 @@ export default {
   settings: {
     isItemFormInSidebar: false,
     isFocusOnList: false,
+    isListUnderSidebar: true,
   },
   sidebar: {
     isOpen: false,

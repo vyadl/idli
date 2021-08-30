@@ -40,6 +40,7 @@
     >
       <h1 class="filters-title">category:</h1>
       <RadioCustom
+        class="item-category"
         v-for="category in currentListCategories"
         :key="category.id"
         :label="category.title"
@@ -208,6 +209,10 @@ export default {
 
     .filters-title {
       padding: 5px 10px 6px 0;
+    }
+
+    .item-category {
+      margin-right: 7px;
     }
 
     .buttons-container {

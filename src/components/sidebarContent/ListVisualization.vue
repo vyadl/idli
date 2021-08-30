@@ -1,25 +1,28 @@
 <template>
   <div class="list-visualization">
-    <SidebarCard
-      class="sorting"
-      title="sorting"
-    >
-      <RadioCustom
-        v-for="title in sortingTitles"
-        :key="title"
-        :label="title"
-        :value="title"
-        :model-value="sorting"
-        name="sorting"
-        @change="_setSorting(title)"
-      />
-      <ButtonText
-        class="sorting-action"
+    <SidebarCard title="sorting">
+      <div class="buttons-container">
+        <RadioCustom
+          v-for="title in sortingTitles"
+          :key="title"
+          :label="title"
+          :value="title"
+          :model-value="sorting"
+          name="sorting"
+          @change="_setSorting(title)"
+        />
+      </div>
+      <div
+        class="buttons-container central"
         v-if="sorting === 'shuffled'"
-        text="randomize it!"
-        style-type="underline"
-        @click="_shuffleFilteredList"
-      />
+      >
+        <ButtonText
+          class="randomize-button"
+          text="randomize!"
+          small
+          @click="_shuffleFilteredList"
+        />
+      </div>
     </SidebarCard>
     <SidebarCard title="mode">
       <div class="buttons-container">
@@ -34,13 +37,14 @@
         />
       </div>
       <div
-        class="buttons-container"
-        v-if="mode === 'list'"
+        class="buttons-container central"
+        v-if="listAlignTitles.length"
       >
         <RadioCustom
           v-for="title in listAlignTitles"
           :key="title"
           :label="title"
+          small
           :value="title"
           :model-value="listAlign"
           name="listAlign"
@@ -48,7 +52,7 @@
         />
       </div>
       <CheckboxCustom
-        v-if="mode === 'list'"
+        v-if="['list', 'cards'].includes(mode)"
         label="show items' details"
         style-type="classic"
         :value="false"
@@ -59,6 +63,7 @@
     <SidebarCard title="theme">
       <div class="buttons-container">
         <RadioCustom
+          class="theme"
           v-for="title in themeTitles"
           :key="title"
           :label="title"
@@ -88,9 +93,8 @@ export default {
   },
   data: () => ({
     sortingTitles: ['default', 'shuffled'],
-    modeTitles: ['list', 'cloud', 'stars'],
+    modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
     themeTitles: ['default', 'inverted'],
-    listAlignTitles: ['left', 'center', 'right', 'random'],
   }),
   computed: {
     ...mapGetters({
@@ -100,6 +104,11 @@ export default {
       listAlign: 'listAlign',
       areItemDetailsShown: 'areItemDetailsShown',
     }),
+    listAlignTitles() {
+      return ['list', 'page'].includes(this.mode)
+        ? ['left', 'center', 'right', this.mode === 'list' ? 'random' : 'edges']
+        : [];
+    },
   },
   methods: {
     ...mapActions({
@@ -116,20 +125,15 @@ export default {
 
 <style lang="scss">
   .list-visualization {
-    .sorting {
-      position: relative;
-    }
-
-    .sorting-action {
-      position: absolute;
-      top: 35px;
-      right: 0;
-    }
-
     .buttons-container {
       display: flex;
       flex-wrap: wrap;
       width: 100%;
+      margin-bottom: 10px;
+
+      &.central {
+        justify-content: center;
+      }
     }
   }
 </style>

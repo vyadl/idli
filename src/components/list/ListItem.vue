@@ -4,19 +4,17 @@
     :class="[
       `${mode}-mode`,
       `${globalTheme}-theme`,
+      { active: edittingItemObj && edittingItemObj.id === item.id }
     ]"
     :style="styles"
+    @click.stop="setItemForEditting"
   >
-    <div
-      class="item-title"
-      :class="{ active: edittingItemObj && edittingItemObj.id === item.id }"
-      @click.stop="setItemForEditting"
-    >
+    <div class="item-title">
       {{ item.title }}
     </div>
     <div
       class="item-details"
-      v-if="areItemDetailsShown && item.details && mode === 'list'"
+      v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
     >
       {{ item.details }}
     </div>
@@ -96,18 +94,41 @@ export default {
       padding: 5px;
       font-size: map-get($text, 'title-font-size');
       transition: .2s text-shadow;
-
-      &.active {
-        text-shadow:
-          .5px 0 currentColor,
-          .5px 0 1px currentColor;
-      }
     }
 
     .item-details {
       align-self: inherit;
       padding: 5px;
       color: map-get($colors, 'gray-dark');
+    }
+
+    &.active {
+      .item-title {
+        text-shadow:
+          .5px 0 currentColor,
+          .5px 0 1px currentColor;
+      }
+    }
+
+    &.cards-mode {
+      width: 100%;
+      margin-bottom: 30px;
+      padding: 10px 10px;
+      border: 2px solid map-get($colors, 'black');
+      border-radius: 3px;
+      transition: box-shadow .1s;
+
+      &.active {
+        box-shadow:
+          1px 1px 0 .5px map-get($colors, 'black'),
+          1px -1px 0 .5px map-get($colors, 'black'),
+          -1px 1px 0 .5px map-get($colors, 'black'),
+          -1px -1px 0 .5px map-get($colors, 'black');
+      }
+
+      .item-title {
+        text-shadow: none;
+      }
     }
 
     &.cloud-mode {
@@ -168,6 +189,18 @@ export default {
 
       &::before {
         background-color: map-get($colors, 'black');
+      }
+
+      &.cards-mode {
+        border-color: map-get($colors, 'white');
+
+        &.active {
+          box-shadow:
+            1px 1px 0 1px map-get($colors, 'white'),
+            1px -1px 0 1px map-get($colors, 'white'),
+            -1px 1px 0 1px map-get($colors, 'white'),
+            -1px -1px 0 1px map-get($colors, 'white');
+        }
       }
 
       &.stars-mode {

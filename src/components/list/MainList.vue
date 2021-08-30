@@ -15,15 +15,32 @@
       class="items-container"
       :class="[
         `${mode}-mode`,
-        { parallax: isSidebarOpen },
+        {
+          'move-to-left': !isListUnderSidebar && isSidebarOpen,
+          parallax: isSidebarOpen,
+        },
       ]"
       :style="styles"
     >
-      <ListItem
-        v-for="item in finalList"
-        :key="item.id"
-        :item="item"
-      />
+      <template v-if="mode === 'cards'">
+        <masonry
+          :cols="4"
+          :gutter="30"
+        >
+          <ListItem
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          />
+        </masonry>
+      </template>
+      <template v-else>
+        <ListItem
+          v-for="item in finalList"
+          :key="item.id"
+          :item="item"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -50,6 +67,7 @@ export default {
       listAlign: 'listAlign',
       areItemDetailsShown: 'areItemDetailsShown',
       isFocusOnList: 'isFocusOnList',
+      isListUnderSidebar: 'isListUnderSidebar',
       isSidebarOpen: 'isSidebarOpen',
     }),
     styles() {
@@ -64,6 +82,15 @@ export default {
         };
 
         styles = { 'align-items': alignStyles[this.listAlign] };
+      } else if (this.mode === 'page') {
+        const alignStyles = {
+          left: 'flex-start',
+          center: 'center',
+          right: 'flex-end',
+          edges: 'space-between',
+        };
+
+        styles = { 'justify-content': alignStyles[this.listAlign] };
       }
 
       return styles;
@@ -110,12 +137,20 @@ export default {
     }
 
     .items-container {
-      transition: transform .5s;
+      padding: 50px;
+      transition:
+        margin .5s,
+        transform .5s;
 
       &.list-mode {
         display: flex;
         flex-direction: column;
-        padding: 50px;
+      }
+
+      &.page-mode {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
       }
 
       &.cloud-mode,
@@ -126,6 +161,12 @@ export default {
         left: 0;
         width: 100%;
         min-height: 100vh;
+        padding: 0;
+      }
+
+      &.move-to-left {
+        // transform: translateX(-280px);
+        margin-right: 280px;
       }
 
       &.parallax {
