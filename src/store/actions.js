@@ -179,14 +179,9 @@ export default {
 
   _setSorting({ commit }, sorting) {
     commit('setSorting', sorting);
-
-    if (sorting === 'default') {
-      commit('setMode', 'list');
-    }
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-    commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);

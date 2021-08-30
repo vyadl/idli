@@ -95,6 +95,8 @@ export default {
     sortingTitles: ['default', 'shuffled'],
     modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
     themeTitles: ['default', 'inverted'],
+    structuredModes: ['list', 'page', 'cards'],
+    unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
     ...mapGetters({
@@ -108,6 +110,23 @@ export default {
       return ['list', 'page'].includes(this.mode)
         ? ['left', 'center', 'right', this.mode === 'list' ? 'random' : 'edges']
         : [];
+    },
+  },
+  watch: {
+    sorting: function sortingHandler(newSorting) {
+      if (this.unstructuredModes.includes(this.mode) && newSorting === 'default') {
+        this._setMode('list');
+      }
+    },
+    mode: function modeHandler(newMode, oldMode) {
+      if (this.unstructuredModes.includes(oldMode) && this.structuredModes.includes(newMode)) {
+        this._setSorting('default');
+      } else if (this.unstructuredModes.includes(newMode)) {
+        this._setSorting('shuffled');
+      } else if (['list', 'page'].includes(newMode)
+        && ['random', 'edges'].includes(this.listAlign)) {
+        this._setListAlign('center');
+      }
     },
   },
   methods: {
