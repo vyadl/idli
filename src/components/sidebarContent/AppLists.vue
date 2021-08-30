@@ -1,7 +1,7 @@
 <template>
   <SidebarCard
     class="app-lists"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
     title="lists"
   >
     <div class="lists-container">
@@ -62,8 +62,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setListForEditting: '_setListForEditting',
       _fetchListById: '_fetchListById',
+      _setListForEditting: '_setListForEditting',
       _decreaseRequestsNumber: '_decreaseRequestsNumber',
     }),
     openListModal() {

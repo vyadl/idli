@@ -1,4 +1,5 @@
 export default {
+  // lists
   lists: state => state.lists,
   testLists: state => state.testLists,
   currentListId: state => state.currentListId,
@@ -7,19 +8,8 @@ export default {
   currentListCategories: (state, getters) => getters.currentListObj?.categories,
   currentListItems: state => state.currentListItems,
   edittingListObj: state => state.edittingListObj,
-  edittingItemObj: state => state.edittingItemObj,
   checkedTags: state => state.checkedTags,
   checkedCategories: state => state.checkedCategories,
-  sorting: state => state.sorting,
-  shuffleTrigger: state => state.shuffleTrigger,
-  mode: state => state.mode,
-  theme: state => state.theme,
-  isInverted: state => state.theme === 'inverted',
-  settings: state => state.settings,
-  isSidebarOpen: state => state.sidebar.isOpen,
-  sidebarMode: state => state.sidebar.mode,
-  notification: state => state.notification,
-  requestsNumber: state => state.requestsNumber,
   filteredList: (state, getters) => {
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;
@@ -33,4 +23,31 @@ export default {
     });
   },
   filteredListLength: (state, getters) => getters.filteredList.length,
+
+  // items
+  edittingItemObj: state => state.edittingItemObj,
+
+  // visualization
+  sorting: state => state.visualization.sorting,
+  mode: state => state.visualization.mode,
+  theme: state => state.visualization.theme,
+  shuffleTrigger: state => state.visualization.shuffleTrigger,
+  listAlign: state => state.visualization.listAlign,
+  areItemDetailsShown: state => state.visualization.areItemDetailsShown,
+
+  // settings
+  settings: state => state.settings,
+  isItemFormInSidebar: state => state.settings.isItemFormInSidebar,
+  isFocusOnList: state => state.settings.isFocusOnList,
+  isListUnderSidebar: state => state.settings.isListUnderSidebar,
+
+  // sidebar
+  isSidebarOpen: state => state.sidebar.isOpen,
+  sidebarMode: state => state.sidebar.mode,
+
+  // notifications
+  notification: state => state.notification,
+
+  // requests
+  requestsNumber: state => state.requestsNumber,
 };

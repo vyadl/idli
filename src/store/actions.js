@@ -1,8 +1,8 @@
 export default {
   _setHotkeys({ dispatch, getters }) {
     document.addEventListener('keydown', event => {
-      if (event.code === 'Escape' && getters.mode === 'focus') {
-        dispatch('_setMode', 'list');
+      if (event.code === 'Escape' && getters.settings.isFocusOnList) {
+        dispatch('_switchFocusMode');
       }
     });
   },
@@ -177,9 +177,6 @@ export default {
 
   // visualization
 
-  _shuffleFilteredList({ commit }) {
-    commit('shuffleFilteredList');
-  },
   _setSorting({ commit }, sorting) {
     commit('setSorting', sorting);
 
@@ -187,16 +184,21 @@ export default {
       commit('setMode', 'list');
     }
   },
-  _setMode({ commit, dispatch }, mode) {
+  _setMode({ commit }, mode) {
     commit('setMode', mode);
     commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
-
-    if (mode === 'focus') {
-      dispatch('_setNotification', 'press Esc to exit focus mode');
-    }
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
+  },
+  _shuffleFilteredList({ commit }) {
+    commit('shuffleFilteredList');
+  },
+  _setListAlign({ commit }, align) {
+    commit('setListAlign', align);
+  },
+  _changeItemDetailsShowingMode({ commit }) {
+    commit('changeItemDetailsShowingMode');
   },
 
   // settings
@@ -205,6 +207,13 @@ export default {
     commit('switchItemFormLocation');
     dispatch('_saveSettingsInLocalStorage');
   },
+  _switchFocusMode({ commit, dispatch }) {
+    commit('switchFocusMode');
+    dispatch('_saveSettingsInLocalStorage');
+  },
+  _switchSidebarAndListIntersection({ commit }) {
+    commit('switchSidebarAndListIntersection');
+  },
 
   // sidebar
 
@@ -212,8 +221,12 @@ export default {
     commit('openSidebar');
     commit('changeSidebarMode', mode);
   },
-  _closeSidebar({ commit }) {
+  _closeSidebar({ commit, getters }) {
     commit('closeSidebar');
+
+    if (getters.sidebarMode === 'item') {
+      commit('changeSidebarMode', 'lists');
+    }
   },
 
   // notifications

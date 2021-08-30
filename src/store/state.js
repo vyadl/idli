@@ -7,12 +7,18 @@ export default {
   checkedTags: [],
   checkedCategories: [],
   edittingItemObj: null,
-  sorting: 'default',
-  mode: 'list',
-  theme: 'default',
-  shuffleTrigger: false,
+  visualization: {
+    sorting: 'default',
+    mode: 'list',
+    theme: 'default',
+    shuffleTrigger: false,
+    listAlign: 'center',
+    areItemDetailsShown: false,
+  },
   settings: {
     isItemFormInSidebar: false,
+    isFocusOnList: false,
+    isListUnderSidebar: true,
   },
   sidebar: {
     isOpen: false,

@@ -1,28 +1,46 @@
 <template>
   <div
     class="main-list"
+    :class="`${globalTheme}-theme`"
     @click="_closeSidebar"
   >
     <div
       class="list-title"
-      :class="{ hidden: mode === 'focus' }"
+      :class="{ hidden: isFocusOnList }"
       v-if="currentListObj"
     >
       {{ currentListObj.title }}
     </div>
     <div
       class="items-container"
-      :class="{
-        parallax: isSidebarOpen,
-        'list-principle': listModePrinciple === 'list',
-        'cloud-principle': listModePrinciple === 'cloud',
-      }"
+      :class="[
+        `${mode}-mode`,
+        {
+          'move-to-left': !isListUnderSidebar && isSidebarOpen,
+          parallax: isSidebarOpen,
+        },
+      ]"
+      :style="styles"
     >
-      <ListItem
-        v-for="item in finalList"
-        :key="item.id"
-        :item="item"
-      />
+      <template v-if="mode === 'cards'">
+        <masonry
+          :cols="4"
+          :gutter="30"
+        >
+          <ListItem
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          />
+        </masonry>
+      </template>
+      <template v-else>
+        <ListItem
+          v-for="item in finalList"
+          :key="item.id"
+          :item="item"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -43,13 +61,39 @@ export default {
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
-      isSidebarOpen: 'isSidebarOpen',
       sorting: 'sorting',
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
+      listAlign: 'listAlign',
+      areItemDetailsShown: 'areItemDetailsShown',
+      isFocusOnList: 'isFocusOnList',
+      isListUnderSidebar: 'isListUnderSidebar',
+      isSidebarOpen: 'isSidebarOpen',
     }),
-    listModePrinciple() {
-      return ['list', 'focus'].includes(this.mode) ? 'list' : 'cloud';
+    styles() {
+      let styles = {};
+
+      if (this.mode === 'list') {
+        const alignStyles = {
+          left: 'flex-start',
+          center: 'center',
+          right: 'flex-end',
+          random: null,
+        };
+
+        styles = { 'align-items': alignStyles[this.listAlign] };
+      } else if (this.mode === 'page') {
+        const alignStyles = {
+          left: 'flex-start',
+          center: 'center',
+          right: 'flex-end',
+          edges: 'space-between',
+        };
+
+        styles = { 'justify-content': alignStyles[this.listAlign] };
+      }
+
+      return styles;
     },
     shuffledList() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
@@ -92,34 +136,40 @@ export default {
       }
     }
 
-    .focus-mode-message {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      padding: 20px;
-      transform: translateX(-50%);
-    }
-
     .items-container {
-      transition: transform .5s;
+      padding: 50px;
+      transition:
+        margin .5s,
+        transform .5s;
 
-      &.parallax {
-        transform: translateX(-20px);
-      }
-
-      &.list-principle {
+      &.list-mode {
         display: flex;
         flex-direction: column;
-        padding: 50px;
       }
 
-      &.cloud-principle {
+      &.page-mode {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      &.cloud-mode,
+      &.stars-mode {
         position: fixed;
         overflow: hidden;
         top: 0;
         left: 0;
         width: 100%;
         min-height: 100vh;
+        padding: 0;
+      }
+
+      &.move-to-left {
+        margin-right: 280px;
+      }
+
+      &.parallax {
+        transform: translateX(-20px);
       }
     }
   }

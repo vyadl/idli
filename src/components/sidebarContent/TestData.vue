@@ -51,8 +51,8 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      testLists: 'testLists',
       lists: 'lists',
+      testLists: 'testLists',
     }),
   },
   created() {

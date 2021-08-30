@@ -1,7 +1,7 @@
 <template>
   <div
     class="sidebar-card"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <h1 class="title">
       {{ title }}

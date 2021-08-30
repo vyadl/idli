@@ -1,7 +1,7 @@
 <template>
   <SidebarCard
     class="filters-list"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
     title="filters"
   >
     <template v-if="currentListObj">
@@ -72,10 +72,10 @@ export default {
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
-      checkedTags: 'checkedTags',
-      checkedCategories: 'checkedCategories',
       currentListTags: 'currentListTags',
       currentListCategories: 'currentListCategories',
+      checkedTags: 'checkedTags',
+      checkedCategories: 'checkedCategories',
       filteredListLength: 'filteredListLength',
     }),
     tagsInfoMessage() {

@@ -40,6 +40,7 @@
     >
       <h1 class="filters-title">category:</h1>
       <RadioCustom
+        class="item-category"
         v-for="category in currentListCategories"
         :key="category.id"
         :label="category.title"
@@ -59,22 +60,22 @@
         <ButtonText
           class="save-button"
           :text="edittingItemObj ? 'save' : 'add'"
-          :small="settings.isItemFormInSidebar"
+          :small="isItemFormInSidebar"
           type="submit"
           :disabled="isRequestProcessing"
         />
         <ButtonText
           text="cancel"
-          :small="settings.isItemFormInSidebar"
+          :small="isItemFormInSidebar"
           :disabled="isRequestProcessing"
-          @click="settings.isItemFormInSidebar ? _closeSidebar() : closeItemModal()"
+          @click="isItemFormInSidebar ? _closeSidebar() : closeItemModal()"
         />
       </div>
       <ButtonText
         v-if="edittingItemObj"
         text="delete item"
         style-type="underline"
-        :small="settings.isItemFormInSidebar"
+        :small="isItemFormInSidebar"
         :disabled="isRequestProcessing"
         @click="deleteItem(item)"
       />
@@ -108,10 +109,10 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      settings: 'settings',
-      edittingItemObj: 'edittingItemObj',
       currentListTags: 'currentListTags',
       currentListCategories: 'currentListCategories',
+      edittingItemObj: 'edittingItemObj',
+      isItemFormInSidebar: 'isItemFormInSidebar',
     }),
     isAnyTagExist() {
       return !!this.currentListTags.length;
@@ -140,10 +141,10 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setItemForEditting: '_setItemForEditting',
       _addItem: '_addItem',
       _updateItem: '_updateItem',
       _deleteItem: '_deleteItem',
+      _setItemForEditting: '_setItemForEditting',
       _closeSidebar: '_closeSidebar',
     }),
     closeItemModal() {
@@ -158,7 +159,7 @@ export default {
       this.isRequestProcessing = true;
       this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
         .then(() => {
-          this.settings.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
+          this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
         })
         .catch(error => {
           this.errorMessage = error.response.data.message;
@@ -171,7 +172,7 @@ export default {
       this.isRequestProcessing = true;
       this._deleteItem(item)
         .then(() => {
-          this.settings.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
+          this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
         })
         .catch(error => {
           this.errorMessage = error.response.data.message;
@@ -208,6 +209,10 @@ export default {
 
     .filters-title {
       padding: 5px 10px 6px 0;
+    }
+
+    .item-category {
+      margin-right: 7px;
     }
 
     .buttons-container {
