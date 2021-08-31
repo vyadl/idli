@@ -24,6 +24,7 @@ module.exports = {
     'no-plusplus': 'off',
     'no-unused-expressions': ["error", { "allowTernary": true }],
     'import/no-extraneous-dependencies': ["error", {"devDependencies": false }],
+    'no-use-before-define': ["error", { "functions": false, "classes": true }],
   },
 
   globals: {

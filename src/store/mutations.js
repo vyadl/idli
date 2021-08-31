@@ -32,6 +32,9 @@ export default {
     state.checkedTags = [];
     state.checkedCategories = [];
   },
+  setShuffledList(state, list) {
+    state.shuffledList = list;
+  },
 
   // items
 
@@ -67,7 +70,7 @@ export default {
   setTheme(state, theme) {
     state.visualization.theme = theme;
   },
-  shuffleFilteredList(state) {
+  switchShuffleTrigger(state) {
     state.visualization.shuffleTrigger = !state.visualization.shuffleTrigger;
   },
   setListAlign(state, align) {
@@ -111,6 +114,12 @@ export default {
       text,
       time: time || null,
     };
+  },
+
+  // modals
+
+  setmodalNameToShow(state, name) {
+    state.modalNameToShow = name;
   },
 
   // requests

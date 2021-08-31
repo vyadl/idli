@@ -6,6 +6,7 @@ export default {
   edittingListObj: null,
   checkedTags: [],
   checkedCategories: [],
+  shuffledList: null,
   edittingItemObj: null,
   deletedLists: [],
   deletedItems: [],
@@ -30,5 +31,6 @@ export default {
     time: null,
     text: '',
   },
+  modalNameToShow: '',
   requestsNumber: 0,
 };

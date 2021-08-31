@@ -5,11 +5,23 @@
     @click="_closeSidebar"
   >
     <div
-      class="list-title"
+      class="header"
       :class="{ hidden: isFocusOnList }"
-      v-if="currentListObj"
     >
-      {{ currentListObj.title }}
+      <div
+        class="list-title"
+        v-if="currentListObj"
+      >
+        {{ currentListObj.title }}
+      </div>
+      <div class="button-container">
+        <ButtonText
+          v-if="sorting === 'shuffled'"
+          text="randomize!"
+          style-type="underline"
+          @click="setShuffledList"
+        />
+      </div>
     </div>
     <div
       class="items-container"
@@ -47,12 +59,14 @@
 
 <script>
 import ListItem from '@/components/list/ListItem.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ListItem,
+    ButtonText,
   },
   data: () => ({
     finalList: [],
@@ -61,6 +75,7 @@ export default {
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
+      shuffledList: 'shuffledList',
       sorting: 'sorting',
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
@@ -95,11 +110,6 @@ export default {
 
       return styles;
     },
-    shuffledList() {
-      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
-
-      return shuffleArray(this.filteredList);
-    },
     computedList() {
       return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
     },
@@ -115,8 +125,12 @@ export default {
   },
   methods: {
     ...mapActions({
+      _setShuffledList: '_setShuffledList',
       _closeSidebar: '_closeSidebar',
     }),
+    setShuffledList() {
+      this._setShuffledList(shuffleArray(this.filteredList));
+    },
   },
 };
 </script>
@@ -126,18 +140,27 @@ export default {
     width: 100%;
     min-height: 100vh;
 
-    .list-title {
-      padding: 10px;
-      font-size: map-get($text, 'title-font-size');
-      color: map-get($colors, 'gray-light');
+    .header {
+      padding: 10px 10px 0;
 
       &.hidden {
         opacity: 0;
       }
     }
 
+    .list-title {
+      font-size: map-get($text, 'title-font-size');
+      color: map-get($colors, 'gray-light');
+    }
+
+    .button-container {
+      position: relative;
+      z-index: 100;
+      height: 30px;
+    }
+
     .items-container {
-      padding: 50px;
+      padding: 30px 50px 50px;
       transition:
         margin .5s,
         transform .5s;
@@ -170,6 +193,12 @@ export default {
 
       &.parallax {
         transform: translateX(-20px);
+      }
+    }
+
+    &.inverted-theme {
+      .list-title {
+        color: map-get($colors, 'gray-dark');
       }
     }
   }
