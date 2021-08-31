@@ -1,12 +1,4 @@
 export default {
-  _setHotkeys({ dispatch, getters }) {
-    document.addEventListener('keydown', event => {
-      if (event.code === 'Escape' && getters.settings.isFocusOnList) {
-        dispatch('_switchFocusMode');
-      }
-    });
-  },
-
   // local storage
 
   _setListIdFromLocalStorage({ commit, dispatch }) {
@@ -136,6 +128,10 @@ export default {
   _resetFilters({ commit }) {
     commit('resetFilters');
   },
+  _setShuffledList({ commit, dispatch }, list) {
+    commit('setShuffledList', list);
+    dispatch('_switchShuffleTrigger');
+  },
 
   // items
 
@@ -179,20 +175,15 @@ export default {
 
   _setSorting({ commit }, sorting) {
     commit('setSorting', sorting);
-
-    if (sorting === 'default') {
-      commit('setMode', 'list');
-    }
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-    commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
   },
-  _shuffleFilteredList({ commit }) {
-    commit('shuffleFilteredList');
+  _switchShuffleTrigger({ commit }) {
+    commit('switchShuffleTrigger');
   },
   _setListAlign({ commit }, align) {
     commit('setListAlign', align);
@@ -233,6 +224,12 @@ export default {
 
   _setNotification({ commit }, text) {
     commit('setNotification', text);
+  },
+
+  // modals
+
+  _setmodalNameToShow({ commit }, name) {
+    commit('setmodalNameToShow', name);
   },
 
   // requests

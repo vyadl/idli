@@ -12,17 +12,6 @@
           @change="_setSorting(title)"
         />
       </div>
-      <div
-        class="buttons-container central"
-        v-if="sorting === 'shuffled'"
-      >
-        <ButtonText
-          class="randomize-button"
-          text="randomize!"
-          small
-          @click="_shuffleFilteredList"
-        />
-      </div>
     </SidebarCard>
     <SidebarCard title="mode">
       <div class="buttons-container">
@@ -37,7 +26,7 @@
         />
       </div>
       <div
-        class="buttons-container central"
+        class="buttons-container"
         v-if="listAlignTitles.length"
       >
         <RadioCustom
@@ -81,7 +70,7 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
-import ButtonText from '@/components/formElements/ButtonText.vue';
+import { shuffleArray } from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -89,18 +78,21 @@ export default {
     SidebarCard,
     RadioCustom,
     CheckboxCustom,
-    ButtonText,
   },
   data: () => ({
     sortingTitles: ['default', 'shuffled'],
     modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
     themeTitles: ['default', 'inverted'],
+    structuredModes: ['list', 'page', 'cards'],
+    unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
     ...mapGetters({
+      filteredList: 'filteredList',
       sorting: 'sorting',
       mode: 'mode',
       theme: 'theme',
+      shuffleTrigger: 'shuffleTrigger',
       listAlign: 'listAlign',
       areItemDetailsShown: 'areItemDetailsShown',
     }),
@@ -110,12 +102,33 @@ export default {
         : [];
     },
   },
+  watch: {
+    sorting: function sortingHandler(newSorting, oldSorting) {
+      if (newSorting === 'shuffled') {
+        this._setShuffledList(shuffleArray(this.filteredList));
+      } else if (oldSorting === 'shuffled') {
+        this._setShuffledList(null);
+      } else if (this.unstructuredModes.includes(this.mode) && newSorting === 'default') {
+        this._setMode('list');
+      }
+    },
+    mode: function modeHandler(newMode, oldMode) {
+      if (this.unstructuredModes.includes(oldMode) && this.structuredModes.includes(newMode)) {
+        this._setSorting('default');
+      } else if (this.unstructuredModes.includes(newMode)) {
+        this._setSorting('shuffled');
+      } else if (['list', 'page'].includes(newMode)
+        && ['random', 'edges'].includes(this.listAlign)) {
+        this._setListAlign('center');
+      }
+    },
+  },
   methods: {
     ...mapActions({
+      _setShuffledList: '_setShuffledList',
       _setSorting: '_setSorting',
       _setMode: '_setMode',
       _setTheme: '_setTheme',
-      _shuffleFilteredList: '_shuffleFilteredList',
       _setListAlign: '_setListAlign',
       _changeItemDetailsShowingMode: '_changeItemDetailsShowingMode',
     }),
@@ -130,10 +143,6 @@ export default {
       flex-wrap: wrap;
       width: 100%;
       margin-bottom: 10px;
-
-      &.central {
-        justify-content: center;
-      }
     }
   }
 </style>
