@@ -5,7 +5,7 @@ import state from './state';
 import mutations from './mutations';
 import actions from './actions';
 import getters from './getters';
-import auth from './auth';
+import auth from './auth'; // eslint-disable-line import/no-cycle
 
 Vue.use(Vuex);
 

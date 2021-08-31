@@ -1,7 +1,7 @@
 <template>
   <SidebarCard
     class="filters-list"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
     title="filters"
   >
     <template v-if="currentListObj">
@@ -14,7 +14,7 @@
         <CheckboxCustom
           v-for="tag in currentListTags"
           :key="tag.id"
-          :label="tag.name"
+          :label="tag.title"
           :value="tag.id"
           v-model="localCheckedTags"
           @change="filterList"
@@ -29,7 +29,7 @@
         <CheckboxCustom
           v-for="category in currentListCategories"
           :key="category.id"
-          :label="category.name"
+          :label="category.title"
           :value="category.id"
           v-model="localCheckedCategories"
           @change="filterList"
@@ -72,10 +72,10 @@ export default {
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
-      checkedTags: 'checkedTags',
-      checkedCategories: 'checkedCategories',
       currentListTags: 'currentListTags',
       currentListCategories: 'currentListCategories',
+      checkedTags: 'checkedTags',
+      checkedCategories: 'checkedCategories',
       filteredListLength: 'filteredListLength',
     }),
     tagsInfoMessage() {

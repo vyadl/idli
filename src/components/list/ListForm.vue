@@ -1,100 +1,104 @@
 <template>
-  <ModalBasic
+  <form
     class="list-form"
-    name="listForm"
-    :header-text="edittingListObj ? 'edit list' : 'new list'"
-    @before-open="setData"
-    @opened="focusOnInput"
-    @closed="resetData"
+    @submit.prevent="edittingListObj ? updateList() : addList()"
   >
-    <template v-slot:main>
-      <InputCustom
-        label="name"
-        v-model="list.name"
-        ref="listName"
+    <InputCustom
+      label="title"
+      v-model="list.title"
+      :disabled="isRequestProcessing"
+      required
+      ref="listTitle"
+    />
+    <div
+      class="private-option"
+      v-if="false"
+    >
+      <CheckboxCustom
+        label="private"
+        style-type="classic"
+        v-model="list.isPrivate"
+        :disabled="isRequestProcessing"
       />
-      <div
-        class="private-option"
-        v-if="false"
-      >
-        <CheckboxCustom
-          label="private"
-          style-type="classic"
-          :title="list.isPrivate ? 'now you can`t share this list' : 'now you can share this list'"
-          v-model="list.isPrivate"
+    </div>
+    <div class="filters-container">
+      <div class="tags">
+        <h1 class="filters-header">
+          tags
+        </h1>
+        <div
+          class="filter"
+          v-for="(tag, index) in list.tags"
+          :key="index"
+        >
+          <InputCustom
+            v-model="tag.title"
+            required
+            :disabled="isRequestProcessing"
+            ref="tagsInput"
+          />
+          <ButtonSign
+            class="delete-filter-button"
+            style-type="cross"
+            title="delete tag"
+            :disabled="isRequestProcessing"
+            @click="deleteFilter('tags', index)"
+          />
+        </div>
+        <ButtonSign
+          style-type="plus"
+          title="add tag"
+          :disabled="isRequestProcessing"
+          @click="addFilter('tags')"
         />
       </div>
-      <div class="filters-container">
-        <div class="tags">
-          <h1 class="filters-header">
-            tags
-          </h1>
-          <div
-            class="filter"
-            v-for="(tag, index) in list.tags"
-            :key="index"
-          >
-            <InputCustom
-              v-model="tag.name"
-              ref="tagsInput"
-            />
-            <ButtonSign
-              class="delete-filter-button"
-              style-type="cross"
-              title="delete tag"
-              @click="deleteFilter('tags', index)"
-            />
-          </div>
+      <div class="categories">
+        <h1 class="filters-header">
+          categories
+        </h1>
+        <div
+          class="filter"
+          v-for="(category, index) in list.categories"
+          :key="index"
+        >
+          <InputCustom
+            v-model="category.title"
+            required
+            :disabled="isRequestProcessing"
+            ref="categoriesInput"
+          />
           <ButtonSign
-            style-type="plus"
-            title="add tag"
-            @click="addFilter('tags')"
+            class="delete-filter-button"
+            style-type="cross"
+            title="delete category"
+            :disabled="isRequestProcessing"
+            @click="deleteFilter('categories', index)"
           />
         </div>
-        <div class="categories">
-          <h1 class="filters-header">
-            categories
-          </h1>
-          <div
-            class="filter"
-            v-for="(category, index) in list.categories"
-            :key="index"
-          >
-            <InputCustom
-              v-model="category.name"
-              ref="categoriesInput"
-            />
-            <ButtonSign
-              class="delete-filter-button"
-              style-type="cross"
-              title="delete category"
-              @click="deleteFilter('categories', index)"
-            />
-          </div>
-          <ButtonSign
-            style-type="plus"
-            title="add category"
-            @click="addFilter('categories')"
-          />
-        </div>
+        <ButtonSign
+          style-type="plus"
+          title="add category"
+          :disabled="isRequestProcessing"
+          @click="addFilter('categories')"
+        />
       </div>
-      <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
-      />
-    </template>
-    <template v-slot:buttons>
+    </div>
+    <ErrorMessage
+      v-if="errorMessage"
+      :message="errorMessage"
+    />
+    <div class="buttons-container">
       <div>
         <ButtonText
           class="modal-button"
           :text="edittingListObj ? 'save' : 'add'"
+          type="submit"
           :disabled="isRequestProcessing"
-          @click="saveList"
         />
         <ButtonText
           text="cancel"
           :disabled="isRequestProcessing"
-          @click="closeListForm"
+          @click="closeListModal"
         />
       </div>
       <ButtonText
@@ -102,14 +106,13 @@
         text="delete list"
         style-type="underline"
         :disabled="isRequestProcessing"
-        @click="deleteList(list.id)"
+        @click="deleteList"
       />
-    </template>
-  </ModalBasic>
+    </div>
+  </form>
 </template>
 
 <script>
-import ModalBasic from '@/components/modals/ModalBasic.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -120,7 +123,6 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
-    ModalBasic,
     InputCustom,
     CheckboxCustom,
     ButtonText,
@@ -128,68 +130,101 @@ export default {
     ErrorMessage,
   },
   data: () => ({
-    list: new List(),
+    list: null,
     isRequestProcessing: false,
     errorMessage: '',
   }),
   computed: {
     ...mapGetters({
+      lists: 'lists',
       edittingListObj: 'edittingListObj',
     }),
   },
+  watch: {
+    edittingListObj: {
+      handler: function edittingItemObjHandler() {
+        this.list = this.edittingListObj
+          ? JSON.parse(JSON.stringify(this.edittingListObj))
+          : new List();
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    if (!this.edittingListObj) {
+      this.$refs.listTitle.focus();
+    }
+  },
+  destroyed() {
+    this.resetData();
+  },
   methods: {
     ...mapActions({
-      _setListForEditting: '_setListForEditting',
       _addList: '_addList',
       _updateList: '_updateList',
       _deleteList: '_deleteList',
+      _setListForEditting: '_setListForEditting',
     }),
-    closeListForm() {
-      this.$modal.hide('listForm');
-    },
-    setData() {
-      if (this.edittingListObj) {
-        this.list = JSON.parse(JSON.stringify(this.edittingListObj));
-      }
-    },
-    focusOnInput() {
-      if (!this.edittingListObj) {
-        this.$refs.listName.focus();
-      }
+    closeListModal() {
+      this.$modal.hide('listModal');
     },
     resetData() {
       this._setListForEditting(null);
       this.list = new List();
       this.errorMessage = '';
     },
-    deleteFilter(type, index) {
-      this.list[type].splice(index, 1);
+    deleteFilter(filtersType, index) {
+      this.list[filtersType].splice(index, 1);
     },
-    addFilter(type) {
-      this.list[type].push({
-        name: null,
+    addFilter(filtersType) {
+      this.list[filtersType].push({
+        title: null,
         id: null,
       });
       this.$nextTick(() => {
-        const refName = `${type}Input`;
+        const filterInputsRefs = this.$refs[`${filtersType}Input`];
 
-        this.$refs[refName][this.$refs[refName].length - 1].focus();
+        filterInputsRefs[filterInputsRefs.length - 1].focus();
       });
     },
-    verifyFilters() {
-      const filtersNames = [];
+    validateListTitle() {
+      const isListTitleUnique = !this.lists.some(storeList => storeList.title === this.list.title);
 
-      this.list.tags.forEach(tag => filtersNames.push(tag.name));
-      this.list.categories.forEach(category => filtersNames.push(category.name));
+      this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
 
-      return filtersNames.length === new Set(filtersNames).size;
+      return isListTitleUnique;
     },
-    saveList() {
-      if (this.verifyFilters()) {
+    checkFiltersTitlesIntersections(filtersType, filtersTitles) {
+      return this.list[filtersType].some(filter => {
+        const isSameTitleFilter = filtersTitles.has(filter.title);
+
+        if (!isSameTitleFilter) {
+          filtersTitles.add(filter.title);
+        }
+
+        return isSameTitleFilter;
+      });
+    },
+    validateFiltersTitles() {
+      let isValid = true;
+      const filtersTitles = new Set();
+
+      isValid = !this.checkFiltersTitlesIntersections('tags', filtersTitles);
+
+      if (isValid) {
+        isValid = !this.checkFiltersTitlesIntersections('categories', filtersTitles);
+      }
+
+      this.errorMessage = isValid ? '' : 'you have filters with same titles';
+
+      return isValid;
+    },
+    addList() {
+      if (this.validateListTitle() && this.validateFiltersTitles()) {
         this.isRequestProcessing = true;
-        this[this.edittingListObj ? '_updateList' : '_addList'](this.list)
+        this._addList(this.list)
           .then(() => {
-            this.closeListForm();
+            this.closeListModal();
           })
           .catch(error => {
             this.errorMessage = error.response.data.message;
@@ -197,15 +232,28 @@ export default {
           .finally(() => {
             this.isRequestProcessing = false;
           });
-      } else {
-        this.errorMessage = 'same names in filters';
       }
     },
-    deleteList(id) {
+    updateList() {
+      if (this.validateFiltersTitles()) {
+        this.isRequestProcessing = true;
+        this._updateList(this.list)
+          .then(() => {
+            this.closeListModal();
+          })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
+          .finally(() => {
+            this.isRequestProcessing = false;
+          });
+      }
+    },
+    deleteList() {
       this.isRequestProcessing = true;
-      this._deleteList(id)
+      this._deleteList(this.list.id)
         .then(() => {
-          this.closeListForm();
+          this.closeListModal();
         })
         .catch(error => {
           this.errorMessage = error.response.data.message;
@@ -249,6 +297,13 @@ export default {
 
     .delete-filter-button {
       margin-left: 10px;
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 30px;
     }
 
     .modal-button {

@@ -7,13 +7,13 @@ module.exports = {
     this.accessToken = null;
   },
   List() {
-    this.name = null;
+    this.title = null;
     this.isPrivate = true;
     this.tags = [];
     this.categories = [];
   },
   Item() {
-    this.text = null;
+    this.title = null;
     this.details = '';
     this.tags = [];
     this.category = null;

@@ -3,9 +3,11 @@ import Vue from 'vue';
 import App from '@/components/App.vue';
 import store from '@/store/index';
 import VModal from 'vue-js-modal';
+import VueMasonry from 'vue-masonry-css';
 import themes from '@/mixins/themes';
 
 Vue.use(VModal);
+Vue.use(VueMasonry);
 Vue.mixin(themes);
 
 new Vue({

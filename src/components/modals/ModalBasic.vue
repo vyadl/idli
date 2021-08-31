@@ -1,29 +1,24 @@
 <template>
   <modal
     class="modal-basic"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
     :name="name"
     height="auto"
     :width="width"
     scrollable
-    @before-open="beforeOpen"
-    @opened="open"
-    @closed="close"
+    transition="modal"
   >
     <header
       class="header"
-      v-if="headerText"
+      v-if="title"
     >
       <h1 class="title">
-        {{ headerText }}
+        {{ title }}
       </h1>
     </header>
     <main class="main">
-      <slot name="main"/>
+      <slot />
     </main>
-    <footer class="footer">
-      <slot name="buttons" />
-    </footer>
   </modal>
 </template>
 
@@ -36,20 +31,13 @@ export default {
       type: Number,
       default: 500,
     },
-    headerText: {
+    title: {
       type: String,
       default: '',
     },
-  },
-  methods: {
-    beforeOpen() {
-      this.$emit('before-open');
-    },
-    open() {
-      this.$emit('opened');
-    },
-    close() {
-      this.$emit('closed');
+    isFooterShown: {
+      type: Boolean,
+      default: true,
     },
   },
 };
@@ -77,16 +65,6 @@ export default {
       margin-bottom: 20px;
       text-align: center;
       font-size: map-get($text, 'title-font-size');
-    }
-
-    .main {
-      margin-bottom: 25px;
-    }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
     }
 
     &.inverted-theme {

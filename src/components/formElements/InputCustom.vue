@@ -1,7 +1,7 @@
 <template>
   <label
     class="input-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <div class="label">
       {{ label }}
@@ -10,6 +10,7 @@
       class="input"
       :type="type"
       :value="value"
+      :disabled="disabled"
       :required="required"
       @input="input($event)"
       ref="input"
@@ -29,6 +30,10 @@ export default {
       default: 'text',
     },
     value: String,
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     required: {
       type: Boolean,
       default: false,

@@ -1,17 +1,25 @@
 <template>
   <label
     class="radio-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <input
       class="input"
       type="radio"
       :value="value"
+      :disabled="disabled"
       :checked="isChecked"
       @change="change"
       @click="click"
     >
-    <div class="label">
+    <div
+      class="label"
+      :class="{
+        small,
+        disabled,
+        checked: isChecked,
+      }"
+    >
       {{ label }}
     </div>
   </label>
@@ -25,9 +33,17 @@ export default {
   },
   props: {
     label: String,
+    small: {
+      type: Boolean,
+      default: false,
+    },
     value: [Number, String],
     modelValue: {
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -54,19 +70,8 @@ export default {
     margin-right: 7px;
     cursor: pointer;
 
-    &:last-of-type {
-      margin-right: 0;
-    }
-
     .input {
       display: none;
-
-      &:checked {
-        &+.label {
-          background-color: map-get($colors, 'black');
-          color: map-get($colors, 'white');
-        }
-      }
     }
 
     .label {
@@ -79,6 +84,26 @@ export default {
         background-color .3s .05s,
         color .2s .05s;
 
+      &:last-of-type {
+        margin-right: 0;
+      }
+
+      &.small {
+        padding: 3px 7px 4px;
+        font-size: 12px;
+      }
+
+      &.disabled {
+        &.checked {
+          background-color: map-get($colors, 'gray-light');
+        }
+
+        border-color: map-get($colors, 'gray-light');
+        background-color: map-get($colors, 'transparent');
+        color: map-get($colors, 'gray-light');
+      }
+
+      &.checked,
       &:hover {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
@@ -86,20 +111,21 @@ export default {
     }
 
     &.inverted-theme {
-      .input {
-        &:checked {
-          &+.label {
-            background-color: map-get($colors, 'white');
-            color: map-get($colors, 'black');
-          }
-        }
-      }
-
       .label {
         border-color: map-get($colors, 'white');
         background-color: map-get($colors, 'black');
-        color: map-get($colors, 'white');
 
+        &.disabled {
+          &.checked {
+            background-color: map-get($colors, 'gray-dark');
+          }
+
+          border-color: map-get($colors, 'gray-dark');
+          background-color: map-get($colors, 'transparent');
+          color: map-get($colors, 'gray-dark');
+        }
+
+        &.checked,
         &:hover {
           background-color: map-get($colors, 'white');
           color: map-get($colors, 'black');

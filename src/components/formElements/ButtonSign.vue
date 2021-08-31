@@ -3,10 +3,8 @@
     class="button-sign"
     :class="[
       styleType,
-      {
-        big,
-        'inverted-theme': isInverted
-      }
+      { big },
+      `${globalTheme}-theme`,
     ]"
     :title="title"
     :type="type"
@@ -58,7 +56,6 @@ export default {
     display: block;
     padding: 0;
     cursor: pointer;
-    transition: opacity .2s;
 
     &.arrow {
       width: 45px;
@@ -91,7 +88,7 @@ export default {
         position: absolute;
         font-weight: 600;
         letter-spacing: 1px;
-        color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'gray-dark');
         transform: translate(-5px, -9px) rotate(90deg);
         transition: color .2s;
       }
@@ -185,12 +182,12 @@ export default {
       &.dots {
         &:hover {
           &::before {
-            color: map-get($colors, 'gray-light');
+            color: map-get($colors, 'white');
           }
         }
 
         &::before {
-          color: map-get($colors, 'white');
+          color: map-get($colors, 'gray-light');
         }
       }
 

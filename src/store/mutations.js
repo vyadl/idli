@@ -4,6 +4,9 @@ export default {
   setLists(state, lists) {
     state.lists = lists;
   },
+  setTestLists(state, lists) {
+    state.testLists = lists;
+  },
   setCurrentListId(state, id) {
     state.currentListId = id;
   },
@@ -56,16 +59,37 @@ export default {
   // visualization
 
   setSorting(state, sorting) {
-    state.sorting = sorting;
+    state.visualization.sorting = sorting;
   },
   setMode(state, mode) {
-    state.mode = mode;
+    state.visualization.mode = mode;
   },
   setTheme(state, theme) {
-    state.theme = theme;
+    state.visualization.theme = theme;
   },
-  shuffleFilteredList(state) {
-    state.shuffleTrigger = !state.shuffleTrigger;
+  switchShuffleTrigger(state) {
+    state.visualization.shuffleTrigger = !state.visualization.shuffleTrigger;
+  },
+  setListAlign(state, align) {
+    state.visualization.listAlign = align;
+  },
+  changeItemDetailsShowingMode(state) {
+    state.visualization.areItemDetailsShown = !state.visualization.areItemDetailsShown;
+  },
+
+  // settings
+
+  setSettings(state, settings) {
+    state.settings = settings;
+  },
+  switchItemFormLocation(state) {
+    state.settings.isItemFormInSidebar = !state.settings.isItemFormInSidebar;
+  },
+  switchFocusMode(state) {
+    state.settings.isFocusOnList = !state.settings.isFocusOnList;
+  },
+  switchSidebarAndListIntersection(state) {
+    state.settings.isListUnderSidebar = !state.settings.isListUnderSidebar;
   },
 
   // sidebar
@@ -80,6 +104,21 @@ export default {
     state.sidebar.mode = mode;
   },
 
+  // notifications
+
+  setNotification(state, { text, time }) {
+    state.notification = {
+      text,
+      time: time || null,
+    };
+  },
+
+  // modals
+
+  setmodalNameToShow(state, name) {
+    state.modalNameToShow = name;
+  },
+
   // requests
 
   increaseRequestsNumber(state) {
@@ -87,5 +126,15 @@ export default {
   },
   decreaseRequestsNumber(state) {
     state.requestsNumber--;
+  },
+
+  // bin
+
+  setDeletedLists(state, lists) {
+    state.deletedLists = lists;
+  },
+
+  setDeletedItems(state, items) {
+    state.deletedItems = items;
   },
 };

@@ -1,6 +1,7 @@
 <template>
   <SidebarCard
-    class="lists-list"
+    class="app-lists"
+    :class="`${globalTheme}-theme`"
     title="lists"
   >
     <div class="lists-container">
@@ -16,8 +17,8 @@
           @click="setListForEditting(list)"
         />
         <ButtonText
-          class="list-name"
-          :text="list.name"
+          class="list-title"
+          :text="list.title"
           style-type="line"
           :active="list.id === currentListId"
           @click="fetchListById(list.id)"
@@ -27,7 +28,7 @@
         style-type="plus"
         title="new list"
         :disabled="isRequestProcessing"
-        @click="openListForm"
+        @click="openListModal"
       />
     </div>
     <TestData/>
@@ -50,7 +51,7 @@ export default {
   },
   data: () => ({
     isRequestProcessing: false,
-    listRequest: null,
+    listRequests: [],
   }),
   computed: {
     ...mapGetters({
@@ -61,31 +62,35 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setListForEditting: '_setListForEditting',
       _fetchListById: '_fetchListById',
+      _setListForEditting: '_setListForEditting',
       _decreaseRequestsNumber: '_decreaseRequestsNumber',
     }),
-    openListForm() {
-      this.$modal.show('listForm');
+    openListModal() {
+      this.$modal.show('listModal');
     },
     setListForEditting(list) {
       this._setListForEditting(list);
-      this.openListForm();
+      this.openListModal();
     },
     fetchListById(id) {
       this.isRequestProcessing = true;
 
-      if (this.listRequest) {
-        this.listRequest.cancel();
+      if (this.listRequests.length) {
+        this.listRequests.forEach(request => {
+          request.cancel();
+        });
         this._decreaseRequestsNumber();
       }
 
       const source = this.$axios.CancelToken.source();
 
-      this.listRequest = source;
+      this.listRequests.push(source);
       this._fetchListById({ id, cancelToken: source.token })
         .finally(() => {
-          this.listRequest = null;
+          const index = this.listRequests.findIndex(request => request === source);
+
+          this.listRequests.splice(index, 1);
           this.isRequestProcessing = false;
         });
     },
@@ -94,7 +99,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .lists-list {
+  .app-lists {
     .lists-container {
       margin-bottom: 100px;
     }
@@ -125,8 +130,24 @@ export default {
       }
     }
 
-    .list-name {
+    .list-title {
       max-width: 220px;
+      border-bottom: 2px solid map-get($colors, 'white');
+      transition: border-color .2s;
+
+      &.active {
+        border-color: map-get($colors, 'black');
+      }
+    }
+
+    &.inverted-theme {
+      .list-title {
+        border-color: map-get($colors, 'black');
+
+        &.active {
+          border-color: map-get($colors, 'white');
+        }
+      }
     }
   }
 </style>

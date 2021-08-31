@@ -3,10 +3,8 @@
     class="button-text"
     :class="[
       styleType,
-      {
-        active,
-        'inverted-theme': isInverted,
-      }
+      { small, active },
+      `${globalTheme}-theme`,
     ]"
     :title="title"
     :type="type"
@@ -22,6 +20,10 @@ export default {
     styleType: {
       type: String,
       default: 'bordered',
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
     active: {
       type: Boolean,
@@ -71,7 +73,13 @@ export default {
       background-color: map-get($colors, 'white');
       transition:
         background-color .3s .05s,
-        color .2s .05s;
+        color .2s .05s,
+        border-color .2s .05s;
+
+      &.small {
+        padding: 3px 10px 4px;
+        font-size: 13px;
+      }
 
       &.active,
       &:hover {
@@ -80,6 +88,7 @@ export default {
       }
 
       &:disabled {
+        pointer-events: none;
         border-color: map-get($colors, 'gray-light');
         color: map-get($colors, 'gray-light');
 
@@ -96,21 +105,30 @@ export default {
       color: map-get($colors, 'gray-dark');
       transition: color .2s;
 
+      &.small {
+        padding: 3px 0;
+        font-size: 11px;
+      }
+
       &:hover,
       &:disabled {
         color: map-get($colors, 'gray-light');
+      }
+
+      &:disabled {
+        pointer-events: none;
       }
     }
 
     &.line {
       padding: 5px 0;
       line-height: 1.3;
-      color: map-get($colors, 'black');
+      color: map-get($colors, 'gray-dark');
       transition: color .2s;
 
       &.active,
       &:hover {
-        color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'black');
       }
     }
 
@@ -127,6 +145,7 @@ export default {
         }
 
         &:disabled {
+          pointer-events: none;
           border-color: map-get($colors, 'gray-dark');
           color: map-get($colors, 'gray-dark');
         }
@@ -139,14 +158,18 @@ export default {
         &:disabled {
           color: map-get($colors, 'gray-dark');
         }
+
+        &:disabled {
+          pointer-events: none;
+        }
       }
 
       &.line {
-        color: map-get($colors, 'white');
+        color: map-get($colors, 'gray-light');
 
         &.active,
         &:hover {
-          color: map-get($colors, 'gray-light');
+          color: map-get($colors, 'white');
         }
       }
     }

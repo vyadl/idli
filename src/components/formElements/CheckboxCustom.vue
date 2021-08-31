@@ -3,18 +3,23 @@
     class="checkbox-custom"
     :class="[
       styleType,
-      { 'inverted-theme': isInverted },
+      `${globalTheme}-theme`,
     ]"
   >
     <input
       class="input"
       type="checkbox"
       :value="value"
+      :disabled="disabled"
       :checked="isChecked"
       @change="change"
     >
     <div
       class="label"
+      :class="{
+        disabled: disabled,
+        checked: isChecked,
+      }"
       :title="title"
     >
       {{ label }}
@@ -38,7 +43,7 @@ export default {
       type: String,
       default: '',
     },
-    value: Number,
+    value: [Number, Boolean],
     modelValue: {
       default: false,
     },
@@ -46,6 +51,10 @@ export default {
       default: true,
     },
     falseValue: {
+      default: false,
+    },
+    disabled: {
+      type: Boolean,
       default: false,
     },
   },
@@ -97,15 +106,6 @@ export default {
     }
 
     &.custom {
-      .input {
-        &:checked {
-          &+.label {
-            background-color: map-get($colors, 'black');
-            color: map-get($colors, 'white');
-          }
-        }
-      }
-
       .label {
         border: 2px solid map-get($colors, 'black');
         border-radius: 25px;
@@ -116,6 +116,17 @@ export default {
           background-color .3s .05s,
           color .2s .05s;
 
+        &.disabled {
+          &.checked {
+            background-color: map-get($colors, 'gray-light');
+          }
+
+          border-color: map-get($colors, 'gray-light');
+          background-color: map-get($colors, 'transparent');
+          color: map-get($colors, 'gray-light');
+        }
+
+        &.checked,
         &:hover {
           background-color: map-get($colors, 'black');
           color: map-get($colors, 'white');
@@ -124,20 +135,25 @@ export default {
     }
 
     &.classic {
-      .input {
-        &:checked {
-          &+.label {
-            &::after {
-              opacity: 1;
-            }
-          }
-        }
-      }
-
       .label {
         position: relative;
-        margin-left: 25px;
+        margin-left: 30px;
         background-color: transparent;
+
+        &.disabled {
+          color: map-get($colors, 'gray-light');
+
+          &::before,
+          &::after {
+            border-color: map-get($colors, 'gray-light');
+          }
+        }
+
+        &.checked {
+          &::after {
+            opacity: 1;
+          }
+        }
 
         &::before,
         &::after {
@@ -148,7 +164,7 @@ export default {
 
         &::before {
           top: 50%;
-          left: -25px;
+          left: -30px;
           width: 18px;
           height: 18px;
           border: 2px solid map-get($colors, 'black');
@@ -165,7 +181,7 @@ export default {
           border-bottom: 2px solid map-get($colors, 'black');
           opacity: 0;
           transform-origin: center center;
-          transform: translateY(-50%) translate(4px, -1px) rotate(-45deg);
+          transform: translateY(-50%) translate(-1px, -1px) rotate(-45deg);
           transition: opacity .2s;
         }
       }
@@ -173,20 +189,22 @@ export default {
 
     &.inverted-theme {
       &.custom {
-        .input {
-          &:checked {
-            &+.label {
-              background-color: map-get($colors, 'white');
-              color: map-get($colors, 'black');
-            }
-          }
-        }
-
         .label {
           border-color: map-get($colors, 'white');
           background-color: map-get($colors, 'black');
           color: map-get($colors, 'white');
 
+          &.disabled {
+            &.checked {
+              background-color: map-get($colors, 'gray-dark');
+            }
+
+            border-color: map-get($colors, 'gray-dark');
+            background-color: map-get($colors, 'transparent');
+            color: map-get($colors, 'gray-dark');
+          }
+
+          &.checked,
           &:hover {
             background-color: map-get($colors, 'white');
             color: map-get($colors, 'black');
@@ -197,6 +215,15 @@ export default {
       &.classic {
         .label {
           color: map-get($colors, 'white');
+
+          &.disabled {
+            color: map-get($colors, 'gray-dark');
+
+            &::before,
+            &::after {
+              border-color: map-get($colors, 'gray-dark');
+            }
+          }
 
           &::before,
           &::after {

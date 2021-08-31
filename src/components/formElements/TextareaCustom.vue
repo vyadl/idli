@@ -1,7 +1,7 @@
 <template>
   <label
     class="textarea-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <div class="label">
       {{ label }}
@@ -9,6 +9,7 @@
     <textarea
       class="textarea"
       :value="value"
+      :disabled="disabled"
       @input="input($event)"
     ></textarea>
   </label>
@@ -19,6 +20,10 @@ export default {
   props: {
     label: String,
     value: String,
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     input(event) {

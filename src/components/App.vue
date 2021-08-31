@@ -1,10 +1,7 @@
 <template>
   <div
     class="app"
-    :class="{
-      'cloud-mode': ['cloud', 'stars'].includes(mode),
-      'inverted-theme': isInverted,
-    }"
+    :class="`${globalTheme}-theme`"
   >
     <transition name="fade">
       <div
@@ -15,8 +12,9 @@
     <EnterScreen v-if="!isLoggedIn"/>
     <MainList v-else />
     <Sidebar />
-    <ListForm />
-    <ItemForm />
+    <ListModal />
+    <ItemModal />
+    <AppNotification v-if="notification" />
   </div>
 </template>
 
@@ -24,9 +22,11 @@
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
 import Sidebar from '@/components/mainPages/Sidebar.vue';
-import ListForm from '@/components/list/ListForm.vue';
-import ItemForm from '@/components/list/ItemForm.vue';
+import ListModal from '@/components/modals/ListModal.vue';
+import ItemModal from '@/components/modals/ItemModal.vue';
+import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initAxios } from '@/settings/axiosSettings';
+import { initHotkeys } from '@/settings/hotkeysSettings';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -34,29 +34,42 @@ export default {
     EnterScreen,
     MainList,
     Sidebar,
-    ListForm,
-    ItemForm,
+    ListModal,
+    ItemModal,
+    AppNotification,
   },
   computed: {
     ...mapGetters({
-      mode: 'mode',
-      theme: 'theme',
+      notification: 'notification',
+      modalNameToShow: 'modalNameToShow',
       requestsNumber: 'requestsNumber',
       isLoggedIn: 'auth/isLoggedIn',
     }),
   },
   created() {
     initAxios();
+    initHotkeys();
     this._setUserFromLocalStorage();
+    this._setSettingsFromLocalStorage();
+    this._fetchTestLists();
 
     if (this.isLoggedIn) {
       setTimeout(this._fetchListsForUser, 500);
     }
   },
+  watch: {
+    modalNameToShow: function modalNameToShowHandler() {
+      if (this.modalNameToShow) {
+        this.$modal.show(this.modalNameToShow);
+      }
+    },
+  },
   methods: {
     ...mapActions({
-      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
+      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
+      _fetchTestLists: '_fetchTestLists',
+      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
     }),
   },
 };
@@ -83,13 +96,6 @@ export default {
         background-color: map-get($colors, 'black');
         animation: loading  2s infinite cubic-bezier(0.45, 0, 0.55, 1);
       }
-    }
-
-    &.cloud-mode {
-      position: fixed;
-      overflow: hidden;
-      top: 0;
-      left: 0;
     }
 
     &.inverted-theme {
