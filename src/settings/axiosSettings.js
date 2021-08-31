@@ -20,7 +20,7 @@ axios.interceptors.response.use(
   error => {
     if (error.response.data.message === 'Invalid JWT Token') {
       store.dispatch('auth/_signOut');
-      store.dispatch('_openSidebar', 'auth');
+      store.dispatch('_openSidebar', 'sign in');
     }
 
     store.commit('decreaseRequestsNumber');

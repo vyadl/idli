@@ -23,6 +23,7 @@ export default {
     });
   },
   filteredListLength: (state, getters) => getters.filteredList.length,
+  shuffledList: state => state.shuffledList,
 
   // items
   edittingItemObj: state => state.edittingItemObj,
@@ -47,6 +48,9 @@ export default {
 
   // notifications
   notification: state => state.notification,
+
+  // modals
+  modalName: state => state.modalName,
 
   // requests
   requestsNumber: state => state.requestsNumber,

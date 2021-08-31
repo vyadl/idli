@@ -26,6 +26,7 @@ import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initAxios } from '@/settings/axiosSettings';
+import { initHotkeys } from '@/settings/hotkeysSettings';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -40,24 +41,31 @@ export default {
   computed: {
     ...mapGetters({
       notification: 'notification',
+      modalName: 'modalName',
       requestsNumber: 'requestsNumber',
       isLoggedIn: 'auth/isLoggedIn',
     }),
   },
   created() {
     initAxios();
+    initHotkeys();
     this._setUserFromLocalStorage();
     this._setSettingsFromLocalStorage();
-    this._setHotkeys();
     this._fetchTestLists();
 
     if (this.isLoggedIn) {
       setTimeout(this._fetchListsForUser, 500);
     }
   },
+  watch: {
+    modalName: function modalNameHandler() {
+      if (this.modalName) {
+        this.$modal.show(this.modalName);
+      }
+    },
+  },
   methods: {
     ...mapActions({
-      _setHotkeys: '_setHotkeys',
       _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
       _fetchTestLists: '_fetchTestLists',

@@ -6,6 +6,7 @@ export default {
   edittingListObj: null,
   checkedTags: [],
   checkedCategories: [],
+  shuffledList: null,
   edittingItemObj: null,
   visualization: {
     sorting: 'default',
@@ -25,5 +26,6 @@ export default {
     mode: 'lists',
   },
   notification: '',
+  modalName: '',
   requestsNumber: 0,
 };
