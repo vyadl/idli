@@ -135,10 +135,6 @@ export default {
   _resetFilters({ commit }) {
     commit('resetFilters');
   },
-  _setShuffledList({ commit, dispatch }, list) {
-    commit('setShuffledList', list);
-    dispatch('_switchShuffleTrigger');
-  },
 
   // items
 

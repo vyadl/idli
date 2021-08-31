@@ -1,5 +1,4 @@
 import store from '@/store/index';
-import { shuffleArray } from '@/utils/utils';
 
 export const initHotkeys = function initHotkeys() {
   document.addEventListener('keyup', event => {
@@ -9,10 +8,6 @@ export const initHotkeys = function initHotkeys() {
       switch (key) {
         case 'KeyI':
           createNewItem();
-          break;
-        case 'ArrowUp':
-        case 'ArrowDown':
-          switchEdittingItem(key);
           break;
         case 'KeyL':
           createNewList();
@@ -32,6 +27,7 @@ export const initHotkeys = function initHotkeys() {
         case 'KeyS':
           switchSidebarMode();
           break;
+        default:
       }
     }
   });
@@ -41,23 +37,6 @@ function createNewItem() {
   store.getters.isItemFormInSidebar
     ? store.dispatch('_openSidebar', 'item')
     : store.dispatch('_setmodalNameToShow', 'itemModal');
-}
-
-function switchEdittingItem(key) {
-  if (store.getters.edittingItemObj
-    && store.getters.isItemFormInSidebar
-    && !['cloud', 'stars'].includes(store.getters.mode)) {
-    const list = store.getters.sorting === 'shuffled'
-      ? store.getters.shuffledList
-      : store.getters.filteredList;
-    const currentItemIndex = list.findIndex(item => item === store.getters.edittingItemObj);
-
-    if (key === 'ArrowUp' && list[currentItemIndex - 1]) {
-      store.dispatch('_setItemForEditting', list[currentItemIndex - 1]);
-    } else if (key === 'ArrowDown' && list[currentItemIndex + 1]) {
-      store.dispatch('_setItemForEditting', list[currentItemIndex + 1]);
-    }
-  }
 }
 
 function createNewList() {
@@ -73,7 +52,6 @@ function editCurrentList() {
 
 function randomizeList() {
   if (store.getters.sorting === 'shuffled') {
-    store.dispatch('_setShuffledList', shuffleArray(store.getters.filteredList));
     store.dispatch('_switchShuffleTrigger');
   }
 }

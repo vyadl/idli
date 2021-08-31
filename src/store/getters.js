@@ -23,7 +23,6 @@ export default {
     });
   },
   filteredListLength: (state, getters) => getters.filteredList.length,
-  shuffledList: state => state.shuffledList,
 
   // items
   edittingItemObj: state => state.edittingItemObj,

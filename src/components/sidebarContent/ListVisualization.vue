@@ -70,7 +70,6 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
-import { shuffleArray } from '@/utils/utils';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -88,11 +87,9 @@ export default {
   }),
   computed: {
     ...mapGetters({
-      filteredList: 'filteredList',
       sorting: 'sorting',
       mode: 'mode',
       theme: 'theme',
-      shuffleTrigger: 'shuffleTrigger',
       listAlign: 'listAlign',
       areItemDetailsShown: 'areItemDetailsShown',
     }),
@@ -103,12 +100,8 @@ export default {
     },
   },
   watch: {
-    sorting: function sortingHandler(newSorting, oldSorting) {
-      if (newSorting === 'shuffled') {
-        this._setShuffledList(shuffleArray(this.filteredList));
-      } else if (oldSorting === 'shuffled') {
-        this._setShuffledList(null);
-      } else if (this.unstructuredModes.includes(this.mode) && newSorting === 'default') {
+    sorting: function sortingHandler(newSorting) {
+      if (this.unstructuredModes.includes(this.mode) && newSorting === 'default') {
         this._setMode('list');
       }
     },
@@ -125,7 +118,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      _setShuffledList: '_setShuffledList',
       _setSorting: '_setSorting',
       _setMode: '_setMode',
       _setTheme: '_setTheme',
