@@ -192,13 +192,9 @@ export default {
       commit('setMode', 'list');
     }
   },
-  _setMode({ commit, dispatch }, mode) {
+  _setMode({ commit }, mode) {
     commit('setMode', mode);
     commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
-
-    if (mode === 'focus') {
-      dispatch('_setNotification', { text: 'press Esc to exit focus mode' });
-    }
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
@@ -219,8 +215,13 @@ export default {
     commit('switchItemFormLocation');
     dispatch('_saveSettingsInLocalStorage');
   },
-  _switchFocusMode({ commit, dispatch }) {
+  _switchFocusMode({ getters, commit, dispatch }) {
     commit('switchFocusMode');
+
+    if (getters.isFocusOnList) {
+      dispatch('_setNotification', { text: 'press Esc to exit focus mode' });
+    }
+
     dispatch('_saveSettingsInLocalStorage');
   },
   _switchSidebarAndListIntersection({ commit }) {

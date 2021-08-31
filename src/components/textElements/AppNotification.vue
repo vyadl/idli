@@ -48,7 +48,7 @@ export default {
               time: null,
               text: '',
             });
-          }, resetNotificationTime + 3000);
+          }, resetNotificationTime + RESET_NOTIFICATION_TIME);
         }
       },
       immediate: true,

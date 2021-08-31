@@ -21,7 +21,7 @@
           @click="resolveAllAction('_hardDeleteAllLists')"
         />
       </div>
-      <CommonDeletedItem
+      <BinUnit
         type="list"
         v-for="item in deletedLists"
         :key="item.id"
@@ -51,7 +51,7 @@
           @click="resolveAllAction('_hardDeleteAllItems')"
         />
       </div>
-      <CommonDeletedItem
+      <BinUnit
         type="list"
         v-for="item in deletedItems"
         :key="item.id"
@@ -67,20 +67,18 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
-import CommonDeletedItem from '@/components/sidebarContent/bin/CommonDeletedItem.vue';
+import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 
 export default {
   components: {
     SidebarCard,
-    CommonDeletedItem,
+    BinUnit,
     ButtonText,
   },
-  data() {
-    return {
-      isRequestProcessing: false,
-    };
-  },
+  data: () => ({
+    isRequestProcessing: false,
+  }),
   computed: {
     ...mapGetters({
       deletedLists: 'deletedLists',
