@@ -6,7 +6,6 @@ export default {
   edittingListObj: null,
   checkedTags: [],
   checkedCategories: [],
-  shuffledList: null,
   edittingItemObj: null,
   deletedLists: [],
   deletedItems: [],

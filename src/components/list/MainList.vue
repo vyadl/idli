@@ -19,7 +19,7 @@
           v-if="sorting === 'shuffled'"
           text="randomize!"
           style-type="underline"
-          @click="setShuffledList"
+          @click="_switchShuffleTrigger"
         />
       </div>
     </div>
@@ -75,12 +75,13 @@ export default {
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
-      shuffledList: 'shuffledList',
+      edittingItemObj: 'edittingItemObj',
       sorting: 'sorting',
       mode: 'mode',
       shuffleTrigger: 'shuffleTrigger',
       listAlign: 'listAlign',
       areItemDetailsShown: 'areItemDetailsShown',
+      isItemFormInSidebar: 'isItemFormInSidebar',
       isFocusOnList: 'isFocusOnList',
       isListUnderSidebar: 'isListUnderSidebar',
       isSidebarOpen: 'isSidebarOpen',
@@ -110,6 +111,11 @@ export default {
 
       return styles;
     },
+    shuffledList() {
+      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
+
+      return shuffleArray(this.filteredList);
+    },
     computedList() {
       return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
     },
@@ -123,13 +129,36 @@ export default {
       immediate: true,
     },
   },
+  created() {
+    this.setArrowHotkeys();
+  },
   methods: {
     ...mapActions({
-      _setShuffledList: '_setShuffledList',
+      _setItemForEditting: '_setItemForEditting',
+      _switchShuffleTrigger: '_switchShuffleTrigger',
       _closeSidebar: '_closeSidebar',
     }),
     setShuffledList() {
       this._setShuffledList(shuffleArray(this.filteredList));
+    },
+    setArrowHotkeys() {
+      document.addEventListener('keyup', event => {
+        if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
+          if ((event.code === 'ArrowUp' || event.code === 'ArrowDown')
+            && this.edittingItemObj
+            && this.isItemFormInSidebar
+            && !['cloud', 'stars'].includes(this.mode)) {
+            const currentItemIndex = this.computedList
+              .findIndex(item => item === this.edittingItemObj);
+
+            if (event.code === 'ArrowUp' && this.computedList[currentItemIndex - 1]) {
+              this._setItemForEditting(this.computedList[currentItemIndex - 1]);
+            } else if (event.code === 'ArrowDown' && this.computedList[currentItemIndex + 1]) {
+              this._setItemForEditting(this.computedList[currentItemIndex + 1]);
+            }
+          }
+        }
+      });
     },
   },
 };

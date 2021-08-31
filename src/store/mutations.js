@@ -32,9 +32,6 @@ export default {
     state.checkedTags = [];
     state.checkedCategories = [];
   },
-  setShuffledList(state, list) {
-    state.shuffledList = list;
-  },
 
   // items
 
