@@ -52,6 +52,6 @@ export default {
   requestsNumber: state => state.requestsNumber,
 
   // bin
-  removedLists: state => state.removedLists,
-  removedItems: state => state.removedItems,
+  deletedLists: state => state.deletedLists,
+  deletedItems: state => state.deletedItems,
 };

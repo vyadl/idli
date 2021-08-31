@@ -124,11 +124,11 @@ export default {
 
   // bin
 
-  setRemovedLists(state, lists) {
-    state.removedLists = lists;
+  setDeletedLists(state, lists) {
+    state.deletedLists = lists;
   },
 
-  setRemovedItems(state, items) {
-    state.removedItems = items;
+  setDeletedItems(state, items) {
+    state.deletedItems = items;
   },
 };

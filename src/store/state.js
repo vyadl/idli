@@ -7,8 +7,8 @@ export default {
   checkedTags: [],
   checkedCategories: [],
   edittingItemObj: null,
-  removedLists: [],
-  removedItems: [],
+  deletedLists: [],
+  deletedItems: [],
   visualization: {
     sorting: 'default',
     mode: 'list',

@@ -112,7 +112,7 @@ export default {
     commit('setCurrentItems', responseList.items);
   },
   async _deleteList({ commit, dispatch, getters }, id) {
-    const res = await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
+    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
 
     if (getters.currentListObj?.id === id) {
       if (getters.lists.length > 1) {
@@ -126,7 +126,7 @@ export default {
     }
 
     commit('deleteList', id);
-    dispatch('_fetchRemovedLists');
+    dispatch('_fetchDeletedLists');
   },
   _setCurrentListId({ commit, dispatch, getters }, id) {
     commit('setCurrentListId', id);
@@ -177,7 +177,7 @@ export default {
 
     commit('deleteItem', item.id);
     dispatch('_setItemForEditting', null);
-    dispatch('_fetchRemovedItems');
+    dispatch('_fetchDeletedItems');
   },
   _setItemForEditting({ commit }, item) {
     commit('setItemForEditting', item);
@@ -192,7 +192,7 @@ export default {
       commit('setMode', 'list');
     }
   },
-  _setMode({ commit }, mode) {
+  _setMode({ commit, dispatch }, mode) {
     commit('setMode', mode);
     commit('setSorting', ['cloud', 'stars'].includes(mode) ? 'shuffled' : 'default');
 
@@ -255,16 +255,16 @@ export default {
 
   // bin
 
-  async _fetchRemovedLists({ commit }) {
-    const { data: removedLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists/deleted`);
+  async _fetchDeletedLists({ commit }) {
+    const { data: deletedLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists/deleted`);
 
-    commit('setRemovedLists', removedLists);
+    commit('setDeletedLists', deletedLists);
   },
 
-  async _fetchRemovedItems({ commit }) {
-    const { data: removedItems } = await this._vm.$axios.get(`${this._vm.$apiBasePath}items/deleted`);
+  async _fetchDeletedItems({ commit }) {
+    const { data: deletedItems } = await this._vm.$axios.get(`${this._vm.$apiBasePath}items/deleted`);
 
-    commit('setRemovedItems', removedItems);
+    commit('setDeletedItems', deletedItems);
   },
 
   async _restoreList({ dispatch, getters }, listId) {
@@ -290,19 +290,19 @@ export default {
   async _hardDeleteList({ dispatch }, listId) {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/hard-delete/${listId}`);
 
-    dispatch('_fetchRemovedLists');
+    dispatch('_fetchDeletedLists');
   },
 
   async _hardDeleteItem({ dispatch }, { listId, itemId }) {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete/${listId}/${itemId}`);
 
-    dispatch('_fetchRemovedItems');
+    dispatch('_fetchDeletedItems');
   },
 
   async _hardDeleteAllItems({ dispatch }) {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete-all`);
 
-    dispatch('_fetchRemovedItems');
+    dispatch('_fetchDeletedItems');
   },
 
   async _restoreAllItems({ dispatch }) {
@@ -316,15 +316,14 @@ export default {
   async _hardDeleteAllLists({ dispatch }) {
     await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/hard-delete-all`);
 
-    dispatch('_fetchRemovedLists');
+    dispatch('_fetchDeletedLists');
   },
 
   async _restoreAllLists({ dispatch, getters }) {
     const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore-all`);
-    console.log(getters.currentListObj);
+
     await dispatch('_fetchingAfterBinActions', false);
-    
-    console.log(getters.currentListObj);
+
     if (getters.currentListObj) {
       dispatch('_fetchCurrentItems');
     }
@@ -335,10 +334,10 @@ export default {
   async _fetchingAfterBinActions({ dispatch }, isItem) {
     if (isItem) {
       dispatch('_fetchCurrentItems');
-      dispatch('_fetchRemovedItems');
+      dispatch('_fetchDeletedItems');
     } else {
       dispatch('_fetchListsForUser');
-      dispatch('_fetchRemovedLists');
+      dispatch('_fetchDeletedLists');
     }
   },
 };

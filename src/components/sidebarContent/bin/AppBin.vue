@@ -4,7 +4,7 @@
   >
     <SidebarCard
       title="lists"
-      v-if="removedLists.length"
+      v-if="deletedLists.length"
     >
       <div class="all-buttons">
         <ButtonText
@@ -23,7 +23,7 @@
       </div>
       <CommonDeletedItem
         type="list"
-        v-for="item in removedLists"
+        v-for="item in deletedLists"
         :key="item.id"
         :item="item"
         :disabled="isRequestProcessing"
@@ -34,7 +34,7 @@
     <SidebarCard
       title="items"
       class="items"
-      v-if="removedItems.length"
+      v-if="deletedItems.length"
     >
       <div class="all-buttons">
         <ButtonText
@@ -53,7 +53,7 @@
       </div>
       <CommonDeletedItem
         type="list"
-        v-for="item in removedItems"
+        v-for="item in deletedItems"
         :key="item.id"
         :item="item"
         :disabled="isRequestProcessing"
@@ -83,18 +83,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      removedLists: 'removedLists',
-      removedItems: 'removedItems',
+      deletedLists: 'deletedLists',
+      deletedItems: 'deletedItems',
     }),
   },
   created() {
-    this._fetchRemovedLists();
-    this._fetchRemovedItems();
+    this._fetchDeletedLists();
+    this._fetchDeletedItems();
   },
   methods: {
     ...mapActions({
-      _fetchRemovedLists: '_fetchRemovedLists',
-      _fetchRemovedItems: '_fetchRemovedItems',
+      _fetchDeletedLists: '_fetchDeletedLists',
+      _fetchDeletedItems: '_fetchDeletedItems',
       _restoreList: '_restoreList',
       _restoreItem: '_restoreItem',
       _hardDeleteList: '_hardDeleteList',
@@ -111,7 +111,7 @@ export default {
       this[action](payload).then(res => {
         if (res?.data?.isListDeleted) {
           this._setNotification({
-            text: `To see the restored items you need to restore this list - "${res?.data?.listTitle}"`,
+            text: `To see the restored item you need to restore this list - "${res?.data?.listTitle}"`,
             time: 15000,
           });
         }
