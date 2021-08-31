@@ -26,6 +26,6 @@ export default {
     mode: 'lists',
   },
   notification: '',
-  modalName: '',
+  modalNameToShow: '',
   requestsNumber: 0,
 };

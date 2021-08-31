@@ -228,8 +228,8 @@ export default {
 
   // modals
 
-  _setModalName({ commit }, name) {
-    commit('setModalName', name);
+  _setmodalNameToShow({ commit }, name) {
+    commit('setmodalNameToShow', name);
   },
 
   // requests

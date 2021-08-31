@@ -41,7 +41,7 @@ export default {
   computed: {
     ...mapGetters({
       notification: 'notification',
-      modalName: 'modalName',
+      modalNameToShow: 'modalNameToShow',
       requestsNumber: 'requestsNumber',
       isLoggedIn: 'auth/isLoggedIn',
     }),
@@ -58,9 +58,9 @@ export default {
     }
   },
   watch: {
-    modalName: function modalNameHandler() {
-      if (this.modalName) {
-        this.$modal.show(this.modalName);
+    modalNameToShow: function modalNameToShowHandler() {
+      if (this.modalNameToShow) {
+        this.$modal.show(this.modalNameToShow);
       }
     },
   },

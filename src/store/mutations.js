@@ -115,8 +115,8 @@ export default {
 
   // modals
 
-  setModalName(state, name) {
-    state.modalName = name;
+  setmodalNameToShow(state, name) {
+    state.modalNameToShow = name;
   },
 
   // requests

@@ -50,7 +50,7 @@ export default {
   notification: state => state.notification,
 
   // modals
-  modalName: state => state.modalName,
+  modalNameToShow: state => state.modalNameToShow,
 
   // requests
   requestsNumber: state => state.requestsNumber,

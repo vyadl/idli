@@ -130,7 +130,7 @@ export default {
     }),
     setShuffledList() {
       this._setShuffledList(shuffleArray(this.filteredList));
-    }
+    },
   },
 };
 </script>
@@ -139,7 +139,7 @@ export default {
   .main-list {
     width: 100%;
     min-height: 100vh;
-    
+
     .header {
       padding: 10px 10px 0;
 

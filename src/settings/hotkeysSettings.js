@@ -6,21 +6,45 @@ export const initHotkeys = function initHotkeys() {
     const key = event.code;
 
     if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
-      createNewItem(key);
-      switchEdittingItemBack(key);
-      createNewList(key);
-      updateCurrentList(key);
-      randomizeList(key);
-      switchFocusMode(key);
-      exitFocusMode(key);
-      switchSidebarMode(key);
+      switch (key) {
+        case 'KeyI':
+          createNewItem();
+          break;
+        case 'ArrowUp':
+        case 'ArrowDown':
+          switchEdittingItem(key);
+          break;
+        case 'KeyL':
+          createNewList();
+          break;
+        case 'KeyE':
+          editCurrentList();
+          break;
+        case 'KeyR':
+          randomizeList();
+          break;
+        case 'KeyF':
+          switchFocusMode();
+          break;
+        case 'Escape':
+          exitFocusMode();
+          break;
+        case 'KeyS':
+          switchSidebarMode();
+          break;
+      }
     }
   });
 };
 
-function switchEdittingItemBack(key) {
-  if ((key === 'ArrowUp' || key === 'ArrowDown')
-    && store.getters.edittingItemObj
+function createNewItem() {
+  store.getters.isItemFormInSidebar
+    ? store.dispatch('_openSidebar', 'item')
+    : store.dispatch('_setmodalNameToShow', 'itemModal');
+}
+
+function switchEdittingItem(key) {
+  if (store.getters.edittingItemObj
     && store.getters.isItemFormInSidebar
     && !['cloud', 'stars'].includes(store.getters.mode)) {
     const list = store.getters.sorting === 'shuffled'
@@ -36,50 +60,36 @@ function switchEdittingItemBack(key) {
   }
 }
 
-function createNewItem(key) {
-  if (key === 'KeyI') {
-    store.getters.isItemFormInSidebar
-      ? store.dispatch('_openSidebar', 'item')
-      : store.dispatch('_setModalName', 'itemModal');
-  }
+function createNewList() {
+  store.dispatch('_setmodalNameToShow', 'listModal');
 }
 
-function createNewList(key) {
-  if (key === 'KeyL') {
-    store.dispatch('_setModalName', 'listModal');
-  }
-}
-
-function updateCurrentList(key) {
-  if (key === 'KeyE' && store.getters.currentListObj) {
+function editCurrentList() {
+  if (store.getters.currentListObj) {
     store.dispatch('_setListForEditting', store.getters.currentListObj);
-    store.dispatch('_setModalName', 'listModal');
+    store.dispatch('_setmodalNameToShow', 'listModal');
   }
 }
 
-function randomizeList(key) {
-  if (key === 'KeyR' && store.getters.sorting === 'shuffled') {
+function randomizeList() {
+  if (store.getters.sorting === 'shuffled') {
     store.dispatch('_setShuffledList', shuffleArray(store.getters.filteredList));
     store.dispatch('_switchShuffleTrigger');
   }
 }
 
-function switchFocusMode(key) {
-  if (key === 'KeyF') {
+function switchFocusMode() {
+  store.dispatch('_switchFocusMode');
+}
+
+function exitFocusMode() {
+  if (store.getters.isFocusOnList) {
     store.dispatch('_switchFocusMode');
   }
 }
 
-function exitFocusMode(key) {
-  if (key === 'Escape' && store.getters.isFocusOnList) {
-    store.dispatch('_switchFocusMode');
-  }
-}
-
-function switchSidebarMode(key) {
-  if (key === 'KeyS') {
-    store.getters.isSidebarOpen
-      ? store.dispatch('_closeSidebar')
-      : store.dispatch('_openSidebar', store.getters.sidebarMode || 'lists');
-  }
+function switchSidebarMode() {
+  store.getters.isSidebarOpen
+    ? store.dispatch('_closeSidebar')
+    : store.dispatch('_openSidebar', store.getters.sidebarMode || 'lists');
 }
