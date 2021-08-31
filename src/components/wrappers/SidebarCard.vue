@@ -23,7 +23,7 @@ export default {
     width: 100%;
     margin-bottom: 25px;
 
-    .title {
+    &>.title {
       width: fit-content;
       margin: 0 auto 20px;
       font-size: map-get($text, 'title-font-size');

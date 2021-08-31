@@ -109,8 +109,11 @@ export default {
 
   // notifications
 
-  setNotification(state, text) {
-    state.notification = text;
+  setNotification(state, { text, time }) {
+    state.notification = {
+      text,
+      time: time || null,
+    };
   },
 
   // modals
@@ -126,5 +129,15 @@ export default {
   },
   decreaseRequestsNumber(state) {
     state.requestsNumber--;
+  },
+
+  // bin
+
+  setDeletedLists(state, lists) {
+    state.deletedLists = lists;
+  },
+
+  setDeletedItems(state, items) {
+    state.deletedItems = items;
   },
 };

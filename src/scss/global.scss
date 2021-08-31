@@ -21,3 +21,22 @@ button {
     outline: none;
   }
 }
+
+a {
+  display: inline-block;
+  padding-bottom: 0;
+  color: inherit;
+  transition: opacity .2s;
+
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    opacity: .8;
+  }
+
+  &:active {
+    opacity: .5;
+  }
+}

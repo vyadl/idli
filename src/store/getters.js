@@ -54,4 +54,8 @@ export default {
 
   // requests
   requestsNumber: state => state.requestsNumber,
+
+  // bin
+  deletedLists: state => state.deletedLists,
+  deletedItems: state => state.deletedItems,
 };

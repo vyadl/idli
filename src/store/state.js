@@ -8,6 +8,8 @@ export default {
   checkedCategories: [],
   shuffledList: null,
   edittingItemObj: null,
+  deletedLists: [],
+  deletedItems: [],
   visualization: {
     sorting: 'default',
     mode: 'list',
@@ -25,7 +27,10 @@ export default {
     isOpen: false,
     mode: 'lists',
   },
-  notification: '',
+  notification: {
+    time: null,
+    text: '',
+  },
   modalNameToShow: '',
   requestsNumber: 0,
 };

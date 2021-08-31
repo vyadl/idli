@@ -1,13 +1,16 @@
 <template>
   <div
     class="app-notification"
-    :class="[
-      { shown: isNotificationShown },
+    :class="[{
+        shown: isNotificationShown,
+        hide: !isNotificationShown && !isIniting,
+        hidden: isIniting,
+      },
       `${globalTheme}-theme`,
     ]"
   >
     <div class="text">
-      {{ notification }}
+      {{ notification.text }}
     </div>
   </div>
 </template>
@@ -19,6 +22,7 @@ const RESET_NOTIFICATION_TIME = 4500;
 
 export default {
   data: () => ({
+    isIniting: true,
     isNotificationShown: false,
   }),
   computed: {
@@ -28,14 +32,23 @@ export default {
   },
   watch: {
     notification: {
-      handler: function notificationHandler() {
-        if (this.notification) {
+      handler: async function notificationHandler() {
+        if (this.notification.text) {
+          const resetNotificationTime = this.notification.time || RESET_NOTIFICATION_TIME;
+
           this.isNotificationShown = true;
 
-          setTimeout(() => {
+          await setTimeout(() => {
             this.isNotificationShown = false;
-            this._setNotification('');
-          }, RESET_NOTIFICATION_TIME);
+            this.isIniting = false;
+          }, resetNotificationTime);
+
+          setTimeout(() => {
+            this._setNotification({
+              time: null,
+              text: '',
+            });
+          }, resetNotificationTime + RESET_NOTIFICATION_TIME);
         }
       },
       immediate: true,
@@ -64,7 +77,18 @@ export default {
     opacity: 0;
 
     &.shown {
-      animation: notification 4s cubic-bezier(0.45, 0, 0.55, 1);
+      animation: notification-show 1s cubic-bezier(0.45, 0, 0.55, 1);
+      animation-fill-mode: both;
+    }
+
+    &.hide {
+      animation: notification-hide 3s cubic-bezier(0.45, 0, 0.55, 1);
+      animation-fill-mode: both;
+    }
+
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
     }
 
     .text {
