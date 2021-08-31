@@ -30,6 +30,14 @@
       />
     </div>
     <UserProfile />
+    <div class="about">
+      <ButtonText
+        style-type="underline"
+        @click="$modal.show('aboutModal')"
+        text="about idli"
+      />
+    </div>
+    <AboutModal />
   </SidebarCard>
 </template>
 
@@ -37,6 +45,8 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import UserProfile from '@/components/sidebarContent/UserProfile.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import AboutModal from '@/components/modals/AboutModal.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -44,6 +54,8 @@ export default {
     SidebarCard,
     UserProfile,
     CheckboxCustom,
+    AboutModal,
+    ButtonText,
   },
   computed: {
     ...mapGetters({
@@ -66,6 +78,10 @@ export default {
   .app-settings {
     .options-container {
       margin-bottom: 100px;
+    }
+    .about {
+      padding-top: 70px;
+      text-align: center;
     }
   }
 </style>

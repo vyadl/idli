@@ -90,7 +90,7 @@ export default {
     }),
     sidebarModes() {
       return this.isLoggedIn
-        ? ['filters', 'visualization', 'lists', 'profile', 'settings', 'bin']
+        ? ['filters', 'visualization', 'lists', 'settings', 'bin']
         : ['sign up', 'sign in'];
     },
   },
