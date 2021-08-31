@@ -1,7 +1,7 @@
 <template>
   <label
     class="radio-custom"
-    :class="{ 'inverted-theme': isInverted }"
+    :class="`${globalTheme}-theme`"
   >
     <input
       class="input"
@@ -15,7 +15,8 @@
     <div
       class="label"
       :class="{
-        disabled: disabled,
+        small,
+        disabled,
         checked: isChecked,
       }"
     >
@@ -32,6 +33,10 @@ export default {
   },
   props: {
     label: String,
+    small: {
+      type: Boolean,
+      default: false,
+    },
     value: [Number, String],
     modelValue: {
       default: '',
@@ -65,10 +70,6 @@ export default {
     margin-right: 7px;
     cursor: pointer;
 
-    &:last-of-type {
-      margin-right: 0;
-    }
-
     .input {
       display: none;
     }
@@ -82,6 +83,15 @@ export default {
       transition:
         background-color .3s .05s,
         color .2s .05s;
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+
+      &.small {
+        padding: 3px 7px 4px;
+        font-size: 12px;
+      }
 
       &.disabled {
         &.checked {

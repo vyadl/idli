@@ -1,20 +1,20 @@
 <template>
   <div
     class="sidebar"
-    :class="{
-      shown: isSidebarOpen,
-      'inverted-theme': isInverted,
-    }"
+    :class="[
+      { shown: isSidebarOpen },
+      `${globalTheme}-theme`,
+    ]"
   >
     <div
       class="add-item-button"
-      v-if="isLoggedIn && currentListObj && mode !== 'focus'"
+      v-if="isLoggedIn && currentListObj && !isFocusOnList"
     >
       <ButtonSign
         style-type="plus"
         big
         title="new item"
-        @click="settings.isItemFormInSidebar ? createNewItem() : openItemModal()"
+        @click="isItemFormInSidebar ? createNewItem() : openItemModal()"
       />
     </div>
     <div class="sidebar-buttons">
@@ -32,7 +32,7 @@
       </div>
       <div
         class="state-button"
-        v-if="mode !== 'focus'"
+        v-if="!isFocusOnList"
       >
         <ButtonSign
           style-type="arrow"
@@ -81,12 +81,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      mode: 'mode',
+      currentListObj: 'currentListObj',
+      isItemFormInSidebar: 'isItemFormInSidebar',
+      isFocusOnList: 'isFocusOnList',
       isSidebarOpen: 'isSidebarOpen',
       sidebarMode: 'sidebarMode',
       isLoggedIn: 'auth/isLoggedIn',
-      currentListObj: 'currentListObj',
-      settings: 'settings',
     }),
     sidebarModes() {
       return this.isLoggedIn
@@ -96,9 +96,9 @@ export default {
   },
   methods: {
     ...mapActions({
+      _setItemForEditting: '_setItemForEditting',
       _openSidebar: '_openSidebar',
       _closeSidebar: '_closeSidebar',
-      _setItemForEditting: '_setItemForEditting',
     }),
     openItemModal() {
       this.$modal.show('itemModal');

@@ -3,10 +3,8 @@
     class="button-sign"
     :class="[
       styleType,
-      {
-        big,
-        'inverted-theme': isInverted
-      }
+      { big },
+      `${globalTheme}-theme`,
     ]"
     :title="title"
     :type="type"
