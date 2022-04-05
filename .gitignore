@@ -1,7 +1,10 @@
+.well-known
+tmp
+stderr.log
 node_modules
-yarn.lock
 dist
 .env
 .htaccess
 app.js
+
 
