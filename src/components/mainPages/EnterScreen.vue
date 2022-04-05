@@ -7,6 +7,7 @@
     <img
       class="logo"
       src="/images/logo.svg"
+      alt="logo"
     >
     <div class="buttons-container">
       <ButtonText
