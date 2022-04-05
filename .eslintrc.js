@@ -28,6 +28,8 @@ module.exports = {
     'no-use-before-define': ["error", { "functions": false, "classes": true }],
     'vuejs-accessibility/label-has-for': 'off',
     'vuejs-accessibility/click-events-have-key-events': 'off',
+    'no-trailing-spaces': 'off',
+    'import/prefer-default-export': 'off',
   },
 
   globals: {

@@ -22,8 +22,8 @@ export default {
       throw error;
     }
   },
-  _signOut({ commit }) {
-    commit('signOut');
+  _logOut({ commit }) {
+    commit('logOut');
     commit('closeSidebar', null, { root: true });
     localStorage.removeItem('user');
     localStorage.removeItem('currentListId');

@@ -211,8 +211,13 @@ export default {
 
     dispatch('_saveSettingsInLocalStorage');
   },
-  _switchSidebarAndListIntersection({ commit }) {
+  _switchSidebarAndListIntersection({ commit, dispatch }) {
     commit('switchSidebarAndListIntersection');
+    dispatch('_saveSettingsInLocalStorage');
+  },
+  _switchUsingHotkeys({ commit, dispatch }) {
+    commit('switchUsingHotkeys');
+    dispatch('_saveSettingsInLocalStorage');
   },
 
   // sidebar
@@ -237,7 +242,7 @@ export default {
 
   // modals
 
-  _setmodalNameToShow({ commit }, name) {
+  _setModalNameToShow({ commit }, name) {
     commit('setmodalNameToShow', name);
   },
 
