@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: server187.web-hosting.com
+        username: vyadl
+        password: persicumPatronum
+        port: 21098
+        script: deploy.sh
