@@ -27,6 +27,7 @@ import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initAxios } from '@/settings/axiosSettings';
 import { initHotkeys } from '@/settings/hotkeysSettings';
+import checkAppVersion from '@/settings/appVersion';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -47,7 +48,9 @@ export default {
     }),
   },
   created() {
+    checkAppVersion();
     initAxios();
+
     this._setUserFromLocalStorage();
     this._setSettingsFromLocalStorage();
     this._fetchTestLists();
