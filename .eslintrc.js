@@ -11,7 +11,8 @@ module.exports = {
   ],
 
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: '@babel/eslint-parser',
+    requireConfigFile: false,
   },
 
   rules: {
@@ -25,6 +26,8 @@ module.exports = {
     'no-unused-expressions': ["error", { "allowTernary": true }],
     'import/no-extraneous-dependencies': ["error", {"devDependencies": false }],
     'no-use-before-define': ["error", { "functions": false, "classes": true }],
+    'vuejs-accessibility/label-has-for': 'off',
+    'vuejs-accessibility/click-events-have-key-events': 'off',
   },
 
   globals: {
