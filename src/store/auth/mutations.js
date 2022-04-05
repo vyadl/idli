@@ -4,7 +4,7 @@ export default {
   signIn(state, user) {
     state.user = user;
   },
-  signOut(state) {
+  logOut(state) {
     state.user = new User();
   },
 };

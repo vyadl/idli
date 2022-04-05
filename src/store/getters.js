@@ -40,6 +40,7 @@ export default {
   isItemFormInSidebar: state => state.settings.isItemFormInSidebar,
   isFocusOnList: state => state.settings.isFocusOnList,
   isListUnderSidebar: state => state.settings.isListUnderSidebar,
+  isUsingHotkeys: state => state.settings.isUsingHotkeys,
 
   // sidebar
   isSidebarOpen: state => state.sidebar.isOpen,
