@@ -11,7 +11,7 @@
     </transition>
     <EnterScreen v-if="!isLoggedIn"/>
     <MainList v-else />
-    <Sidebar />
+    <SidebarPage />
     <ListModal />
     <ItemModal />
     <AppNotification v-if="notification" />
@@ -21,7 +21,7 @@
 <script>
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
-import Sidebar from '@/components/mainPages/SidebarPage.vue';
+import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
@@ -32,7 +32,7 @@ export default {
   components: {
     EnterScreen,
     MainList,
-    Sidebar,
+    SidebarPage,
     ListModal,
     ItemModal,
     AppNotification,
