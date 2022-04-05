@@ -28,6 +28,26 @@
         name="isListUnderSidebar"
         @change="_switchSidebarAndListIntersection"
       />
+      <CheckboxCustom
+        label="using hotkeys"
+        style-type="classic"
+        :value="true"
+        :model-value="isUsingHotkeys"
+        name="isUsingHotkeys"
+        @change="_switchUsingHotkeys"
+      />
+
+      <div class="hotkeys-desc">
+        ESC - exit focus mode/hide modal <br>
+        <template v-if="isUsingHotkeys">
+        I — new item <br>
+        L — new list <br>
+        E — edit current list <br>
+        R — randomize list <br>
+        F — switch focus mode <br>
+        S — show/hide sidebar
+        </template>
+      </div>
     </div>
     <UserProfile />
     <div class="about">
@@ -62,6 +82,7 @@ export default {
       isItemFormInSidebar: 'isItemFormInSidebar',
       isFocusOnList: 'isFocusOnList',
       isListUnderSidebar: 'isListUnderSidebar',
+      isUsingHotkeys: 'isUsingHotkeys',
     }),
   },
   methods: {
@@ -69,6 +90,7 @@ export default {
       _switchItemFormLocation: '_switchItemFormLocation',
       _switchFocusMode: '_switchFocusMode',
       _switchSidebarAndListIntersection: '_switchSidebarAndListIntersection',
+      _switchUsingHotkeys: '_switchUsingHotkeys',
     }),
   },
 };
@@ -82,6 +104,12 @@ export default {
     .about {
       padding-top: 70px;
       text-align: center;
+    }
+    .hotkeys-desc {
+      font-family: 'Courier';
+      padding-left: 30px;
+      font-size: 12px;
+      color: map-get($colors, 'gray-dark');
     }
   }
 </style>

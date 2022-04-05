@@ -7,6 +7,7 @@
     :width="width"
     scrollable
     transition="modal"
+    @closed="_setModalNameToShow('')"
   >
     <header
       class="header"
@@ -24,6 +25,8 @@
 
 <script>
 
+import { mapActions } from 'vuex';
+
 export default {
   props: {
     name: String,
@@ -39,6 +42,11 @@ export default {
       type: Boolean,
       default: true,
     },
+  },
+  methods: {
+    ...mapActions({
+      _setModalNameToShow: '_setModalNameToShow',
+    }),
   },
 };
 </script>

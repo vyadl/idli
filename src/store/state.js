@@ -21,6 +21,7 @@ export default {
     isItemFormInSidebar: false,
     isFocusOnList: false,
     isListUnderSidebar: true,
+    isUsingHotkeys: true,
   },
   sidebar: {
     isOpen: false,

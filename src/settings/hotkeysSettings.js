@@ -4,7 +4,20 @@ export const initHotkeys = function initHotkeys() {
   document.addEventListener('keyup', event => {
     const key = event.code;
 
-    if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
+    if (
+      !event.target.closest('input[type=text]')
+      && !event.target.closest('textarea')
+      && key === 'Escape'
+    ) {
+      exitFocusMode();
+    }
+
+    if (
+      !event.target.closest('input[type=text]')
+      && !event.target.closest('textarea')
+      && store.getters['auth/isLoggedIn']
+      && store.getters.settings.isUsingHotkeys
+    ) {
       switch (key) {
         case 'KeyI':
           createNewItem();
@@ -21,9 +34,6 @@ export const initHotkeys = function initHotkeys() {
         case 'KeyF':
           switchFocusMode();
           break;
-        case 'Escape':
-          exitFocusMode();
-          break;
         case 'KeyS':
           switchSidebarMode();
           break;
@@ -36,24 +46,23 @@ export const initHotkeys = function initHotkeys() {
 function createNewItem() {
   store.getters.isItemFormInSidebar
     ? store.dispatch('_openSidebar', 'item')
-    : store.dispatch('_setmodalNameToShow', 'itemModal');
+    : store.dispatch('_setModalNameToShow', 'itemModal');
 }
 
 function createNewList() {
-  store.dispatch('_setmodalNameToShow', 'listModal');
+  store.dispatch('_setModalNameToShow', 'listModal');
 }
 
 function editCurrentList() {
   if (store.getters.currentListObj) {
     store.dispatch('_setListForEditting', store.getters.currentListObj);
-    store.dispatch('_setmodalNameToShow', 'listModal');
+    store.dispatch('_setModalNameToShow', 'listModal');
   }
 }
 
 function randomizeList() {
-  if (store.getters.sorting === 'shuffled') {
-    store.dispatch('_switchShuffleTrigger');
-  }
+  store.dispatch('_setSorting', 'shuffled');
+  store.dispatch('_switchShuffleTrigger');
 }
 
 function switchFocusMode() {

@@ -26,6 +26,7 @@ import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initAxios } from '@/settings/axiosSettings';
+import { initHotkeys } from '@/settings/hotkeysSettings';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -50,6 +51,8 @@ export default {
     this._setUserFromLocalStorage();
     this._setSettingsFromLocalStorage();
     this._fetchTestLists();
+
+    initHotkeys();
 
     if (this.isLoggedIn) {
       setTimeout(this._fetchListsForUser, 500);

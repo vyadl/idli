@@ -10,9 +10,9 @@
       </div>
     </div>
     <ButtonText
-      text="sign out"
+      text="log out"
       style-type="underline"
-      @click="_signOut"
+      @click="_logOut"
     />
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      _signOut: 'auth/_signOut',
+      _logOut: 'auth/_logOut',
     }),
   },
 };

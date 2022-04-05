@@ -91,6 +91,9 @@ export default {
   switchSidebarAndListIntersection(state) {
     state.settings.isListUnderSidebar = !state.settings.isListUnderSidebar;
   },
+  switchUsingHotkeys(state) {
+    state.settings.isUsingHotkeys = !state.settings.isUsingHotkeys;
+  },
 
   // sidebar
 
