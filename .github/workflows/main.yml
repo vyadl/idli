@@ -22,8 +22,6 @@ jobs:
         port: ${{ secrets.PORT_SERVER }}
         envs: NICKNAME,TOKEN
         script: |
-          echo $NICKNAME
-          echo $TOKEN
           source /home/vyadl/nodevenv/idli/14/bin/activate && cd /home/vyadl/idli
           git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" master
           npm install
