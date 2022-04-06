@@ -13,12 +13,13 @@ jobs:
     - name: executing remote ssh commands
       uses: appleboy/ssh-action@master
       with:
-        host: server187.web-hosting.com
-        username: vyadl
-        password: persicumPatronum
-        port: 21098
+        host: ${{ secrets.HOST_SERVER }}
+        username: ${{ secrets.NICKNAME_SERVER }}
+        password: ${{ secrets.PASSWORD_SERVER }}
+        port: ${{ secrets.PORT_SERVER }}
         script: |
           source /home/vyadl/nodevenv/idli/14/bin/activate && cd /home/vyadl/idli
-          git pull "https://vyadl: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@github.com/vyadl/idli.git" master
-          npm install
-          npm run build
+          run git pull "https://${{ secrets.NICKNAME_GITHUB }}:${{ secrets.TOKEN_GIHUB }}@github.com/vyadl/idli.git" master
+          run npm install
+          run npm run build
+          
