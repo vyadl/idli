@@ -14,7 +14,7 @@ jobs:
       uses: appleboy/ssh-action@master
       env:
        NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
-       TOKEN: ${{ secrets.TOKEN_GIHUB }}
+       TOKEN: ${{ secrets.TOKEN_GITHUB }}
       with:
         host: ${{ secrets.HOST_SERVER }}
         username: ${{ secrets.NICKNAME_SERVER }}
@@ -22,6 +22,8 @@ jobs:
         port: ${{ secrets.PORT_SERVER }}
         envs: NICKNAME,TOKEN
         script: |
+          echo $NICKNAME
+          echo $TOKEN
           source /home/vyadl/nodevenv/idli/14/bin/activate && cd /home/vyadl/idli
           git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" master
           npm install
