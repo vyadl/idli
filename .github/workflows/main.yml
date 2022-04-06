@@ -13,7 +13,7 @@ jobs:
     - name: executing remote ssh commands
       uses: appleboy/ssh-action@master
       env:
-       NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
+       NICKNAME: ${{ secrets.NICKNAM_GITHUB }}
        TOKEN: ${{ secrets.TOKEN_GITHUB }}
       with:
         host: ${{ secrets.HOST_SERVER }}
@@ -23,7 +23,9 @@ jobs:
         envs: NICKNAME,TOKEN
         script: |
           source /home/vyadl/nodevenv/idli/14/bin/activate && cd /home/vyadl/idli
-          git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" master
-          npm install
-          npm run build
+          if [[ $(git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" master) ]]; then  
+            npm install
+            npm run build
+          fi
+          
           
