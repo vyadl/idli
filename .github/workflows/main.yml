@@ -19,7 +19,7 @@ jobs:
         port: ${{ secrets.PORT_SERVER }}
         script: |
           source /home/vyadl/nodevenv/idli/14/bin/activate && cd /home/vyadl/idli
-          run git pull "https://${{ secrets.NICKNAME_GITHUB }}:${{ secrets.TOKEN_GIHUB }}@github.com/vyadl/idli.git" master
-          run npm install
-          run npm run build
+          git pull "https://${{ secrets.NICKNAME_GITHUB }}:${{ secrets.TOKEN_GIHUB }}@github.com/vyadl/idli.git" master
+          npm install
+          npm run build
           
