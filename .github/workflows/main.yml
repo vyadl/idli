@@ -13,7 +13,7 @@ jobs:
     - name: executing remote ssh commands
       uses: appleboy/ssh-action@master
       env:
-       NICKNAME: ${{ secrets.NICKNAME_GITHU }}
+       NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
        TOKEN: ${{ secrets.TOKEN_GITHUB }}
       with:
         host: ${{ secrets.HOST_SERVER }}
