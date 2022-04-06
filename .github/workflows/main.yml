@@ -12,6 +12,9 @@ jobs:
     steps:
     - name: executing remote ssh commands
       uses: appleboy/ssh-action@master
+      env:
+       NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
+       TOKEN: ${{ secrets.TOKEN_GIHUB }}
       with:
         host: ${{ secrets.HOST_SERVER }}
         username: ${{ secrets.NICKNAME_SERVER }}
@@ -19,7 +22,7 @@ jobs:
         port: ${{ secrets.PORT_SERVER }}
         script: |
           source /home/vyadl/nodevenv/idli/14/bin/activate && cd /home/vyadl/idli
-          git pull "https://${{ secrets.NICKNAME_GITHUB }}:${{ secrets.TOKEN_GIHUB }}@github.com/vyadl/idli.git" master
+          git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" master
           npm install
           npm run build
           
