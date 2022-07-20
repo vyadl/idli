@@ -4,10 +4,22 @@
     name="aboutModal"
     title="about idli"
   >
-    Creative manager of lists
+    <div class="project-descr">
+      Creative manager of lists
+    </div>
     <br><br>
     Created by:
     <br><br>
+    Mariia Br
+    <div class="descr">
+      (frontend)
+      <br>
+      <a
+        href="mailto:tnuocc@gmail.com"
+        target="_blank"
+      >tnuocc@gmail.com</a>
+    </div>
+    <br>
     Kseniya Korovina
     <br>
     <div class="descr">
@@ -33,7 +45,7 @@
     Philip Sukolenov
     <br>
     <div class="descr">
-      (product owner, frontend, backend, design)
+      (idea, product owner, frontend, backend, design)
       <br>
       <a
         href="http://vyadl.me"
@@ -59,6 +71,9 @@ export default {
   .about-modal {
     .descr {
       font-size: 12px;
+    }
+    .project-descr {
+      font-size: 18px;
     }
   }
 </style>
