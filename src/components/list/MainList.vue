@@ -38,7 +38,7 @@
         <masonry-wall
           :items="finalList"
           :column-width="200"
-          :gap="0"
+          :gap="20"
         >
           <template #default="{ item }">
             <ListItem
@@ -70,9 +70,6 @@ export default {
     ListItem,
     ButtonText,
   },
-  data: () => ({
-    finalList: [],
-  }),
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
@@ -118,18 +115,8 @@ export default {
 
       return shuffleArray(this.filteredList);
     },
-    computedList() {
+    finalList() {
       return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
-    },
-  },
-  watch: {
-    computedList: {
-      handler: function computedListHandler() {
-        this.finalList = [];
-        this.finalList = this.computedList;
-      },
-      immediate: true,
-      deep: true,
     },
   },
   created() {
@@ -151,13 +138,13 @@ export default {
             && this.edittingItemObj
             && this.isItemFormInSidebar
             && !['cloud', 'stars'].includes(this.mode)) {
-            const currentItemIndex = this.computedList
+            const currentItemIndex = this.finalList
               .findIndex(item => item === this.edittingItemObj);
 
-            if (event.code === 'ArrowUp' && this.computedList[currentItemIndex - 1]) {
-              this._setItemForEditting(this.computedList[currentItemIndex - 1]);
-            } else if (event.code === 'ArrowDown' && this.computedList[currentItemIndex + 1]) {
-              this._setItemForEditting(this.computedList[currentItemIndex + 1]);
+            if (event.code === 'ArrowUp' && this.finalList[currentItemIndex - 1]) {
+              this._setItemForEditting(this.finalList[currentItemIndex - 1]);
+            } else if (event.code === 'ArrowDown' && this.finalList[currentItemIndex + 1]) {
+              this._setItemForEditting(this.finalList[currentItemIndex + 1]);
             }
           }
         }

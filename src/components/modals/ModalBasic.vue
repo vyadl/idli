@@ -24,24 +24,15 @@
 </template>
 
 <script>
-
 import { mapActions } from 'vuex';
 import { VueFinalModal } from 'vue-final-modal';
 
 export default {
   props: {
     name: String,
-    width: {
-      type: Number,
-      default: 500,
-    },
     title: {
       type: String,
       default: '',
-    },
-    isFooterShown: {
-      type: Boolean,
-      default: true,
     },
   },
   data: () => ({

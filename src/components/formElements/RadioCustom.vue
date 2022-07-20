@@ -80,7 +80,6 @@ export default {
       transition:
         background-color .3s .05s,
         color .2s .05s;
-s
       &:last-of-type {
         margin-right: 0;
       }
