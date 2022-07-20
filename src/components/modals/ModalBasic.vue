@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="`modal-basic ${globalTheme}-theme`"
-  >
+  <div :class="`modal-basic ${globalTheme}-theme`">
     <VueFinalModal
       v-model="show"
       :name="name"
@@ -49,14 +47,6 @@ export default {
   data: () => ({
     show: false,
   }),
-  // computed: {
-  //   ...mapGetters({
-  //     modalNameToShow: 'modalNameToShow',
-  //   }),
-  //   isShown() {
-  //     return this.name === this.modalNameToShow;
-  //   },
-  // },
   components: {
     VueFinalModal,
   },

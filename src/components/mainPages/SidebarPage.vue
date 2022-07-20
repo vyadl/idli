@@ -1,7 +1,10 @@
 <template>
   <div
     class="sidebar"
-    :class="`${isSidebarOpen ? 'shown' : ''} ${globalTheme}-theme`"
+    :class="[
+      { shown: isSidebarOpen },
+      `${globalTheme}-theme`,
+    ]"
   >
     <div
       class="add-item-button"

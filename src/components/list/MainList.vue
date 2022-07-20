@@ -38,7 +38,7 @@
         <masonry-wall
           :items="finalList"
           :column-width="200"
-          :gap="30"
+          :gap="0"
         >
           <template #default="{ item }">
             <ListItem

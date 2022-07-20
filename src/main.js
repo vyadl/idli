@@ -1,34 +1,32 @@
 import '@/scss/main.scss';
 import { createApp } from 'vue';
-import App from '@/components/App.vue';
-import store from '@/store/index';
 import { vfmPlugin } from 'vue-final-modal';
 import MasonryWall from '@yeger/vue-masonry-wall';
-import themes from '@/mixins/themes';
+import store from '@/store/index';
 import { initAxios } from '@/settings/axiosSettings';
+import themes from '@/mixins/themes';
+import App from '@/components/App.vue';
 
-export const app = createApp(App);
+const app = createApp(App);
 
 const { axios, apiBasePath } = initAxios(store);
 
-store.$conf = {
+store.$config = {
   axios,
   apiBasePath,
 };
-app.config.globalProperties.$conf = {
+app.config.globalProperties.$config = {
   axios,
   apiBasePath,
 };
 
 app.use(store);
 app.use(MasonryWall);
-app.mixin(themes);
 app.use(vfmPlugin({
   key: '$vfm',
   componentName: 'VueFinalModal',
   dynamicContainerName: 'ModalsContainer',
 }));
+app.mixin(themes);
 
 app.mount('#app');
-
-//  Vue.use(VModal);
