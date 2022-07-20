@@ -3,7 +3,7 @@ import { createApp } from 'vue';
 import App from '@/components/App.vue';
 import store from '@/store/index';
 import { vfmPlugin } from 'vue-final-modal';
-import VueMasonry from 'vue-masonry-css';
+import MasonryWall from '@yeger/vue-masonry-wall';
 import themes from '@/mixins/themes';
 import { initAxios } from '@/settings/axiosSettings';
 
@@ -21,7 +21,7 @@ app.config.globalProperties.$conf = {
 };
 
 app.use(store);
-app.use(VueMasonry);
+app.use(MasonryWall);
 app.mixin(themes);
 app.use(vfmPlugin({
   key: '$vfm',

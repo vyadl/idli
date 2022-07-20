@@ -35,16 +35,18 @@
       :style="styles"
     >
       <template v-if="mode === 'cards'">
-        <masonry
-          :cols="4"
-          :gutter="30"
+        <masonry-wall
+          :items="finalList"
+          :column-width="200"
+          :gap="30"
         >
-          <ListItem
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-          />
-        </masonry>
+          <template #default="{ item }">
+            <ListItem
+              :key="item.id"
+              :item="item"
+            />
+          </template>
+        </masonry-wall>
       </template>
       <template v-else>
         <ListItem
