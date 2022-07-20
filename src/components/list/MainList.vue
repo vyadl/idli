@@ -127,6 +127,7 @@ export default {
         this.finalList = this.computedList;
       },
       immediate: true,
+      deep: true,
     },
   },
   created() {

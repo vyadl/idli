@@ -1,10 +1,7 @@
 <template>
   <div
     class="sidebar"
-    :class="[
-      { shown: isSidebarOpen },
-      `${globalTheme}-theme`,
-    ]"
+    :class="`${isSidebarOpen ? 'shown' : ''} ${globalTheme}-theme`"
   >
     <div
       class="add-item-button"
@@ -101,7 +98,7 @@ export default {
       _closeSidebar: '_closeSidebar',
     }),
     openItemModal() {
-      this.$modal.show('itemModal');
+      this.$vfm.show('itemModal');
     },
     changeSidebarState() {
       this.isSidebarOpen

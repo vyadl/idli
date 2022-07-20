@@ -8,7 +8,7 @@
     </div>
     <textarea
       class="textarea"
-      :value="value"
+      :value="modelValue"
       :disabled="disabled"
       @input="input($event)"
     ></textarea>
@@ -19,15 +19,16 @@
 export default {
   props: {
     label: String,
-    value: String,
+    modelValue: String,
     disabled: {
       type: Boolean,
       default: false,
     },
   },
+  emits: ['update:modelValue'],
   methods: {
     input(event) {
-      this.$emit('input', event.target.value);
+      this.$emit('update:modelValue', event.target.value);
     },
   },
 };

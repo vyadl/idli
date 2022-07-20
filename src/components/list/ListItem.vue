@@ -69,7 +69,7 @@ export default {
       this._setItemForEditting(this.item);
       this.isItemFormInSidebar
         ? this._openSidebar('item')
-        : this.$modal.show('itemModal');
+        : this.$vfm.show('itemModal');
     },
     randomNumber(min, max) {
       return Math.floor(min + Math.random() * (max + 1 - min));

@@ -2,14 +2,14 @@ import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; //
 
 export default {
   async _signUp({ commit }, user) {
-    await this._vm.$axios.post(`${this._vm.$apiBasePath}auth/signup`, user);
+    await this.$conf.axios.post(`${this.$conf.apiBasePath}auth/signup`, user);
 
     commit('changeSidebarMode', 'sign in', { root: true });
   },
   async _signIn({ commit, dispatch }, user) {
     try {
-      const { data: responseUser } = await this._vm.$axios
-        .post(`${this._vm.$apiBasePath}auth/signin`, user);
+      const { data: responseUser } = await this.$conf.axios
+        .post(`${this.$conf.apiBasePath}auth/signin`, user);
 
       commit('signIn', responseUser);
       commit('changeSidebarMode', 'lists', { root: true });

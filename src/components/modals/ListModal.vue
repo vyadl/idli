@@ -14,6 +14,12 @@ import ListForm from '@/components/list/ListForm.vue';
 import { mapGetters } from 'vuex';
 
 export default {
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     ModalBasic,
     ListForm,

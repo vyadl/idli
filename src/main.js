@@ -1,18 +1,34 @@
 import '@/scss/main.scss';
-import Vue from 'vue';
+import { createApp } from 'vue';
 import App from '@/components/App.vue';
 import store from '@/store/index';
-import VModal from 'vue-js-modal';
+import { vfmPlugin } from 'vue-final-modal';
 import VueMasonry from 'vue-masonry-css';
 import themes from '@/mixins/themes';
+import { initAxios } from '@/settings/axiosSettings';
 
-Vue.use(VModal);
-Vue.use(VueMasonry);
-Vue.mixin(themes);
+export const app = createApp(App);
 
-new Vue({
-  store,
-  render: h => h(App),
-}).$mount('#app');
+const { axios, apiBasePath } = initAxios(store);
 
-Vue.config.devtools = true;
+store.$conf = {
+  axios,
+  apiBasePath,
+};
+app.config.globalProperties.$conf = {
+  axios,
+  apiBasePath,
+};
+
+app.use(store);
+app.use(VueMasonry);
+app.mixin(themes);
+app.use(vfmPlugin({
+  key: '$vfm',
+  componentName: 'VueFinalModal',
+  dynamicContainerName: 'ModalsContainer',
+}));
+
+app.mount('#app');
+
+//  Vue.use(VModal);

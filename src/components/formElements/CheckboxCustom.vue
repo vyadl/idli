@@ -29,10 +29,6 @@
 
 <script>
 export default {
-  model: {
-    prop: 'modelValue',
-    event: 'change',
-  },
   props: {
     label: String,
     styleType: {
@@ -58,6 +54,7 @@ export default {
       default: false,
     },
   },
+  emits: ['update:modelValue'],
   computed: {
     isChecked() {
       if (this.modelValue instanceof Array) {
@@ -80,9 +77,9 @@ export default {
           newValue.splice(newValue.indexOf(this.value), 1);
         }
 
-        this.$emit('change', newValue);
+        this.$emit('update:modelValue', newValue);
       } else {
-        this.$emit('change', isChecked ? this.trueValue : this.falseValue);
+        this.$emit('update:modelValue', isChecked ? this.trueValue : this.falseValue);
       }
     },
   },

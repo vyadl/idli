@@ -27,10 +27,6 @@
 
 <script>
 export default {
-  model: {
-    prop: 'modelValue',
-    event: 'change',
-  },
   props: {
     label: String,
     small: {
@@ -46,6 +42,7 @@ export default {
       default: false,
     },
   },
+  emits: ['update:modelValue', 'click'],
   computed: {
     isChecked() {
       return this.modelValue === this.value;
@@ -53,7 +50,7 @@ export default {
   },
   methods: {
     change() {
-      this.$emit('change', this.value);
+      this.$emit('update:modelValue', this.value);
     },
     click() {
       this.$emit('click');
@@ -83,7 +80,7 @@ export default {
       transition:
         background-color .3s .05s,
         color .2s .05s;
-
+s
       &:last-of-type {
         margin-right: 0;
       }

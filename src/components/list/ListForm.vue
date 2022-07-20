@@ -155,7 +155,7 @@ export default {
       this.$refs.listTitle.focus();
     }
   },
-  destroyed() {
+  unmounted() {
     this.resetData();
   },
   methods: {
@@ -166,7 +166,7 @@ export default {
       _setListForEditting: '_setListForEditting',
     }),
     closeListModal() {
-      this.$modal.hide('listModal');
+      this.$vfm.hide('listModal');
     },
     resetData() {
       this._setListForEditting(null);
