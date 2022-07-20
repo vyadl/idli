@@ -9,7 +9,7 @@
     <input
       class="input"
       :type="type"
-      :value="value"
+      :value="modelValue"
       :disabled="disabled"
       :required="required"
       @input="input($event)"
@@ -29,7 +29,7 @@ export default {
       type: String,
       default: 'text',
     },
-    value: String,
+    modelValue: String,
     disabled: {
       type: Boolean,
       default: false,
@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     input(event) {
-      this.$emit('input', event.target.value);
+      this.$emit('update:modelValue', event.target.value);
     },
     focus() {
       this.$refs.input.focus();

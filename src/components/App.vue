@@ -12,8 +12,8 @@
     <EnterScreen v-if="!isLoggedIn"/>
     <MainList v-else />
     <SidebarPage />
-    <ListModal />
-    <ItemModal />
+    <ListModal/>
+    <ItemModal/>
     <AppNotification v-if="notification" />
   </div>
 </template>
@@ -25,7 +25,6 @@ import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
-import { initAxios } from '@/settings/axiosSettings';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
 import { mapGetters, mapActions } from 'vuex';
@@ -49,7 +48,6 @@ export default {
   },
   created() {
     checkAppVersion();
-    initAxios();
 
     this._setUserFromLocalStorage();
     this._setSettingsFromLocalStorage();
@@ -64,7 +62,7 @@ export default {
   watch: {
     modalNameToShow: function modalNameToShowHandler() {
       if (this.modalNameToShow) {
-        this.$modal.show(this.modalNameToShow);
+        this.$vfm.show(this.modalNameToShow);
       }
     },
   },

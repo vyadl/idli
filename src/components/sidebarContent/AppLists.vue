@@ -65,9 +65,10 @@ export default {
       _fetchListById: '_fetchListById',
       _setListForEditting: '_setListForEditting',
       _decreaseRequestsNumber: '_decreaseRequestsNumber',
+      _setModalNameToShow: '_setModalNameToShow',
     }),
     openListModal() {
-      this.$modal.show('listModal');
+      this._setModalNameToShow('listModal');
     },
     setListForEditting(list) {
       this._setListForEditting(list);
@@ -83,7 +84,7 @@ export default {
         this._decreaseRequestsNumber();
       }
 
-      const source = this.$axios.CancelToken.source();
+      const source = this.$config.axios.CancelToken.source();
 
       this.listRequests.push(source);
       this._fetchListById({ id, cancelToken: source.token })

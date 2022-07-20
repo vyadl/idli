@@ -4,7 +4,7 @@
       {{ item.title }}
     </div>
     <div class="deleted-at">
-      deleted at {{ item.deletedAt | getFormattedDate }}
+      deleted at {{ getFormattedDate(item.deletedAt) }}
     </div>
     <div class="buttons">
       <ButtonText
@@ -42,7 +42,17 @@ export default {
       default: false,
     },
   },
-  filters: {
+  components: {
+    ButtonText,
+  },
+  emits: ['restore', 'delete'],
+  methods: {
+    restore() {
+      this.$emit('restore');
+    },
+    remove() {
+      this.$emit('delete');
+    },
     getFormattedDate(val) {
       const options = {
         year: 'numeric',
@@ -55,17 +65,6 @@ export default {
       };
 
       return new Intl.DateTimeFormat('en', options).format(new Date(val));
-    },
-  },
-  components: {
-    ButtonText,
-  },
-  methods: {
-    restore() {
-      this.$emit('restore');
-    },
-    remove() {
-      this.$emit('delete');
     },
   },
 };

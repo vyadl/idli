@@ -35,16 +35,18 @@
       :style="styles"
     >
       <template v-if="mode === 'cards'">
-        <masonry
-          :cols="4"
-          :gutter="30"
+        <masonry-wall
+          :items="finalList"
+          :column-width="200"
+          :gap="20"
         >
-          <ListItem
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-          />
-        </masonry>
+          <template #default="{ item }">
+            <ListItem
+              :key="item.id"
+              :item="item"
+            />
+          </template>
+        </masonry-wall>
       </template>
       <template v-else>
         <ListItem
@@ -68,9 +70,6 @@ export default {
     ListItem,
     ButtonText,
   },
-  data: () => ({
-    finalList: [],
-  }),
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
@@ -116,17 +115,8 @@ export default {
 
       return shuffleArray(this.filteredList);
     },
-    computedList() {
+    finalList() {
       return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
-    },
-  },
-  watch: {
-    computedList: {
-      handler: function computedListHandler() {
-        this.finalList = [];
-        this.finalList = this.computedList;
-      },
-      immediate: true,
     },
   },
   created() {
@@ -148,13 +138,13 @@ export default {
             && this.edittingItemObj
             && this.isItemFormInSidebar
             && !['cloud', 'stars'].includes(this.mode)) {
-            const currentItemIndex = this.computedList
+            const currentItemIndex = this.finalList
               .findIndex(item => item === this.edittingItemObj);
 
-            if (event.code === 'ArrowUp' && this.computedList[currentItemIndex - 1]) {
-              this._setItemForEditting(this.computedList[currentItemIndex - 1]);
-            } else if (event.code === 'ArrowDown' && this.computedList[currentItemIndex + 1]) {
-              this._setItemForEditting(this.computedList[currentItemIndex + 1]);
+            if (event.code === 'ArrowUp' && this.finalList[currentItemIndex - 1]) {
+              this._setItemForEditting(this.finalList[currentItemIndex - 1]);
+            } else if (event.code === 'ArrowDown' && this.finalList[currentItemIndex + 1]) {
+              this._setItemForEditting(this.finalList[currentItemIndex + 1]);
             }
           }
         }

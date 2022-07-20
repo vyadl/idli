@@ -115,10 +115,10 @@ export default {
       isItemFormInSidebar: 'isItemFormInSidebar',
     }),
     isAnyTagExist() {
-      return !!this.currentListTags.length;
+      return !!this.currentListTags?.length;
     },
     isAnyCategoryExist() {
-      return !!this.currentListCategories.length;
+      return !!this.currentListCategories?.length;
     },
   },
   watch: {
@@ -136,7 +136,7 @@ export default {
       this.$refs.itemTitle.focus();
     }
   },
-  destroyed() {
+  unmounted() {
     this.resetData();
   },
   methods: {
@@ -148,7 +148,7 @@ export default {
       _closeSidebar: '_closeSidebar',
     }),
     closeItemModal() {
-      this.$modal.hide('itemModal');
+      this.$vfm.hide('itemModal');
     },
     resetData() {
       this._setItemForEditting(null);

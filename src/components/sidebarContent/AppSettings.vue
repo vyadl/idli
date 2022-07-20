@@ -53,7 +53,7 @@
     <div class="about">
       <ButtonText
         style-type="underline"
-        @click="$modal.show('aboutModal')"
+        @click="$vfm.show('aboutModal')"
         text="about idli"
       />
     </div>

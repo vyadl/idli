@@ -69,7 +69,7 @@ export default {
       this._setItemForEditting(this.item);
       this.isItemFormInSidebar
         ? this._openSidebar('item')
-        : this.$modal.show('itemModal');
+        : this.$vfm.show('itemModal');
     },
     randomNumber(min, max) {
       return Math.floor(min + Math.random() * (max + 1 - min));
@@ -112,7 +112,7 @@ export default {
 
     &.cards-mode {
       width: 100%;
-      margin-bottom: 30px;
+      margin-bottom: 0;
       padding: 10px 10px;
       border: 2px solid map-get($colors, 'black');
       border-radius: 3px;

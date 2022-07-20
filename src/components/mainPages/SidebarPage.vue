@@ -101,7 +101,7 @@ export default {
       _closeSidebar: '_closeSidebar',
     }),
     openItemModal() {
-      this.$modal.show('itemModal');
+      this.$vfm.show('itemModal');
     },
     changeSidebarState() {
       this.isSidebarOpen

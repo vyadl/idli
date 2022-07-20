@@ -23,13 +23,13 @@ export default {
   // lists
 
   async _fetchListsForUser({ commit, dispatch }) {
-    const { data: responseLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists`);
+    const { data: responseLists } = await this.$config.axios.get(`${this.$config.apiBasePath}lists`);
 
     commit('setLists', responseLists);
     dispatch('_setListIdFromLocalStorage');
   },
   async _fetchTestLists({ commit }) {
-    const { data: responseLists } = await this._vm.$axios.get('/test_data.json');
+    const { data: responseLists } = await this.$config.axios.get('/test_data.json');
 
     commit('setTestLists', responseLists);
   },
@@ -42,21 +42,21 @@ export default {
       }
     }
 
-    const { data: responseList } = await this._vm.$axios
-      .get(`${this._vm.$apiBasePath}list/${id}`, { cancelToken });
+    const { data: responseList } = await this.$config.axios
+      .get(`${this.$config.apiBasePath}list/${id}`, { cancelToken });
 
     commit('updateList', responseList);
     commit('setCurrentItems', responseList.items);
   },
   async _fetchCurrentItems({ commit, getters }) {
-    const { data: responseList } = await this._vm.$axios
-      .get(`${this._vm.$apiBasePath}list/${getters.currentListId}`);
+    const { data: responseList } = await this.$config.axios
+      .get(`${this.$config.apiBasePath}list/${getters.currentListId}`);
 
     commit('setCurrentItems', responseList.items);
   },
   async _addList({ commit, dispatch }, list) {
-    const { data: responseList } = await this._vm.$axios
-      .post(`${this._vm.$apiBasePath}list/add`, list);
+    const { data: responseList } = await this.$config.axios
+      .post(`${this.$config.apiBasePath}list/add`, list);
 
     commit('addList', responseList);
     dispatch('_setCurrentListId', responseList.id);
@@ -68,8 +68,8 @@ export default {
     categories,
     items,
   }) {
-    const { data: responseList } = await this._vm.$axios
-      .post(`${this._vm.$apiBasePath}list/add`, {
+    const { data: responseList } = await this.$config.axios
+      .post(`${this.$config.apiBasePath}list/add`, {
         title,
         isPrivate,
         tags,
@@ -79,8 +79,8 @@ export default {
     commit('addList', responseList);
     dispatch('_setCurrentListId', responseList.id);
 
-    const { data: responseItems } = await this._vm.$axios
-      .post(`${this._vm.$apiBasePath}items/add-many/${responseList.id}`, { items });
+    const { data: responseItems } = await this.$config.axios
+      .post(`${this.$config.apiBasePath}items/add-many/${responseList.id}`, { items });
 
     commit('addItems', responseItems);
     commit('setCurrentItems', responseItems);
@@ -92,8 +92,8 @@ export default {
     categories,
     id,
   }) {
-    const { data: responseList } = await this._vm.$axios
-      .patch(`${this._vm.$apiBasePath}list/update/${id}`, {
+    const { data: responseList } = await this.$config.axios
+      .patch(`${this.$config.apiBasePath}list/update/${id}`, {
         title,
         isPrivate,
         tags,
@@ -104,7 +104,7 @@ export default {
     commit('setCurrentItems', responseList.items);
   },
   async _deleteList({ commit, dispatch, getters }, id) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/delete/${id}`);
+    await this.$config.axios.delete(`${this.$config.apiBasePath}list/delete/${id}`);
 
     if (getters.currentListObj?.id === id) {
       if (getters.lists.length > 1) {
@@ -140,8 +140,8 @@ export default {
 
   async _addItem({ commit, getters }, item) {
     const listId = getters.currentListObj.id;
-    const { data: responseItem } = await this._vm.$axios
-      .post(`${this._vm.$apiBasePath}item/add/${listId}`, item);
+    const { data: responseItem } = await this.$config.axios
+      .post(`${this.$config.apiBasePath}item/add/${listId}`, item);
 
     commit('addItem', responseItem);
   },
@@ -153,8 +153,8 @@ export default {
     listId,
     id,
   }) {
-    const { data: responseItem } = await this._vm.$axios
-      .patch(`${this._vm.$apiBasePath}item/update/${listId}/${id}`, {
+    const { data: responseItem } = await this.$config.axios
+      .patch(`${this.$config.apiBasePath}item/update/${listId}/${id}`, {
         title,
         details,
         tags,
@@ -165,7 +165,7 @@ export default {
     dispatch('_setItemForEditting', null);
   },
   async _deleteItem({ commit, dispatch }, item) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/delete/${item.listId}/${item.id}`);
+    await this.$config.axios.delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`);
 
     commit('deleteItem', item.id);
     dispatch('_setItemForEditting', null);
@@ -255,19 +255,19 @@ export default {
   // bin
 
   async _fetchDeletedLists({ commit }) {
-    const { data: deletedLists } = await this._vm.$axios.get(`${this._vm.$apiBasePath}lists/deleted`);
+    const { data: deletedLists } = await this.$config.axios.get(`${this.$config.apiBasePath}lists/deleted`);
 
     commit('setDeletedLists', deletedLists);
   },
 
   async _fetchDeletedItems({ commit }) {
-    const { data: deletedItems } = await this._vm.$axios.get(`${this._vm.$apiBasePath}items/deleted`);
+    const { data: deletedItems } = await this.$config.axios.get(`${this.$config.apiBasePath}items/deleted`);
 
     commit('setDeletedItems', deletedItems);
   },
 
   async _restoreList({ dispatch, getters }, listId) {
-    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore/${listId}`);
+    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`);
 
     await dispatch('_fetchingAfterBinActions', false);
 
@@ -279,7 +279,7 @@ export default {
   },
 
   async _restoreItem({ dispatch }, { listId, itemId }) {
-    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore/${listId}/${itemId}`);
+    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`);
 
     dispatch('_fetchingAfterBinActions', true);
 
@@ -287,25 +287,25 @@ export default {
   },
 
   async _hardDeleteList({ dispatch }, listId) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/hard-delete/${listId}`);
+    await this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`);
 
     dispatch('_fetchDeletedLists');
   },
 
   async _hardDeleteItem({ dispatch }, { listId, itemId }) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete/${listId}/${itemId}`);
+    await this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`);
 
     dispatch('_fetchDeletedItems');
   },
 
   async _hardDeleteAllItems({ dispatch }) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}item/hard-delete-all`);
+    await this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`);
 
     dispatch('_fetchDeletedItems');
   },
 
   async _restoreAllItems({ dispatch }) {
-    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}item/restore-all`);
+    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`);
 
     dispatch('_fetchingAfterBinActions', true);
 
@@ -313,13 +313,13 @@ export default {
   },
 
   async _hardDeleteAllLists({ dispatch }) {
-    await this._vm.$axios.delete(`${this._vm.$apiBasePath}list/hard-delete-all`);
+    await this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`);
 
     dispatch('_fetchDeletedLists');
   },
 
   async _restoreAllLists({ dispatch, getters }) {
-    const res = await this._vm.$axios.patch(`${this._vm.$apiBasePath}list/restore-all`);
+    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`);
 
     await dispatch('_fetchingAfterBinActions', false);
 
