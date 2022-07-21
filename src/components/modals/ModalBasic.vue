@@ -4,7 +4,8 @@
       v-model="show"
       :name="name"
       height="auto"
-      scrollable
+      :z-index="50"
+      :esc-to-close="true"
       transition="modal"
       @closed="_setModalNameToShow('')"
     >
@@ -56,6 +57,10 @@ export default {
       left: auto;
       right: 0;
       width: 100vw;
+    }
+
+    .vfm__container {
+      overflow: auto;
     }
 
     .vfm__overlay {
