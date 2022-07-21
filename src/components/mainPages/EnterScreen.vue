@@ -6,8 +6,8 @@
   >
     <img
       class="logo"
-      src="/images/logo.svg"
       alt="logo"
+      :src="globalTheme === 'default' ? '/images/black-logo.svg' : '/images/white-logo.svg'"
     >
     <div class="buttons-container">
       <ButtonText
