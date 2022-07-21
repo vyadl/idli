@@ -43,14 +43,16 @@ export default {
       if (['cloud', 'stars'].includes(this.mode)) {
         const windowWidth = document.documentElement.clientWidth;
         const windowHeight = document.documentElement.clientHeight;
+        const translateX = Math.floor(Math.random() * (windowWidth - 20)) + 10;
+        const translateY = Math.floor(Math.random() * (windowHeight - 20)) + 10;
 
         const scaleStyle = `scale(${Math.floor(Math.random() * (20 - 5) + 5) / 10})`;
         const rotateStyle = `rotate(${Math.floor(Math.random() * 40 - 20)}deg)`;
         const translateStyle = `translate(
-          ${Math.floor(Math.random() * (windowWidth - 70 - 5) + 5)}px, 
-          ${Math.floor(Math.random() * windowHeight)}px)`;
+          calc(${translateX}px - 50%),
+          calc(${translateY}px - 50%))`;
 
-        styles = { transform: `${scaleStyle} ${rotateStyle} ${translateStyle}` };
+        styles = { transform: `${translateStyle} ${scaleStyle} ${rotateStyle}` };
       } else if (this.listAlign === 'random') {
         const alignStyles = ['flex-start', 'center', 'flex-end'];
 
