@@ -68,6 +68,10 @@ export default {
     letter-spacing: .3px;
     cursor: pointer;
 
+    &:disabled {
+      pointer-events: none;
+    }
+
     &.bordered {
       border: 2px solid map-get($colors, 'black');
       border-radius: 3px;

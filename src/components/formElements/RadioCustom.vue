@@ -1,7 +1,10 @@
 <template>
   <label
     class="radio-custom"
-    :class="`${globalTheme}-theme`"
+    :class="[
+      `${globalTheme}-theme`,
+      { disabled },
+    ]"
   >
     <input
       class="input"
@@ -66,6 +69,10 @@ export default {
     margin-bottom: 10px;
     margin-right: 7px;
     cursor: pointer;
+
+    &.disabled {
+      pointer-events: none;
+    }
 
     .input {
       display: none;

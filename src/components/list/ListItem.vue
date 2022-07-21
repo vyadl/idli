@@ -157,6 +157,18 @@ export default {
       border-radius: 50%;
       background-color: map-get($colors, 'black');
 
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 8px;
+        min-height: 8px;
+        width: 250%;
+        height: 250%;
+      }
+
       &:hover {
         .item-title {
           z-index: 2;

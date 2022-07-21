@@ -7,7 +7,8 @@
       :z-index="50"
       :esc-to-close="true"
       transition="modal"
-      @closed="_setModalNameToShow('')"
+      @before-open="open"
+      @closed="close"
     >
       <header
         class="header"
@@ -18,7 +19,11 @@
         </h1>
       </header>
       <main class="main">
-        <slot />
+        <Transition name="fade">
+          <template v-if="showContent">
+            <slot />
+          </template>
+        </Transition>
       </main>
     </VueFinalModal>
   </div>
@@ -38,6 +43,7 @@ export default {
   },
   data: () => ({
     show: false,
+    showContent: false,
   }),
   components: {
     VueFinalModal,
@@ -46,6 +52,15 @@ export default {
     ...mapActions({
       _setModalNameToShow: '_setModalNameToShow',
     }),
+    open() {
+      this.showContent = true;
+    },
+    close() {
+      this._setModalNameToShow('');
+      setTimeout(() => {
+        this.showContent = false;
+      }, 300);
+    },
   },
 };
 </script>
@@ -76,6 +91,14 @@ export default {
       left: 50%;
       top: 30px;
       transform: translateX(-50%);
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 100%;
+        width: 100%;
+        height: 100px;
+      }
     }
 
     .header {

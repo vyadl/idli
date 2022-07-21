@@ -7,6 +7,10 @@
     ]"
   >
     <div
+      class="intersection-observer"
+      ref="intersectionObserver"
+    ></div>
+    <div
       class="add-item-button"
       v-if="isLoggedIn && currentListObj && !isFocusOnList"
     >
@@ -94,6 +98,13 @@ export default {
         : ['sign up', 'sign in'];
     },
   },
+  mounted() {
+    this.$refs.intersectionObserver.addEventListener('mouseover', () => {
+      if (!this.isSidebarOpen) {
+        this._openSidebar(this.sidebarMode ? this.sidebarMode : 'lists');
+      }
+    });
+  },
   methods: {
     ...mapActions({
       _setItemForEditting: '_setItemForEditting',
@@ -140,6 +151,14 @@ export default {
       .state-button {
         transform: translateX(-110%) rotate(180deg);
       }
+    }
+
+    .intersection-observer {
+      position: absolute;
+      height: 100vh;
+      width: 1px;
+      left: -1px;
+      z-index: 20;
     }
 
     .sidebar-content {
