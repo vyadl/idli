@@ -173,8 +173,6 @@ export default {
     }
 
     .button-container {
-      position: relative;
-      z-index: 100;
       height: 30px;
     }
 
