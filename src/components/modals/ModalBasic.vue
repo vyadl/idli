@@ -1,5 +1,7 @@
 <template>
-  <div :class="`modal-basic ${globalTheme}-theme`">
+  <div 
+    :class="`modal-basic ${globalTheme}-theme`"
+  >
     <VueFinalModal
       v-model="show"
       :name="name"
@@ -7,6 +9,10 @@
       scrollable
       transition="modal"
       @closed="_setModalNameToShow('')"
+      :style="`
+        --width: ${width}px;
+        --top: ${top}px;
+      `"
     >
       <header
         class="header"
@@ -33,6 +39,14 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+    width: {
+      type: Number,
+      default: 500,
+    },
+    top: {
+      type: Number,
+      default: 30,
     },
   },
   data: () => ({
@@ -66,10 +80,10 @@ export default {
       padding: 28px;
       box-shadow: 0 10px 90px -30px map-get($colors, 'black');
       background-color: map-get($colors, 'white');
-      width: 500px;
+      width: var(--width);
       position: absolute;
       left: 50%;
-      top: 30px;
+      top: var(--top);
       transform: translateX(-50%);
     }
 

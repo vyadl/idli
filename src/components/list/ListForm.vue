@@ -118,6 +118,7 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
+import { ask } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 
@@ -249,18 +250,20 @@ export default {
           });
       }
     },
-    deleteList() {
-      this.isRequestProcessing = true;
-      this._deleteList(this.list.id)
-        .then(() => {
-          this.closeListModal();
-        })
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+    async deleteList() {
+      if (await ask()) {
+        this.isRequestProcessing = true;
+        this._deleteList(this.list.id)
+          .then(() => {
+            this.closeListModal();
+          })
+          .catch(error => {
+            this.errorMessage = error.response.data.message;
+          })
+          .finally(() => {
+            this.isRequestProcessing = false;
+          });
+      }
     },
   },
 };
