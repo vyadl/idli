@@ -11,6 +11,13 @@
           name="sorting"
           @change="_setSorting(title)"
         />
+        <ButtonText
+          v-if="sorting === 'shuffled'"
+          class="randomize"
+          text="randomize!"
+          style-type="underline"
+          @click="_switchShuffleTrigger"
+        />
       </div>
     </SidebarCard>
     <SidebarCard title="mode">
@@ -70,6 +77,7 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -77,6 +85,7 @@ export default {
     SidebarCard,
     RadioCustom,
     CheckboxCustom,
+    ButtonText,
   },
   data: () => ({
     sortingTitles: ['default', 'shuffled'],
@@ -123,6 +132,7 @@ export default {
       _setTheme: '_setTheme',
       _setListAlign: '_setListAlign',
       _changeItemDetailsShowingMode: '_changeItemDetailsShowingMode',
+      _switchShuffleTrigger: '_switchShuffleTrigger',
     }),
   },
 };
@@ -131,10 +141,17 @@ export default {
 <style lang="scss">
   .list-visualization {
     .buttons-container {
+      position: relative;
       display: flex;
       flex-wrap: wrap;
       width: 100%;
       margin-bottom: 10px;
+    }
+    .randomize {
+      position: absolute;
+      right: 0;
+      bottom: 100%;
+      font-size: 11px;
     }
   }
 </style>

@@ -176,6 +176,7 @@ export default {
       position: relative;
       z-index: 100;
       height: 30px;
+      width: 100px;
     }
 
     .items-container {
