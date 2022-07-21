@@ -8,6 +8,7 @@
     </div>
     <textarea
       class="textarea"
+      rows="4"
       :value="modelValue"
       :disabled="disabled"
       @input="input($event)"
