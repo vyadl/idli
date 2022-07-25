@@ -122,6 +122,10 @@ export default {
     state.modalNameToShow = name;
   },
 
+  setModalTitle(state, title) {
+    state.modalTitle = title;
+  },
+
   // requests
 
   increaseRequestsNumber(state) {

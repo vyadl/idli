@@ -51,6 +51,7 @@ export default {
 
   // modals
   modalNameToShow: state => state.modalNameToShow,
+  modalTitle: state => state.modalTitle,
 
   // requests
   requestsNumber: state => state.requestsNumber,

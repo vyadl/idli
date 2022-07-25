@@ -1,6 +1,10 @@
 <template>
   <div 
     :class="`modal-basic ${globalTheme}-theme`"
+    :style="`
+        --modalWidth: ${width}px;
+        --modalTop: ${top}px;
+      `"
   >
     <VueFinalModal
       v-model="show"
@@ -9,10 +13,6 @@
       scrollable
       transition="modal"
       @closed="_setModalNameToShow('')"
-      :style="`
-        --width: ${width}px;
-        --top: ${top}px;
-      `"
     >
       <header
         class="header"
@@ -80,10 +80,10 @@ export default {
       padding: 28px;
       box-shadow: 0 10px 90px -30px map-get($colors, 'black');
       background-color: map-get($colors, 'white');
-      width: var(--width);
+      width: var(--modalWidth);
       position: absolute;
       left: 50%;
-      top: var(--top);
+      top: var(--modalTop);
       transform: translateX(-50%);
     }
 

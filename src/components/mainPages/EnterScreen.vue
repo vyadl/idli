@@ -7,7 +7,7 @@
     <img
       class="logo"
       alt="logo"
-      :src="globalTheme === 'default' ? '/images/black-logo.svg' : '/images/white-logo.svg'"
+      :src="logoSrc"
     >
     <div class="buttons-container">
       <ButtonText
@@ -39,6 +39,10 @@ export default {
     ...mapGetters({
       isSidebarOpen: 'isSidebarOpen',
     }),
+    logoSrc() {
+      return this.globalTheme === 'default' 
+        ? '/images/black-logo.svg' : '/images/white-logo.svg';
+    },
   },
   methods: {
     ...mapActions({

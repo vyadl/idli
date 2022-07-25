@@ -2,7 +2,7 @@
   <ModalBasic
     class="confirmation-modal"
     name="confirmationModal"
-    :title="`are you sure you want to delete list  \'${edittingListObj?.title}\' ?`"
+    :title="modalTitle"
     :width="400"
     :top="90"
   >
@@ -25,7 +25,7 @@
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { confirmationPromise } from '@/settings/confirmationPromise';
-import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
   components: {
@@ -34,8 +34,8 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      edittingListObj: 'edittingListObj',
+    ...mapState({
+      modalTitle: 'modalTitle',
     }),
   },
 

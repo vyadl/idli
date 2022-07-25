@@ -118,7 +118,7 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import { ask } from '@/settings/confirmationPromise';
+import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 
@@ -140,6 +140,10 @@ export default {
       lists: 'lists',
       edittingListObj: 'edittingListObj',
     }),
+    deleteListModalTitle() {
+      return `are you sure you want to delete list  
+        '${this.edittingListObj?.title}' ?`;
+    },
   },
   watch: {
     edittingListObj: {
@@ -251,7 +255,7 @@ export default {
       }
     },
     async deleteList() {
-      if (await ask()) {
+      if (await isConfirmed(this.deleteListModalTitle)) {
         this.isRequestProcessing = true;
         this._deleteList(this.list.id)
           .then(() => {

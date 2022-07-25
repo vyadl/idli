@@ -63,7 +63,7 @@ export default {
     }
   },
   watch: {
-    modalNameToShow: function modalNameToShowHandler() {
+    modalNameToShow() {
       if (this.modalNameToShow) {
         this.$vfm.show(this.modalNameToShow);
       }
