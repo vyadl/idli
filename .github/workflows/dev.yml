@@ -24,7 +24,3 @@ jobs:
         script_stop: true
         script: |
           source source /home/vyadl/nodevenv/dev.idli/14/bin/activate && cd /home/vyadl/dev.idli
-          git checkout dev
-          git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" dev
-          npm install
-          npm run build
