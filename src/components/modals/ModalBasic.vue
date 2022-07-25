@@ -1,9 +1,8 @@
 <template>
   <div :class="`modal-basic ${globalTheme}-theme`">
     <VueFinalModal
-      v-model="show"
+      v-model="showModal"
       :name="name"
-      height="auto"
       :z-index="50"
       :esc-to-close="true"
       transition="modal"
@@ -20,7 +19,7 @@
       </header>
       <main class="main">
         <Transition name="fade">
-          <template v-if="showContent">
+          <template v-if="showInner">
             <slot />
           </template>
         </Transition>
@@ -42,8 +41,8 @@ export default {
     },
   },
   data: () => ({
-    show: false,
-    showContent: false,
+    showModal: false,
+    showInner: false,
   }),
   components: {
     VueFinalModal,
@@ -53,12 +52,12 @@ export default {
       _setModalNameToShow: '_setModalNameToShow',
     }),
     open() {
-      this.showContent = true;
+      this.showInner = true;
     },
     close() {
       this._setModalNameToShow('');
       setTimeout(() => {
-        this.showContent = false;
+        this.showInner = false;
       }, 300);
     },
   },

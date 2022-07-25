@@ -7,8 +7,8 @@
     ]"
   >
     <div
-      class="intersection-observer"
-      ref="intersectionObserver"
+      class="edge-move-catcher"
+      ref="edgeMoveCatcher"
     ></div>
     <div
       class="add-item-button"
@@ -99,7 +99,7 @@ export default {
     },
   },
   mounted() {
-    this.$refs.intersectionObserver.addEventListener('mouseover', () => {
+    this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
         this._openSidebar(this.sidebarMode ? this.sidebarMode : 'lists');
       }
@@ -153,12 +153,12 @@ export default {
       }
     }
 
-    .intersection-observer {
+    .edge-move-catcher {
       position: absolute;
+      z-index: 20;
       height: 100vh;
       width: 1px;
       left: -1px;
-      z-index: 20;
     }
 
     .sidebar-content {
@@ -190,8 +190,8 @@ export default {
 
       &::before {
         content: '';
-        z-index: -1;
         position: absolute;
+        z-index: -1;
         top: 0;
         left: 0;
         width: 100%;

@@ -14,15 +14,16 @@ export const initAxios = function initAxios(store) {
       return response;
     },
     error => {
-      store.commit('decreaseRequestsNumber');
-
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
+      } else {
+        store.commit('decreaseRequestsNumber');
       }
 
       if (error.response?.data?.message === 'Invalid JWT Token') {
         store.dispatch('auth/_logOut');
         store.dispatch('_openSidebar', 'sign in');
+
         throw new Error('Invalid JWT Token');
       }
 

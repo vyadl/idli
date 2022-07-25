@@ -70,6 +70,7 @@ export default {
 
     &:disabled {
       pointer-events: none;
+      color: map-get($colors, 'gray-light');
     }
 
     &.bordered {
@@ -93,13 +94,7 @@ export default {
       }
 
       &:disabled {
-        pointer-events: none;
         border-color: map-get($colors, 'gray-light');
-        color: map-get($colors, 'gray-light');
-
-        &:hover {
-          background-color: transparent;
-        }
       }
     }
 
@@ -115,13 +110,8 @@ export default {
         font-size: 11px;
       }
 
-      &:hover,
-      &:disabled {
+      &:hover {
         color: map-get($colors, 'gray-light');
-      }
-
-      &:disabled {
-        pointer-events: none;
       }
     }
 
@@ -138,6 +128,10 @@ export default {
     }
 
     &.inverted-theme {
+      &:disabled {
+        color: map-get($colors, 'gray-dark');
+      }
+
       &.bordered {
         border-color: map-get($colors, 'white');
         background-color: map-get($colors, 'black');
@@ -150,7 +144,6 @@ export default {
         }
 
         &:disabled {
-          pointer-events: none;
           border-color: map-get($colors, 'gray-dark');
           color: map-get($colors, 'gray-dark');
         }
@@ -159,13 +152,8 @@ export default {
       &.underline {
         color: map-get($colors, 'gray-light');
 
-        &:hover,
-        &:disabled {
+        &:hover {
           color: map-get($colors, 'gray-dark');
-        }
-
-        &:disabled {
-          pointer-events: none;
         }
       }
 
