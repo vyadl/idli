@@ -140,10 +140,6 @@ export default {
       lists: 'lists',
       edittingListObj: 'edittingListObj',
     }),
-    deleteListModalTitle() {
-      return `are you sure you want to delete list  
-        '${this.edittingListObj?.title}' ?`;
-    },
   },
   watch: {
     edittingListObj: {
@@ -255,7 +251,10 @@ export default {
       }
     },
     async deleteList() {
-      if (await isConfirmed(this.deleteListModalTitle)) {
+      const confirmationModalTitle = `are you sure you want to delete list  
+        '${this.edittingListObj?.title}' ?`;
+
+      if (await isConfirmed(confirmationModalTitle)) {
         this.isRequestProcessing = true;
         this._deleteList(this.list.id)
           .then(() => {

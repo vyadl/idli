@@ -2,7 +2,7 @@
   <ModalBasic
     class="confirmation-modal"
     name="confirmationModal"
-    :title="modalTitle"
+    :title="confirmationModalTitle"
     :width="400"
     :top="90"
   >
@@ -35,7 +35,7 @@ export default {
 
   computed: {
     ...mapState({
-      modalTitle: 'modalTitle',
+      confirmationModalTitle: 'confirmationModalTitle',
     }),
   },
 

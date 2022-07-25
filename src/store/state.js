@@ -32,6 +32,6 @@ export default {
     text: '',
   },
   modalNameToShow: '',
-  modalTitle: null,
+  confirmationModalTitle: '',
   requestsNumber: 0,
 };
