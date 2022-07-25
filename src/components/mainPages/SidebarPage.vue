@@ -7,6 +7,10 @@
     ]"
   >
     <div
+      class="edge-move-catcher"
+      ref="edgeMoveCatcher"
+    ></div>
+    <div
       class="add-item-button"
       v-if="isLoggedIn && currentListObj && !isFocusOnList"
     >
@@ -94,6 +98,13 @@ export default {
         : ['sign up', 'sign in'];
     },
   },
+  mounted() {
+    this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
+      if (!this.isSidebarOpen) {
+        this._openSidebar(this.sidebarMode ? this.sidebarMode : 'lists');
+      }
+    });
+  },
   methods: {
     ...mapActions({
       _setItemForEditting: '_setItemForEditting',
@@ -142,6 +153,14 @@ export default {
       }
     }
 
+    .edge-move-catcher {
+      position: absolute;
+      z-index: 20;
+      height: 100vh;
+      width: 1px;
+      left: -1px;
+    }
+
     .sidebar-content {
       position: relative;
       width: 100%;
@@ -171,8 +190,8 @@ export default {
 
       &::before {
         content: '';
-        z-index: -1;
         position: absolute;
+        z-index: -1;
         top: 0;
         left: 0;
         width: 100%;

@@ -1,12 +1,13 @@
 <template>
   <div :class="`modal-basic ${globalTheme}-theme`">
     <VueFinalModal
-      v-model="show"
+      v-model="showModal"
       :name="name"
-      height="auto"
-      scrollable
+      :z-index="50"
+      :esc-to-close="true"
       transition="modal"
-      @closed="_setModalNameToShow('')"
+      @before-open="open"
+      @closed="close"
     >
       <header
         class="header"
@@ -17,7 +18,11 @@
         </h1>
       </header>
       <main class="main">
-        <slot />
+        <Transition name="fade">
+          <template v-if="showInner">
+            <slot />
+          </template>
+        </Transition>
       </main>
     </VueFinalModal>
   </div>
@@ -36,7 +41,8 @@ export default {
     },
   },
   data: () => ({
-    show: false,
+    showModal: false,
+    showInner: false,
   }),
   components: {
     VueFinalModal,
@@ -45,6 +51,15 @@ export default {
     ...mapActions({
       _setModalNameToShow: '_setModalNameToShow',
     }),
+    open() {
+      this.showInner = true;
+    },
+    close() {
+      this._setModalNameToShow('');
+      setTimeout(() => {
+        this.showInner = false;
+      }, 300);
+    },
   },
 };
 </script>
@@ -56,6 +71,10 @@ export default {
       left: auto;
       right: 0;
       width: 100vw;
+    }
+
+    .vfm__container {
+      overflow: auto;
     }
 
     .vfm__overlay {
@@ -71,6 +90,14 @@ export default {
       left: 50%;
       top: 30px;
       transform: translateX(-50%);
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 100%;
+        width: 100%;
+        height: 100px;
+      }
     }
 
     .header {

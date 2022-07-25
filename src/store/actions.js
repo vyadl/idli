@@ -22,18 +22,20 @@ export default {
 
   // lists
 
-  async _fetchListsForUser({ commit, dispatch }) {
-    const { data: responseLists } = await this.$config.axios.get(`${this.$config.apiBasePath}lists`);
-
-    commit('setLists', responseLists);
-    dispatch('_setListIdFromLocalStorage');
+  _fetchListsForUser({ commit, dispatch }) {
+    return this.$config.axios.get(`${this.$config.apiBasePath}lists`)
+      .then(({ data: responseLists }) => {
+        commit('setLists', responseLists);
+        dispatch('_setListIdFromLocalStorage');
+      });
   },
-  async _fetchTestLists({ commit }) {
-    const { data: responseLists } = await this.$config.axios.get('/test_data.json');
-
-    commit('setTestLists', responseLists);
+  _fetchTestLists({ commit }) {
+    return this.$config.axios.get('/test_data.json')
+      .then(({ data: responseLists }) => {
+        commit('setTestLists', responseLists);
+      });
   },
-  async _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
+  _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj?.items.length) {
@@ -42,24 +44,30 @@ export default {
       }
     }
 
-    const { data: responseList } = await this.$config.axios
-      .get(`${this.$config.apiBasePath}list/${id}`, { cancelToken });
-
-    commit('updateList', responseList);
-    commit('setCurrentItems', responseList.items);
+    return this.$config.axios
+      .get(`${this.$config.apiBasePath}list/${id}`, { cancelToken })
+      .then(({ data: responseList }) => {
+        commit('updateList', responseList);
+        commit('setCurrentItems', responseList.items);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   },
-  async _fetchCurrentItems({ commit, getters }) {
-    const { data: responseList } = await this.$config.axios
-      .get(`${this.$config.apiBasePath}list/${getters.currentListId}`);
-
-    commit('setCurrentItems', responseList.items);
+  _fetchCurrentItems({ commit, getters }) {
+    return this.$config.axios
+      .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
+      .then(({ data: responseList }) => {
+        commit('setCurrentItems', responseList.items);
+      });
   },
-  async _addList({ commit, dispatch }, list) {
-    const { data: responseList } = await this.$config.axios
-      .post(`${this.$config.apiBasePath}list/add`, list);
-
-    commit('addList', responseList);
-    dispatch('_setCurrentListId', responseList.id);
+  _addList({ commit, dispatch }, list) {
+    return this.$config.axios
+      .post(`${this.$config.apiBasePath}list/add`, list)
+      .then(({ data: responseList }) => {
+        commit('addList', responseList);
+        dispatch('_setCurrentListId', responseList.id);
+      });
   },
   async _addTestList({ commit, dispatch }, {
     title,
