@@ -122,6 +122,10 @@ export default {
     state.modalNameToShow = name;
   },
 
+  setconfirmationModalTitle(state, title) {
+    state.confirmationModalTitle = title;
+  },
+
   // requests
 
   increaseRequestsNumber(state) {

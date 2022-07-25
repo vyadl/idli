@@ -7,7 +7,7 @@
     <div class="lists-container">
       <div
         class="list"
-        v-for="list in lists"
+        v-for="list in sortedLists"
         :key="list.id"
       >
         <ButtonSign
@@ -59,6 +59,11 @@ export default {
       currentListId: 'currentListId',
       edittingListObj: 'edittingListObj',
     }),
+    sortedLists() {
+      return [...this.lists].sort((list, nextList) => (
+        Date.parse(nextList.updatedAt) - Date.parse(list.updatedAt)
+      )); 
+    },
   },
   methods: {
     ...mapActions({
