@@ -39,7 +39,7 @@ export const initAxios = function initAxios(store) {
 
   return {
     axios,
-    apiBasePath: process.env.VUE_APP_API_BASE_PATH,
+    apiBasePath: import.meta.env.VITE_API_BASE_PATH,
   };
 };
 

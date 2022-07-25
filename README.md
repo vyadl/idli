@@ -10,13 +10,13 @@ npm i
 
 make `.env` file with for example
 ```
-VUE_APP_API_BASE_PATH=http://app.idli.space/api/
+VITE_API_BASE_PATH=https://api.dev.idli.space/api/
 ```
 
 ## Running
 
 ```
-npm run serve
+npm run dev
 ````
 
 ## Building for prod

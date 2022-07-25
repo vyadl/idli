@@ -1,4 +1,4 @@
-export function shuffleArray(arr) {
+export const shuffleArray = (arr) => {
   const newArr = JSON.parse(JSON.stringify(arr));
 
   for (let i = newArr.length - 1; i > 0; i--) {
@@ -8,7 +8,7 @@ export function shuffleArray(arr) {
   }
 
   return newArr;
-}
+};
 
 export class DeferredBoolean {
   constructor() {
