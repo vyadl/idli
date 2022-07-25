@@ -1,5 +1,11 @@
 <template>
-  <div :class="`modal-basic ${globalTheme}-theme`">
+  <div 
+    :class="`modal-basic ${globalTheme}-theme`"
+    :style="`
+        --modalWidth: ${width}px;
+        --modalTop: ${top}px;
+      `"
+  >
     <VueFinalModal
       v-model="showModal"
       :name="name"
@@ -38,6 +44,14 @@ export default {
     title: {
       type: String,
       default: '',
+    },
+    width: {
+      type: Number,
+      default: 500,
+    },
+    top: {
+      type: Number,
+      default: 30,
     },
   },
   data: () => ({
@@ -85,10 +99,10 @@ export default {
       padding: 28px;
       box-shadow: 0 10px 90px -30px map-get($colors, 'black');
       background-color: map-get($colors, 'white');
-      width: 500px;
+      width: var(--modalWidth);
       position: absolute;
       left: 50%;
-      top: 30px;
+      top: var(--modalTop);
       transform: translateX(-50%);
       &::after {
         content: '';
