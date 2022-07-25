@@ -174,6 +174,7 @@ export default {
 
     .button-container {
       height: 30px;
+      width: 100px;
     }
 
     .items-container {

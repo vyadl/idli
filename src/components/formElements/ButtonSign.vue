@@ -58,6 +58,10 @@ export default {
     padding: 0;
     cursor: pointer;
 
+    &:disabled {
+      pointer-events: none;
+    }
+
     &.arrow {
       width: 45px;
       height: 45px;

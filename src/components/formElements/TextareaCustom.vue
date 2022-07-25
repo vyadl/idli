@@ -1,7 +1,10 @@
 <template>
   <label
     class="textarea-custom"
-    :class="`${globalTheme}-theme`"
+    :class="[
+      `${globalTheme}-theme`,
+      { disabled },
+    ]"
   >
     <div class="label">
       {{ label }}
@@ -40,6 +43,10 @@ export default {
     display: block;
     width: 100%;
     margin-bottom: 15px;
+
+    &.disabled {
+      pointer-events: none;
+    }
 
     .label {
       font-size: 12px;

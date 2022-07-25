@@ -3,6 +3,7 @@
     class="checkbox-custom"
     :class="[
       styleType,
+      disabled,
       `${globalTheme}-theme`,
     ]"
   >
@@ -93,6 +94,10 @@ export default {
     margin-bottom: 10px;
     margin-right: 7px;
     cursor: pointer;
+
+    &.disabled {
+      pointer-events: none;
+    }
 
     &:last-of-type {
       margin-right: 0;
