@@ -6,22 +6,10 @@ export default {
   components: {
     InputCustom,
   },
-  data() {
-    return {
-      value: '',
-    };
-  },
   computed: {
     ...mapState({
       currentSearchValue: 'currentSearchValue',
     }),
-  },
-  watch: {
-    currentSearchValue(value) {
-      if (!value) {
-        this.value = '';
-      }
-    },
   },
   methods: {
     ...mapMutations({
@@ -29,13 +17,12 @@ export default {
     }),
   },
 };
-
 </script>
 
 <template>
   <InputCustom 
     :placeholder="'search items'"
-    v-model="value"
-    @input="setCurrentSearchValue(value)"
+    :modelValue="currentSearchValue"
+    @input="setCurrentSearchValue"
   />
 </template>
