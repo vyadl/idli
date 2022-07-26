@@ -13,14 +13,15 @@ export default {
   filteredList: (state, getters) => {
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;
+    const lowerCasedSearchValue = state.currentSearchValue.toLowerCase();
 
     return getters.currentListItems.filter(item => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
       const isCategoryIntersection = !categories.length || categories
         .indexOf(item.category) !== -1;
       const isIncludesSearchValue = !state.currentSearchValue 
-        || item.title.toLowerCase().includes(state.currentSearchValue.toLowerCase())
-        || item.details.toLowerCase().includes(state.currentSearchValue.toLowerCase());
+        || item.title.toLowerCase().includes(lowerCasedSearchValue)
+        || item.details.toLowerCase().includes(lowerCasedSearchValue);
 
       return areTagsIntersection && isCategoryIntersection && isIncludesSearchValue;
     });

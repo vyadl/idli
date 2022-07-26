@@ -16,7 +16,7 @@
       :disabled="disabled"
       :required="required"
       :placeholder="placeholder"
-      @input="input($event)"
+      @input="input($event.target.value)"
       ref="input"
     >
   </label>
@@ -54,9 +54,9 @@ export default {
   ],
 
   methods: {
-    input(event) {
-      this.$emit('input', event.target.value);
-      this.$emit('update:modelValue', event.target.value);
+    input(value) {
+      this.$emit('input', value);
+      this.$emit('update:modelValue', value);
     },
     focus() {
       this.$refs.input.focus();
