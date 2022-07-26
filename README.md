@@ -10,7 +10,7 @@ npm i
 
 make `.env` file with for example
 ```
-VUE_APP_API_BASE_PATH=http://app.idli.space/api/
+VITE_API_BASE_PATH=http://app.idli.space/api/
 ```
 
 ## Running

@@ -2,7 +2,7 @@ module.exports = {
   root: true,
 
   env: {
-    node: true,
+    es2021: true,
   },
 
   extends: [
@@ -11,7 +11,6 @@ module.exports = {
   ],
 
   parserOptions: {
-    parser: '@babel/eslint-parser',
     requireConfigFile: false,
   },
 
