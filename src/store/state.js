@@ -3,6 +3,7 @@ export default {
   testLists: [],
   currentListId: null,
   currentListItems: [],
+  currentSearchValue: '',
   edittingListObj: null,
   checkedTags: [],
   checkedCategories: [],

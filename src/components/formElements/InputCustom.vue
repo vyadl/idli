@@ -15,7 +15,8 @@
       :value="modelValue"
       :disabled="disabled"
       :required="required"
-      @input="input($event)"
+      :placeholder="placeholder"
+      @input="input($event.target.value)"
       ref="input"
     >
   </label>
@@ -41,10 +42,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    placeholder: {
+      type: String,
+      default: '',
+    },
   },
+
+  emits: [
+    'input',
+    'update:modelValue',
+  ],
+
   methods: {
-    input(event) {
-      this.$emit('update:modelValue', event.target.value);
+    input(value) {
+      this.$emit('input', value);
+      this.$emit('update:modelValue', value);
     },
     focus() {
       this.$refs.input.focus();
