@@ -15,6 +15,7 @@
       :value="modelValue"
       :disabled="disabled"
       :required="required"
+      :placeholder="placeholder"
       @input="input($event)"
       ref="input"
     >
@@ -40,6 +41,10 @@ export default {
     required: {
       type: Boolean,
       default: false,
+    },
+    placeholder: {
+      type: String,
+      default: '',
     },
   },
   methods: {

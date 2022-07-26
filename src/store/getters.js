@@ -18,8 +18,11 @@ export default {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
       const isCategoryIntersection = !categories.length || categories
         .indexOf(item.category) !== -1;
+      const isIncludesSearchValue = !state.currentSearchValue 
+        || item.title.toLowerCase().includes(state.currentSearchValue.toLowerCase())
+        || item.details.toLowerCase().includes(state.currentSearchValue.toLowerCase());
 
-      return areTagsIntersection && isCategoryIntersection;
+      return areTagsIntersection && isCategoryIntersection && isIncludesSearchValue;
     });
   },
   filteredListLength: (state, getters) => getters.filteredList.length,

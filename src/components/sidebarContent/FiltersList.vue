@@ -1,4 +1,6 @@
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
+  <SearchField v-if="currentListObj"/>
   <SidebarCard
     class="filters-list"
     :class="`${globalTheme}-theme`"
@@ -38,7 +40,7 @@
       <div class="bottom">
         <div class="items-count">selected: {{ filteredListLength }}</div>
         <ButtonText
-          v-if="localCheckedTags.length || localCheckedCategories.length"
+          v-if="localCheckedTags.length || localCheckedCategories.length || currentSearchValue"
           text="reset filters"
           style-type="underline"
           @click="resetFilters"
@@ -46,20 +48,27 @@
       </div>
     </template>
     <template v-else>
-      <InfoMessage message="to manage filters you should create list" />
+      <InfoMessage message="to manage filters you should choose or create list" />
     </template>
   </SidebarCard>
 </template>
 
 <script>
+import SearchField from '@/components/sidebarContent/SearchField.vue';
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { 
+  mapGetters, 
+  mapActions, 
+  mapState, 
+  mapMutations, 
+} from 'vuex';
 
 export default {
   components: {
+    SearchField,
     SidebarCard,
     CheckboxCustom,
     ButtonText,
@@ -70,6 +79,9 @@ export default {
     localCheckedCategories: [],
   }),
   computed: {
+    ...mapState({
+      currentSearchValue: 'currentSearchValue',
+    }),
     ...mapGetters({
       currentListObj: 'currentListObj',
       currentListTags: 'currentListTags',
@@ -90,6 +102,9 @@ export default {
     this.localCheckedCategories = this.checkedCategories;
   },
   methods: {
+    ...mapMutations({
+      setCurrentSearchValue: 'setCurrentSearchValue',
+    }),
     ...mapActions({
       _filterList: '_filterList',
       _resetFilters: '_resetFilters',
@@ -104,6 +119,7 @@ export default {
       this.localCheckedTags = [];
       this.localCheckedCategories = [];
       this._resetFilters();
+      this.setCurrentSearchValue('');
     },
   },
 };

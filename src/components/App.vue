@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
@@ -29,7 +30,6 @@ import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
-import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {

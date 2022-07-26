@@ -56,6 +56,12 @@ export default {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);
   },
 
+  // filters
+
+  setCurrentSearchValue(state, value) {
+    state.currentSearchValue = value;
+  },
+
   // visualization
 
   setSorting(state, sorting) {
