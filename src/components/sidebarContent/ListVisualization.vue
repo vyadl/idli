@@ -1,9 +1,12 @@
 <template>
   <div class="list-visualization">
-    <SidebarCard title="sorting">
+    <SidebarCard 
+      title="sorting"
+      class="main-sorting"
+    >
       <div class="buttons-container">
         <RadioCustom
-          v-for="title in sortingTitles"
+          v-for="title in mainSortingTitles"
           :key="title"
           :label="title"
           :value="title"
@@ -18,7 +21,28 @@
           style-type="underline"
           @click="_switchShuffleTrigger"
         />
+    </div>
+    </SidebarCard>
+    <hr class="break-line" />
+    <SidebarCard>
+      <div class="buttons-container">
+        <RadioCustom
+          v-for="title in secondarySortingTitles"
+          :key="title"
+          :label="title"
+          :value="title"
+          :model-value="sorting"
+          name="sorting"
+          @change="_setSorting(title)"
+        />
       </div>
+    <CheckboxCustom
+      label="reverse order"
+      style-type="classic"
+      :value="false"
+      :model-value="isItemsOrderReversed"
+      @change="toggleItemsOrder"
+    />
     </SidebarCard>
     <SidebarCard title="mode">
       <div class="buttons-container">
@@ -78,7 +102,12 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { 
+  mapGetters, 
+  mapActions, 
+  mapState, 
+  mapMutations,
+} from 'vuex';
 
 export default {
   components: {
@@ -88,13 +117,17 @@ export default {
     ButtonText,
   },
   data: () => ({
-    sortingTitles: ['default', 'shuffled'],
+    mainSortingTitles: ['custom', 'shuffled'],
+    secondarySortingTitles: ['alphabetic', 'date created', 'date updated'],
     modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
     themeTitles: ['default', 'inverted'],
     structuredModes: ['list', 'page', 'cards'],
     unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
+    ...mapState({
+      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
+    }),
     ...mapGetters({
       sorting: 'sorting',
       mode: 'mode',
@@ -126,6 +159,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations({
+      toggleItemsOrder: 'toggleItemsOrder',
+    }),
     ...mapActions({
       _setSorting: '_setSorting',
       _setMode: '_setMode',
@@ -140,12 +176,21 @@ export default {
 
 <style lang="scss">
   .list-visualization {
+    .main-sorting {
+      margin-bottom: 0;
+    }
     .buttons-container {
       position: relative;
       display: flex;
       flex-wrap: wrap;
       width: 100%;
       margin-bottom: 10px;
+    }
+    .break-line {
+      margin: 0;
+      border: none;
+      border-bottom: 1px solid map-get($colors, 'black');
+      width: 50%;
     }
     .randomize {
       position: absolute;

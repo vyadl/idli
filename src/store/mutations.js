@@ -82,6 +82,9 @@ export default {
   changeItemDetailsShowingMode(state) {
     state.visualization.areItemDetailsShown = !state.visualization.areItemDetailsShown;
   },
+  toggleItemsOrder(state) {
+    state.visualization.isItemsOrderReversed = !state.visualization.isItemsOrderReversed;
+  },
 
   // settings
 

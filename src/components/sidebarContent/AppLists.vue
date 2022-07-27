@@ -40,6 +40,7 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import TestData from '@/components/sidebarContent/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import { sortByDate } from '@/utils/sorting';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -60,9 +61,7 @@ export default {
       edittingListObj: 'edittingListObj',
     }),
     sortedLists() {
-      return [...this.lists].sort((list, nextList) => (
-        Date.parse(nextList.updatedAt) - Date.parse(list.updatedAt)
-      )); 
+      return sortByDate(this.lists, 'updatedAt'); 
     },
   },
   methods: {

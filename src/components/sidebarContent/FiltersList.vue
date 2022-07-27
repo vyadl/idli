@@ -1,56 +1,59 @@
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
-  <SearchField v-if="currentListObj"/>
+<div 
+  v-if="currentListObj"
+  class="filters-list"
+>
+  <SidebarCard title="search">
+    <SearchField />
+  </SidebarCard>
   <SidebarCard
-    class="filters-list"
     :class="`${globalTheme}-theme`"
     title="filters"
   >
-    <template v-if="currentListObj">
-      <h1 class="filters-title">tags</h1>
-      <InfoMessage
-        v-if="tagsInfoMessage"
-        :message="tagsInfoMessage"
+    <h1 class="filters-title">tags</h1>
+    <InfoMessage
+      v-if="tagsInfoMessage"
+      :message="tagsInfoMessage"
+    />
+    <div class="filters-container">
+      <CheckboxCustom
+        v-for="tag in currentListTags"
+        :key="tag.id"
+        :label="tag.title"
+        :value="tag.id"
+        v-model="localCheckedTags"
+        @change="filterList"
       />
-      <div class="filters-container">
-        <CheckboxCustom
-          v-for="tag in currentListTags"
-          :key="tag.id"
-          :label="tag.title"
-          :value="tag.id"
-          v-model="localCheckedTags"
-          @change="filterList"
-        />
-      </div>
-      <h1 class="filters-title">categories</h1>
-      <InfoMessage
-        v-if="categoriesInfoMessage"
-        :message="categoriesInfoMessage"
+    </div>
+    <h1 class="filters-title">categories</h1>
+    <InfoMessage
+      v-if="categoriesInfoMessage"
+      :message="categoriesInfoMessage"
+    />
+    <div class="filters-container">
+      <CheckboxCustom
+        v-for="category in currentListCategories"
+        :key="category.id"
+        :label="category.title"
+        :value="category.id"
+        v-model="localCheckedCategories"
+        @change="filterList"
       />
-      <div class="filters-container">
-        <CheckboxCustom
-          v-for="category in currentListCategories"
-          :key="category.id"
-          :label="category.title"
-          :value="category.id"
-          v-model="localCheckedCategories"
-          @change="filterList"
-        />
-      </div>
-      <div class="bottom">
-        <div class="items-count">selected: {{ filteredListLength }}</div>
-        <ButtonText
-          v-if="localCheckedTags.length || localCheckedCategories.length || currentSearchValue"
-          text="reset filters"
-          style-type="underline"
-          @click="resetFilters"
-        />
-      </div>
-    </template>
-    <template v-else>
-      <InfoMessage message="to manage filters you should choose or create list" />
-    </template>
+    </div>
+    <div class="bottom">
+      <div class="items-count">selected: {{ filteredListLength }}</div>
+      <ButtonText
+        v-if="localCheckedTags.length || localCheckedCategories.length || currentSearchValue"
+        text="reset filters"
+        style-type="underline"
+        @click="resetFilters"
+      />
+    </div>
   </SidebarCard>
+</div>
+<div v-else>
+  <InfoMessage message="to manage filters you should choose or create list" />
+</div>
 </template>
 
 <script>

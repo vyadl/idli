@@ -63,7 +63,8 @@
 import ListItem from '@/components/list/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
-import { mapGetters, mapActions } from 'vuex';
+import { sortByDate, sortByAlphabet } from '@/utils/sorting';
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -71,6 +72,9 @@ export default {
     ButtonText,
   },
   computed: {
+    ...mapState({
+      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
+    }),
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
@@ -115,8 +119,39 @@ export default {
 
       return shuffleArray(this.filteredList);
     },
+    alphabetSortedList() {
+      return sortByAlphabet(this.filteredList, 'title');
+    },
+    dateUpdatedSortedList() {
+      return sortByDate(this.filteredList, 'updatedAt');
+    },
+    dateCreatedSortedList() {
+      return sortByDate(this.filteredList, 'createdAt');
+    },
+    sortedList() {
+      let generatedList = [];
+
+      switch (this.sorting) {
+        case 'shuffled':
+          generatedList = this.shuffledList; 
+          break;
+        case 'date created': 
+          generatedList = this.dateCreatedSortedList;
+          break;
+        case 'date updated': 
+          generatedList = this.dateUpdatedSortedList;
+          break;
+        case 'alphabetic': 
+          generatedList = this.alphabetSortedList;
+          break;
+        default: 
+          generatedList = this.filteredList;
+      }
+
+      return generatedList;
+    },
     finalList() {
-      return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
+      return this.isItemsOrderReversed ? [...this.sortedList].reverse() : this.sortedList;
     },
   },
   created() {
