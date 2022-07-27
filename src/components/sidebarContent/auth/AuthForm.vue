@@ -9,11 +9,8 @@
       required
       @input="clearMessage"
     />
-    <InputCustom
-      label="password"
-      type="password"
+    <PasswordField
       v-model="signInData.password"
-      required
       @input="clearMessage"
     />
     <div class="message-container">
@@ -32,14 +29,16 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import { mapActions } from 'vuex';
+import PasswordField from '@/components/sidebarContent/auth/PasswordField.vue';
 
 export default {
   components: {
     InputCustom,
+    PasswordField,
     ButtonText,
     ErrorMessage,
   },

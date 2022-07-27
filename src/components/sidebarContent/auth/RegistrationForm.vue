@@ -16,17 +16,14 @@
       required
       @input="clearMessage"
     />
-    <InputCustom
-      label="password"
-      type="password"
+    <PasswordField
       v-model="user.password"
-      required
+      @input="clearMessage"
     />
-    <InputCustom
+    <PasswordField
       label="confirm password"
-      type="password"
       v-model="passwordToCheck"
-      required
+      @input="clearMessage"
     />
     <div class="message-container">
       <ErrorMessage
@@ -47,6 +44,7 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
+import PasswordField from '@/components/sidebarContent/auth/PasswordField.vue';
 import { mapActions } from 'vuex';
 
 export default {
@@ -54,6 +52,7 @@ export default {
     InputCustom,
     ButtonText,
     ErrorMessage,
+    PasswordField,
   },
   data: () => ({
     user: {
