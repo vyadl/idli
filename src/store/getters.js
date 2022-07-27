@@ -11,6 +11,7 @@ export default {
   checkedTags: state => state.checkedTags,
   checkedCategories: state => state.checkedCategories,
   filteredList: (state, getters) => {
+    const MIN_SEARCH_SYMBOLS = 3;
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;
     const lowerCasedSearchValue = state.currentSearchValue.toLowerCase();
@@ -19,7 +20,10 @@ export default {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
       const isCategoryIntersection = !categories.length || categories
         .indexOf(item.category) !== -1;
-      const isIncludesSearchValue = !state.currentSearchValue 
+      
+      const isSearchValueRelevant = state.currentSearchValue 
+        && state.currentSearchValue.length >= MIN_SEARCH_SYMBOLS;
+      const isIncludesSearchValue = !isSearchValueRelevant
         || item.title.toLowerCase().includes(lowerCasedSearchValue)
         || item.details.toLowerCase().includes(lowerCasedSearchValue);
 
