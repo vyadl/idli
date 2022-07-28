@@ -129,7 +129,7 @@ export default {
         return [];
       }
 
-      return this.isItemsOrderReversed ? [...this.sortingOptions[this.sorting]()].reverse() 
+      return this.isItemsOrderReversed ? this.sortingOptions[this.sorting]().reverse() 
         : this.sortingOptions[this.sorting]();
     },
   },
@@ -137,8 +137,8 @@ export default {
     this.setArrowHotkeys();
 
     this.sortingOptions = {
-      custom: () => this.filteredList,
-      shuffled: () => this.shuffledList,
+      custom: () => [...this.filteredList],
+      shuffled: () => [...this.shuffledList],
       alphabetic: () => sortByAlphabet(this.filteredList, 'title'),
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
