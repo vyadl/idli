@@ -73,7 +73,7 @@ export default {
   },
   data() {
     return {
-      sortingOptions: {},
+      sortingOptions: null,
     };
   },
   computed: {
@@ -125,12 +125,24 @@ export default {
       return shuffleArray(this.filteredList);
     },
     finalList() {
-      return this.isItemsOrderReversed ? [...this.sortList(this.sorting)].reverse() 
-        : this.sortList(this.sorting);
+      if (!this.sortingOptions) {
+        return [];
+      }
+
+      return this.isItemsOrderReversed ? [...this.sortingOptions[this.sorting]()].reverse() 
+        : this.sortingOptions[this.sorting]();
     },
   },
   created() {
     this.setArrowHotkeys();
+
+    this.sortingOptions = {
+      custom: () => this.filteredList,
+      shuffled: () => this.shuffledList,
+      alphabetic: () => sortByAlphabet(this.filteredList, 'title'),
+      dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
+      dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
+    };
   },
   methods: {
     ...mapActions({
@@ -140,17 +152,6 @@ export default {
     }),
     setShuffledList() {
       this._setShuffledList(shuffleArray(this.filteredList));
-    },
-    sortList(sorting) {
-      this.sortingOptions = {
-        custom: () => this.filteredList,
-        shuffled: () => this.shuffledList,
-        alphabetic: sortByAlphabet.bind(null, this.filteredList, 'title'),
-        dateCreated: sortByDate.bind(null, this.filteredList, 'createdAt'),
-        dateUpdated: sortByDate.bind(null, this.filteredList, 'updatedAt'),
-      };
-
-      return this.sortingOptions[sorting]();
     },
     setArrowHotkeys() {
       document.addEventListener('keyup', event => {

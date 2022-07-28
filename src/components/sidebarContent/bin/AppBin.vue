@@ -1,4 +1,3 @@
-<!-- eslint-disable consistent-return -->
 <template>
 <div class="app-bin">
   <div

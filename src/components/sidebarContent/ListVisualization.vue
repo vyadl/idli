@@ -6,7 +6,7 @@
     >
       <div class="buttons-container">
         <RadioCustom
-          v-for="sortingOption in mainSortingTitles"
+          v-for="sortingOption in mainSortingOptions"
           :key="sortingOption.title"
           :label="sortingOption.title"
           :value="sortingOption.type"
@@ -27,7 +27,7 @@
     <SidebarCard>
       <div class="buttons-container">
         <RadioCustom
-          v-for="sortingOption in secondarySortingTitles"
+          v-for="sortingOption in secondarySortingOptions"
           :key="sortingOption.title"
           :label="sortingOption.title"
           :value="sortingOption.type"
@@ -117,7 +117,7 @@ export default {
     ButtonText,
   },
   data: () => ({
-    mainSortingTitles: {
+    mainSortingOptions: {
       custom: {
         title: 'custom',
         type: 'custom',
@@ -127,7 +127,7 @@ export default {
         type: 'shuffled',
       },
     },
-    secondarySortingTitles: {
+    secondarySortingOptions: {
       alphabetic: {
         title: 'alphabetic',
         type: 'alphabetic',
