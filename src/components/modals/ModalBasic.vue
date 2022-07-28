@@ -11,6 +11,7 @@
       :name="name"
       :z-index="50"
       :esc-to-close="true"
+      :lock-scroll="false"
       transition="modal"
       @before-open="open"
       @closed="close"

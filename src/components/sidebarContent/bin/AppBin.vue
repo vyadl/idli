@@ -1,10 +1,12 @@
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
+<div class="app-bin">
   <div
-    class="app-bin"
+    v-if="deletedLists.length || deletedItems.length"
   >
     <SidebarCard
       title="lists"
-      v-if="deletedLists.length"
+      v-show="deletedLists.length"
     >
       <div class="all-buttons">
         <ButtonText
@@ -34,7 +36,7 @@
     <SidebarCard
       title="items"
       class="items"
-      v-if="deletedItems.length"
+      v-show="deletedItems.length"
     >
       <div class="all-buttons">
         <ButtonText
@@ -62,6 +64,13 @@
       />
     </SidebarCard>
   </div>
+  <div 
+    v-else
+    class="message"
+  >
+    <InfoMessage message="nothing was deleted so far"/>
+  </div>
+</div>
 </template>
 
 <script>
@@ -69,12 +78,15 @@ import { mapGetters, mapActions } from 'vuex';
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
+import { isConfirmed } from '@/settings/confirmationPromise';
 
 export default {
   components: {
     SidebarCard,
     BinUnit,
     ButtonText,
+    InfoMessage,
   },
   data: () => ({
     isRequestProcessing: false,
@@ -117,20 +129,21 @@ export default {
         this.isRequestProcessing = false;
       });
     },
-    resolveAllAction(action) {
-      this.isRequestProcessing = true;
-
-      this[action]().then(res => {
-        if (res?.data?.listsTitlesArray?.length) {
-          this._setNotification({
-            text: `To see the restored items you need to restore these lists
-              - "${res.data.listsTitlesArray.join(', ')}"`,
-            time: 20000,
-          });
-        }
-      }).finally(() => {
-        this.isRequestProcessing = false;
-      });
+    async resolveAllAction(action) {
+      if (await isConfirmed()) {
+        this.isRequestProcessing = true;
+        this[action]().then(res => {
+          if (res?.data?.listsTitlesArray?.length) {
+            this._setNotification({
+              text: `To see the restored items you need to restore these lists
+                - "${res.data.listsTitlesArray.join(', ')}"`,
+              time: 20000,
+            });
+          }
+        }).finally(() => {
+          this.isRequestProcessing = false;
+        });
+      }
     },
   },
 };
@@ -142,6 +155,9 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-bottom: 15px;
+    }
+    .message {
+      text-align: center;
     }
   }
 </style>
