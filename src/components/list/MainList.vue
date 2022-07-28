@@ -63,14 +63,23 @@
 import ListItem from '@/components/list/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
-import { mapGetters, mapActions } from 'vuex';
+import { sortByDate, sortByAlphabet } from '@/utils/sorting';
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ListItem,
     ButtonText,
   },
+  data() {
+    return {
+      sortingOptions: null,
+    };
+  },
   computed: {
+    ...mapState({
+      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
+    }),
     ...mapGetters({
       currentListObj: 'currentListObj',
       filteredList: 'filteredList',
@@ -116,11 +125,24 @@ export default {
       return shuffleArray(this.filteredList);
     },
     finalList() {
-      return this.sorting === 'shuffled' ? this.shuffledList : this.filteredList;
+      if (!this.sortingOptions) {
+        return [];
+      }
+
+      return this.isItemsOrderReversed ? this.sortingOptions[this.sorting]().reverse() 
+        : this.sortingOptions[this.sorting]();
     },
   },
   created() {
     this.setArrowHotkeys();
+
+    this.sortingOptions = {
+      custom: () => [...this.filteredList],
+      shuffled: () => [...this.shuffledList],
+      alphabetic: () => sortByAlphabet(this.filteredList, 'title'),
+      dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
+      dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
+    };
   },
   methods: {
     ...mapActions({

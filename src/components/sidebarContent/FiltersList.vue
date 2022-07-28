@@ -1,12 +1,13 @@
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
-  <SearchField v-if="currentListObj"/>
-  <SidebarCard
-    class="filters-list"
-    :class="`${globalTheme}-theme`"
-    title="filters"
-  >
-    <template v-if="currentListObj">
+<div class="filters-list">
+  <div v-if="currentListObj">
+    <SidebarCard title="search">
+      <SearchField />
+    </SidebarCard>
+    <SidebarCard
+      :class="`${globalTheme}-theme`"
+      title="filters"
+    >
       <h1 class="filters-title">tags</h1>
       <InfoMessage
         v-if="tagsInfoMessage"
@@ -46,11 +47,12 @@
           @click="resetFilters"
         />
       </div>
-    </template>
-    <template v-else>
-      <InfoMessage message="to manage filters you should choose or create list" />
-    </template>
-  </SidebarCard>
+    </SidebarCard>
+  </div>
+  <div v-else>
+    <InfoMessage message="to manage filters you should choose or create list" />
+  </div>
+</div>
 </template>
 
 <script>

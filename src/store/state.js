@@ -11,12 +11,13 @@ export default {
   deletedLists: [],
   deletedItems: [],
   visualization: {
-    sorting: 'default',
+    sorting: 'dateCreated',
     mode: 'list',
     theme: 'default',
     shuffleTrigger: false,
     listAlign: 'center',
     areItemDetailsShown: false,
+    isItemsOrderReversed: false,
   },
   settings: {
     isItemFormInSidebar: false,

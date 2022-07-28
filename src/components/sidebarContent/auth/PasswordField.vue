@@ -1,0 +1,73 @@
+<script>
+import InputCustom from '@/components/formElements/InputCustom.vue';
+
+export default {
+  components: {
+    InputCustom,
+  },
+  props: {
+    modelValue: String,
+    label: {
+      type: String,
+      default: 'password',
+    },
+  },
+  emits: [
+    'input',
+    'update:modelValue',
+  ],
+  data() {
+    return {
+      isPasswordShown: true,
+      inputType: 'password',
+    };
+  },
+
+  methods: {
+    togglePassword() {
+      this.isPasswordShown = !this.isPasswordShown;
+      this.inputType = this.isPasswordShown ? 'password' : 'text';
+    },
+    input(value) {
+      this.$emit('input', value);
+      this.$emit('update:modelValue', value);
+    },
+  },
+};
+</script>
+
+<template>
+<div class="password-field">
+  <InputCustom
+    :label="label"
+    :type="inputType"
+    :modelValue="modelValue"
+    @input="input"
+    required
+  />
+  <div class="eye-button">
+    <img 
+      alt="show pw" 
+      :width="20"
+      :src="isPasswordShown ? '/images/eye-open.svg' : '/images/eye-closed.svg'" 
+      @click="togglePassword"
+    />
+  </div>
+</div>
+</template>
+
+<style lang="scss">
+.password-field {
+  position: relative;
+  width: 100%;
+  .eye-button {
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+}
+</style>
