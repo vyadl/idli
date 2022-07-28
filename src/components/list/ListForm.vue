@@ -254,19 +254,21 @@ export default {
       const confirmationModalTitle = `are you sure you want to delete list  
         '${this.edittingListObj?.title}' ?`;
 
-      if (await isConfirmed(confirmationModalTitle)) {
-        this.isRequestProcessing = true;
-        this._deleteList(this.list.id)
-          .then(() => {
-            this.closeListModal();
-          })
-          .catch(error => {
-            this.errorMessage = error.response.data.message;
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
-          });
+      if (!await isConfirmed(confirmationModalTitle)) {
+        return false;
       }
+
+      this.isRequestProcessing = true;
+      this._deleteList(this.list.id)
+        .then(() => {
+          this.closeListModal();
+        })
+        .catch(error => {
+          this.errorMessage = error.response.data.message;
+        })
+        .finally(() => {
+          this.isRequestProcessing = false;
+        });
     },
   },
 };

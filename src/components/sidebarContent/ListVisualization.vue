@@ -6,13 +6,13 @@
     >
       <div class="buttons-container">
         <RadioCustom
-          v-for="title in mainSortingTitles"
-          :key="title"
-          :label="title"
-          :value="title"
+          v-for="sortingOption in mainSortingTitles"
+          :key="sortingOption.title"
+          :label="sortingOption.title"
+          :value="sortingOption.type"
           :model-value="sorting"
           name="sorting"
-          @change="_setSorting(title)"
+          @change="_setSorting(sortingOption.type)"
         />
         <ButtonText
           v-if="sorting === 'shuffled'"
@@ -21,19 +21,19 @@
           style-type="underline"
           @click="_switchShuffleTrigger"
         />
-    </div>
+      </div>
     </SidebarCard>
     <hr class="break-line" />
     <SidebarCard>
       <div class="buttons-container">
         <RadioCustom
-          v-for="title in secondarySortingTitles"
-          :key="title"
-          :label="title"
-          :value="title"
+          v-for="sortingOption in secondarySortingTitles"
+          :key="sortingOption.title"
+          :label="sortingOption.title"
+          :value="sortingOption.type"
           :model-value="sorting"
           name="sorting"
-          @change="_setSorting(title)"
+          @change="_setSorting(sortingOption.type)"
         />
       </div>
     <CheckboxCustom
@@ -117,8 +117,30 @@ export default {
     ButtonText,
   },
   data: () => ({
-    mainSortingTitles: ['custom', 'shuffled'],
-    secondarySortingTitles: ['alphabetic', 'date created', 'date updated'],
+    mainSortingTitles: {
+      custom: {
+        title: 'custom',
+        type: 'custom',
+      },
+      shuffled: {
+        title: 'shuffled',
+        type: 'shuffled',
+      },
+    },
+    secondarySortingTitles: {
+      alphabetic: {
+        title: 'alphabetic',
+        type: 'alphabetic',
+      },
+      dateCreated: {
+        title: 'date created',
+        type: 'dateCreated',
+      },
+      dateUpdated: {
+        title: 'date updated',
+        type: 'dateUpdated',
+      },
+    },
     modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
     themeTitles: ['default', 'inverted'],
     structuredModes: ['list', 'page', 'cards'],

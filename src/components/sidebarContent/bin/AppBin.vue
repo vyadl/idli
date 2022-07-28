@@ -1,4 +1,4 @@
-<!-- eslint-disable vue/no-multiple-template-root -->
+<!-- eslint-disable consistent-return -->
 <template>
 <div class="app-bin">
   <div
@@ -130,20 +130,22 @@ export default {
       });
     },
     async resolveAllAction(action) {
-      if (await isConfirmed()) {
-        this.isRequestProcessing = true;
-        this[action]().then(res => {
-          if (res?.data?.listsTitlesArray?.length) {
-            this._setNotification({
-              text: `To see the restored items you need to restore these lists
-                - "${res.data.listsTitlesArray.join(', ')}"`,
-              time: 20000,
-            });
-          }
-        }).finally(() => {
-          this.isRequestProcessing = false;
-        });
+      if (!await isConfirmed()) {
+        return false;
       }
+
+      this.isRequestProcessing = true;
+      this[action]().then(res => {
+        if (res?.data?.listsTitlesArray?.length) {
+          this._setNotification({
+            text: `To see the restored items you need to restore these lists
+              - "${res.data.listsTitlesArray.join(', ')}"`,
+            time: 20000,
+          });
+        }
+      }).finally(() => {
+        this.isRequestProcessing = false;
+      });
     },
   },
 };

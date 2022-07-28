@@ -18,15 +18,15 @@ export default {
   ],
   data() {
     return {
-      isEyeOpen: true,
+      isPasswordShown: true,
       inputType: 'password',
     };
   },
 
   methods: {
     togglePassword() {
-      this.isEyeOpen = !this.isEyeOpen;
-      this.inputType = this.isEyeOpen ? 'password' : 'text';
+      this.isPasswordShown = !this.isPasswordShown;
+      this.inputType = this.isPasswordShown ? 'password' : 'text';
     },
     input(value) {
       this.$emit('input', value);
@@ -49,7 +49,7 @@ export default {
     <img 
       alt="show pw" 
       :width="20"
-      :src="isEyeOpen ? '/images/eye-open.svg' : '/images/eye-closed.svg'" 
+      :src="isPasswordShown ? '/images/eye-open.svg' : '/images/eye-closed.svg'" 
       @click="togglePassword"
     />
   </div>

@@ -71,6 +71,11 @@ export default {
     ListItem,
     ButtonText,
   },
+  data() {
+    return {
+      sortingOptions: {},
+    };
+  },
   computed: {
     ...mapState({
       isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
@@ -119,39 +124,9 @@ export default {
 
       return shuffleArray(this.filteredList);
     },
-    alphabetSortedList() {
-      return sortByAlphabet(this.filteredList, 'title');
-    },
-    dateUpdatedSortedList() {
-      return sortByDate(this.filteredList, 'updatedAt');
-    },
-    dateCreatedSortedList() {
-      return sortByDate(this.filteredList, 'createdAt');
-    },
-    sortedList() {
-      let generatedList = [];
-
-      switch (this.sorting) {
-        case 'shuffled':
-          generatedList = this.shuffledList; 
-          break;
-        case 'date created': 
-          generatedList = this.dateCreatedSortedList;
-          break;
-        case 'date updated': 
-          generatedList = this.dateUpdatedSortedList;
-          break;
-        case 'alphabetic': 
-          generatedList = this.alphabetSortedList;
-          break;
-        default: 
-          generatedList = this.filteredList;
-      }
-
-      return generatedList;
-    },
     finalList() {
-      return this.isItemsOrderReversed ? [...this.sortedList].reverse() : this.sortedList;
+      return this.isItemsOrderReversed ? [...this.sortList(this.sorting)].reverse() 
+        : this.sortList(this.sorting);
     },
   },
   created() {
@@ -165,6 +140,17 @@ export default {
     }),
     setShuffledList() {
       this._setShuffledList(shuffleArray(this.filteredList));
+    },
+    sortList(sorting) {
+      this.sortingOptions = {
+        custom: () => this.filteredList,
+        shuffled: () => this.shuffledList,
+        alphabetic: sortByAlphabet.bind(null, this.filteredList, 'title'),
+        dateCreated: sortByDate.bind(null, this.filteredList, 'createdAt'),
+        dateUpdated: sortByDate.bind(null, this.filteredList, 'updatedAt'),
+      };
+
+      return this.sortingOptions[sorting]();
     },
     setArrowHotkeys() {
       document.addEventListener('keyup', event => {
