@@ -1,26 +1,3 @@
-<template>
-  <div
-    class="list-item"
-    :class="[
-      `${mode}-mode`,
-      `${globalTheme}-theme`,
-      { active: edittingItemObj && edittingItemObj.id === item.id }
-    ]"
-    :style="styles"
-    @click.stop="setItemForEditting"
-  >
-    <div class="item-title">
-      {{ item.title }}
-    </div>
-    <div
-      class="item-details"
-      v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
-    >
-      {{ item.details }}
-    </div>
-  </div>
-</template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
 
@@ -79,6 +56,29 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div
+    class="list-item"
+    :class="[
+      `${mode}-mode`,
+      `${globalTheme}-theme`,
+      { active: edittingItemObj && edittingItemObj.id === item.id }
+    ]"
+    :style="styles"
+    @click.stop="setItemForEditting"
+  >
+    <div class="item-title">
+      {{ item.title }}
+    </div>
+    <div
+      class="item-details"
+      v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
+    >
+      {{ item.details }}
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
   .list-item {

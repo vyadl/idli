@@ -1,3 +1,29 @@
+<script>
+import ButtonText from '@/components/formElements/ButtonText.vue';
+import { mapGetters, mapActions } from 'vuex';
+
+export default {
+  components: {
+    ButtonText,
+  },
+  computed: {
+    ...mapGetters({
+      isSidebarOpen: 'isSidebarOpen',
+    }),
+    logoSrc() {
+      return this.globalTheme === 'default' 
+        ? '/images/black-logo.svg' : '/images/white-logo.svg';
+    },
+  },
+  methods: {
+    ...mapActions({
+      _openSidebar: '_openSidebar',
+      _closeSidebar: '_closeSidebar',
+    }),
+  },
+};
+</script>
+
 <template>
   <div
     class="enter-screen"
@@ -26,32 +52,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapGetters, mapActions } from 'vuex';
-
-export default {
-  components: {
-    ButtonText,
-  },
-  computed: {
-    ...mapGetters({
-      isSidebarOpen: 'isSidebarOpen',
-    }),
-    logoSrc() {
-      return this.globalTheme === 'default' 
-        ? '/images/black-logo.svg' : '/images/white-logo.svg';
-    },
-  },
-  methods: {
-    ...mapActions({
-      _openSidebar: '_openSidebar',
-      _closeSidebar: '_closeSidebar',
-    }),
-  },
-};
-</script>
 
 <style lang="scss">
   .enter-screen {

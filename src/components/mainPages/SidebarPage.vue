@@ -1,62 +1,3 @@
-<template>
-  <div
-    class="sidebar"
-    :class="[
-      { shown: isSidebarOpen },
-      `${globalTheme}-theme`,
-    ]"
-  >
-    <div
-      class="edge-move-catcher"
-      ref="edgeMoveCatcher"
-    ></div>
-    <div
-      class="add-item-button"
-      v-if="isLoggedIn && currentListObj && !isFocusOnList"
-    >
-      <ButtonSign
-        style-type="plus"
-        big
-        title="new item"
-        @click="isItemFormInSidebar ? createNewItem() : openItemModal()"
-      />
-    </div>
-    <div class="sidebar-buttons">
-      <div class="mode-buttons">
-        <ButtonText
-          class="mode-button"
-          v-for="mode in sidebarModes"
-          :key="mode"
-          :text="mode"
-          :style-type="mode === 'bin' ? 'underline' : 'bordered'"
-          :small="mode === 'bin'"
-          :active="sidebarMode === mode"
-          @click="_openSidebar(mode)"
-        />
-      </div>
-      <div
-        class="state-button"
-        v-if="!isFocusOnList"
-      >
-        <ButtonSign
-          style-type="arrow"
-          @click="changeSidebarState"
-        />
-      </div>
-    </div>
-    <div class="sidebar-content">
-      <ListVisualization v-if="sidebarMode === 'visualization'" />
-      <FiltersList v-if="sidebarMode === 'filters'" />
-      <AppLists v-if="sidebarMode === 'lists'" />
-      <AppSettings v-if="sidebarMode === 'settings'"/>
-      <RegistrationForm v-if="sidebarMode === 'sign up'" />
-      <AuthForm v-if="sidebarMode === 'sign in'" />
-      <AppBin v-if="sidebarMode === 'bin'" />
-      <ItemSidebar v-if="sidebarMode === 'item'" />
-    </div>
-  </div>
-</template>
-
 <script>
 import FiltersList from '@/components/sidebarContent/FiltersList.vue';
 import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
@@ -126,6 +67,65 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div
+    class="sidebar"
+    :class="[
+      { shown: isSidebarOpen },
+      `${globalTheme}-theme`,
+    ]"
+  >
+    <div
+      class="edge-move-catcher"
+      ref="edgeMoveCatcher"
+    ></div>
+    <div
+      class="add-item-button"
+      v-if="isLoggedIn && currentListObj && !isFocusOnList"
+    >
+      <ButtonSign
+        style-type="plus"
+        big
+        title="new item"
+        @click="isItemFormInSidebar ? createNewItem() : openItemModal()"
+      />
+    </div>
+    <div class="sidebar-buttons">
+      <div class="mode-buttons">
+        <ButtonText
+          class="mode-button"
+          v-for="mode in sidebarModes"
+          :key="mode"
+          :text="mode"
+          :style-type="mode === 'bin' ? 'underline' : 'bordered'"
+          :small="mode === 'bin'"
+          :active="sidebarMode === mode"
+          @click="_openSidebar(mode)"
+        />
+      </div>
+      <div
+        class="state-button"
+        v-if="!isFocusOnList"
+      >
+        <ButtonSign
+          style-type="arrow"
+          @click="changeSidebarState"
+        />
+      </div>
+    </div>
+    <div class="sidebar-content">
+      <ListVisualization v-if="sidebarMode === 'visualization'" />
+      <FiltersList v-if="sidebarMode === 'filters'" />
+      <AppLists v-if="sidebarMode === 'lists'" />
+      <AppSettings v-if="sidebarMode === 'settings'"/>
+      <RegistrationForm v-if="sidebarMode === 'sign up'" />
+      <AuthForm v-if="sidebarMode === 'sign in'" />
+      <AppBin v-if="sidebarMode === 'bin'" />
+      <ItemSidebar v-if="sidebarMode === 'item'" />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
   .sidebar {

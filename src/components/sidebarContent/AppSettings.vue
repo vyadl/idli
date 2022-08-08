@@ -1,3 +1,38 @@
+<script>
+import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import UserProfile from '@/components/sidebarContent/UserProfile.vue';
+import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import AboutModal from '@/components/modals/AboutModal.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
+import { mapGetters, mapActions } from 'vuex';
+
+export default {
+  components: {
+    SidebarCard,
+    UserProfile,
+    CheckboxCustom,
+    AboutModal,
+    ButtonText,
+  },
+  computed: {
+    ...mapGetters({
+      isItemFormInSidebar: 'isItemFormInSidebar',
+      isFocusOnList: 'isFocusOnList',
+      isListUnderSidebar: 'isListUnderSidebar',
+      isUsingHotkeys: 'isUsingHotkeys',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      _switchItemFormLocation: '_switchItemFormLocation',
+      _switchFocusMode: '_switchFocusMode',
+      _switchSidebarAndListIntersection: '_switchSidebarAndListIntersection',
+      _switchUsingHotkeys: '_switchUsingHotkeys',
+    }),
+  },
+};
+</script>
+
 <template>
   <SidebarCard
     class="app-settings"
@@ -60,41 +95,6 @@
     <AboutModal />
   </SidebarCard>
 </template>
-
-<script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
-import UserProfile from '@/components/sidebarContent/UserProfile.vue';
-import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
-import AboutModal from '@/components/modals/AboutModal.vue';
-import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapGetters, mapActions } from 'vuex';
-
-export default {
-  components: {
-    SidebarCard,
-    UserProfile,
-    CheckboxCustom,
-    AboutModal,
-    ButtonText,
-  },
-  computed: {
-    ...mapGetters({
-      isItemFormInSidebar: 'isItemFormInSidebar',
-      isFocusOnList: 'isFocusOnList',
-      isListUnderSidebar: 'isListUnderSidebar',
-      isUsingHotkeys: 'isUsingHotkeys',
-    }),
-  },
-  methods: {
-    ...mapActions({
-      _switchItemFormLocation: '_switchItemFormLocation',
-      _switchFocusMode: '_switchFocusMode',
-      _switchSidebarAndListIntersection: '_switchSidebarAndListIntersection',
-      _switchUsingHotkeys: '_switchUsingHotkeys',
-    }),
-  },
-};
-</script>
 
 <style lang="scss">
   .app-settings {

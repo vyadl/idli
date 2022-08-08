@@ -1,35 +1,3 @@
-<template>
-  <SidebarCard class="test-data">
-    <ButtonText
-      :text="areTestListsShown ? 'hide test lists' : 'show test lists'"
-      style-type="underline"
-      @click="areTestListsShown = !areTestListsShown"
-    />
-    <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
-    />
-    <div
-      class="buttons-container"
-      v-if="areTestListsShown"
-    >
-      <InfoMessage
-        class="info-message"
-        message="choosing test list will copy it to your lists"
-      />
-      <ButtonText
-        class="list-title"
-        v-for="list in testLists"
-        :key="list.title"
-        :text="list.title"
-        style-type="line"
-        :disabled="isRequestProcessing"
-        @click="addTestList(list)"
-      />
-    </div>
-  </SidebarCard>
-</template>
-
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -76,6 +44,38 @@ export default {
   },
 };
 </script>
+
+<template>
+  <SidebarCard class="test-data">
+    <ButtonText
+      :text="areTestListsShown ? 'hide test lists' : 'show test lists'"
+      style-type="underline"
+      @click="areTestListsShown = !areTestListsShown"
+    />
+    <ErrorMessage
+      v-if="errorMessage"
+      :message="errorMessage"
+    />
+    <div
+      class="buttons-container"
+      v-if="areTestListsShown"
+    >
+      <InfoMessage
+        class="info-message"
+        message="choosing test list will copy it to your lists"
+      />
+      <ButtonText
+        class="list-title"
+        v-for="list in testLists"
+        :key="list.title"
+        :text="list.title"
+        style-type="line"
+        :disabled="isRequestProcessing"
+        @click="addTestList(list)"
+      />
+    </div>
+  </SidebarCard>
+</template>
 
 <style lang="scss">
   .test-data {

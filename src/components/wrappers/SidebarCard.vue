@@ -1,3 +1,11 @@
+<script>
+export default {
+  props: {
+    title: String,
+  },
+};
+</script>
+
 <template>
   <div
     class="sidebar-card"
@@ -9,14 +17,6 @@
     <slot />
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    title: String,
-  },
-};
-</script>
 
 <style lang="scss">
   .sidebar-card {

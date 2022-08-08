@@ -1,24 +1,3 @@
-<template>
-  <div
-    class="app"
-    :class="`${globalTheme}-theme`"
-  >
-    <transition name="fade">
-      <div
-        class="preloader"
-        v-if="requestsNumber"
-      ></div>
-    </transition>
-    <EnterScreen v-if="!isLoggedIn"/>
-    <MainList v-else />
-    <SidebarPage />
-    <ListModal/>
-    <ItemModal/>
-    <ConfirmationModal/>
-    <AppNotification v-if="notification" />
-  </div>
-</template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
@@ -79,6 +58,27 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div
+    class="app"
+    :class="`${globalTheme}-theme`"
+  >
+    <transition name="fade">
+      <div
+        class="preloader"
+        v-if="requestsNumber"
+      ></div>
+    </transition>
+    <EnterScreen v-if="!isLoggedIn"/>
+    <MainList v-else />
+    <SidebarPage />
+    <ListModal/>
+    <ItemModal/>
+    <ConfirmationModal/>
+    <AppNotification v-if="notification" />
+  </div>
+</template>
 
 <style lang="scss">
   .app {

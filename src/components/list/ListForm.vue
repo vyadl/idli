@@ -1,117 +1,3 @@
-<template>
-  <form
-    class="list-form"
-    @submit.prevent="edittingListObj ? updateList() : addList()"
-  >
-    <InputCustom
-      label="title"
-      v-model="list.title"
-      :disabled="isRequestProcessing"
-      required
-      ref="listTitle"
-    />
-    <div
-      class="private-option"
-      v-if="false"
-    >
-      <CheckboxCustom
-        label="private"
-        style-type="classic"
-        v-model="list.isPrivate"
-        :disabled="isRequestProcessing"
-      />
-    </div>
-    <div class="filters-container">
-      <div class="tags">
-        <h1 class="filters-header">
-          tags
-        </h1>
-        <div
-          class="filter"
-          v-for="(tag, index) in list.tags"
-          :key="index"
-        >
-          <InputCustom
-            v-model="tag.title"
-            required
-            :disabled="isRequestProcessing"
-            ref="tagsInput"
-          />
-          <ButtonSign
-            class="delete-filter-button"
-            style-type="cross"
-            title="delete tag"
-            :disabled="isRequestProcessing"
-            @click="deleteFilter('tags', index)"
-          />
-        </div>
-        <ButtonSign
-          style-type="plus"
-          title="add tag"
-          :disabled="isRequestProcessing"
-          @click="addFilter('tags')"
-        />
-      </div>
-      <div class="categories">
-        <h1 class="filters-header">
-          categories
-        </h1>
-        <div
-          class="filter"
-          v-for="(category, index) in list.categories"
-          :key="index"
-        >
-          <InputCustom
-            v-model="category.title"
-            required
-            :disabled="isRequestProcessing"
-            ref="categoriesInput"
-          />
-          <ButtonSign
-            class="delete-filter-button"
-            style-type="cross"
-            title="delete category"
-            :disabled="isRequestProcessing"
-            @click="deleteFilter('categories', index)"
-          />
-        </div>
-        <ButtonSign
-          style-type="plus"
-          title="add category"
-          :disabled="isRequestProcessing"
-          @click="addFilter('categories')"
-        />
-      </div>
-    </div>
-    <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
-    />
-    <div class="buttons-container">
-      <div>
-        <ButtonText
-          class="modal-button"
-          :text="edittingListObj ? 'save' : 'add'"
-          type="submit"
-          :disabled="isRequestProcessing"
-        />
-        <ButtonText
-          text="cancel"
-          :disabled="isRequestProcessing"
-          @click="closeListModal"
-        />
-      </div>
-      <ButtonText
-        v-if="edittingListObj"
-        text="delete list"
-        style-type="underline"
-        :disabled="isRequestProcessing"
-        @click="deleteList"
-      />
-    </div>
-  </form>
-</template>
-
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
@@ -273,6 +159,120 @@ export default {
   },
 };
 </script>
+
+<template>
+  <form
+    class="list-form"
+    @submit.prevent="edittingListObj ? updateList() : addList()"
+  >
+    <InputCustom
+      label="title"
+      v-model="list.title"
+      :disabled="isRequestProcessing"
+      required
+      ref="listTitle"
+    />
+    <div
+      class="private-option"
+      v-if="false"
+    >
+      <CheckboxCustom
+        label="private"
+        style-type="classic"
+        v-model="list.isPrivate"
+        :disabled="isRequestProcessing"
+      />
+    </div>
+    <div class="filters-container">
+      <div class="tags">
+        <h1 class="filters-header">
+          tags
+        </h1>
+        <div
+          class="filter"
+          v-for="(tag, index) in list.tags"
+          :key="index"
+        >
+          <InputCustom
+            v-model="tag.title"
+            required
+            :disabled="isRequestProcessing"
+            ref="tagsInput"
+          />
+          <ButtonSign
+            class="delete-filter-button"
+            style-type="cross"
+            title="delete tag"
+            :disabled="isRequestProcessing"
+            @click="deleteFilter('tags', index)"
+          />
+        </div>
+        <ButtonSign
+          style-type="plus"
+          title="add tag"
+          :disabled="isRequestProcessing"
+          @click="addFilter('tags')"
+        />
+      </div>
+      <div class="categories">
+        <h1 class="filters-header">
+          categories
+        </h1>
+        <div
+          class="filter"
+          v-for="(category, index) in list.categories"
+          :key="index"
+        >
+          <InputCustom
+            v-model="category.title"
+            required
+            :disabled="isRequestProcessing"
+            ref="categoriesInput"
+          />
+          <ButtonSign
+            class="delete-filter-button"
+            style-type="cross"
+            title="delete category"
+            :disabled="isRequestProcessing"
+            @click="deleteFilter('categories', index)"
+          />
+        </div>
+        <ButtonSign
+          style-type="plus"
+          title="add category"
+          :disabled="isRequestProcessing"
+          @click="addFilter('categories')"
+        />
+      </div>
+    </div>
+    <ErrorMessage
+      v-if="errorMessage"
+      :message="errorMessage"
+    />
+    <div class="buttons-container">
+      <div>
+        <ButtonText
+          class="modal-button"
+          :text="edittingListObj ? 'save' : 'add'"
+          type="submit"
+          :disabled="isRequestProcessing"
+        />
+        <ButtonText
+          text="cancel"
+          :disabled="isRequestProcessing"
+          @click="closeListModal"
+        />
+      </div>
+      <ButtonText
+        v-if="edittingListObj"
+        text="delete list"
+        style-type="underline"
+        :disabled="isRequestProcessing"
+        @click="deleteList"
+      />
+    </div>
+  </form>
+</template>
 
 <style lang="scss">
   .list-form {

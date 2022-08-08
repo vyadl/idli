@@ -1,3 +1,13 @@
+<script>
+import ModalBasic from '@/components/modals/ModalBasic.vue';
+
+export default {
+  components: {
+    ModalBasic,
+  },
+};
+</script>
+
 <template>
   <ModalBasic
     class="about-modal"
@@ -56,16 +66,6 @@
     </div>
   </ModalBasic>
 </template>
-
-<script>
-import ModalBasic from '@/components/modals/ModalBasic.vue';
-
-export default {
-  components: {
-    ModalBasic,
-  },
-};
-</script>
 
 <style lang="scss">
   .about-modal {

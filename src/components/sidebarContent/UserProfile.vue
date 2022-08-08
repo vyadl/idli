@@ -1,22 +1,3 @@
-<template>
-  <div class="user-profile">
-    <h1 class="profile-title">your profile</h1>
-    <div class="user-info">
-      <div class="info-field">
-        username:  {{ user.username }}
-      </div>
-      <div class="info-field">
-        e-mail:  {{ user.email }}
-      </div>
-    </div>
-    <ButtonText
-      text="log out"
-      style-type="underline"
-      @click="_logOut"
-    />
-  </div>
-</template>
-
 <script>
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -37,6 +18,25 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="user-profile">
+    <h1 class="profile-title">your profile</h1>
+    <div class="user-info">
+      <div class="info-field">
+        username:  {{ user.username }}
+      </div>
+      <div class="info-field">
+        e-mail:  {{ user.email }}
+      </div>
+    </div>
+    <ButtonText
+      text="log out"
+      style-type="underline"
+      @click="_logOut"
+    />
+  </div>
+</template>
 
 <style lang="scss">
   .user-profile {

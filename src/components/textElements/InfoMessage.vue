@@ -1,9 +1,3 @@
-<template>
-  <div class="info-message">
-    {{ message }}
-  </div>
-</template>
-
 <script>
 export default {
   props: {
@@ -11,6 +5,12 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="info-message">
+    {{ message }}
+  </div>
+</template>
 
 <style lang="scss">
   .info-message {
