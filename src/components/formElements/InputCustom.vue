@@ -22,6 +22,10 @@ export default {
       type: String,
       default: '',
     },
+    paddingRight: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: [
@@ -54,6 +58,7 @@ export default {
     </div>
     <input
       class="input"
+      :class="{ 'padding-right' : paddingRight }"
       :type="type"
       :value="modelValue"
       :disabled="disabled"
@@ -85,6 +90,10 @@ export default {
       padding: 9px 3px 4px;
       border-bottom: 1px solid map-get($colors, 'gray-light');
       transition: border-color .3s;
+
+      &.padding-right {
+        padding-right: 20px;
+      }
 
       &:focus {
         border-color: map-get($colors, 'black');
