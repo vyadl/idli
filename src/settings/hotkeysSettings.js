@@ -1,6 +1,14 @@
 import store from '@/store/index';
 
-export const initHotkeys = function initHotkeys() {
+const keysPressed = new Set();
+
+document.addEventListener('keydown', event => {
+  const key = event.code;
+
+  keysPressed.add(key);
+});
+
+export function initHotkeys() {
   document.addEventListener('keyup', event => {
     const key = event.code;
 
@@ -17,6 +25,7 @@ export const initHotkeys = function initHotkeys() {
       && !event.target.closest('textarea')
       && store.getters['auth/isLoggedIn']
       && store.getters.settings.isUsingHotkeys
+      && keysPressed.size === 1
     ) {
       switch (key) {
         case 'KeyI':
@@ -40,8 +49,10 @@ export const initHotkeys = function initHotkeys() {
         default:
       }
     }
+
+    keysPressed.delete(key);
   });
-};
+}
 
 function createNewItem() {
   store.getters.isItemFormInSidebar
