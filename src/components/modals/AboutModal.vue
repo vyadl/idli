@@ -14,6 +14,7 @@ export default {
     name="aboutModal"
     title="about idli"
   >
+  <div>
     <div class="project-descr">
       Creative manager of lists
     </div>
@@ -64,6 +65,7 @@ export default {
         vyadl.me
       </a>
     </div>
+  </div>
   </ModalBasic>
 </template>
 
