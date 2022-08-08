@@ -1,26 +1,3 @@
-<template>
-  <ModalBasic
-    class="confirmation-modal"
-    name="confirmationModal"
-    :title="confirmationModalTitle"
-    :width="400"
-    :top="90"
-  >
-    <div class="buttons-wrapper">
-      <ButtonText
-        text="yes"
-        @click="confirm"
-      >
-      </ButtonText>
-      <ButtonText
-        text="no"
-        @click="close"
-      >
-      </ButtonText>
-    </div>
-  </ModalBasic>
-</template>
-
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -51,8 +28,30 @@ export default {
     },
   },
 };
-
 </script>
+
+<template>
+  <ModalBasic
+    class="confirmation-modal"
+    name="confirmationModal"
+    :title="confirmationModalTitle"
+    :width="400"
+    :top="90"
+  >
+    <div class="buttons-wrapper">
+      <ButtonText
+        text="yes"
+        @click="confirm"
+      >
+      </ButtonText>
+      <ButtonText
+        text="no"
+        @click="close"
+      >
+      </ButtonText>
+    </div>
+  </ModalBasic>
+</template>
 
 <style lang="scss">
 .confirmation-modal {

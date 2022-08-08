@@ -1,33 +1,3 @@
-<template>
-  <label
-    class="checkbox-custom"
-    :class="[
-      styleType,
-      disabled,
-      `${globalTheme}-theme`,
-    ]"
-  >
-    <input
-      class="input"
-      type="checkbox"
-      :value="value"
-      :disabled="disabled"
-      :checked="isChecked"
-      @change="change"
-    >
-    <div
-      class="label"
-      :class="{
-        disabled: disabled,
-        checked: isChecked,
-      }"
-      :title="title"
-    >
-      {{ label }}
-    </div>
-  </label>
-</template>
-
 <script>
 export default {
   props: {
@@ -86,6 +56,36 @@ export default {
   },
 };
 </script>
+
+<template>
+  <label
+    class="checkbox-custom"
+    :class="[
+      styleType,
+      disabled,
+      `${globalTheme}-theme`,
+    ]"
+  >
+    <input
+      class="input"
+      type="checkbox"
+      :value="value"
+      :disabled="disabled"
+      :checked="isChecked"
+      @change="change"
+    >
+    <div
+      class="label"
+      :class="{
+        disabled: disabled,
+        checked: isChecked,
+      }"
+      :title="title"
+    >
+      {{ label }}
+    </div>
+  </label>
+</template>
 
 <style lang="scss">
   .checkbox-custom {

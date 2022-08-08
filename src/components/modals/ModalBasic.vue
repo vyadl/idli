@@ -1,40 +1,3 @@
-<template>
-  <div 
-    :class="`modal-basic ${globalTheme}-theme`"
-    :style="`
-        --modalWidth: ${width}px;
-        --modalTop: ${top}px;
-      `"
-  >
-    <VueFinalModal
-      v-model="showModal"
-      :name="name"
-      :z-index="50"
-      :esc-to-close="true"
-      :lock-scroll="false"
-      transition="modal"
-      @before-open="open"
-      @closed="close"
-    >
-      <header
-        class="header"
-        v-if="title"
-      >
-        <h1 class="title">
-          {{ title }}
-        </h1>
-      </header>
-      <main class="main">
-        <Transition name="fade">
-          <template v-if="showInner">
-            <slot />
-          </template>
-        </Transition>
-      </main>
-    </VueFinalModal>
-  </div>
-</template>
-
 <script>
 import { mapActions } from 'vuex';
 import { VueFinalModal } from 'vue-final-modal';
@@ -78,6 +41,43 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div 
+    :class="`modal-basic ${globalTheme}-theme`"
+    :style="`
+        --modalWidth: ${width}px;
+        --modalTop: ${top}px;
+      `"
+  >
+    <VueFinalModal
+      v-model="showModal"
+      :name="name"
+      :z-index="50"
+      :esc-to-close="true"
+      :lock-scroll="false"
+      transition="modal"
+      @before-open="open"
+      @closed="close"
+    >
+      <header
+        class="header"
+        v-if="title"
+      >
+        <h1 class="title">
+          {{ title }}
+        </h1>
+      </header>
+      <main class="main">
+        <Transition name="fade">
+          <template v-if="showInner">
+            <slot />
+          </template>
+        </Transition>
+      </main>
+    </VueFinalModal>
+  </div>
+</template>
 
 <style lang="scss">
   .modal-basic {

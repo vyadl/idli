@@ -1,29 +1,3 @@
-<template>
-  <div class="common-deleted-item">
-    <div class="title">
-      {{ item.title }}
-    </div>
-    <div class="deleted-at">
-      deleted at {{ getFormattedDate(item.deletedAt) }}
-    </div>
-    <div class="buttons">
-      <ButtonText
-        text="restore"
-        small
-        :disabled="disabled"
-        @click="restore"
-      />
-      <ButtonText
-        text="delete"
-        style-type="underline"
-        small
-        :disabled="disabled"
-        @click="remove"
-      />
-    </div>
-  </div>
-</template>
-
 <script>
 import ButtonText from '@/components/formElements/ButtonText.vue';
 
@@ -69,6 +43,32 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="common-deleted-item">
+    <div class="title">
+      {{ item.title }}
+    </div>
+    <div class="deleted-at">
+      deleted at {{ getFormattedDate(item.deletedAt) }}
+    </div>
+    <div class="buttons">
+      <ButtonText
+        text="restore"
+        small
+        :disabled="disabled"
+        @click="restore"
+      />
+      <ButtonText
+        text="delete"
+        style-type="underline"
+        small
+        :disabled="disabled"
+        @click="remove"
+      />
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
   .common-deleted-item {

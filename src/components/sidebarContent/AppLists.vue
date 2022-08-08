@@ -1,40 +1,3 @@
-<template>
-  <SidebarCard
-    class="app-lists"
-    :class="`${globalTheme}-theme`"
-    title="lists"
-  >
-    <div class="lists-container">
-      <div
-        class="list"
-        v-for="list in sortedLists"
-        :key="list.id"
-      >
-        <ButtonSign
-          class="edit-button"
-          :class="{ active:  list.id === currentListId }"
-          style-type="dots"
-          @click="setListForEditting(list)"
-        />
-        <ButtonText
-          class="list-title"
-          :text="list.title"
-          style-type="line"
-          :active="list.id === currentListId"
-          @click="fetchListById(list.id)"
-        />
-      </div>
-      <ButtonSign
-        style-type="plus"
-        title="new list"
-        :disabled="isRequestProcessing"
-        @click="openListModal"
-      />
-    </div>
-    <TestData/>
-  </SidebarCard>
-</template>
-
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import TestData from '@/components/sidebarContent/TestData.vue';
@@ -102,6 +65,43 @@ export default {
   },
 };
 </script>
+
+<template>
+  <SidebarCard
+    class="app-lists"
+    :class="`${globalTheme}-theme`"
+    title="lists"
+  >
+    <div class="lists-container">
+      <div
+        class="list"
+        v-for="list in sortedLists"
+        :key="list.id"
+      >
+        <ButtonSign
+          class="edit-button"
+          :class="{ active:  list.id === currentListId }"
+          style-type="dots"
+          @click="setListForEditting(list)"
+        />
+        <ButtonText
+          class="list-title"
+          :text="list.title"
+          style-type="line"
+          :active="list.id === currentListId"
+          @click="fetchListById(list.id)"
+        />
+      </div>
+      <ButtonSign
+        style-type="plus"
+        title="new list"
+        :disabled="isRequestProcessing"
+        @click="openListModal"
+      />
+    </div>
+    <TestData/>
+  </SidebarCard>
+</template>
 
 <style lang="scss">
   .app-lists {

@@ -1,45 +1,3 @@
-<template>
-  <form
-    class="registration-form"
-    @submit.prevent="signUp(user)"
-  >
-    <InputCustom
-      label="username"
-      v-model="user.username"
-      required
-      @input="clearMessage"
-    />
-    <InputCustom
-      label="e-mail"
-      type="email"
-      v-model="user.email"
-      required
-      @input="clearMessage"
-    />
-    <PasswordField
-      v-model="user.password"
-      @input="clearMessage"
-    />
-    <PasswordField
-      label="confirm password"
-      v-model="passwordToCheck"
-      @input="clearMessage"
-    />
-    <div class="message-container">
-      <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
-      />
-    </div>
-    <ButtonText
-      text="sign up"
-      style-type="bordered"
-      type="submit"
-      :disabled="isRequestProcessing"
-    />
-  </form>
-</template>
-
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -89,6 +47,48 @@ export default {
   },
 };
 </script>
+
+<template>
+  <form
+    class="registration-form"
+    @submit.prevent="signUp(user)"
+  >
+    <InputCustom
+      label="username"
+      v-model="user.username"
+      required
+      @input="clearMessage"
+    />
+    <InputCustom
+      label="e-mail"
+      type="email"
+      v-model="user.email"
+      required
+      @input="clearMessage"
+    />
+    <PasswordField
+      v-model="user.password"
+      @input="clearMessage"
+    />
+    <PasswordField
+      label="confirm password"
+      v-model="passwordToCheck"
+      @input="clearMessage"
+    />
+    <div class="message-container">
+      <ErrorMessage
+        v-if="errorMessage"
+        :message="errorMessage"
+      />
+    </div>
+    <ButtonText
+      text="sign up"
+      style-type="bordered"
+      type="submit"
+      :disabled="isRequestProcessing"
+    />
+  </form>
+</template>
 
 <style lang="scss">
   .registration-form {
