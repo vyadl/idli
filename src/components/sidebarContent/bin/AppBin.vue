@@ -1,77 +1,3 @@
-<template>
-<div class="app-bin">
-  <div
-    v-if="deletedLists.length || deletedItems.length"
-  >
-    <SidebarCard
-      title="lists"
-      v-show="deletedLists.length"
-    >
-      <div class="all-buttons">
-        <ButtonText
-          text="restore all lists"
-          small
-          :disabled="isRequestProcessing"
-          @click="resolveAllAction('_restoreAllLists')"
-        />
-        <ButtonText
-          text="delete all lists"
-          style-type="underline"
-          small
-          :disabled="isRequestProcessing"
-          @click="resolveAllAction('_hardDeleteAllLists')"
-        />
-      </div>
-      <BinUnit
-        type="list"
-        v-for="item in deletedLists"
-        :key="item.id"
-        :item="item"
-        :disabled="isRequestProcessing"
-        @delete="resolveAction('_hardDeleteList', item.id)"
-        @restore="resolveAction('_restoreList', item.id)"
-      />
-    </SidebarCard>
-    <SidebarCard
-      title="items"
-      class="items"
-      v-show="deletedItems.length"
-    >
-      <div class="all-buttons">
-        <ButtonText
-          text="restore all items"
-          small
-          :disabled="isRequestProcessing"
-          @click="resolveAllAction('_restoreAllItems')"
-        />
-        <ButtonText
-          text="delete all items"
-          style-type="underline"
-          small
-          :disabled="isRequestProcessing"
-          @click="resolveAllAction('_hardDeleteAllItems')"
-        />
-      </div>
-      <BinUnit
-        type="list"
-        v-for="item in deletedItems"
-        :key="item.id"
-        :item="item"
-        :disabled="isRequestProcessing"
-        @delete="resolveAction('_hardDeleteItem', { itemId: item.id, listId: item.listId })"
-        @restore="resolveAction('_restoreItem',{ itemId: item.id, listId: item.listId })"
-      />
-    </SidebarCard>
-  </div>
-  <div 
-    v-else
-    class="message"
-  >
-    <InfoMessage message="nothing was deleted so far"/>
-  </div>
-</div>
-</template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
@@ -149,6 +75,80 @@ export default {
   },
 };
 </script>
+
+<template>
+<div class="app-bin">
+  <div
+    v-if="deletedLists.length || deletedItems.length"
+  >
+    <SidebarCard
+      title="lists"
+      v-show="deletedLists.length"
+    >
+      <div class="all-buttons">
+        <ButtonText
+          text="restore all lists"
+          small
+          :disabled="isRequestProcessing"
+          @click="resolveAllAction('_restoreAllLists')"
+        />
+        <ButtonText
+          text="delete all lists"
+          style-type="underline"
+          small
+          :disabled="isRequestProcessing"
+          @click="resolveAllAction('_hardDeleteAllLists')"
+        />
+      </div>
+      <BinUnit
+        type="list"
+        v-for="item in deletedLists"
+        :key="item.id"
+        :item="item"
+        :disabled="isRequestProcessing"
+        @delete="resolveAction('_hardDeleteList', item.id)"
+        @restore="resolveAction('_restoreList', item.id)"
+      />
+    </SidebarCard>
+    <SidebarCard
+      title="items"
+      class="items"
+      v-show="deletedItems.length"
+    >
+      <div class="all-buttons">
+        <ButtonText
+          text="restore all items"
+          small
+          :disabled="isRequestProcessing"
+          @click="resolveAllAction('_restoreAllItems')"
+        />
+        <ButtonText
+          text="delete all items"
+          style-type="underline"
+          small
+          :disabled="isRequestProcessing"
+          @click="resolveAllAction('_hardDeleteAllItems')"
+        />
+      </div>
+      <BinUnit
+        type="list"
+        v-for="item in deletedItems"
+        :key="item.id"
+        :item="item"
+        :disabled="isRequestProcessing"
+        @delete="resolveAction('_hardDeleteItem', { itemId: item.id, listId: item.listId })"
+        @restore="resolveAction('_restoreItem',{ itemId: item.id, listId: item.listId })"
+      />
+    </SidebarCard>
+  </div>
+  <div 
+    v-else
+    class="message"
+  >
+    <InfoMessage message="nothing was deleted so far"/>
+  </div>
+</div>
+</template>
 
 .<style lang="scss">
   .app-bin {

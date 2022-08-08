@@ -1,33 +1,3 @@
-<template>
-  <label
-    class="radio-custom"
-    :class="[
-      `${globalTheme}-theme`,
-      { disabled },
-    ]"
-  >
-    <input
-      class="input"
-      type="radio"
-      :value="value"
-      :disabled="disabled"
-      :checked="isChecked"
-      @change="change"
-      @click="click"
-    >
-    <div
-      class="label"
-      :class="{
-        small,
-        disabled,
-        checked: isChecked,
-      }"
-    >
-      {{ label }}
-    </div>
-  </label>
-</template>
-
 <script>
 export default {
   props: {
@@ -61,6 +31,36 @@ export default {
   },
 };
 </script>
+
+<template>
+  <label
+    class="radio-custom"
+    :class="[
+      `${globalTheme}-theme`,
+      { disabled },
+    ]"
+  >
+    <input
+      class="input"
+      type="radio"
+      :value="value"
+      :disabled="disabled"
+      :checked="isChecked"
+      @change="change"
+      @click="click"
+    >
+    <div
+      class="label"
+      :class="{
+        small,
+        disabled,
+        checked: isChecked,
+      }"
+    >
+      {{ label }}
+    </div>
+  </label>
+</template>
 
 <style lang="scss">
   .radio-custom {

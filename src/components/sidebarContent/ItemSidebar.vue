@@ -1,12 +1,3 @@
-<template>
-  <SidebarCard
-    class="item-sidebar"
-    :title="edittingItemObj ? 'edit item' : 'new item'"
-  >
-    <ItemForm />
-  </SidebarCard>
-</template>
-
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ItemForm from '@/components/list/ItemForm.vue';
@@ -24,3 +15,12 @@ export default {
   },
 };
 </script>
+
+<template>
+  <SidebarCard
+    class="item-sidebar"
+    :title="edittingItemObj ? 'edit item' : 'new item'"
+  >
+    <ItemForm />
+  </SidebarCard>
+</template>

@@ -1,27 +1,3 @@
-<template>
-  <label
-    class="input-custom"
-    :class="[
-      `${globalTheme}-theme`,
-      { disabled },
-    ]"
-  >
-    <div class="label">
-      {{ label }}
-    </div>
-    <input
-      class="input"
-      :type="type"
-      :value="modelValue"
-      :disabled="disabled"
-      :required="required"
-      :placeholder="placeholder"
-      @input="input($event.target.value)"
-      ref="input"
-    >
-  </label>
-</template>
-
 <script>
 export default {
   props: {
@@ -64,6 +40,30 @@ export default {
   },
 };
 </script>
+
+<template>
+  <label
+    class="input-custom"
+    :class="[
+      `${globalTheme}-theme`,
+      { disabled },
+    ]"
+  >
+    <div class="label">
+      {{ label }}
+    </div>
+    <input
+      class="input"
+      :type="type"
+      :value="modelValue"
+      :disabled="disabled"
+      :required="required"
+      :placeholder="placeholder"
+      @input="input($event.target.value)"
+      ref="input"
+    >
+  </label>
+</template>
 
 <style lang="scss">
   .input-custom {

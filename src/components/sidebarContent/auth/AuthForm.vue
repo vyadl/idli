@@ -1,33 +1,3 @@
-<template>
-  <form
-    class="auth-form"
-    @submit.prevent="signIn(signInData)"
-  >
-    <InputCustom
-      label="username"
-      v-model="signInData.username"
-      required
-      @input="clearMessage"
-    />
-    <PasswordField
-      v-model="signInData.password"
-      @input="clearMessage"
-    />
-    <div class="message-container">
-      <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
-      />
-    </div>
-    <ButtonText
-      text="sign in"
-      style-type="bordered"
-      type="submit"
-      :disabled="isRequestProcessing"
-    />
-  </form>
-</template>
-
 <script>
 import { mapActions } from 'vuex';
 import InputCustom from '@/components/formElements/InputCustom.vue';
@@ -70,6 +40,36 @@ export default {
   },
 };
 </script>
+
+<template>
+  <form
+    class="auth-form"
+    @submit.prevent="signIn(signInData)"
+  >
+    <InputCustom
+      label="username"
+      v-model="signInData.username"
+      required
+      @input="clearMessage"
+    />
+    <PasswordField
+      v-model="signInData.password"
+      @input="clearMessage"
+    />
+    <div class="message-container">
+      <ErrorMessage
+        v-if="errorMessage"
+        :message="errorMessage"
+      />
+    </div>
+    <ButtonText
+      text="sign in"
+      style-type="bordered"
+      type="submit"
+      :disabled="isRequestProcessing"
+    />
+  </form>
+</template>
 
 <style lang="scss">
   .auth-form {

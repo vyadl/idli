@@ -1,3 +1,22 @@
+<script>
+export default {
+  props: {
+    label: String,
+    modelValue: String,
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:modelValue'],
+  methods: {
+    input(event) {
+      this.$emit('update:modelValue', event.target.value);
+    },
+  },
+};
+</script>
+
 <template>
   <label
     class="textarea-custom"
@@ -18,25 +37,6 @@
     ></textarea>
   </label>
 </template>
-
-<script>
-export default {
-  props: {
-    label: String,
-    modelValue: String,
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['update:modelValue'],
-  methods: {
-    input(event) {
-      this.$emit('update:modelValue', event.target.value);
-    },
-  },
-};
-</script>
 
 <style lang="scss">
   .textarea-custom {

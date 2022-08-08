@@ -1,20 +1,3 @@
-<template>
-  <div
-    class="app-notification"
-    :class="[{
-        shown: isNotificationShown,
-        hide: !isNotificationShown && !isIniting,
-        hidden: isIniting,
-      },
-      `${globalTheme}-theme`,
-    ]"
-  >
-    <div class="text">
-      {{ notification.text }}
-    </div>
-  </div>
-</template>
-
 <script>
 import { mapGetters, mapActions } from 'vuex';
 
@@ -61,6 +44,23 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div
+    class="app-notification"
+    :class="[{
+        shown: isNotificationShown,
+        hide: !isNotificationShown && !isIniting,
+        hidden: isIniting,
+      },
+      `${globalTheme}-theme`,
+    ]"
+  >
+    <div class="text">
+      {{ notification.text }}
+    </div>
+  </div>
+</template>
 
 <style lang="scss">
   .app-notification {

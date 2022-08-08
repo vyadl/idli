@@ -1,18 +1,3 @@
-<template>
-  <button
-    class="button-sign"
-    :class="[
-      styleType,
-      { big },
-      `${globalTheme}-theme`,
-    ]"
-    :title="title"
-    :type="type"
-    :disabled="disabled"
-    @click="click($event)"
-  ></button>
-</template>
-
 <script>
 export default {
   props: {
@@ -50,6 +35,21 @@ export default {
   },
 };
 </script>
+
+<template>
+  <button
+    class="button-sign"
+    :class="[
+      styleType,
+      { big },
+      `${globalTheme}-theme`,
+    ]"
+    :title="title"
+    :type="type"
+    :disabled="disabled"
+    @click="click($event)"
+  ></button>
+</template>
 
 <style lang="scss">
   .button-sign {

@@ -1,88 +1,3 @@
-<template>
-  <form
-    class="item-form"
-    v-if="item"
-    @submit.prevent="saveItem"
-  >
-    <div class="text-fields">
-      <InputCustom
-        label="item"
-        v-model="item.title"
-        :disabled="isRequestProcessing"
-        required
-        ref="itemTitle"
-      />
-      <TextareaCustom
-        label="details"
-        v-model="item.details"
-        :disabled="isRequestProcessing"
-      />
-    </div>
-    <div
-      class="filters-container"
-      :class="{ indent: isAnyTagExist && isAnyCategoryExist }"
-      v-if="isAnyTagExist"
-    >
-      <h1 class="filters-title">tags:</h1>
-      <CheckboxCustom
-        v-for="tag in currentListTags"
-        :key="tag.id"
-        :label="tag.title"
-        :value="tag.id"
-        v-model="item.tags"
-        :disabled="isRequestProcessing"
-        name="tags"
-      />
-    </div>
-    <div
-      class="filters-container"
-      v-if="isAnyCategoryExist"
-    >
-      <h1 class="filters-title">category:</h1>
-      <RadioCustom
-        class="item-category"
-        v-for="category in currentListCategories"
-        :key="category.id"
-        :label="category.title"
-        :value="category.id"
-        v-model="item.category"
-        :disabled="isRequestProcessing"
-        name="category"
-        @click="disableCategory(category.id)"
-      />
-    </div>
-    <ErrorMessage
-      v-if="errorMessage.length"
-      :message="errorMessage"
-    />
-    <div class="buttons-container">
-      <div>
-        <ButtonText
-          class="save-button"
-          :text="edittingItemObj ? 'save' : 'add'"
-          :small="isItemFormInSidebar"
-          type="submit"
-          :disabled="isRequestProcessing"
-        />
-        <ButtonText
-          text="cancel"
-          :small="isItemFormInSidebar"
-          :disabled="isRequestProcessing"
-          @click="isItemFormInSidebar ? _closeSidebar() : closeItemModal()"
-        />
-      </div>
-      <ButtonText
-        v-if="edittingItemObj"
-        text="delete item"
-        style-type="underline"
-        :small="isItemFormInSidebar"
-        :disabled="isRequestProcessing"
-        @click="deleteItem(item)"
-      />
-    </div>
-  </form>
-</template>
-
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
@@ -189,6 +104,91 @@ export default {
   },
 };
 </script>
+
+<template>
+  <form
+    class="item-form"
+    v-if="item"
+    @submit.prevent="saveItem"
+  >
+    <div class="text-fields">
+      <InputCustom
+        label="item"
+        v-model="item.title"
+        :disabled="isRequestProcessing"
+        required
+        ref="itemTitle"
+      />
+      <TextareaCustom
+        label="details"
+        v-model="item.details"
+        :disabled="isRequestProcessing"
+      />
+    </div>
+    <div
+      class="filters-container"
+      :class="{ indent: isAnyTagExist && isAnyCategoryExist }"
+      v-if="isAnyTagExist"
+    >
+      <h1 class="filters-title">tags:</h1>
+      <CheckboxCustom
+        v-for="tag in currentListTags"
+        :key="tag.id"
+        :label="tag.title"
+        :value="tag.id"
+        v-model="item.tags"
+        :disabled="isRequestProcessing"
+        name="tags"
+      />
+    </div>
+    <div
+      class="filters-container"
+      v-if="isAnyCategoryExist"
+    >
+      <h1 class="filters-title">category:</h1>
+      <RadioCustom
+        class="item-category"
+        v-for="category in currentListCategories"
+        :key="category.id"
+        :label="category.title"
+        :value="category.id"
+        v-model="item.category"
+        :disabled="isRequestProcessing"
+        name="category"
+        @click="disableCategory(category.id)"
+      />
+    </div>
+    <ErrorMessage
+      v-if="errorMessage.length"
+      :message="errorMessage"
+    />
+    <div class="buttons-container">
+      <div>
+        <ButtonText
+          class="save-button"
+          :text="edittingItemObj ? 'save' : 'add'"
+          :small="isItemFormInSidebar"
+          type="submit"
+          :disabled="isRequestProcessing"
+        />
+        <ButtonText
+          text="cancel"
+          :small="isItemFormInSidebar"
+          :disabled="isRequestProcessing"
+          @click="isItemFormInSidebar ? _closeSidebar() : closeItemModal()"
+        />
+      </div>
+      <ButtonText
+        v-if="edittingItemObj"
+        text="delete item"
+        style-type="underline"
+        :small="isItemFormInSidebar"
+        :disabled="isRequestProcessing"
+        @click="deleteItem(item)"
+      />
+    </div>
+  </form>
+</template>
 
 <style lang="scss">
   .item-form {
