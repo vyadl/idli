@@ -22,9 +22,9 @@ export default {
       type: String,
       default: '',
     },
-    paddingRight: {
-      type: Boolean,
-      default: false,
+    icon: {
+      type: String,
+      default: '',
     },
   },
 
@@ -58,7 +58,7 @@ export default {
     </div>
     <input
       class="input"
-      :class="{ 'padding-right' : paddingRight }"
+      :class="{ 'padding-right' : icon }"
       :type="type"
       :value="modelValue"
       :disabled="disabled"
@@ -67,6 +67,17 @@ export default {
       @input="input($event.target.value)"
       ref="input"
     >
+    <div 
+      class="icon-wrapper"
+      v-if="icon"
+    >
+      <img 
+        class="icon"
+        alt="icon" 
+        :width="15"
+        :src="icon" 
+      />
+    </div>
   </label>
 </template>
 
@@ -98,6 +109,20 @@ export default {
       &:focus {
         border-color: map-get($colors, 'black');
       }
+    }
+
+    .icon-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .icon {
+      display: block;
+      position: absolute;
+      top: 50%;
+      transform: translate(-20%, -140%);
+      right: 0;
+      opacity: 0.5;
     }
 
     &.inverted-theme {

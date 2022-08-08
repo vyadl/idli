@@ -1,11 +1,9 @@
 import store from '@/store/index';
 
-const keysPressed = new Set();
+const pressedKeys = new Set();
 
 document.addEventListener('keydown', event => {
-  const key = event.code;
-
-  keysPressed.add(key);
+  pressedKeys.add(event.code);
 });
 
 export function initHotkeys() {
@@ -25,7 +23,7 @@ export function initHotkeys() {
       && !event.target.closest('textarea')
       && store.getters['auth/isLoggedIn']
       && store.getters.settings.isUsingHotkeys
-      && keysPressed.size === 1
+      && pressedKeys.size === 1
     ) {
       switch (key) {
         case 'KeyI':
@@ -50,7 +48,7 @@ export function initHotkeys() {
       }
     }
 
-    keysPressed.delete(key);
+    pressedKeys.delete(key);
   });
 }
 
