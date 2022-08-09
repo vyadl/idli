@@ -22,6 +22,10 @@ export default {
       type: String,
       default: '',
     },
+    icon: {
+      type: String,
+      default: '',
+    },
   },
 
   emits: [
@@ -54,6 +58,7 @@ export default {
     </div>
     <input
       class="input"
+      :class="{ 'with-icon' : icon }"
       :type="type"
       :value="modelValue"
       :disabled="disabled"
@@ -62,6 +67,17 @@ export default {
       @input="input($event.target.value)"
       ref="input"
     >
+    <div 
+      v-if="icon"
+      class="icon-wrapper"
+    >
+      <img 
+        class="icon"
+        alt="icon" 
+        :width="15"
+        :src="icon" 
+      />
+    </div>
   </label>
 </template>
 
@@ -86,9 +102,26 @@ export default {
       border-bottom: 1px solid map-get($colors, 'gray-light');
       transition: border-color .3s;
 
+      &.with-icon {
+        padding-right: 20px;
+      }
+
       &:focus {
         border-color: map-get($colors, 'black');
       }
+    }
+
+    .icon-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .icon {
+      display: block;
+      position: absolute;
+      top: 50%;
+      transform: translate(-20%, -140%);
+      right: 0;
     }
 
     &.inverted-theme {

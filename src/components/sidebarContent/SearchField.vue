@@ -20,9 +20,12 @@ export default {
 </script>
 
 <template>
+<div class="search-field">
   <InputCustom 
+    icon="/icons/loupe.svg"
     :placeholder="'search items'"
     :modelValue="currentSearchValue"
     @input="setCurrentSearchValue"
   />
+</div>
 </template>

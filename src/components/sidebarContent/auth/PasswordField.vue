@@ -39,6 +39,7 @@ export default {
 <template>
 <div class="password-field">
   <InputCustom
+    padding-right
     :label="label"
     :type="inputType"
     :modelValue="modelValue"
@@ -49,7 +50,7 @@ export default {
     <img 
       alt="show pw" 
       :width="20"
-      :src="isPasswordShown ? '/images/eye-open.svg' : '/images/eye-closed.svg'" 
+      :src="isPasswordShown ? '/icons/eye-open.svg' : '/icons/eye-closed.svg'" 
       @click="togglePassword"
     />
   </div>
@@ -66,7 +67,6 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     right: 0;
-    opacity: 0.5;
     cursor: pointer;
   }
 }
