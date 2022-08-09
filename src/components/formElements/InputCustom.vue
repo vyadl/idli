@@ -76,7 +76,6 @@ export default {
         alt="icon" 
         :width="15"
         :src="icon" 
-        fill="purple"
       />
     </div>
   </label>
