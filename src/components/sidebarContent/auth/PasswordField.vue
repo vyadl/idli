@@ -67,7 +67,6 @@ export default {
     top: 50%;
     transform: translateY(-50%);
     right: 0;
-    opacity: 0.5;
     cursor: pointer;
   }
 }

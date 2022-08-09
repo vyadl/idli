@@ -58,7 +58,7 @@ export default {
     </div>
     <input
       class="input"
-      :class="{ 'padding-right' : icon }"
+      :class="{ 'with-icon' : icon }"
       :type="type"
       :value="modelValue"
       :disabled="disabled"
@@ -68,14 +68,15 @@ export default {
       ref="input"
     >
     <div 
-      class="icon-wrapper"
       v-if="icon"
+      class="icon-wrapper"
     >
       <img 
         class="icon"
         alt="icon" 
         :width="15"
         :src="icon" 
+        fill="purple"
       />
     </div>
   </label>
@@ -102,7 +103,7 @@ export default {
       border-bottom: 1px solid map-get($colors, 'gray-light');
       transition: border-color .3s;
 
-      &.padding-right {
+      &.with-icon {
         padding-right: 20px;
       }
 
@@ -122,7 +123,6 @@ export default {
       top: 50%;
       transform: translate(-20%, -140%);
       right: 0;
-      opacity: 0.5;
     }
 
     &.inverted-theme {
