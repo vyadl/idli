@@ -40,9 +40,23 @@ export default {
     },
   },
   mounted() {
+    this.$watch(() => this.$route.query.sidebar, (mode) => {
+      if (mode) {
+        this._openSidebar(mode);
+      }
+    });
+
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
-        this._openSidebar(this.sidebarMode ? this.sidebarMode : 'lists');
+        let mode = '';
+
+        if (!this.isLoggedIn) {
+          mode = 'sign in';
+        } else {
+          mode = this.sidebarMode ? this.sidebarMode : 'lists';
+        }
+
+        this._openSidebar(mode);
       }
     });
   },
@@ -100,7 +114,7 @@ export default {
           :text="mode"
           :style-type="mode === 'bin' ? 'underline' : 'bordered'"
           :small="mode === 'bin'"
-          :active="sidebarMode === mode"
+          :active="$route.query.sidebar === mode"
           @click="_openSidebar(mode)"
         />
       </div>

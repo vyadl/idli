@@ -50,7 +50,7 @@ export default {
     <img 
       alt="show pw" 
       :width="20"
-      :src="isPasswordShown ? '/icons/eye-open.svg' : '/icons/eye-closed.svg'" 
+      :src="isPasswordShown ? '/icons/eye-closed.svg' : '/icons/eye-open.svg'" 
       @click="togglePassword"
     />
   </div>

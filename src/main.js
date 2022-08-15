@@ -6,6 +6,7 @@ import store from '@/store/index';
 import { initAxios } from '@/settings/axiosSettings';
 import themes from '@/mixins/themes';
 import App from '@/components/App.vue';
+import { router } from '@/router/index';
 
 const app = createApp(App);
 
@@ -20,6 +21,7 @@ app.config.globalProperties.$config = {
   apiBasePath,
 };
 
+app.use(router);
 app.use(store);
 app.use(MasonryWall);
 app.use(vfmPlugin({
