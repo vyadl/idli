@@ -3,9 +3,6 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   props: ['item'],
-  beforeRouteEnter() {
-    
-  },
   computed: {
     ...mapGetters({
       edittingItemObj: 'edittingItemObj',
