@@ -1,3 +1,5 @@
+import { addQueryItems, pushRouteKeepQuery, deleteFromQuery } from '@/router/utils';
+
 export default {
   // local storage
 
@@ -49,6 +51,10 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setCurrentItems', responseList.items);
+        pushRouteKeepQuery({
+          name: 'list',
+          params: { id },
+        });
       })
       .catch(error => {
         console.log(error);
@@ -233,9 +239,11 @@ export default {
   _openSidebar({ commit }, mode) {
     commit('openSidebar');
     commit('changeSidebarMode', mode);
+    addQueryItems({ sidebar: mode });
   },
   _closeSidebar({ commit, getters }) {
     commit('closeSidebar');
+    deleteFromQuery('sidebar');
 
     if (getters.sidebarMode === 'item') {
       commit('changeSidebarMode', 'lists');

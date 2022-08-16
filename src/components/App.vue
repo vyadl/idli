@@ -1,7 +1,5 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import EnterScreen from '@/components/mainPages/EnterScreen.vue';
-import MainList from '@/components/list/MainList.vue';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
@@ -12,8 +10,6 @@ import checkAppVersion from '@/settings/appVersion';
 
 export default {
   components: {
-    EnterScreen,
-    MainList,
     SidebarPage,
     ConfirmationModal,
     ListModal,
@@ -70,8 +66,7 @@ export default {
         v-if="requestsNumber"
       ></div>
     </transition>
-    <EnterScreen v-if="!isLoggedIn"/>
-    <MainList v-else />
+    <router-view></router-view>
     <SidebarPage />
     <ListModal/>
     <ItemModal/>

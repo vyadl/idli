@@ -56,7 +56,9 @@ export default {
     :type="type"
     :disabled="disabled"
     @click="click($event)"
-  >{{ text }}</button>
+  >
+    {{ text }}
+  </button>
 </template>
 
 <style lang="scss">

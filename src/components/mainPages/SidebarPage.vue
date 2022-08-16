@@ -24,6 +24,8 @@ export default {
     ButtonText,
     ButtonSign,
   },
+  LOGGED_IN_DEFAULT_SIDEBAR: 'lists',
+  LOGGED_OUT_DEFAULT_SIDEBAR: 'sign in',
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
@@ -40,9 +42,25 @@ export default {
     },
   },
   mounted() {
+    this.$watch(() => this.$route.query.sidebar, (mode) => {
+      if (mode) {
+        this._openSidebar(mode);
+      } else {
+        this._closeSidebar();
+      }
+    });
+
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
-        this._openSidebar(this.sidebarMode ? this.sidebarMode : 'lists');
+        let mode = '';
+
+        if (!this.isLoggedIn) {
+          mode = this.$options.LOGGED_OUT_DEFAULT_SIDEBAR;
+        } else {
+          mode = this.sidebarMode ? this.sidebarMode : this.$options.LOGGED_IN_DEFAULT_SIDEBAR;
+        }
+
+        this._openSidebar(mode);
       }
     });
   },
@@ -58,7 +76,8 @@ export default {
     changeSidebarState() {
       this.isSidebarOpen
         ? this._closeSidebar()
-        : this._openSidebar(this.isLoggedIn ? this.sidebarMode : 'sign up');
+        : this._openSidebar(this.isLoggedIn 
+          ? this.sidebarMode : this.$options.LOGGED_OUT_DEFAULT_SIDEBAR);
     },
     createNewItem() {
       this._setItemForEditting(null);
