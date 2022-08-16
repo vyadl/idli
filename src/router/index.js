@@ -8,6 +8,4 @@ export const router = createRouter({
   routes,
 });
 
-(function initRouter() {
-  beforeEach(router);
-}());
+beforeEach(router);
