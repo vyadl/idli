@@ -6,7 +6,7 @@ import store from '@/store/index';
 import { initAxios } from '@/settings/axiosSettings';
 import themes from '@/mixins/themes';
 import App from '@/components/App.vue';
-import { router } from '@/router/index';
+import { router } from '@/router';
 
 const app = createApp(App);
 

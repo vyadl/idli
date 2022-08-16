@@ -24,6 +24,8 @@ export default {
     ButtonText,
     ButtonSign,
   },
+  LOGGED_IN_DEFAULT_SIDEBAR: 'lists',
+  LOGGED_OUT_DEFAULT_SIDEBAR: 'sign in',
   computed: {
     ...mapGetters({
       currentListObj: 'currentListObj',
@@ -43,6 +45,8 @@ export default {
     this.$watch(() => this.$route.query.sidebar, (mode) => {
       if (mode) {
         this._openSidebar(mode);
+      } else {
+        this._closeSidebar();
       }
     });
 
@@ -51,9 +55,9 @@ export default {
         let mode = '';
 
         if (!this.isLoggedIn) {
-          mode = 'sign in';
+          mode = this.$options.LOGGED_OUT_DEFAULT_SIDEBAR;
         } else {
-          mode = this.sidebarMode ? this.sidebarMode : 'lists';
+          mode = this.sidebarMode ? this.sidebarMode : this.$options.LOGGED_IN_DEFAULT_SIDEBAR;
         }
 
         this._openSidebar(mode);
@@ -72,7 +76,8 @@ export default {
     changeSidebarState() {
       this.isSidebarOpen
         ? this._closeSidebar()
-        : this._openSidebar(this.isLoggedIn ? this.sidebarMode : 'sign up');
+        : this._openSidebar(this.isLoggedIn 
+          ? this.sidebarMode : this.$options.LOGGED_OUT_DEFAULT_SIDEBAR);
     },
     createNewItem() {
       this._setItemForEditting(null);
@@ -114,7 +119,7 @@ export default {
           :text="mode"
           :style-type="mode === 'bin' ? 'underline' : 'bordered'"
           :small="mode === 'bin'"
-          :active="$route.query.sidebar === mode"
+          :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
       </div>

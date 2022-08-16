@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-cycle
-import { addQueryItems, changeRoute, deleteQueryItems } from '@/router/index';
+import { addQueryItems, pushRouteKeepQuery, deleteFromQuery } from '@/router/utils';
 
 export default {
   // local storage
@@ -52,7 +51,10 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setCurrentItems', responseList.items);
-        changeRoute('list', { id });
+        pushRouteKeepQuery({
+          name: 'list',
+          params: { id },
+        });
       })
       .catch(error => {
         console.log(error);
@@ -241,7 +243,7 @@ export default {
   },
   _closeSidebar({ commit, getters }) {
     commit('closeSidebar');
-    deleteQueryItems('sidebar');
+    deleteFromQuery('sidebar');
 
     if (getters.sidebarMode === 'item') {
       commit('changeSidebarMode', 'lists');
