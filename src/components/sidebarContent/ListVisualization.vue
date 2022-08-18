@@ -116,10 +116,10 @@ export default {
       </div>
     </SidebarCard>
     <hr
-      v-if="!(sorting === 'shuffled')"
+      v-if="sorting !== 'shuffled'"
       class="break-line"
     />
-    <SidebarCard v-if="!(sorting === 'shuffled')">
+    <SidebarCard v-if="sorting !== 'shuffled'">
       <div class="buttons-container">
         <RadioCustom
           v-for="sortingOption in secondarySortingOptions"

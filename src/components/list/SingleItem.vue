@@ -63,8 +63,7 @@ export default {
     class="single-item"
     :class="[
       `${globalTheme}-theme`,
-      { 
-        active: edittingItemObj && edittingItemObj.id === item.id },
+      { active: edittingItemObj && edittingItemObj.id === item.id },
     ]"
     @click="_closeSidebar"
   >

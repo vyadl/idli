@@ -18,7 +18,6 @@ export default {
   data() {
     return {
       sortingOptions: null,
-      isRequestProcessing: false,
     };
   },
   computed: {
@@ -93,7 +92,7 @@ export default {
       }
     },
   },
-  async beforeRouteEnter(to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next(vm => {
       if (vm.$route.params.id) {
         vm._fetchListById({
