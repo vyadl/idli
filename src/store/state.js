@@ -11,7 +11,7 @@ export default {
   deletedLists: [],
   deletedItems: [],
   visualization: {
-    sorting: 'dateCreated',
+    sorting: 'custom',
     mode: 'list',
     theme: 'default',
     shuffleTrigger: false,

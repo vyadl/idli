@@ -4,12 +4,7 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
-import { 
-  mapGetters, 
-  mapActions, 
-  mapState, 
-  mapMutations, 
-} from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
 export default {
   components: {
@@ -42,14 +37,15 @@ export default {
       return !this.currentListCategories?.length ? 'no categories in this list' : '';
     },
   },
-  created() {
-    this.localCheckedTags = this.checkedTags;
-    this.localCheckedCategories = this.checkedCategories;
+  watch: {
+    checkedTags(tags) {
+      this.localCheckedTags = tags;
+    },
+    checkedCategories(categories) {
+      this.localCheckedCategories = categories;
+    },
   },
   methods: {
-    ...mapMutations({
-      setCurrentSearchValue: 'setCurrentSearchValue',
-    }),
     ...mapActions({
       _filterList: '_filterList',
       _resetFilters: '_resetFilters',
@@ -64,7 +60,6 @@ export default {
       this.localCheckedTags = [];
       this.localCheckedCategories = [];
       this._resetFilters();
-      this.setCurrentSearchValue('');
     },
   },
 };

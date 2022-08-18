@@ -1,4 +1,5 @@
 import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
+// eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
 import { addQueryItems } from '@/router/utils';
 

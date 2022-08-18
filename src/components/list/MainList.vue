@@ -3,7 +3,12 @@ import ListItem from '@/components/list/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
-import { mapState, mapGetters, mapActions } from 'vuex';
+import {
+  mapState,
+  mapGetters,
+  mapActions,
+  mapMutations,
+} from 'vuex';
 
 export default {
   components: {
@@ -13,10 +18,12 @@ export default {
   data() {
     return {
       sortingOptions: null,
+      isRequestProcessing: false,
     };
   },
   computed: {
     ...mapState({
+      currentListItems: 'currentListItems',
       isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
     }),
     ...mapGetters({
@@ -72,6 +79,30 @@ export default {
         : this.sortingOptions[this.sorting]();
     },
   },
+  watch: {
+    currentListItems(value) {
+      if (value) {
+        if (this.$route.query.tags || this.$route.query.categories) {
+          this.filterList({ 
+            tags: this.$route.query.tags 
+              ? JSON.parse(this.$route.query.tags) : [],
+            categories: this.$route.query.categories 
+              ? JSON.parse(this.$route.query.categories) : [],
+          });
+        }
+      }
+    },
+  },
+  async beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (vm.$route.params.id) {
+        vm._fetchListById({
+          id: vm.$route.params.id,
+          cancelToken: null,
+        });
+      }
+    });
+  },
   created() {
     this.setArrowHotkeys();
 
@@ -82,9 +113,62 @@ export default {
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
+
+    const queryOptions = {
+      sorting: {
+        callback: this.setSorting,
+      },
+      mode: {
+        callback: this.setMode,
+      },
+      submode: {
+        callback: this.setListAlign,
+      },
+      theme: {
+        callback: this.setTheme,
+      },
+      search: {
+        callback: this.setCurrentSearchValue,
+      },
+      'with-details': {
+        callback: this.toggleItemDetailsShowingMode,
+        withoutPayload: true,
+      },
+      'reverse-order': {
+        callback: this.toggleItemsOrder,
+        withoutPayload: true,
+      },
+      sidebar: {
+        callback: sidebar => {
+          this.openSidebar();
+          this.changeSidebarMode(sidebar);
+        },
+      },
+    };
+
+    Object.keys(queryOptions).forEach(key => {
+      if (Object.keys(this.$route.query).includes(key)) {
+        queryOptions[key].callback(
+          queryOptions[key].withoutPayload ? '' : this.$route.query[key],
+        );
+      }
+    });
   },
   methods: {
+    ...mapMutations([
+      'setSorting',
+      'setMode',
+      'setListAlign',
+      'setTheme',
+      'setCurrentSearchValue',
+      'toggleItemDetailsShowingMode',
+      'toggleItemsOrder',
+      'openSidebar',
+      'changeSidebarMode',
+      'filterList',
+    ]),
     ...mapActions({
+      _fetchListById: '_fetchListById',
       _setItemForEditting: '_setItemForEditting',
       _switchShuffleTrigger: '_switchShuffleTrigger',
       _closeSidebar: '_closeSidebar',

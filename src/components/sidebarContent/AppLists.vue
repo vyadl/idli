@@ -33,6 +33,7 @@ export default {
       _setListForEditting: '_setListForEditting',
       _decreaseRequestsNumber: '_decreaseRequestsNumber',
       _setModalNameToShow: '_setModalNameToShow',
+      _resetFilters: '_resetFilters',
     }),
     openListModal() {
       this._setModalNameToShow('listModal');
@@ -59,6 +60,7 @@ export default {
           const index = this.listRequests.findIndex(request => request === source);
 
           this.listRequests.splice(index, 1);
+          this._resetFilters();
           this.isRequestProcessing = false;
         });
     },

@@ -1,5 +1,6 @@
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
+import SingleItem from '@/components/list/SingleItem.vue';
 
 export const routes = [
   { 
@@ -22,6 +23,14 @@ export const routes = [
     path: '/list/:id',
     name: 'list',
     component: MainList,
+    meta: {
+      isLoginRequired: true,
+    },
+  },
+  { 
+    path: '/item/:id',
+    name: 'item',
+    component: SingleItem,
     meta: {
       isLoginRequired: true,
     },
