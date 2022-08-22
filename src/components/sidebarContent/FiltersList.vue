@@ -14,10 +14,6 @@ export default {
     ButtonText,
     InfoMessage,
   },
-  data: () => ({
-    localCheckedTags: [],
-    localCheckedCategories: [],
-  }),
   computed: {
     ...mapState({
       currentSearchValue: 'currentSearchValue',
@@ -37,30 +33,12 @@ export default {
       return !this.currentListCategories?.length ? 'no categories in this list' : '';
     },
   },
-  watch: {
-    checkedTags(tags) {
-      this.localCheckedTags = tags;
-    },
-    checkedCategories(categories) {
-      this.localCheckedCategories = categories;
-    },
-  },
   methods: {
-    ...mapActions({
-      _filterList: '_filterList',
-      _resetFilters: '_resetFilters',
-    }),
-    filterList() {
-      this._filterList({
-        tags: this.localCheckedTags,
-        categories: this.localCheckedCategories,
-      });
-    },
-    resetFilters() {
-      this.localCheckedTags = [];
-      this.localCheckedCategories = [];
-      this._resetFilters();
-    },
+    ...mapActions([
+      '_resetFilters',
+      '_setCategories',
+      '_setTags',
+    ]),
   },
 };
 </script>
@@ -86,8 +64,8 @@ export default {
           :key="tag.id"
           :label="tag.title"
           :value="tag.id"
-          v-model="localCheckedTags"
-          @change="filterList"
+          :model-value="checkedTags"
+          @update:modelValue="newValue => _setTags(newValue)"
         />
       </div>
       <h1 class="filters-title">categories</h1>
@@ -101,17 +79,17 @@ export default {
           :key="category.id"
           :label="category.title"
           :value="category.id"
-          v-model="localCheckedCategories"
-          @change="filterList"
+          :model-value="checkedCategories"
+          @update:modelValue="newValue => _setCategories(newValue)"
         />
       </div>
       <div class="bottom">
         <div class="items-count">selected: {{ filteredListLength }}</div>
         <ButtonText
-          v-if="localCheckedTags.length || localCheckedCategories.length || currentSearchValue"
+          v-if="checkedTags.length || checkedCategories.length || currentSearchValue"
           text="reset filters"
           style-type="underline"
-          @click="resetFilters"
+          @click="_resetFilters"
         />
       </div>
     </SidebarCard>

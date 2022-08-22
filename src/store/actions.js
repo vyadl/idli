@@ -1,6 +1,12 @@
-import { addQueryItems, pushRouteKeepQuery, deleteFromQuery } from '@/router/utils';
+import { 
+  addQueryItems, 
+  pushRouteKeepQuery, 
+  deleteFromQuery, 
+  changeQueryItem,
+} from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
+import { MIN_SEARCH_SYMBOLS } from '../../config';
 
 export default {
   // local storage
@@ -31,7 +37,9 @@ export default {
       .then(({ data: responseLists }) => {
         commit('setLists', responseLists);
 
-        if (router.currentRoute._value.name !== 'item' && !router.currentRoute._value.params.id) {
+        const routerValues = router.currentRoute._value;
+
+        if (routerValues.name !== 'item' && !routerValues.params.id) {
           dispatch('_setListIdFromLocalStorage');
         }
       });
@@ -143,10 +151,9 @@ export default {
     commit('deleteList', id);
     dispatch('_fetchDeletedLists');
   },
-  _setCurrentListId({ commit, dispatch, getters }, id) {
+  _setCurrentListId({ commit, getters }, id) {
     commit('setCurrentListId', id);
     commit('setCurrentItems', []);
-    dispatch('_resetFilters');
     localStorage.setItem('currentListId', getters.currentListId);
   },
   _setListForEditting({ commit }, list) {
@@ -161,9 +168,7 @@ export default {
         `${this.$config.apiBasePath}item/${router.currentRoute._value.params.id}`,
         { cancelToken: null },
       )
-      .then(({ data }) => {
-        return data;
-      })
+      .then(({ data }) => data)
       .catch(error => {
         console.log(error);
       });
@@ -209,7 +214,6 @@ export default {
 
   _setCurrentSearchValue({ commit }, search) {
     commit('setCurrentSearchValue', search);
-    const MIN_SEARCH_SYMBOLS = 3;
 
     if (search.length >= MIN_SEARCH_SYMBOLS) {
       addQueryItems({ search });
@@ -217,26 +221,16 @@ export default {
       deleteFromQuery('search');
     }
   },
-  _filterList({ commit }, { tags, categories }) {
-    commit('filterList', { tags, categories });
-
-    const additionalQuery = {};
-
-    if (tags.length) {
-      additionalQuery.tags = JSON.stringify(tags);
-    } else {
-      additionalQuery.tags = undefined;
-    }
-
-    if (categories.length) {
-      additionalQuery.categories = JSON.stringify(categories);
-    } else {
-      additionalQuery.categories = undefined;
-    }
-
-    addQueryItems(additionalQuery);
+  _setTags({ commit }, tags) {
+    commit('setTags', tags);
+    changeQueryItem('tags', JSON.stringify(tags));
+  },
+  _setCategories({ commit }, categories) {
+    commit('setCategories', categories);
+    changeQueryItem('categories', JSON.stringify(categories));
   },
   _resetFilters({ commit }) {
+    console.log('action reset');
     commit('resetFilters');
     deleteFromQuery(['search', 'tags', 'categories']);
   },
@@ -245,12 +239,7 @@ export default {
 
   _setSorting({ state, commit, dispatch }, sorting) {
     commit('setSorting', sorting);
-
-    if (sorting === 'custom') {
-      deleteFromQuery('sorting');
-    } else {
-      addQueryItems({ sorting });
-    }
+    changeQueryItem('sorting', sorting);
 
     if (sorting === 'shuffled') {
       if (state.visualization.isItemsOrderReversed) {
@@ -260,51 +249,26 @@ export default {
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-
-    if (mode === 'list') {
-      deleteFromQuery('mode');
-    } else {
-      addQueryItems({ mode });
-    }
+    changeQueryItem('mode', mode);
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
-
-    if (theme === 'default') {
-      deleteFromQuery('theme');
-    } else {
-      addQueryItems({ theme });
-    }
+    changeQueryItem('theme', theme);
   },
   _switchShuffleTrigger({ commit }) {
     commit('switchShuffleTrigger');
   },
   _setListAlign({ commit }, align) {
     commit('setListAlign', align);
-
-    if (align === 'center') {
-      deleteFromQuery('submode');
-    } else {
-      addQueryItems({ submode: align });
-    }
+    changeQueryItem('align', align);
   },
   _toggleItemsOrder({ state, commit }) {
     commit('toggleItemsOrder');
-
-    if (state.visualization.isItemsOrderReversed) {
-      addQueryItems({ 'reverse-order': state.visualization.isItemsOrderReversed });
-    } else {
-      deleteFromQuery('reverse-order');
-    }
+    changeQueryItem('isItemsOrderReversed', state.visualization.isItemsOrderReversed);
   },
   _toggleItemDetailsShowingMode({ state, commit }) {
     commit('toggleItemDetailsShowingMode');
-
-    if (state.visualization.areItemDetailsShown) {
-      addQueryItems({ 'with-details': state.visualization.areItemDetailsShown });
-    } else {
-      deleteFromQuery('with-details');
-    }
+    changeQueryItem('areItemDetailsShown', state.visualization.areItemDetailsShown);
   },
 
   // settings

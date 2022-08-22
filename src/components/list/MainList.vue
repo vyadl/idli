@@ -3,11 +3,9 @@ import ListItem from '@/components/list/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
+import { handleQueryOnLoad } from '@/router/utils';
 import {
-  mapState,
-  mapGetters,
-  mapActions,
-  mapMutations,
+  mapState, mapGetters, mapActions, mapMutations,
 } from 'vuex';
 
 export default {
@@ -22,7 +20,6 @@ export default {
   },
   computed: {
     ...mapState({
-      currentListItems: 'currentListItems',
       isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
     }),
     ...mapGetters({
@@ -78,30 +75,6 @@ export default {
         : this.sortingOptions[this.sorting]();
     },
   },
-  watch: {
-    currentListItems(value) {
-      if (value) {
-        if (this.$route.query.tags || this.$route.query.categories) {
-          this.filterList({ 
-            tags: this.$route.query.tags 
-              ? JSON.parse(this.$route.query.tags) : [],
-            categories: this.$route.query.categories 
-              ? JSON.parse(this.$route.query.categories) : [],
-          });
-        }
-      }
-    },
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      if (vm.$route.params.id) {
-        vm._fetchListById({
-          id: vm.$route.params.id,
-          cancelToken: null,
-        });
-      }
-    });
-  },
   created() {
     this.setArrowHotkeys();
 
@@ -114,6 +87,12 @@ export default {
     };
 
     const queryOptions = {
+      tags: {
+        callback: this.setTags,
+      },
+      categories: {
+        callback: this.setCategories,
+      },
       sorting: {
         callback: this.setSorting,
       },
@@ -122,9 +101,6 @@ export default {
       },
       submode: {
         callback: this.setListAlign,
-      },
-      theme: {
-        callback: this.setTheme,
       },
       search: {
         callback: this.setCurrentSearchValue,
@@ -137,6 +113,9 @@ export default {
         callback: this.toggleItemsOrder,
         withoutPayload: true,
       },
+      theme: {
+        callback: this.setTheme,
+      },
       sidebar: {
         callback: sidebar => {
           this.openSidebar();
@@ -145,26 +124,27 @@ export default {
       },
     };
 
-    Object.keys(queryOptions).forEach(key => {
-      if (Object.keys(this.$route.query).includes(key)) {
-        queryOptions[key].callback(
-          queryOptions[key].withoutPayload ? '' : this.$route.query[key],
-        );
-      }
-    });
+    if (this.$route.params.id) {
+      this._fetchListById({ id: this.$route.params.id, cancelToken: null })
+        .then(() => {
+          handleQueryOnLoad(queryOptions, this.$route.query);
+        });
+    }
   },
   methods: {
     ...mapMutations([
+      'setTags',
+      'setCategories',
       'setSorting',
       'setMode',
       'setListAlign',
-      'setTheme',
       'setCurrentSearchValue',
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
+      'filterList',
+      'setTheme',
       'openSidebar',
       'changeSidebarMode',
-      'filterList',
     ]),
     ...mapActions({
       _fetchListById: '_fetchListById',

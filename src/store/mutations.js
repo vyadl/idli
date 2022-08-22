@@ -57,6 +57,20 @@ export default {
     state.checkedTags = tags;
     state.checkedCategories = categories;
   },
+  setTags(state, tags) {
+    if (typeof tags === 'string') {
+      state.checkedTags = JSON.parse(tags);
+    } else {
+      state.checkedTags = tags;
+    }
+  },
+  setCategories(state, categories) {
+    if (typeof categories === 'string') {
+      state.checkedCategories = JSON.parse(categories);
+    } else {
+      state.checkedCategories = categories;
+    }
+  },
   resetFilters(state) {
     state.checkedTags = [];
     state.checkedCategories = [];

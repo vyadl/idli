@@ -15,29 +15,26 @@ export default {
       'edittingItemObj',
     ]),
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm._fetchItemById()
-        .then(item => {
-          // eslint-disable-next-line no-param-reassign
-          vm.item = item;
-          vm._setItemForEditting(item);
+  created() {
+    this._fetchItemById()
+      .then(item => {
+        this.item = item;
+        this._setItemForEditting(item);
 
-          if (vm.isItemFormInSidebar) {
-            vm._openSidebar('item');
-          } else {
-            vm._switchItemFormLocation();
-            vm._openSidebar('item');
-          }
+        if (this.isItemFormInSidebar) {
+          this._openSidebar('item');
+        } else {
+          this._switchItemFormLocation();
+          this._openSidebar('item');
+        }
 
-          vm.$router.push({
-            query: { 
-              sidebar: 'item',
-              item: item.id,
-            },
-          });
+        this.$router.push({
+          query: { 
+            sidebar: 'item',
+            item: item.id,
+          },
         });
-    });
+      });
   },
   methods: {
     ...mapActions([
