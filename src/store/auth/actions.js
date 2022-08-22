@@ -33,6 +33,7 @@ export default {
     localStorage.removeItem('currentListId');
     deleteAccessToken();
     router.push({ name: 'auth' });
+    commit('closeSidebar', null, { root: true });
   },
   _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');

@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
 import { checkDefaultValue } from '@/utils/utils';
-import { defaultValues } from '../../config';
+import { defaultQueryValues } from '../../config';
 
 function getQuery() {
   return router.currentRoute._value.query;
@@ -38,26 +38,35 @@ export function deleteFromQuery(queryToDelete) {
   router.push({ query });
 }
 
-export function changeQueryItem(option, value) {
-  const isValueDefault = checkDefaultValue(defaultValues, option, value);
-  
-  if (isValueDefault) {
-    deleteFromQuery(defaultValues[option].queryName);
+export function changeQuery(option, value) {
+  if (value) {
+    addQueryItems({
+      [option]: value,
+    });
   } else {
-    const additionalQuery = {};
-    const queryKey = defaultValues[option].queryName;
-    additionalQuery[queryKey] = value;
-
-    addQueryItems(additionalQuery);
+    deleteFromQuery(option);
   }
 }
 
+export function changeQueryRespectingDefault(option, value) {
+  const isValueDefault = checkDefaultValue(defaultQueryValues, option, value);
+
+  changeQuery(
+    defaultQueryValues[option].queryName,
+    isValueDefault ? '' : value,
+  );
+}
+
 export function handleQueryOnLoad(queryOptions, currentQuery) {
-  Object.keys(queryOptions).forEach(key => {
-    if (Object.keys(currentQuery).includes(key)) {
-      queryOptions[key].callback(
-        queryOptions[key].withoutPayload ? '' : currentQuery[key],
-      );
+  new Set(Object.keys(queryOptions)).forEach(key => {
+    const currentQueryKeys = new Set(Object.keys(currentQuery));
+
+    if (currentQueryKeys.has(key)) {
+      if (queryOptions[key].withoutPayload) {
+        queryOptions[key].callback();
+      } else {
+        queryOptions[key].callback(currentQuery[key]);
+      }
     }
   });
 }

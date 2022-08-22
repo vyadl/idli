@@ -136,7 +136,7 @@ export default {
         style-type="classic"
         :value="false"
         :model-value="isItemsOrderReversed"
-        @change="_toggleItemsOrder"
+        @update:modelValue="_toggleItemsOrder"
       />
     </SidebarCard>
     <SidebarCard title="mode">
@@ -172,7 +172,7 @@ export default {
         style-type="classic"
         :value="false"
         :model-value="areItemDetailsShown"
-        @change="_toggleItemDetailsShowingMode"
+        @update:modelValue="_toggleItemDetailsShowingMode"
       />
     </SidebarCard>
     <SidebarCard title="theme">

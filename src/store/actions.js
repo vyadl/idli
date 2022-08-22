@@ -1,8 +1,5 @@
 import { 
-  addQueryItems, 
-  pushRouteKeepQuery, 
-  deleteFromQuery, 
-  changeQueryItem,
+  addQueryItems, pushRouteKeepQuery, deleteFromQuery, changeQuery, changeQueryRespectingDefault,
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
@@ -64,10 +61,6 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setCurrentItems', responseList.items);
-        pushRouteKeepQuery({
-          name: 'list',
-          params: { id },
-        });
       })
       .catch(error => {
         console.log(error);
@@ -155,6 +148,10 @@ export default {
     commit('setCurrentListId', id);
     commit('setCurrentItems', []);
     localStorage.setItem('currentListId', getters.currentListId);
+    pushRouteKeepQuery({
+      name: 'list',
+      params: { id },
+    });
   },
   _setListForEditting({ commit }, list) {
     commit('setListForEditting', list);
@@ -215,19 +212,24 @@ export default {
   _setCurrentSearchValue({ commit }, search) {
     commit('setCurrentSearchValue', search);
 
-    if (search.length >= MIN_SEARCH_SYMBOLS) {
-      addQueryItems({ search });
-    } else {
-      deleteFromQuery('search');
-    }
+    changeQuery(
+      'search', 
+      search.length >= MIN_SEARCH_SYMBOLS ? search : '',
+    );
+
+    // if (search.length >= MIN_SEARCH_SYMBOLS) {
+    //   addQueryItems({ search });
+    // } else {
+    //   deleteFromQuery('search');
+    // }
   },
   _setTags({ commit }, tags) {
     commit('setTags', tags);
-    changeQueryItem('tags', JSON.stringify(tags));
+    changeQueryRespectingDefault('tags', JSON.stringify(tags));
   },
   _setCategories({ commit }, categories) {
     commit('setCategories', categories);
-    changeQueryItem('categories', JSON.stringify(categories));
+    changeQueryRespectingDefault('categories', JSON.stringify(categories));
   },
   _resetFilters({ commit }) {
     commit('resetFilters');
@@ -238,7 +240,7 @@ export default {
 
   _setSorting({ state, commit, dispatch }, sorting) {
     commit('setSorting', sorting);
-    changeQueryItem('sorting', sorting);
+    changeQueryRespectingDefault('sorting', sorting);
 
     if (sorting === 'shuffled') {
       if (state.visualization.isItemsOrderReversed) {
@@ -248,26 +250,26 @@ export default {
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-    changeQueryItem('mode', mode);
+    changeQueryRespectingDefault('mode', mode);
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
-    changeQueryItem('theme', theme);
+    changeQueryRespectingDefault('theme', theme);
   },
   _switchShuffleTrigger({ commit }) {
     commit('switchShuffleTrigger');
   },
   _setListAlign({ commit }, align) {
     commit('setListAlign', align);
-    changeQueryItem('align', align);
+    changeQueryRespectingDefault('align', align);
   },
   _toggleItemsOrder({ state, commit }) {
     commit('toggleItemsOrder');
-    changeQueryItem('isItemsOrderReversed', state.visualization.isItemsOrderReversed);
+    changeQueryRespectingDefault('isItemsOrderReversed', state.visualization.isItemsOrderReversed);
   },
   _toggleItemDetailsShowingMode({ state, commit }) {
     commit('toggleItemDetailsShowingMode');
-    changeQueryItem('areItemDetailsShown', state.visualization.areItemDetailsShown);
+    changeQueryRespectingDefault('areItemDetailsShown', state.visualization.areItemDetailsShown);
   },
 
   // settings

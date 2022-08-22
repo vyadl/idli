@@ -1,6 +1,10 @@
 export const MIN_SEARCH_SYMBOLS = 3;
 
-export const defaultValues = {
+export const defaultQueryValues = {
+  search: {
+    default: '',
+    queryName: 'search',
+  },
   tags: {
     default: '[]',
     queryName: 'tags',
