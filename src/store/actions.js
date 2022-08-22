@@ -230,7 +230,6 @@ export default {
     changeQueryItem('categories', JSON.stringify(categories));
   },
   _resetFilters({ commit }) {
-    console.log('action reset');
     commit('resetFilters');
     deleteFromQuery(['search', 'tags', 'categories']);
   },

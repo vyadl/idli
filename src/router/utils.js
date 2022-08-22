@@ -58,8 +58,6 @@ export function handleQueryOnLoad(queryOptions, currentQuery) {
       queryOptions[key].callback(
         queryOptions[key].withoutPayload ? '' : currentQuery[key],
       );
-      console.log(key);
-      console.log(currentQuery[key]);
     }
   });
 }
