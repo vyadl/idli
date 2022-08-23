@@ -17,10 +17,10 @@ export default {
     isRequestProcessing: false,
   }),
   computed: {
-    ...mapGetters({
-      deletedLists: 'deletedLists',
-      deletedItems: 'deletedItems',
-    }),
+    ...mapGetters([
+      'deletedLists',
+      'deletedItems',
+    ]),
   },
   created() {
     this._fetchDeletedLists();

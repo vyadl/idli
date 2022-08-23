@@ -4,14 +4,14 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   props: ['item'],
   computed: {
-    ...mapGetters({
-      edittingItemObj: 'edittingItemObj',
-      mode: 'mode',
-      shuffleTrigger: 'shuffleTrigger',
-      listAlign: 'listAlign',
-      areItemDetailsShown: 'areItemDetailsShown',
-      isItemFormInSidebar: 'isItemFormInSidebar',
-    }),
+    ...mapGetters([
+      'edittingItemObj',
+      'mode',
+      'shuffleTrigger',
+      'listAlign',
+      'areItemDetailsShown',
+      'isItemFormInSidebar',
+    ]),
     styles() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
@@ -40,10 +40,10 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      _setItemForEditting: '_setItemForEditting',
-      _openSidebar: '_openSidebar',
-    }),
+    ...mapActions([
+      '_setItemForEditting',
+      '_openSidebar',
+    ]),
     setItemForEditting() {
       this._setItemForEditting(this.item);
       this.isItemFormInSidebar

@@ -23,12 +23,12 @@ export default {
     errorMessage: '',
   }),
   computed: {
-    ...mapGetters({
-      currentListTags: 'currentListTags',
-      currentListCategories: 'currentListCategories',
-      edittingItemObj: 'edittingItemObj',
-      isItemFormInSidebar: 'isItemFormInSidebar',
-    }),
+    ...mapGetters([
+      'currentListTags',
+      'currentListCategories',
+      'edittingItemObj',
+      'isItemFormInSidebar',
+    ]),
     isAnyTagExist() {
       return !!this.currentListTags?.length;
     },
@@ -55,13 +55,13 @@ export default {
     this.resetData();
   },
   methods: {
-    ...mapActions({
-      _addItem: '_addItem',
-      _updateItem: '_updateItem',
-      _deleteItem: '_deleteItem',
-      _setItemForEditting: '_setItemForEditting',
-      _closeSidebar: '_closeSidebar',
-    }),
+    ...mapActions([
+      '_addItem',
+      '_updateItem',
+      '_deleteItem',
+      '_setItemForEditting',
+      '_closeSidebar',
+    ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
     },

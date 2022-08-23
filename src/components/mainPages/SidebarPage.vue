@@ -57,11 +57,11 @@ export default {
     });
   },
   methods: {
-    ...mapActions({
-      _setItemForEditting: '_setItemForEditting',
-      _openSidebar: '_openSidebar',
-      _closeSidebar: '_closeSidebar',
-    }),
+    ...mapActions([
+      '_setItemForEditting',
+      '_openSidebar',
+      '_closeSidebar',
+    ]),
     openItemModal() {
       this.$vfm.show('itemModal');
     },

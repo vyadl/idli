@@ -7,19 +7,19 @@ export default {
     ButtonText,
   },
   computed: {
-    ...mapGetters({
-      isSidebarOpen: 'isSidebarOpen',
-    }),
+    ...mapGetters([
+      'isSidebarOpen',
+    ]),
     logoSrc() {
       return this.globalTheme === 'default' 
         ? '/images/black-logo.svg' : '/images/white-logo.svg';
     },
   },
   methods: {
-    ...mapActions({
-      _openSidebar: '_openSidebar',
-      _closeSidebar: '_closeSidebar',
-    }),
+    ...mapActions([
+      '_openSidebar',
+      '_closeSidebar',
+    ]),
   },
 };
 </script>
