@@ -3,6 +3,7 @@ import ListItem from '@/components/list/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
+// eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 import {
   mapState, mapGetters, mapActions, mapMutations,
@@ -113,15 +114,6 @@ export default {
         callback: this.toggleItemsOrder,
         withoutPayload: true,
       },
-      theme: {
-        callback: this.setTheme,
-      },
-      sidebar: {
-        callback: sidebar => {
-          this.openSidebar();
-          this.changeSidebarMode(sidebar);
-        },
-      },
     };
 
     if (this.$route.params.id) {
@@ -142,9 +134,6 @@ export default {
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
       'filterList',
-      'setTheme',
-      'openSidebar',
-      'changeSidebarMode',
     ]),
     ...mapActions([
       '_fetchListById',
