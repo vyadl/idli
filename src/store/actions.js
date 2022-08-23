@@ -1,5 +1,9 @@
 import { 
-  addQueryItems, pushRouteKeepQuery, deleteFromQuery, changeQuery, changeQueryRespectingDefault,
+  addQueryItems,
+  pushRouteKeepQuery,
+  deleteFromQuery,
+  changeQuery,
+  changeQueryRespectingDefault,
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
@@ -214,14 +218,8 @@ export default {
 
     changeQuery(
       'search', 
-      search.length >= MIN_SEARCH_SYMBOLS ? search : '',
+      search.length >= MIN_SEARCH_SYMBOLS ? search : null,
     );
-
-    // if (search.length >= MIN_SEARCH_SYMBOLS) {
-    //   addQueryItems({ search });
-    // } else {
-    //   deleteFromQuery('search');
-    // }
   },
   _setTags({ commit }, tags) {
     commit('setTags', tags);

@@ -53,14 +53,14 @@ export function changeQueryRespectingDefault(option, value) {
 
   changeQuery(
     defaultQueryValues[option].queryName,
-    isValueDefault ? '' : value,
+    isValueDefault ? null : value,
   );
 }
 
 export function handleQueryOnLoad(queryOptions, currentQuery) {
-  new Set(Object.keys(queryOptions)).forEach(key => {
-    const currentQueryKeys = new Set(Object.keys(currentQuery));
+  const currentQueryKeys = new Set(Object.keys(currentQuery));
 
+  Object.keys(queryOptions).forEach(key => {
     if (currentQueryKeys.has(key)) {
       if (queryOptions[key].withoutPayload) {
         queryOptions[key].callback();

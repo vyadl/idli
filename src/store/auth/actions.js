@@ -1,26 +1,26 @@
 import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
-// eslint-disable-next-line import/no-cycle
-import { router } from '@/router';
+import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { addQueryItems } from '@/router/utils';
+import { dispatchFromRoot, commitFromRoot } from '@/store/store-utils'; // eslint-disable-line import/no-cycle
 
 export default {
-  async _signUp({ commit }, user) {
+  async _signUp(user) {
     await this.$config.axios.post(`${this.$config.apiBasePath}auth/signup`, user);
 
-    commit('changeSidebarMode', 'sign in', { root: true });
+    commitFromRoot('changeSidebarMode', 'sign in');
     addQueryItems({ sidebar: 'sign in' });
   },
-  async _signIn({ commit, dispatch }, user) {
+  async _signIn({ commit }, user) {
     try {
       const { data: responseUser } = await this.$config.axios
         .post(`${this.$config.apiBasePath}auth/signin`, user);
 
       commit('signIn', responseUser);
-      commit('changeSidebarMode', 'lists', { root: true });
+      commitFromRoot('changeSidebarMode', 'lists');
       router.push({ name: 'home', query: { sidebar: 'lists' } });
       localStorage.setItem('user', JSON.stringify(responseUser));
       setAccessToken(responseUser.accessToken);
-      dispatch('_fetchListsForUser', null, { root: true });
+      dispatchFromRoot('_fetchListsForUser');
     } catch (error) {
       localStorage.removeItem('user');
 
@@ -33,7 +33,7 @@ export default {
     localStorage.removeItem('currentListId');
     deleteAccessToken();
     router.push({ name: 'auth' });
-    commit('closeSidebar', null, { root: true });
+    commitFromRoot('closeSidebar');
   },
   _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');
