@@ -1,3 +1,5 @@
+import { MIN_SEARCH_SYMBOLS } from '../../config';
+
 export default {
   // lists
   lists: state => state.lists,
@@ -11,7 +13,6 @@ export default {
   checkedTags: state => state.checkedTags,
   checkedCategories: state => state.checkedCategories,
   filteredList: (state, getters) => {
-    const MIN_SEARCH_SYMBOLS = 3;
     const tags = getters.checkedTags;
     const categories = getters.checkedCategories;
     const lowerCasedSearchValue = state.currentSearchValue.toLowerCase();

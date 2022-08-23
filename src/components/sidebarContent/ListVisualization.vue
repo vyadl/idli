@@ -3,12 +3,7 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { 
-  mapGetters, 
-  mapActions, 
-  mapState, 
-  mapMutations,
-} from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
 export default {
   components: {
@@ -66,13 +61,13 @@ export default {
   },
   watch: {
     sorting: function sortingHandler(newSorting) {
-      if (this.unstructuredModes.includes(this.mode) && newSorting === 'default') {
+      if (this.unstructuredModes.includes(this.mode) && newSorting === 'custom') {
         this._setMode('list');
       }
     },
     mode: function modeHandler(newMode, oldMode) {
       if (this.unstructuredModes.includes(oldMode) && this.structuredModes.includes(newMode)) {
-        this._setSorting('default');
+        this._setSorting('custom');
       } else if (this.unstructuredModes.includes(newMode)) {
         this._setSorting('shuffled');
       } else if (['list', 'page'].includes(newMode)
@@ -82,15 +77,13 @@ export default {
     },
   },
   methods: {
-    ...mapMutations({
-      toggleItemsOrder: 'toggleItemsOrder',
-    }),
     ...mapActions({
       _setSorting: '_setSorting',
       _setMode: '_setMode',
       _setTheme: '_setTheme',
       _setListAlign: '_setListAlign',
-      _changeItemDetailsShowingMode: '_changeItemDetailsShowingMode',
+      _toggleItemDetailsShowingMode: '_toggleItemDetailsShowingMode',
+      _toggleItemsOrder: '_toggleItemsOrder',
       _switchShuffleTrigger: '_switchShuffleTrigger',
     }),
   },
@@ -122,8 +115,11 @@ export default {
         />
       </div>
     </SidebarCard>
-    <hr class="break-line" />
-    <SidebarCard>
+    <hr
+      v-if="sorting !== 'shuffled'"
+      class="break-line"
+    />
+    <SidebarCard v-if="sorting !== 'shuffled'">
       <div class="buttons-container">
         <RadioCustom
           v-for="sortingOption in secondarySortingOptions"
@@ -135,13 +131,13 @@ export default {
           @change="_setSorting(sortingOption.type)"
         />
       </div>
-    <CheckboxCustom
-      label="reverse order"
-      style-type="classic"
-      :value="false"
-      :model-value="isItemsOrderReversed"
-      @change="toggleItemsOrder"
-    />
+      <CheckboxCustom
+        label="reverse order"
+        style-type="classic"
+        :value="false"
+        :model-value="isItemsOrderReversed"
+        @update:modelValue="_toggleItemsOrder"
+      />
     </SidebarCard>
     <SidebarCard title="mode">
       <div class="buttons-container">
@@ -176,7 +172,7 @@ export default {
         style-type="classic"
         :value="false"
         :model-value="areItemDetailsShown"
-        @change="_changeItemDetailsShowingMode"
+        @update:modelValue="_toggleItemDetailsShowingMode"
       />
     </SidebarCard>
     <SidebarCard title="theme">

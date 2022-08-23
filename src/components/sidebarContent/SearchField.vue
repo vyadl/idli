@@ -1,6 +1,6 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   components: {
@@ -12,8 +12,8 @@ export default {
     }),
   },
   methods: {
-    ...mapMutations({
-      setCurrentSearchValue: 'setCurrentSearchValue',
+    ...mapActions({
+      _setCurrentSearchValue: '_setCurrentSearchValue',
     }),
   },
 };
@@ -25,7 +25,7 @@ export default {
     icon="/icons/loupe.svg"
     :placeholder="'search items'"
     :modelValue="currentSearchValue"
-    @input="setCurrentSearchValue"
+    @input="_setCurrentSearchValue"
   />
 </div>
 </template>

@@ -42,14 +42,6 @@ export default {
     },
   },
   mounted() {
-    this.$watch(() => this.$route.query.sidebar, (mode) => {
-      if (mode) {
-        this._openSidebar(mode);
-      } else {
-        this._closeSidebar();
-      }
-    });
-
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
         let mode = '';

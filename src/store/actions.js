@@ -1,4 +1,13 @@
-import { addQueryItems, pushRouteKeepQuery, deleteFromQuery } from '@/router/utils';
+import { 
+  addQueryItems,
+  pushRouteKeepQuery,
+  deleteFromQuery,
+  changeQuery,
+  changeQueryRespectingDefault,
+} from '@/router/utils';
+// eslint-disable-next-line import/no-cycle
+import { router } from '@/router';
+import { MIN_SEARCH_SYMBOLS } from '../../config';
 
 export default {
   // local storage
@@ -28,7 +37,12 @@ export default {
     return this.$config.axios.get(`${this.$config.apiBasePath}lists`)
       .then(({ data: responseLists }) => {
         commit('setLists', responseLists);
-        dispatch('_setListIdFromLocalStorage');
+
+        const routerValues = router.currentRoute._value;
+
+        if (routerValues.name !== 'item' && !routerValues.params.id) {
+          dispatch('_setListIdFromLocalStorage');
+        }
       });
   },
   _fetchTestLists({ commit }) {
@@ -51,10 +65,6 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setCurrentItems', responseList.items);
-        pushRouteKeepQuery({
-          name: 'list',
-          params: { id },
-        });
       })
       .catch(error => {
         console.log(error);
@@ -92,6 +102,10 @@ export default {
 
     commit('addList', responseList);
     dispatch('_setCurrentListId', responseList.id);
+    pushRouteKeepQuery({
+      name: 'list',
+      params: { id: responseList.id },
+    });
 
     const { data: responseItems } = await this.$config.axios
       .post(`${this.$config.apiBasePath}items/add-many/${responseList.id}`, { items });
@@ -134,24 +148,32 @@ export default {
     commit('deleteList', id);
     dispatch('_fetchDeletedLists');
   },
-  _setCurrentListId({ commit, dispatch, getters }, id) {
+  _setCurrentListId({ commit, getters }, id) {
     commit('setCurrentListId', id);
     commit('setCurrentItems', []);
-    dispatch('_resetFilters');
     localStorage.setItem('currentListId', getters.currentListId);
+    pushRouteKeepQuery({
+      name: 'list',
+      params: { id },
+    });
   },
   _setListForEditting({ commit }, list) {
     commit('setListForEditting', list);
   },
-  _filterList({ commit }, { tags, categories }) {
-    commit('filterList', { tags, categories });
-  },
-  _resetFilters({ commit }) {
-    commit('resetFilters');
-  },
 
   // items
 
+  _fetchItemById() {
+    return this.$config.axios
+      .get(
+        `${this.$config.apiBasePath}item/${router.currentRoute._value.params.id}`,
+        { cancelToken: null },
+      )
+      .then(({ data }) => data)
+      .catch(error => {
+        console.log(error);
+      });
+  },
   async _addItem({ commit, getters }, item) {
     const listId = getters.currentListObj.id;
     const { data: responseItem } = await this.$config.axios
@@ -189,25 +211,63 @@ export default {
     commit('setItemForEditting', item);
   },
 
+  // filters
+
+  _setCurrentSearchValue({ commit }, search) {
+    commit('setCurrentSearchValue', search);
+
+    changeQuery(
+      'search', 
+      search.length >= MIN_SEARCH_SYMBOLS ? search : null,
+    );
+  },
+  _setTags({ commit }, tags) {
+    commit('setTags', tags);
+    changeQueryRespectingDefault('tags', JSON.stringify(tags));
+  },
+  _setCategories({ commit }, categories) {
+    commit('setCategories', categories);
+    changeQueryRespectingDefault('categories', JSON.stringify(categories));
+  },
+  _resetFilters({ commit }) {
+    commit('resetFilters');
+    deleteFromQuery(['search', 'tags', 'categories']);
+  },
+
   // visualization
 
-  _setSorting({ commit }, sorting) {
+  _setSorting({ state, commit, dispatch }, sorting) {
     commit('setSorting', sorting);
+    changeQueryRespectingDefault('sorting', sorting);
+
+    if (sorting === 'shuffled') {
+      if (state.visualization.isItemsOrderReversed) {
+        dispatch('_toggleItemsOrder');
+      }
+    }
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
+    changeQueryRespectingDefault('mode', mode);
   },
   _setTheme({ commit }, theme) {
     commit('setTheme', theme);
+    changeQueryRespectingDefault('theme', theme);
   },
   _switchShuffleTrigger({ commit }) {
     commit('switchShuffleTrigger');
   },
   _setListAlign({ commit }, align) {
     commit('setListAlign', align);
+    changeQueryRespectingDefault('align', align);
   },
-  _changeItemDetailsShowingMode({ commit }) {
-    commit('changeItemDetailsShowingMode');
+  _toggleItemsOrder({ state, commit }) {
+    commit('toggleItemsOrder');
+    changeQueryRespectingDefault('isItemsOrderReversed', state.visualization.isItemsOrderReversed);
+  },
+  _toggleItemDetailsShowingMode({ state, commit }) {
+    commit('toggleItemDetailsShowingMode');
+    changeQueryRespectingDefault('areItemDetailsShown', state.visualization.areItemDetailsShown);
   },
 
   // settings

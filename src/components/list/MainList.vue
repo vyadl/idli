@@ -3,7 +3,10 @@ import ListItem from '@/components/list/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/utils';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { handleQueryOnLoad } from '@/router/utils';
+import {
+  mapState, mapGetters, mapActions, mapMutations,
+} from 'vuex';
 
 export default {
   components: {
@@ -82,9 +85,69 @@ export default {
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
+
+    const queryOptions = {
+      tags: {
+        callback: this.setTags,
+      },
+      categories: {
+        callback: this.setCategories,
+      },
+      sorting: {
+        callback: this.setSorting,
+      },
+      mode: {
+        callback: this.setMode,
+      },
+      submode: {
+        callback: this.setListAlign,
+      },
+      search: {
+        callback: this.setCurrentSearchValue,
+      },
+      'with-details': {
+        callback: this.toggleItemDetailsShowingMode,
+        withoutPayload: true,
+      },
+      'reverse-order': {
+        callback: this.toggleItemsOrder,
+        withoutPayload: true,
+      },
+      theme: {
+        callback: this.setTheme,
+      },
+      sidebar: {
+        callback: sidebar => {
+          this.openSidebar();
+          this.changeSidebarMode(sidebar);
+        },
+      },
+    };
+
+    if (this.$route.params.id) {
+      this._fetchListById({ id: this.$route.params.id, cancelToken: null })
+        .then(() => {
+          handleQueryOnLoad(queryOptions, this.$route.query);
+        });
+    }
   },
   methods: {
+    ...mapMutations([
+      'setTags',
+      'setCategories',
+      'setSorting',
+      'setMode',
+      'setListAlign',
+      'setCurrentSearchValue',
+      'toggleItemDetailsShowingMode',
+      'toggleItemsOrder',
+      'filterList',
+      'setTheme',
+      'openSidebar',
+      'changeSidebarMode',
+    ]),
     ...mapActions({
+      _fetchListById: '_fetchListById',
       _setItemForEditting: '_setItemForEditting',
       _switchShuffleTrigger: '_switchShuffleTrigger',
       _closeSidebar: '_closeSidebar',

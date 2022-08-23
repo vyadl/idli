@@ -20,3 +20,11 @@ export class DeferredBoolean {
       .catch(() => false);
   }
 }
+
+export function getDefaultValue(optionsObj, option) {
+  return optionsObj[option].default;
+}
+
+export function checkDefaultValue(optionsObj, option, value) {
+  return value === getDefaultValue(optionsObj, option);
+}

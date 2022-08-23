@@ -24,14 +24,6 @@ export default {
   deleteList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);
   },
-  filterList(state, { tags, categories }) {
-    state.checkedTags = tags;
-    state.checkedCategories = categories;
-  },
-  resetFilters(state) {
-    state.checkedTags = [];
-    state.checkedCategories = [];
-  },
 
   // items
 
@@ -61,6 +53,29 @@ export default {
   setCurrentSearchValue(state, value) {
     state.currentSearchValue = value;
   },
+  filterList(state, { tags, categories }) {
+    state.checkedTags = tags;
+    state.checkedCategories = categories;
+  },
+  setTags(state, tags) {
+    if (typeof tags === 'string') {
+      state.checkedTags = JSON.parse(tags);
+    } else {
+      state.checkedTags = tags;
+    }
+  },
+  setCategories(state, categories) {
+    if (typeof categories === 'string') {
+      state.checkedCategories = JSON.parse(categories);
+    } else {
+      state.checkedCategories = categories;
+    }
+  },
+  resetFilters(state) {
+    state.checkedTags = [];
+    state.checkedCategories = [];
+    state.currentSearchValue = '';
+  },
 
   // visualization
 
@@ -79,7 +94,7 @@ export default {
   setListAlign(state, align) {
     state.visualization.listAlign = align;
   },
-  changeItemDetailsShowingMode(state) {
+  toggleItemDetailsShowingMode(state) {
     state.visualization.areItemDetailsShown = !state.visualization.areItemDetailsShown;
   },
   toggleItemsOrder(state) {

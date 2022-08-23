@@ -1,4 +1,7 @@
+// eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
+import { checkDefaultValue } from '@/utils/utils';
+import { defaultQueryValues } from '../../config';
 
 function getQuery() {
   return router.currentRoute._value.query;
@@ -33,4 +36,37 @@ export function deleteFromQuery(queryToDelete) {
   }
 
   router.push({ query });
+}
+
+export function changeQuery(option, value) {
+  if (value) {
+    addQueryItems({
+      [option]: value,
+    });
+  } else {
+    deleteFromQuery(option);
+  }
+}
+
+export function changeQueryRespectingDefault(option, value) {
+  const isValueDefault = checkDefaultValue(defaultQueryValues, option, value);
+
+  changeQuery(
+    defaultQueryValues[option].queryName,
+    isValueDefault ? null : value,
+  );
+}
+
+export function handleQueryOnLoad(queryOptions, currentQuery) {
+  const currentQueryKeys = new Set(Object.keys(currentQuery));
+
+  Object.keys(queryOptions).forEach(key => {
+    if (currentQueryKeys.has(key)) {
+      if (queryOptions[key].withoutPayload) {
+        queryOptions[key].callback();
+      } else {
+        queryOptions[key].callback(currentQuery[key]);
+      }
+    }
+  });
 }
