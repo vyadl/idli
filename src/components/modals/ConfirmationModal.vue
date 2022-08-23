@@ -11,9 +11,9 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      confirmationModalTitle: 'confirmationModalTitle',
-    }),
+    ...mapState([
+      'confirmationModalTitle',
+    ]),
   },
 
   methods: {

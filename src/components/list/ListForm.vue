@@ -22,10 +22,10 @@ export default {
     errorMessage: '',
   }),
   computed: {
-    ...mapGetters({
-      lists: 'lists',
-      edittingListObj: 'edittingListObj',
-    }),
+    ...mapGetters([
+      'lists',
+      'edittingListObj',
+    ]),
   },
   watch: {
     edittingListObj: {
@@ -46,12 +46,12 @@ export default {
     this.resetData();
   },
   methods: {
-    ...mapActions({
-      _addList: '_addList',
-      _updateList: '_updateList',
-      _deleteList: '_deleteList',
-      _setListForEditting: '_setListForEditting',
-    }),
+    ...mapActions([
+      '_addList',
+      '_updateList',
+      '_deleteList',
+      '_setListForEditting',
+    ]),
     closeListModal() {
       this.$vfm.hide('listModal');
     },

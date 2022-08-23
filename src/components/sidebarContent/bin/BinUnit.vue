@@ -19,7 +19,10 @@ export default {
   components: {
     ButtonText,
   },
-  emits: ['restore', 'delete'],
+  emits: [
+    'restore',
+    'delete',
+  ],
   methods: {
     restore() {
       this.$emit('restore');

@@ -9,9 +9,9 @@ export default {
     isNotificationShown: false,
   }),
   computed: {
-    ...mapGetters({
-      notification: 'notification',
-    }),
+    ...mapGetters([
+      'notification',
+    ]),
   },
   watch: {
     notification: {
@@ -38,9 +38,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      _setNotification: '_setNotification',
-    }),
+    ...mapActions([
+      '_setNotification',
+    ]),
   },
 };
 </script>

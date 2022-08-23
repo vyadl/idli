@@ -26,9 +26,9 @@ export default {
     VueFinalModal,
   },
   methods: {
-    ...mapActions({
-      _setModalNameToShow: '_setModalNameToShow',
-    }),
+    ...mapActions([
+      '_setModalNameToShow',
+    ]),
     open() {
       this.showInner = true;
     },

@@ -9,9 +9,9 @@ export default {
     ListForm,
   },
   computed: {
-    ...mapGetters({
-      edittingListObj: 'edittingListObj',
-    }),
+    ...mapGetters([
+      'edittingListObj',
+    ]),
   },
 };
 </script>

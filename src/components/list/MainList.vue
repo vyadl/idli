@@ -22,20 +22,20 @@ export default {
     ...mapState({
       isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
     }),
-    ...mapGetters({
-      currentListObj: 'currentListObj',
-      filteredList: 'filteredList',
-      edittingItemObj: 'edittingItemObj',
-      sorting: 'sorting',
-      mode: 'mode',
-      shuffleTrigger: 'shuffleTrigger',
-      listAlign: 'listAlign',
-      areItemDetailsShown: 'areItemDetailsShown',
-      isItemFormInSidebar: 'isItemFormInSidebar',
-      isFocusOnList: 'isFocusOnList',
-      isListUnderSidebar: 'isListUnderSidebar',
-      isSidebarOpen: 'isSidebarOpen',
-    }),
+    ...mapGetters([
+      'currentListObj',
+      'filteredList',
+      'edittingItemObj',
+      'sorting',
+      'mode',
+      'shuffleTrigger',
+      'listAlign',
+      'areItemDetailsShown',
+      'isItemFormInSidebar',
+      'isFocusOnList',
+      'isListUnderSidebar',
+      'isSidebarOpen',
+    ]),
     styles() {
       let styles = {};
 
@@ -146,12 +146,12 @@ export default {
       'openSidebar',
       'changeSidebarMode',
     ]),
-    ...mapActions({
-      _fetchListById: '_fetchListById',
-      _setItemForEditting: '_setItemForEditting',
-      _switchShuffleTrigger: '_switchShuffleTrigger',
-      _closeSidebar: '_closeSidebar',
-    }),
+    ...mapActions([
+      '_fetchListById',
+      '_setItemForEditting',
+      '_switchShuffleTrigger',
+      '_closeSidebar',
+    ]),
     setShuffledList() {
       this._setShuffledList(shuffleArray(this.filteredList));
     },
