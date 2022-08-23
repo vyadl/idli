@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
@@ -7,6 +7,7 @@ import ItemModal from '@/components/modals/ItemModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
+import { handleQueryOnLoad } from '@/router/utils';
 
 export default {
   components: {
@@ -36,6 +37,25 @@ export default {
     if (this.isLoggedIn) {
       setTimeout(this._fetchListsForUser, 500);
     }
+
+    const queryOptions = {
+      theme: {
+        callback: this.setTheme,
+      },
+      sidebar: {
+        callback: sidebar => {
+          this.openSidebar();
+          this.changeSidebarMode(sidebar);
+        },
+      },
+    };
+
+    this.$watch(
+      () => this.$route.query,
+      query => {
+        handleQueryOnLoad(queryOptions, query);
+      },
+    );
   },
   watch: {
     modalNameToShow() {
@@ -45,6 +65,11 @@ export default {
     },
   },
   methods: {
+    ...mapMutations([
+      'setTheme',
+      'openSidebar',
+      'changeSidebarMode',
+    ]),
     ...mapActions({
       _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
