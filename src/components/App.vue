@@ -38,21 +38,21 @@ export default {
       setTimeout(this._fetchListsForUser, 500);
     }
 
+    const queryOptions = {
+      theme: {
+        callback: this.setTheme,
+      },
+      sidebar: {
+        callback: sidebar => {
+          this.openSidebar();
+          this.changeSidebarMode(sidebar);
+        },
+      },
+    };
+
     this.$watch(
       () => this.$route.query,
-      (query) => {
-        const queryOptions = {
-          theme: {
-            callback: this.setTheme,
-          },
-          sidebar: {
-            callback: sidebar => {
-              this.openSidebar();
-              this.changeSidebarMode(sidebar);
-            },
-          },
-        };
-
+      query => {
         handleQueryOnLoad(queryOptions, query);
       },
     );
