@@ -46,13 +46,13 @@ export default {
     ...mapState({
       isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
     }),
-    ...mapGetters({
-      sorting: 'sorting',
-      mode: 'mode',
-      theme: 'theme',
-      listAlign: 'listAlign',
-      areItemDetailsShown: 'areItemDetailsShown',
-    }),
+    ...mapGetters([
+      'sorting',
+      'mode',
+      'theme',
+      'listAlign',
+      'areItemDetailsShown',
+    ]),
     listAlignTitles() {
       return ['list', 'page'].includes(this.mode)
         ? ['left', 'center', 'right', this.mode === 'list' ? 'random' : 'edges']
@@ -77,15 +77,15 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      _setSorting: '_setSorting',
-      _setMode: '_setMode',
-      _setTheme: '_setTheme',
-      _setListAlign: '_setListAlign',
-      _toggleItemDetailsShowingMode: '_toggleItemDetailsShowingMode',
-      _toggleItemsOrder: '_toggleItemsOrder',
-      _switchShuffleTrigger: '_switchShuffleTrigger',
-    }),
+    ...mapActions([
+      '_setSorting',
+      '_setMode',
+      '_setTheme',
+      '_setListAlign',
+      '_toggleItemDetailsShowingMode',
+      '_toggleItemsOrder',
+      '_switchShuffleTrigger',
+    ]),
   },
 };
 </script>

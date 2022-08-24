@@ -7,14 +7,14 @@ export default {
     InputCustom,
   },
   computed: {
-    ...mapState({
-      currentSearchValue: 'currentSearchValue',
-    }),
+    ...mapState([
+      'currentSearchValue',
+    ]),
   },
   methods: {
-    ...mapActions({
-      _setCurrentSearchValue: '_setCurrentSearchValue',
-    }),
+    ...mapActions([
+      '_setCurrentSearchValue',
+    ]),
   },
 };
 </script>

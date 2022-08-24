@@ -18,23 +18,23 @@ export default {
     listRequests: [],
   }),
   computed: {
-    ...mapGetters({
-      lists: 'lists',
-      currentListId: 'currentListId',
-      edittingListObj: 'edittingListObj',
-    }),
+    ...mapGetters([
+      'lists',
+      'currentListId',
+      'edittingListObj',
+    ]),
     sortedLists() {
       return sortByDate(this.lists, 'updatedAt'); 
     },
   },
   methods: {
-    ...mapActions({
-      _fetchListById: '_fetchListById',
-      _setListForEditting: '_setListForEditting',
-      _decreaseRequestsNumber: '_decreaseRequestsNumber',
-      _setModalNameToShow: '_setModalNameToShow',
-      _resetFilters: '_resetFilters',
-    }),
+    ...mapActions([
+      '_fetchListById',
+      '_setListForEditting',
+      '_decreaseRequestsNumber',
+      '_setModalNameToShow',
+      '_resetFilters',
+    ]),
     openListModal() {
       this._setModalNameToShow('listModal');
     },

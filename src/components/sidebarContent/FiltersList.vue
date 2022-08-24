@@ -15,17 +15,17 @@ export default {
     InfoMessage,
   },
   computed: {
-    ...mapState({
-      currentSearchValue: 'currentSearchValue',
-    }),
-    ...mapGetters({
-      currentListObj: 'currentListObj',
-      currentListTags: 'currentListTags',
-      currentListCategories: 'currentListCategories',
-      checkedTags: 'checkedTags',
-      checkedCategories: 'checkedCategories',
-      filteredListLength: 'filteredListLength',
-    }),
+    ...mapState([
+      'currentSearchValue',
+    ]),
+    ...mapGetters([
+      'currentListObj',
+      'currentListTags',
+      'currentListCategories',
+      'checkedTags',
+      'checkedCategories',
+      'filteredListLength',
+    ]),
     tagsInfoMessage() {
       return !this.currentListTags?.length ? 'no tags in this list' : '';
     },
