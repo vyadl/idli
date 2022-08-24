@@ -15,20 +15,20 @@ export default {
     ButtonText,
   },
   computed: {
-    ...mapGetters({
-      isItemFormInSidebar: 'isItemFormInSidebar',
-      isFocusOnList: 'isFocusOnList',
-      isListUnderSidebar: 'isListUnderSidebar',
-      isUsingHotkeys: 'isUsingHotkeys',
-    }),
+    ...mapGetters([
+      'isItemFormInSidebar',
+      'isFocusOnList',
+      'isListUnderSidebar',
+      'isUsingHotkeys',
+    ]),
   },
   methods: {
-    ...mapActions({
-      _switchItemFormLocation: '_switchItemFormLocation',
-      _switchFocusMode: '_switchFocusMode',
-      _switchSidebarAndListIntersection: '_switchSidebarAndListIntersection',
-      _switchUsingHotkeys: '_switchUsingHotkeys',
-    }),
+    ...mapActions([
+      '_switchItemFormLocation',
+      '_switchFocusMode',
+      '_switchSidebarAndListIntersection',
+      '_switchUsingHotkeys',
+    ]),
   },
 };
 </script>

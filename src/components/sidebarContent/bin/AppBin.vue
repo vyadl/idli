@@ -27,19 +27,19 @@ export default {
     this._fetchDeletedItems();
   },
   methods: {
-    ...mapActions({
-      _fetchDeletedLists: '_fetchDeletedLists',
-      _fetchDeletedItems: '_fetchDeletedItems',
-      _restoreList: '_restoreList',
-      _restoreItem: '_restoreItem',
-      _hardDeleteList: '_hardDeleteList',
-      _hardDeleteItem: '_hardDeleteItem',
-      _setNotification: '_setNotification',
-      _hardDeleteAllItems: '_hardDeleteAllItems',
-      _hardDeleteAllLists: '_hardDeleteAllLists',
-      _restoreAllItems: '_restoreAllItems',
-      _restoreAllLists: '_restoreAllLists',
-    }),
+    ...mapActions([
+      '_fetchDeletedLists',
+      '_fetchDeletedItems',
+      '_restoreList',
+      '_restoreItem',
+      '_hardDeleteList',
+      '_hardDeleteItem',
+      '_setNotification',
+      '_hardDeleteAllItems',
+      '_hardDeleteAllLists',
+      '_restoreAllItems',
+      '_restoreAllLists',
+    ]),
     resolveAction(action, payload) {
       this.isRequestProcessing = true;
 

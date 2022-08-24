@@ -18,18 +18,18 @@ export default {
     errorMessage: '',
   }),
   computed: {
-    ...mapGetters({
-      lists: 'lists',
-      testLists: 'testLists',
-    }),
+    ...mapGetters([
+      'lists',
+      'testLists',
+    ]),
   },
   created() {
     this.areTestListsShown = !this.lists.length;
   },
   methods: {
-    ...mapActions({
-      _addTestList: '_addTestList',
-    }),
+    ...mapActions([
+      '_addTestList',
+    ]),
     addTestList(list) {
       this.isRequestProcessing = true;
       this.errorMessage = '';

@@ -9,9 +9,9 @@ export default {
     ItemForm,
   },
   computed: {
-    ...mapGetters({
-      edittingItemObj: 'edittingItemObj',
-    }),
+    ...mapGetters([
+      'edittingItemObj',
+    ]),
   },
 };
 </script>
