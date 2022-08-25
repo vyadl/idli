@@ -29,11 +29,11 @@ export default {
       'edittingItemObj',
       'isItemFormInSidebar',
     ]),
-    isAnyTagExist() {
-      return !!this.currentListTags?.length;
+    isAnyTagWithIdExist() {
+      return this.currentListTags?.some(tag => tag.id);
     },
-    isAnyCategoryExist() {
-      return !!this.currentListCategories?.length;
+    isAnyCategoryWithIdExist() {
+      return this.currentListCategories?.some(category => category.id);
     },
   },
   watch: {
@@ -72,10 +72,12 @@ export default {
     },
     saveItem() {
       this.isRequestProcessing = true;
+
+      if (!this.isItemFormInSidebar) {
+        this.closeItemModal();
+      }
+
       this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
-        .then(() => {
-          this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
-        })
         .catch(error => {
           this.errorMessage = error.response.data.message;
         })
@@ -85,10 +87,12 @@ export default {
     },
     deleteItem(item) {
       this.isRequestProcessing = true;
+
+      if (!this.isItemFormInSidebar) {
+        this.closeItemModal();
+      }
+
       this._deleteItem(item)
-        .then(() => {
-          this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
-        })
         .catch(error => {
           this.errorMessage = error.response.data.message;
         })
@@ -127,12 +131,13 @@ export default {
     </div>
     <div
       class="filters-container"
-      :class="{ indent: isAnyTagExist && isAnyCategoryExist }"
-      v-if="isAnyTagExist"
+      :class="{ indent: isAnyTagWithIdExist && isAnyCategoryWithIdExist }"
+      v-if="isAnyTagWithIdExist "
     >
       <h1 class="filters-title">tags:</h1>
       <CheckboxCustom
         v-for="tag in currentListTags"
+        v-show="tag.id"
         :key="tag.id"
         :label="tag.title"
         :value="tag.id"
@@ -143,12 +148,13 @@ export default {
     </div>
     <div
       class="filters-container"
-      v-if="isAnyCategoryExist"
+      v-if="isAnyCategoryWithIdExist"
     >
       <h1 class="filters-title">category:</h1>
       <RadioCustom
         class="item-category"
         v-for="category in currentListCategories"
+        v-show="category.id"
         :key="category.id"
         :label="category.title"
         :value="category.id"

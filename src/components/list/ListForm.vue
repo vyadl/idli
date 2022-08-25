@@ -123,11 +123,9 @@ export default {
     },
     updateList() {
       if (this.validateFiltersTitles()) {
+        this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
-          .then(() => {
-            this.closeListModal();
-          })
           .catch(error => {
             this.errorMessage = error.response.data.message;
           })
