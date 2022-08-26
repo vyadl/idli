@@ -9,7 +9,7 @@ export function commitFromRoot(mutationName, payload = null) {
 }
 
 export function notifyAboutError(error) {
-  const isResponseMessage = error.response?.data?.message && error.response?.status !== 500;
+  const isResponseMessage = error.response?.data?.message && error.response.status !== 500;
 
   store.commit('setNotification', { 
     text: isResponseMessage
