@@ -7,10 +7,10 @@ import {
   changeQueryRespectingDefault,
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
-import { notifyAboutError } from '@/store/store-utils';
+import { notifyAboutError } from '@/store/utils';
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
-import { MIN_SEARCH_SYMBOLS } from '../../config';
+import { MIN_SEARCH_SYMBOLS } from '@/store/config';
 
 export default {
   // local storage
