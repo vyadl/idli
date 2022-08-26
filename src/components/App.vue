@@ -21,7 +21,7 @@ export default {
     ...mapGetters({
       notification: 'notification',
       modalNameToShow: 'modalNameToShow',
-      requestsNumber: 'requestsNumber',
+      explicitRequestsNumber: 'explicitRequestsNumber',
       isLoggedIn: 'auth/isLoggedIn',
     }),
   },
@@ -88,7 +88,7 @@ export default {
     <transition name="fade">
       <div
         class="preloader"
-        v-if="requestsNumber"
+        v-if="explicitRequestsNumber"
       ></div>
     </transition>
     <router-view></router-view>

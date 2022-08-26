@@ -10,7 +10,7 @@ export function commitFromRoot(mutationName, payload = null) {
 
 export function notifyAboutError(error) {
   store.commit('setNotification', { 
-    text: error.response.status === 500 
-      ? 'Something went wrong' : error.response.data.message,
+    text: error.response?.status === 500 
+      ? 'Something went wrong' : error.response?.data?.message,
   });
 }

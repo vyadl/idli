@@ -28,12 +28,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      '_addTestList',
+      '_copyTestListToUserLists',
     ]),
     addTestList(list) {
       this.isRequestProcessing = true;
       this.errorMessage = '';
-      this._addTestList(list)
+      this._copyTestListToUserLists(list)
         .catch(error => {
           this.errorMessage = error.response.data.message;
         })

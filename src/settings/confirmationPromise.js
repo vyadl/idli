@@ -6,7 +6,7 @@ export let confirmationPromise;
 
 export function isConfirmed(confirmationModalTitle = 'are you sure?') {
   store.dispatch('_setModalNameToShow', 'confirmationModal');
-  store.commit('setconfirmationModalTitle', confirmationModalTitle);
+  store.commit('setConfirmationModalTitle', confirmationModalTitle);
   confirmationPromise = new DeferredBoolean();
 
   return confirmationPromise.promise;

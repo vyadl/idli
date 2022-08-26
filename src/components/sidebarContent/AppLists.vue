@@ -31,7 +31,7 @@ export default {
     ...mapActions([
       '_fetchListById',
       '_setListForEditting',
-      '_decreaseRequestsNumber',
+      '_decreaseExplicitRequestsNumber',
       '_setModalNameToShow',
       '_resetFilters',
     ]),
@@ -49,7 +49,7 @@ export default {
         this.listRequests.forEach(request => {
           request.cancel();
         });
-        this._decreaseRequestsNumber();
+        this._decreaseExplicitRequestsNumber();
       }
 
       const source = this.$config.axios.CancelToken.source();
