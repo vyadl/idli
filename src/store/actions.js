@@ -70,7 +70,7 @@ export default {
         commit('setCurrentItems', responseList.items);
       })
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -142,7 +142,7 @@ export default {
         commit('updateList', responseList);
       })
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
         dispatch('_fetchListsForUser');
       });
   },
@@ -161,7 +161,6 @@ export default {
     }
 
     commit('deleteList', id);
-    dispatch('_fetchDeletedLists');
   },
   _setCurrentListId({ commit, getters }, id) {
     commit('setCurrentListId', id);
@@ -203,7 +202,7 @@ export default {
         commit('updateItemByTemporaryId', responseItem);
       })
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
@@ -236,7 +235,7 @@ export default {
         commit('updateItem', responseList);
       })
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
@@ -245,13 +244,9 @@ export default {
     dispatch('_setItemForEditting', null);
     
     this.$config.axios.delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`)
-      .then(() => {
-        dispatch('_fetchDeletedItems');
-      })
       .catch(async error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
         await dispatch('_fetchListById', { id: item.listId, cancelToken: null });
-        dispatch('_setItemForEditting', item);
       });
   },
   _setItemForEditting({ commit }, item) {
@@ -384,6 +379,7 @@ export default {
   },
 
   async _fetchDeletedItems({ commit }) {
+    console.log(1);
     const { data: deletedItems } = await this.$config.axios.get(`${this.$config.apiBasePath}items/deleted`);
 
     commit('setDeletedItems', deletedItems);
@@ -394,7 +390,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(async () => {
         await dispatch('_fetchingAfterBinActions', false);
@@ -410,7 +406,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(() => {
         dispatch('_fetchingAfterBinActions', true);
@@ -422,7 +418,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(() => {
         dispatch('_fetchDeletedLists');
@@ -434,7 +430,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(() => {
         dispatch('_fetchDeletedItems');
@@ -446,7 +442,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(() => {
         dispatch('_fetchDeletedItems');
@@ -458,7 +454,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(() => {
         dispatch('_fetchingAfterBinActions', true);
@@ -470,7 +466,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(() => {
         dispatch('_fetchDeletedLists');
@@ -482,7 +478,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`)
       .catch(error => {
-        notifyAboutError(error.response.status, error.response.data.message);
+        notifyAboutError(error);
       })
       .finally(async () => {
         await dispatch('_fetchingAfterBinActions', false);

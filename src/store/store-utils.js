@@ -8,8 +8,9 @@ export function commitFromRoot(mutationName, payload = null) {
   store.commit(mutationName, payload, { root: true });
 }
 
-export function notifyAboutError(status, message) {
+export function notifyAboutError(error) {
   store.commit('setNotification', { 
-    text: status === 500 ? 'Something went wrong' : message,
+    text: error.response.status === 500 
+      ? 'Something went wrong' : error.response.data.message,
   });
 }

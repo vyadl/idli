@@ -55,8 +55,10 @@ export default {
       });
     },
     async resolveAllAction(action) {
-      if (!await isConfirmed()) {
-        return false;
+      if (action === '_hardDeleteAllLists' || action === '_hardDeleteAllItems') {
+        if (!await isConfirmed()) {
+          return false;
+        }
       }
 
       this.isRequestProcessing = true;
