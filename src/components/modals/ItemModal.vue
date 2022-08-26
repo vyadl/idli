@@ -1,6 +1,6 @@
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
-import ItemForm from '@/components/list/ItemForm.vue';
+import ItemForm from '@/components/item/ItemForm.vue';
 import { mapGetters } from 'vuex';
 
 export default {

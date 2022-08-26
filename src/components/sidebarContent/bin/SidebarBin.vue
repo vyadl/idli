@@ -79,7 +79,7 @@ export default {
 </script>
 
 <template>
-<div class="app-bin">
+<div class="sidebar-bin">
   <div
     v-if="deletedLists.length || deletedItems.length"
   >
@@ -153,7 +153,7 @@ export default {
 </template>
 
 .<style lang="scss">
-  .app-bin {
+  .sidebar-bin {
     .all-buttons {
       display: flex;
       justify-content: space-between;

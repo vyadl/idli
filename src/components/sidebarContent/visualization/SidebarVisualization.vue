@@ -91,7 +91,7 @@ export default {
 </script>
 
 <template>
-  <div class="list-visualization">
+  <div class="sidebar-visualization">
     <SidebarCard 
       title="sorting"
       class="main-sorting"
@@ -193,7 +193,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .list-visualization {
+  .sidebar-visualization {
     .main-sorting {
       margin-bottom: 0;
     }

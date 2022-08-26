@@ -1,5 +1,5 @@
 <script>
-import ListItem from '@/components/list/ListItem.vue';
+import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';

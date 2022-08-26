@@ -1,5 +1,5 @@
 <script>
-import SearchField from '@/components/sidebarContent/SearchField.vue';
+import SearchField from '@/components/sidebarContent/filters/SearchField.vue';
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -44,7 +44,7 @@ export default {
 </script>
 
 <template>
-<div class="filters-list">
+<div class="sidebar-filters">
   <div v-if="currentListObj">
     <SidebarCard title="search">
       <SearchField />
@@ -101,7 +101,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .filters-list {
+  .sidebar-filters {
     .filters-title {
       margin-bottom: 10px;
     }

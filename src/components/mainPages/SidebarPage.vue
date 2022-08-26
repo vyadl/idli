@@ -1,26 +1,26 @@
 <script>
-import FiltersList from '@/components/sidebarContent/FiltersList.vue';
-import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
-import AppLists from '@/components/sidebarContent/AppLists.vue';
-import AppBin from '@/components/sidebarContent/bin/AppBin.vue';
-import AppSettings from '@/components/sidebarContent/AppSettings.vue';
+import SidebarFilters from '@/components/sidebarContent/filters/SidebarFilters.vue';
+import SidebarVisualization from '@/components/sidebarContent/visualization/SidebarVisualization.vue';
+import SidebarLists from '@/components/sidebarContent/lists/SidebarLists.vue';
+import SidebarBin from '@/components/sidebarContent/bin/SidebarBin.vue';
+import SidebarSettings from '@/components/sidebarContent/settings/SidebarSettings.vue';
 import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
 import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
-import ItemSidebar from '@/components/sidebarContent/ItemSidebar.vue';
+import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    ListVisualization,
-    FiltersList,
-    AppLists,
-    AppSettings,
+    SidebarVisualization,
+    SidebarFilters,
+    SidebarLists,
+    SidebarSettings,
     RegistrationForm,
     AuthForm,
-    AppBin,
-    ItemSidebar,
+    SidebarBin,
+    SidebarItem,
     ButtonText,
     ButtonSign,
   },
@@ -126,14 +126,14 @@ export default {
       </div>
     </div>
     <div class="sidebar-content">
-      <ListVisualization v-if="sidebarMode === 'visualization'" />
-      <FiltersList v-if="sidebarMode === 'filters'" />
-      <AppLists v-if="sidebarMode === 'lists'" />
-      <AppSettings v-if="sidebarMode === 'settings'"/>
+      <SidebarVisualization v-if="sidebarMode === 'visualization'" />
+      <SidebarFilters v-if="sidebarMode === 'filters'" />
+      <SidebarLists v-if="sidebarMode === 'lists'" />
+      <SidebarSettings v-if="sidebarMode === 'settings'"/>
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
-      <AppBin v-if="sidebarMode === 'bin'" />
-      <ItemSidebar v-if="sidebarMode === 'item'" />
+      <SidebarBin v-if="sidebarMode === 'bin'" />
+      <SidebarItem v-if="sidebarMode === 'item'" />
     </div>
   </div>
 </template>

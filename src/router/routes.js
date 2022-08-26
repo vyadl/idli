@@ -1,6 +1,6 @@
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
 import MainList from '@/components/list/MainList.vue';
-import SingleItem from '@/components/list/SingleItem.vue';
+import SingleItem from '@/components/item/SingleItem.vue';
 
 export const routes = [
   { 

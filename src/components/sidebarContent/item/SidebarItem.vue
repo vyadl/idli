@@ -1,6 +1,6 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
-import ItemForm from '@/components/list/ItemForm.vue';
+import ItemForm from '@/components/item/ItemForm.vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -18,7 +18,7 @@ export default {
 
 <template>
   <SidebarCard
-    class="item-sidebar"
+    class="sidebar-item"
     :title="edittingItemObj ? 'edit item' : 'new item'"
   >
     <ItemForm />
