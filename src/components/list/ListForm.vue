@@ -134,8 +134,10 @@ export default {
     async deleteList() {
       const confirmationModalTitle = `are you sure you want to delete list  
         '${this.edittingListObj?.title}' ?`;
+        
+      const isRejected = !await isConfirmed(confirmationModalTitle);
 
-      if (!await isConfirmed(confirmationModalTitle)) {
+      if (isRejected) {
         return false;
       }
 

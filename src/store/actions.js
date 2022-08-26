@@ -379,7 +379,6 @@ export default {
   },
 
   async _fetchDeletedItems({ commit }) {
-    console.log(1);
     const { data: deletedItems } = await this.$config.axios.get(`${this.$config.apiBasePath}items/deleted`);
 
     commit('setDeletedItems', deletedItems);
