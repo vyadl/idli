@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
-import { checkDefaultValue } from '@/utils/utils';
-import { defaultQueryValues } from '../../config';
+import { defaultQueryValues } from '@/router/config';
 
 function getQuery() {
   return router.currentRoute._value.query;
@@ -69,4 +68,12 @@ export function handleQueryOnLoad(queryOptions, currentQuery) {
       }
     }
   });
+}
+
+function getDefaultValue(optionsObj, option) {
+  return optionsObj[option].default;
+}
+
+export function checkDefaultValue(optionsObj, option, value) {
+  return value === getDefaultValue(optionsObj, option);
 }

@@ -1,4 +1,4 @@
-import { MIN_SEARCH_SYMBOLS } from '../../config';
+import { MIN_SEARCH_SYMBOLS } from '@/store/config';
 
 export default {
   // lists

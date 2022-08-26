@@ -1,4 +1,4 @@
-import { DeferredBoolean } from '@/utils/utils';
+import { DeferredBoolean } from '@/utils/misc';
 import store from '@/store/index';
 
 // eslint-disable-next-line import/no-mutable-exports
