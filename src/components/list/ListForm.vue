@@ -126,9 +126,6 @@ export default {
         this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
-          .catch(error => {
-            this.errorMessage = error.response.data.message;
-          })
           .finally(() => {
             this.isRequestProcessing = false;
           });

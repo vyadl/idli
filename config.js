@@ -1,7 +1,5 @@
 export const MIN_SEARCH_SYMBOLS = 3;
 
-export const BACKGROUND_REQUEST_FAIL_MESSAGE = 'Action failed. Please try again.';
-
 export const defaultQueryValues = {
   tags: {
     default: '[]',

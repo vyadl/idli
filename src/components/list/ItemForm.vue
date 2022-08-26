@@ -4,7 +4,6 @@ import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { Item } from '@/models/models';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -15,12 +14,10 @@ export default {
     CheckboxCustom,
     RadioCustom,
     ButtonText,
-    ErrorMessage,
   },
   data: () => ({
     item: null,
     isRequestProcessing: false,
-    errorMessage: '',
   }),
   computed: {
     ...mapGetters([
@@ -68,34 +65,19 @@ export default {
     resetData() {
       this._setItemForEditting(null);
       this.item = new Item();
-      this.errorMessage = '';
     },
     saveItem() {
       this.isRequestProcessing = true;
-
-      if (!this.isItemFormInSidebar) {
-        this.closeItemModal();
-      }
-
+      this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
       this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
-        })
         .finally(() => {
           this.isRequestProcessing = false;
         });
     },
     deleteItem(item) {
       this.isRequestProcessing = true;
-
-      if (!this.isItemFormInSidebar) {
-        this.closeItemModal();
-      }
-
+      this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
       this._deleteItem(item)
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
-        })
         .finally(() => {
           this.isRequestProcessing = false;
         });
@@ -164,10 +146,6 @@ export default {
         @click="disableCategory(category.id)"
       />
     </div>
-    <ErrorMessage
-      v-if="errorMessage.length"
-      :message="errorMessage"
-    />
     <div class="buttons-container">
       <div>
         <ButtonText

@@ -8,7 +8,7 @@ import {
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
-import { MIN_SEARCH_SYMBOLS, BACKGROUND_REQUEST_FAIL_MESSAGE } from '../../config';
+import { MIN_SEARCH_SYMBOLS } from '../../config';
 
 export default {
   // local storage
@@ -68,7 +68,9 @@ export default {
         commit('setCurrentItems', responseList.items);
       })
       .catch(error => {
-        console.log(error);
+        commit('setNotification', {
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -139,8 +141,10 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
       })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
         dispatch('_fetchListsForUser');
       });
   },
@@ -200,8 +204,10 @@ export default {
       .then(({ data: responseItem }) => {
         commit('updateItemByTemporaryId', responseItem);
       })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
@@ -233,8 +239,10 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateItem', responseList);
       })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
@@ -246,8 +254,10 @@ export default {
       .then(() => {
         dispatch('_fetchDeletedItems');
       })
-      .catch(async () => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(async error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
         await dispatch('_fetchListById', { id: item.listId, cancelToken: null });
         dispatch('_setItemForEditting', item);
       });
@@ -391,11 +401,10 @@ export default {
     commit('removeListFromBin', listId);
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`)
-      .then(res => {
-        return res;
-      })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
       .finally(async () => {
         await dispatch('_fetchingAfterBinActions', false);
@@ -410,11 +419,10 @@ export default {
     commit('removeItemFromBin', itemId);
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
-      .then(res => {
-        return res;
-      })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
       .finally(() => {
         dispatch('_fetchingAfterBinActions', true);
@@ -425,10 +433,12 @@ export default {
     commit('removeListFromBin', listId);
 
     this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`)
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
-      .finally(async () => {
+      .finally(() => {
         dispatch('_fetchDeletedLists');
       });
   },
@@ -437,10 +447,12 @@ export default {
     commit('removeItemFromBin', itemId);
 
     this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`)
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
-      .finally(async () => {
+      .finally(() => {
         dispatch('_fetchDeletedItems');
       });
   },
@@ -449,10 +461,12 @@ export default {
     commit('removeBulkFromBin', 'items');
 
     this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`)
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
-      .finally(async () => {
+      .finally(() => {
         dispatch('_fetchDeletedItems');
       });
   },
@@ -461,13 +475,12 @@ export default {
     commit('removeBulkFromBin', 'items');
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`)
-      .then(res => {
-        return res;
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
-      })
-      .finally(async () => {
+      .finally(() => {
         dispatch('_fetchingAfterBinActions', true);
       });
   },
@@ -476,8 +489,10 @@ export default {
     commit('removeBulkFromBin', 'lists');
 
     this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`)
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
       .finally(() => {
         dispatch('_fetchDeletedLists');
@@ -488,11 +503,10 @@ export default {
     commit('removeBulkFromBin', 'lists');
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`)
-      .then(res => {
-        return res;
-      })
-      .catch(() => {
-        commit('setNotification', { text: BACKGROUND_REQUEST_FAIL_MESSAGE });
+      .catch(error => {
+        commit('setNotification', { 
+          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
+        });
       })
       .finally(async () => {
         await dispatch('_fetchingAfterBinActions', false);
