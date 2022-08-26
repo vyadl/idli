@@ -1,6 +1,6 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
-import TestData from '@/components/sidebarContent/TestData.vue';
+import TestData from '@/components/sidebarContent/lists/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { sortByDate } from '@/utils/sorting';
@@ -72,7 +72,7 @@ export default {
 
 <template>
   <SidebarCard
-    class="app-lists"
+    class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
   >
@@ -108,7 +108,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .app-lists {
+  .sidebar-lists {
     .lists-container {
       margin-bottom: 100px;
     }

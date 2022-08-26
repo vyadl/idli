@@ -1,6 +1,6 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
-import UserProfile from '@/components/sidebarContent/UserProfile.vue';
+import UserProfile from '@/components/sidebarContent/settings/UserProfile.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import AboutModal from '@/components/modals/AboutModal.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -35,7 +35,7 @@ export default {
 
 <template>
   <SidebarCard
-    class="app-settings"
+    class="sidebar-settings"
     title="settings"
   >
     <div class="options-container">
@@ -97,7 +97,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .app-settings {
+  .sidebar-settings {
     .options-container {
       margin-bottom: 100px;
     }
