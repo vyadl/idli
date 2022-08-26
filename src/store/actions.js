@@ -37,6 +37,8 @@ export default {
   // lists
 
   _fetchListsForUser({ commit, dispatch }) {
+    commit('increaseExplicitRequestsNumber');
+
     return this.$config.axios.get(`${this.$config.apiBasePath}lists`)
       .then(({ data: responseLists }) => {
         commit('setLists', responseLists);
@@ -46,6 +48,9 @@ export default {
         if (routerValues.name !== 'item' && !routerValues.params.id) {
           dispatch('_setListIdFromLocalStorage');
         }
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
       });
   },
   _fetchTestLists({ commit }) {
@@ -74,27 +79,39 @@ export default {
       });
   },
   _fetchCurrentItems({ commit, getters }) {
+    commit('increaseExplicitRequestsNumber');
+
     return this.$config.axios
       .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
       .then(({ data: responseList }) => {
         commit('setCurrentItems', responseList.items);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
       });
   },
   _addList({ commit, dispatch }, list) {
+    commit('increaseExplicitRequestsNumber');
+
     return this.$config.axios
       .post(`${this.$config.apiBasePath}list/add`, list)
       .then(({ data: responseList }) => {
         commit('addList', responseList);
         dispatch('_setCurrentListId', responseList.id);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
       });
   },
-  async _addTestList({ commit, dispatch }, {
+  async _copyTestListToUserLists({ commit, dispatch }, {
     title,
     isPrivate,
     tags,
     categories,
     items,
   }) {
+    commit('increaseExplicitRequestsNumber');
+
     const { data: responseList } = await this.$config.axios
       .post(`${this.$config.apiBasePath}list/add`, {
         title,
@@ -115,6 +132,7 @@ export default {
 
     commit('addItems', responseItems);
     commit('setCurrentItems', responseItems);
+    commit('decreaseExplicitRequestsNumber');
   },
   _updateList({ commit, dispatch }, {
     title,
@@ -147,6 +165,8 @@ export default {
       });
   },
   async _deleteList({ commit, dispatch, getters }, id) {
+    commit('increaseExplicitRequestsNumber');
+
     await this.$config.axios.delete(`${this.$config.apiBasePath}list/delete/${id}`);
 
     if (getters.currentListObj?.id === id) {
@@ -161,6 +181,7 @@ export default {
     }
 
     commit('deleteList', id);
+    commit('decreaseExplicitRequestsNumber');
   },
   _setCurrentListId({ commit, getters }, id) {
     commit('setCurrentListId', id);
@@ -177,7 +198,9 @@ export default {
 
   // items
 
-  _fetchItemById() {
+  _fetchItemById({ commit }) {
+    commit('increaseExplicitRequestsNumber');
+
     return this.$config.axios
       .get(
         `${this.$config.apiBasePath}item/${router.currentRoute._value.params.id}`,
@@ -186,6 +209,9 @@ export default {
       .then(({ data }) => data)
       .catch(error => {
         console.log(error);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
       });
   },
   async _addItem({ commit, dispatch, getters }, item) {
@@ -361,13 +387,7 @@ export default {
   // modals
 
   _setModalNameToShow({ commit }, name) {
-    commit('setmodalNameToShow', name);
-  },
-
-  // requests
-
-  _decreaseRequestsNumber({ commit }) {
-    commit('decreaseRequestsNumber');
+    commit('setModalNameToShow', name);
   },
 
   // bin
@@ -384,7 +404,17 @@ export default {
     commit('setDeletedItems', deletedItems);
   },
 
+  _fetchBin({ commit, dispatch }) {
+    commit('increaseExplicitRequestsNumber');
+
+    Promise.all([dispatch('_fetchDeletedLists'), dispatch('_fetchDeletedItems')])
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
+      });
+  },
+
   _restoreList({ commit, dispatch, getters }, listId) {
+    commit('increaseExplicitRequestsNumber');
     commit('removeListFromBin', listId);
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`)
@@ -392,6 +422,7 @@ export default {
         notifyAboutError(error);
       })
       .finally(async () => {
+        commit('decreaseExplicitRequestsNumber');
         await dispatch('_fetchingAfterBinActions', false);
 
         if (getters.lists.length) {
@@ -401,6 +432,7 @@ export default {
   },
 
   _restoreItem({ commit, dispatch }, { listId, itemId }) {
+    commit('increaseExplicitRequestsNumber');
     commit('removeItemFromBin', itemId);
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
@@ -408,6 +440,7 @@ export default {
         notifyAboutError(error);
       })
       .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
         dispatch('_fetchingAfterBinActions', true);
       });
   },
@@ -449,6 +482,7 @@ export default {
   },
 
   _restoreAllItems({ commit, dispatch }) {
+    commit('increaseExplicitRequestsNumber');
     commit('removeBulkFromBin', 'items');
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`)
@@ -456,6 +490,7 @@ export default {
         notifyAboutError(error);
       })
       .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
         dispatch('_fetchingAfterBinActions', true);
       });
   },
@@ -473,6 +508,7 @@ export default {
   },
 
   _restoreAllLists({ commit, dispatch, getters }) {
+    commit('increaseExplicitRequestsNumber');
     commit('removeBulkFromBin', 'lists');
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`)
@@ -480,6 +516,7 @@ export default {
         notifyAboutError(error);
       })
       .finally(async () => {
+        commit('decreaseExplicitRequestsNumber');
         await dispatch('_fetchingAfterBinActions', false);
 
         if (getters.currentListObj) {

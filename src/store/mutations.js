@@ -149,21 +149,21 @@ export default {
 
   // modals
 
-  setmodalNameToShow(state, name) {
+  setModalNameToShow(state, name) {
     state.modalNameToShow = name;
   },
 
-  setconfirmationModalTitle(state, title) {
+  setConfirmationModalTitle(state, title) {
     state.confirmationModalTitle = title;
   },
 
   // requests
 
-  increaseRequestsNumber(state) {
-    state.requestsNumber++;
+  increaseExplicitRequestsNumber(state) {
+    state.explicitRequestsNumber++;
   },
-  decreaseRequestsNumber(state) {
-    state.requestsNumber--;
+  decreaseExplicitRequestsNumber(state) {
+    state.explicitRequestsNumber--;
   },
 
   // bin

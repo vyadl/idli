@@ -62,7 +62,7 @@ export default {
   modalNameToShow: state => state.modalNameToShow,
 
   // requests
-  requestsNumber: state => state.requestsNumber,
+  explicitRequestsNumber: state => state.explicitRequestsNumber,
 
   // bin
   deletedLists: state => state.deletedLists,

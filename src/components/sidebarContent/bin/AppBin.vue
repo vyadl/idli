@@ -23,13 +23,11 @@ export default {
     ]),
   },
   created() {
-    this._fetchDeletedLists();
-    this._fetchDeletedItems();
+    this._fetchBin();
   },
   methods: {
     ...mapActions([
-      '_fetchDeletedLists',
-      '_fetchDeletedItems',
+      '_fetchBin',
       '_restoreList',
       '_restoreItem',
       '_hardDeleteList',

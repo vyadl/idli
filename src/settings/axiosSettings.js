@@ -1,24 +1,13 @@
 import axios from 'axios';
 
 export const initAxios = function initAxios(store) {
-  axios.interceptors.request.use(config => {
-    store.commit('increaseRequestsNumber');
-
-    return config;
-  });
-
   axios.interceptors.response.use(
-    response => {
-      store.commit('decreaseRequestsNumber');
+    response => response,
 
-      return response;
-    },
     error => {
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
-      } else {
-        store.commit('decreaseRequestsNumber');
-      }
+      } 
 
       if (error.response?.data?.message === 'Invalid JWT Token') {
         store.dispatch('auth/_logOut');
