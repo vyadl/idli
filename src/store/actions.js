@@ -7,6 +7,8 @@ import {
   changeQueryRespectingDefault,
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
+import { notifyAboutError } from '@/store/store-utils';
+// eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
 import { MIN_SEARCH_SYMBOLS } from '../../config';
 
@@ -55,7 +57,7 @@ export default {
   _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     dispatch('_setCurrentListId', id);
 
-    if (getters.currentListObj?.items.length) {
+    if (getters.currentListObj?.items?.length) {
       if (getters.currentListObj.items[0] instanceof Object) {
         commit('setCurrentItems', getters.currentListObj.items);
       }
@@ -68,7 +70,7 @@ export default {
         commit('setCurrentItems', responseList.items);
       })
       .catch(error => {
-        console.log(error);
+        notifyAboutError(error);
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -114,23 +116,35 @@ export default {
     commit('addItems', responseItems);
     commit('setCurrentItems', responseItems);
   },
-  async _updateList({ commit }, {
+  _updateList({ commit, dispatch }, {
     title,
     isPrivate,
     tags,
     categories,
     id,
   }) {
-    const { data: responseList } = await this.$config.axios
+    commit('updateList', {
+      title,
+      isPrivate,
+      tags,
+      categories,
+      id,
+    });
+
+    this.$config.axios
       .patch(`${this.$config.apiBasePath}list/update/${id}`, {
         title,
         isPrivate,
         tags,
         categories,
+      })
+      .then(({ data: responseList }) => {
+        commit('updateList', responseList);
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatch('_fetchListsForUser');
       });
-
-    commit('updateList', responseList);
-    commit('setCurrentItems', responseList.items);
   },
   async _deleteList({ commit, dispatch, getters }, id) {
     await this.$config.axios.delete(`${this.$config.apiBasePath}list/delete/${id}`);
@@ -147,7 +161,6 @@ export default {
     }
 
     commit('deleteList', id);
-    dispatch('_fetchDeletedLists');
   },
   _setCurrentListId({ commit, getters }, id) {
     commit('setCurrentListId', id);
@@ -175,14 +188,25 @@ export default {
         console.log(error);
       });
   },
-  async _addItem({ commit, getters }, item) {
+  async _addItem({ commit, dispatch, getters }, item) {
     const listId = getters.currentListObj.id;
-    const { data: responseItem } = await this.$config.axios
-      .post(`${this.$config.apiBasePath}item/add/${listId}`, item);
+    const itemWithTemporaryId = {
+      ...item,
+      temporaryId: Date.now(),
+    };
 
-    commit('addItem', responseItem);
+    commit('addItem', itemWithTemporaryId);
+    this.$config.axios
+      .post(`${this.$config.apiBasePath}item/add/${listId}`, itemWithTemporaryId)
+      .then(({ data: responseItem }) => {
+        commit('updateItemByTemporaryId', responseItem);
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatch('_fetchListById', { id: listId, cancelToken: null });
+      });
   },
-  async _updateItem({ commit, dispatch }, {
+  _updateItem({ commit, dispatch }, {
     title,
     details,
     tags,
@@ -190,23 +214,40 @@ export default {
     listId,
     id,
   }) {
-    const { data: responseItem } = await this.$config.axios
+    commit('updateItem', {
+      title,
+      details,
+      tags,
+      category,
+      id,
+    });
+
+    dispatch('_setItemForEditting', null);
+
+    this.$config.axios
       .patch(`${this.$config.apiBasePath}item/update/${listId}/${id}`, {
         title,
         details,
         tags,
         category,
+      })
+      .then(({ data: responseList }) => {
+        commit('updateItem', responseList);
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
-
-    commit('updateItem', responseItem);
-    dispatch('_setItemForEditting', null);
   },
   async _deleteItem({ commit, dispatch }, item) {
-    await this.$config.axios.delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`);
-
     commit('deleteItem', item.id);
     dispatch('_setItemForEditting', null);
-    dispatch('_fetchDeletedItems');
+    
+    this.$config.axios.delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`)
+      .catch(async error => {
+        notifyAboutError(error);
+        await dispatch('_fetchListById', { id: item.listId, cancelToken: null });
+      });
   },
   _setItemForEditting({ commit }, item) {
     commit('setItemForEditting', item);
@@ -281,7 +322,7 @@ export default {
     commit('switchFocusMode');
 
     if (getters.isFocusOnList) {
-      dispatch('_setNotification', { text: 'press Esc to exit focus mode' });
+      commit('setNotification', { text: 'press Esc to exit focus mode' });
     }
 
     dispatch('_saveSettingsInLocalStorage');
@@ -343,68 +384,108 @@ export default {
     commit('setDeletedItems', deletedItems);
   },
 
-  async _restoreList({ dispatch, getters }, listId) {
-    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`);
+  _restoreList({ commit, dispatch, getters }, listId) {
+    commit('removeListFromBin', listId);
 
-    await dispatch('_fetchingAfterBinActions', false);
+    this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(async () => {
+        await dispatch('_fetchingAfterBinActions', false);
 
-    if (getters.lists.length) {
-      dispatch('_fetchCurrentItems');
-    }
-
-    return res;
+        if (getters.lists.length) {
+          dispatch('_fetchCurrentItems');
+        }
+      });
   },
 
-  async _restoreItem({ dispatch }, { listId, itemId }) {
-    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`);
+  _restoreItem({ commit, dispatch }, { listId, itemId }) {
+    commit('removeItemFromBin', itemId);
 
-    dispatch('_fetchingAfterBinActions', true);
-
-    return res;
+    this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(() => {
+        dispatch('_fetchingAfterBinActions', true);
+      });
   },
 
-  async _hardDeleteList({ dispatch }, listId) {
-    await this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`);
+  _hardDeleteList({ dispatch, commit }, listId) {
+    commit('removeListFromBin', listId);
 
-    dispatch('_fetchDeletedLists');
+    this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(() => {
+        dispatch('_fetchDeletedLists');
+      });
   },
 
-  async _hardDeleteItem({ dispatch }, { listId, itemId }) {
-    await this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`);
+  _hardDeleteItem({ dispatch, commit }, { listId, itemId }) {
+    commit('removeItemFromBin', itemId);
 
-    dispatch('_fetchDeletedItems');
+    this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(() => {
+        dispatch('_fetchDeletedItems');
+      });
   },
 
-  async _hardDeleteAllItems({ dispatch }) {
-    await this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`);
+  _hardDeleteAllItems({ commit, dispatch }) {
+    commit('removeBulkFromBin', 'items');
 
-    dispatch('_fetchDeletedItems');
+    this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(() => {
+        dispatch('_fetchDeletedItems');
+      });
   },
 
-  async _restoreAllItems({ dispatch }) {
-    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`);
+  _restoreAllItems({ commit, dispatch }) {
+    commit('removeBulkFromBin', 'items');
 
-    dispatch('_fetchingAfterBinActions', true);
-
-    return res;
+    this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(() => {
+        dispatch('_fetchingAfterBinActions', true);
+      });
   },
 
-  async _hardDeleteAllLists({ dispatch }) {
-    await this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`);
+  _hardDeleteAllLists({ commit, dispatch }) {
+    commit('removeBulkFromBin', 'lists');
 
-    dispatch('_fetchDeletedLists');
+    this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(() => {
+        dispatch('_fetchDeletedLists');
+      });
   },
 
-  async _restoreAllLists({ dispatch, getters }) {
-    const res = await this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`);
+  _restoreAllLists({ commit, dispatch, getters }) {
+    commit('removeBulkFromBin', 'lists');
 
-    await dispatch('_fetchingAfterBinActions', false);
+    this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`)
+      .catch(error => {
+        notifyAboutError(error);
+      })
+      .finally(async () => {
+        await dispatch('_fetchingAfterBinActions', false);
 
-    if (getters.currentListObj) {
-      dispatch('_fetchCurrentItems');
-    }
-
-    return res;
+        if (getters.currentListObj) {
+          dispatch('_fetchCurrentItems');
+        }
+      });
   },
 
   async _fetchingAfterBinActions({ dispatch }, isItem) {

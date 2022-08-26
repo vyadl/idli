@@ -123,14 +123,9 @@ export default {
     },
     updateList() {
       if (this.validateFiltersTitles()) {
+        this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
-          .then(() => {
-            this.closeListModal();
-          })
-          .catch(error => {
-            this.errorMessage = error.response.data.message;
-          })
           .finally(() => {
             this.isRequestProcessing = false;
           });
@@ -139,8 +134,10 @@ export default {
     async deleteList() {
       const confirmationModalTitle = `are you sure you want to delete list  
         '${this.edittingListObj?.title}' ?`;
+        
+      const isRejected = !await isConfirmed(confirmationModalTitle);
 
-      if (!await isConfirmed(confirmationModalTitle)) {
+      if (isRejected) {
         return false;
       }
 

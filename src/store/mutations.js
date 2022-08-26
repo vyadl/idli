@@ -44,6 +44,13 @@ export default {
 
     state.currentListItems.splice(index, 1, item);
   },
+  updateItemByTemporaryId(state, { temporaryId, ...item }) {
+    const index = state.currentListItems.findIndex(
+      localItem => localItem.temporaryId === temporaryId,
+    );
+    
+    state.currentListItems.splice(index, 1, item);
+  },
   deleteItem(state, id) {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);
   },
@@ -160,6 +167,22 @@ export default {
   },
 
   // bin
+
+  removeListFromBin(state, id) {
+    state.deletedLists = state.deletedLists.filter(list => list.id !== id);
+  },
+
+  removeItemFromBin(state, id) {
+    state.deletedItems = state.deletedItems.filter(item => item.id !== id);
+  },
+
+  removeBulkFromBin(state, unit) {
+    if (unit === 'lists') {
+      state.deletedLists = [];
+    } else if (unit === 'items') {
+      state.deletedItems = [];
+    }
+  },
 
   setDeletedLists(state, lists) {
     state.deletedLists = lists;

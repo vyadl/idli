@@ -7,3 +7,10 @@ export function dispatchFromRoot(actionName, payload = null) {
 export function commitFromRoot(mutationName, payload = null) {
   store.commit(mutationName, payload, { root: true });
 }
+
+export function notifyAboutError(error) {
+  store.commit('setNotification', { 
+    text: error.response.status === 500 
+      ? 'Something went wrong' : error.response.data.message,
+  });
+}
