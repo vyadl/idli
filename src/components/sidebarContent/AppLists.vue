@@ -4,7 +4,7 @@ import TestData from '@/components/sidebarContent/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { sortByDate } from '@/utils/sorting';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -28,10 +28,12 @@ export default {
     },
   },
   methods: {
+    ...mapMutations([
+      'decreaseExplicitRequestsNumber',
+    ]),
     ...mapActions([
       '_fetchListById',
       '_setListForEditting',
-      '_decreaseExplicitRequestsNumber',
       '_setModalNameToShow',
       '_resetFilters',
     ]),
@@ -49,7 +51,7 @@ export default {
         this.listRequests.forEach(request => {
           request.cancel();
         });
-        this._decreaseExplicitRequestsNumber();
+        this.decreaseExplicitRequestsNumber();
       }
 
       const source = this.$config.axios.CancelToken.source();

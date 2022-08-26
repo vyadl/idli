@@ -85,6 +85,8 @@ export default {
       .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
       .then(({ data: responseList }) => {
         commit('setCurrentItems', responseList.items);
+      })
+      .finally(() => {
         commit('decreaseExplicitRequestsNumber');
       });
   },
