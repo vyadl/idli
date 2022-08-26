@@ -7,6 +7,8 @@ import {
   changeQueryRespectingDefault,
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
+import { notifyAboutError } from '@/store/store-utils';
+// eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
 import { MIN_SEARCH_SYMBOLS } from '../../config';
 
@@ -68,9 +70,7 @@ export default {
         commit('setCurrentItems', responseList.items);
       })
       .catch(error => {
-        commit('setNotification', {
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -142,9 +142,7 @@ export default {
         commit('updateList', responseList);
       })
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
         dispatch('_fetchListsForUser');
       });
   },
@@ -205,9 +203,7 @@ export default {
         commit('updateItemByTemporaryId', responseItem);
       })
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
@@ -240,9 +236,7 @@ export default {
         commit('updateItem', responseList);
       })
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
@@ -255,9 +249,7 @@ export default {
         dispatch('_fetchDeletedItems');
       })
       .catch(async error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
         await dispatch('_fetchListById', { id: item.listId, cancelToken: null });
         dispatch('_setItemForEditting', item);
       });
@@ -402,9 +394,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(async () => {
         await dispatch('_fetchingAfterBinActions', false);
@@ -420,9 +410,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(() => {
         dispatch('_fetchingAfterBinActions', true);
@@ -434,9 +422,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(() => {
         dispatch('_fetchDeletedLists');
@@ -448,9 +434,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(() => {
         dispatch('_fetchDeletedItems');
@@ -462,9 +446,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(() => {
         dispatch('_fetchDeletedItems');
@@ -476,9 +458,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(() => {
         dispatch('_fetchingAfterBinActions', true);
@@ -490,9 +470,7 @@ export default {
 
     this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(() => {
         dispatch('_fetchDeletedLists');
@@ -504,9 +482,7 @@ export default {
 
     this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`)
       .catch(error => {
-        commit('setNotification', { 
-          text: error.response.status === 500 ? 'Something went wrong' : error.response.data.message,
-        });
+        notifyAboutError(error.response.status, error.response.data.message);
       })
       .finally(async () => {
         await dispatch('_fetchingAfterBinActions', false);
