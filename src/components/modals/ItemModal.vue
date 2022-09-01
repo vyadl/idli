@@ -20,7 +20,7 @@ export default {
   <ModalBasic
     class="item-modal"
     name="itemModal"
-    :title="edittingItemObj ? 'edit item' : 'new item'"
+    :title="edittingItemObj?.id ? 'edit item' : 'new item'"
   >
     <ItemForm />
   </ModalBasic>

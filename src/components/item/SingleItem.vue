@@ -19,7 +19,10 @@ export default {
     this._fetchItemById()
       .then(item => {
         this.item = item;
-        this._setItemForEditting(item);
+        this._fetchListById({ id: item.listId, cancelToken: null })
+          .then(() => {
+            this._setEdittingItemIndex(this.item);
+          });
 
         if (this.isItemFormInSidebar) {
           this._openSidebar('item');
@@ -39,13 +42,15 @@ export default {
   methods: {
     ...mapActions([
       '_fetchItemById',
+      '_fetchListById',
       '_openSidebar',
       '_closeSidebar',
-      '_setItemForEditting',
+      '_setEdittingItemIndex',
       '_switchItemFormLocation',
     ]),
     setItemForEditting() {
-      this._setItemForEditting(this.item);
+      this._setEdittingItemIndex(this.item);
+
       this.isItemFormInSidebar
         ? this._openSidebar('item')
         : this.$vfm.show('itemModal');
@@ -60,7 +65,7 @@ export default {
     class="single-item"
     :class="[
       `${globalTheme}-theme`,
-      { active: edittingItemObj && edittingItemObj.id === item.id },
+      { active: edittingItemObj?.id === item.id },
     ]"
     @click="_closeSidebar"
   >

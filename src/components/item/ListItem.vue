@@ -12,6 +12,22 @@ export default {
       'areItemDetailsShown',
       'isItemFormInSidebar',
     ]),
+    itemName() {
+      let name = '';
+
+      if (this.item.title) {
+        name = this.item.title;
+      } else if (this.item.temporaryId) {
+        name = 'New item...';
+      }
+
+      return name;
+    },
+    isItemActive() {
+      return this.edittingItemObj?.temporaryId 
+        ? this.edittingItemObj?.temporaryId === this.item.temporaryId
+        : this.edittingItemObj?.id === this.item.id;
+    },
     styles() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
 
@@ -41,11 +57,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      '_setItemForEditting',
       '_openSidebar',
+      '_setEdittingItemIndex',
     ]),
     setItemForEditting() {
-      this._setItemForEditting(this.item);
+      this._setEdittingItemIndex(this.item);
+
       this.isItemFormInSidebar
         ? this._openSidebar('item')
         : this.$vfm.show('itemModal');
@@ -63,13 +80,13 @@ export default {
     :class="[
       `${mode}-mode`,
       `${globalTheme}-theme`,
-      { active: edittingItemObj && edittingItemObj.id === item.id }
+      { active: isItemActive }
     ]"
     :style="styles"
     @click.stop="setItemForEditting"
   >
     <div class="item-title">
-      {{ item.title }}
+      {{ itemName }}
     </div>
     <div
       class="item-details"
