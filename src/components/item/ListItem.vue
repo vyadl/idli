@@ -25,7 +25,7 @@ export default {
     },
     isItemActive() {
       return this.edittingItemObj?.temporaryId 
-        ? this.edittingItemObj?.temporaryId === this.item.temporaryId
+        ? this.edittingItemObj.temporaryId === this.item.temporaryId
         : this.edittingItemObj?.id === this.item.id;
     },
     styles() {

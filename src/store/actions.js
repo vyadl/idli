@@ -219,19 +219,24 @@ export default {
       });
   },
   _setEdittingItemIndex({ state, commit }, targetItem) {
+    function compareItemsById(item1, item2) {
+      return item1.temporaryId 
+        ? item1.temporaryId === item2.temporaryId
+        : item1.id === item2.id;
+    } 
+
     if (state.currentListId) {
-      commit('setEdittingItemIndex', state.currentListItems.findIndex(item => {
-        return targetItem.temporaryId 
-          ? item.temporaryId === targetItem.temporaryId : item.id === targetItem.id;
-      }));
+      const itemIndex = state.currentListItems
+        .findIndex(item => compareItemsById(item, targetItem));
+
+      commit('setEdittingItemIndex', itemIndex);
     } else {
       const { listId } = targetItem;
       const listIndex = state.lists.findIndex(list => list.id === listId);
+      const itemIndex = state.lists[listIndex].items
+        .findIndex(item => compareItemsById(item, targetItem));
   
-      commit('setEdittingItemIndex', state.lists[listIndex].items.findIndex(item => {
-        return targetItem.temporaryId 
-          ? item.temporaryId === targetItem.temporaryId : item.id === targetItem.id;
-      }));
+      commit('setEdittingItemIndex', itemIndex);
     }
   },
   _addNewItemPlaceholder({ commit, dispatch }) {
@@ -245,16 +250,13 @@ export default {
     dispatch('_setEdittingItemIndex', itemWithTemporaryId);
   },
   _addItemOnServer({ commit, getters, dispatch }, { item, cancelToken }) {
-    if (!item.title) {
-      // eslint-disable-next-line no-param-reassign
-      item.title = generateTitleFromDetails(item.details);
-    }
-
     const listId = getters.currentListObj.id;
+    const title = item.title || generateTitleFromDetails(item.details);
 
     this.$config.axios
       .post(`${this.$config.apiBasePath}item/add/${listId}`, {
         ...item,
+        title,
       }, {
         cancelToken,
       })
@@ -267,17 +269,14 @@ export default {
       });
   },
   _updateItemOnServer({ commit, dispatch }, { item, cancelToken }) {
-    if (!item.title) {
-      // eslint-disable-next-line no-param-reassign
-      item.title = generateTitleFromDetails(item.details);
-    }
+    const title = item.title || generateTitleFromDetails(item.details);
 
     this.$config.axios
       .patch(`${this.$config.apiBasePath}item/update/${item.listId}/${item.id}`, {
-        title: item.title,
         details: item.details,
         tags: item.tags,
         category: item.category,
+        title,
       }, {
         cancelToken,
       })

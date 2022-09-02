@@ -5,9 +5,14 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { 
-  mapGetters, mapActions, mapState, mapMutations,
+  mapGetters,
+  mapActions,
+  mapState,
+  mapMutations,
+  useStore,
 } from 'vuex';
 import { debounce } from 'throttle-debounce';
+import axios from 'axios';
 
 export default {
   components: {
@@ -17,22 +22,43 @@ export default {
     RadioCustom,
     ButtonText,
   },
-  API_REQUEST_DELAY: 1500,
-  data() {
-    return {
-      serverRequests: [],
-      callActionDebounced: debounce(
-        this.$options.API_REQUEST_DELAY,
-        (action, item) => {
-          const source = this.$config.axios.CancelToken.source();
+  setup() {
+    const store = useStore();
+    const API_REQUEST_DELAY = 1500;
+    const serverRequests = {};
 
-          this.serverRequests.push(source);
-          this[action]({ item, cancelToken: source.token })
-            .finally(() => {
-              this.serverRequests = [];
-            });
-        },
-      ),
+    const callActionDebounced = debounce(
+      API_REQUEST_DELAY,
+      (action, item) => {
+        const source = axios.CancelToken.source();
+
+        if (!serverRequests[item.id || item.temporaryId]) {
+          serverRequests[item.id || item.temporaryId] = [];
+        }
+
+        serverRequests[item.id || item.temporaryId].push(source);
+
+        const sourceIndex = serverRequests[item.id || item.temporaryId].length - 1;
+
+        store.dispatch(action, { item, cancelToken: source.token })
+          .finally(() => {
+            if (item.temporaryId) {
+              delete serverRequests[item.temporaryId];
+            } else {
+              serverRequests[item.id].splice(sourceIndex, 1);
+            }
+          });
+      },
+    );
+
+    const cancelActionDebounced = () => {
+      callActionDebounced.cancel({ upcomingOnly: true });
+    };
+
+    return {
+      callActionDebounced,
+      cancelActionDebounced,
+      serverRequests,
     };
   },
   computed: {
@@ -63,25 +89,28 @@ export default {
     }
   },
   unmounted() {
-    const itemsNotAdded = this.currentListItems
+    const itemsCreatedEmpty = this.currentListItems
       .filter(item => item.temporaryId && !item.title && !item.details);
 
-    itemsNotAdded.forEach(item => {
+    itemsCreatedEmpty.forEach(item => {
       this._deleteItemByTemporaryId(item);
     });
 
-    const areItemsNotUpdated = this.currentListItems
-      .some(item => item.id && !item.title && !item.details);
+    const itemsBecameEmpty = this.currentListItems
+      .filter(item => item.id && !item.title && !item.details);
 
-    if (areItemsNotUpdated) {
-      this._fetchListById({ id: this.currentListId, cancelToken: null });
-    }
+    itemsBecameEmpty.forEach(item => {
+      this._updateItemOnServer({
+        item: { ...item, title: '[empty item]' }, 
+        cancelToken: null,
+      });
+    });
 
     this.setEdittingItemIndex(null); 
   },
   methods: {
     ...mapMutations([
-      'updateItemField',
+      'updateItemFieldLocally',
       'setEdittingItemIndex',
     ]),
     ...mapActions([
@@ -95,9 +124,8 @@ export default {
     closeItemModal() {
       this.$vfm.hide('itemModal');
     },
-    saveItem(field, value) {
-      this.callActionDebounced.cancel({ upcomingOnly: true });
-      this.updateItemField({ field, value });
+    updateItemField(field, value) {
+      this.updateItemFieldLocally({ field, value });
         
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
         this.callActionDebounced(
@@ -107,14 +135,15 @@ export default {
       }
     },
     removeItem(item) {
-      this.callActionDebounced.cancel({ upcomingOnly: true });
+      this.cancelActionDebounced();
       this[item.id ? '_deleteItem' : '_deleteItemByTemporaryId'](item);
 
-      if (this.serverRequests.length) {
-        this.serverRequests.forEach(request => {
+      if (this.serverRequests[item.id || item.temporaryId]?.length) {
+        this.serverRequests[item.id || item.temporaryId].forEach(request => {
           request.cancel();
         });
-        this.serverRequests = [];
+
+        delete this.serverRequests[item.id || item.temporaryId];
       }
 
       if (item.temporaryId) {
@@ -123,7 +152,8 @@ export default {
 
       if (this.isItemFormInSidebar) {
         this.setEdittingItemIndex(this.currentListItems[this.edittingItemIndex] 
-          ? this.edittingItemIndex : this.currentListItems.length - 1);
+          ? this.edittingItemIndex 
+          : this.currentListItems.length - 1);
       } else {
         this.setEdittingItemIndex(null);
         this.closeItemModal();
@@ -149,13 +179,13 @@ export default {
         label="item"
         :modelValue="edittingItemObj.title"
         :placeholder="edittingItemObj.temporaryId ? 'New item...' : ''"
-        @update:modelValue="value => saveItem('title', value)"
+        @update:modelValue="value => updateItemField('title', value)"
         ref="itemTitle"
       />
       <TextareaCustom
         label="details"
         :modelValue="edittingItemObj.details"
-        @update:modelValue="value => saveItem('details', value)"
+        @update:modelValue="value => updateItemField('details', value)"
       />
     </div>
     <div
@@ -171,7 +201,7 @@ export default {
         :label="tag.title"
         :value="tag.id"
         :modelValue="edittingItemObj.tags"
-        @update:modelValue="value => saveItem('tags', value)"
+        @update:modelValue="value => updateItemField('tags', value)"
         name="tags"
         :disabled="areTagsAndCategoriesDisabled"
       />
@@ -189,7 +219,7 @@ export default {
         :label="category.title"
         :value="category.id"
         :modelValue="edittingItemObj.category"
-        @update:modelValue="value => saveItem('category', value)"
+        @update:modelValue="value => updateItemField('category', value)"
         @click="disableCategory(category.id)"
         name="category"
         :disabled="areTagsAndCategoriesDisabled"

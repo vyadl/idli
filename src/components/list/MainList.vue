@@ -6,7 +6,10 @@ import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 import {
-  mapState, mapGetters, mapActions, mapMutations,
+  mapState,
+  mapGetters,
+  mapActions,
+  mapMutations,
 } from 'vuex';
 
 export default {

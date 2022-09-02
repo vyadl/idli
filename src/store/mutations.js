@@ -39,7 +39,7 @@ export default {
   setEdittingItemIndex(state, index) {
     state.edittingItemIndex = index;
   },
-  updateItemField(state, { field, value }) {
+  updateItemFieldLocally(state, { field, value }) {
     state.currentListItems[state.edittingItemIndex][field] = value;
   },
   updateItem(state, item) {
@@ -47,11 +47,15 @@ export default {
 
     state.currentListItems.splice(index, 1, item);
   },
-  updateItemMetaFields(state, item) {
-    const targetIndex = state.currentListItems.findIndex(localItem => localItem.id === item.id);
+  updateItemFieldsByServerResponse(state, item) {
+    const targetIndex = state.currentListItems
+      .findIndex(localItem => localItem.id === item.id);
     const targetItem = state.currentListItems[targetIndex];
+    const fieldsToUpdate = ['updatedAt'];
 
-    targetItem.updatedAt = item.updatedAt;
+    fieldsToUpdate.forEach(field => {
+      targetItem[field] = item[field];
+    });
   },
   updateItemByTemporaryId(state, { temporaryId, ...item }) {
     const index = state.currentListItems.findIndex(

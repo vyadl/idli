@@ -4,7 +4,7 @@ import { addQueryItems } from '@/router/utils'; // eslint-disable-line import/no
 import { dispatchFromRoot, commitFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
 export default {
-  async _signUp(user) {
+  async _signUp(state, user) {
     await this.$config.axios.post(`${this.$config.apiBasePath}auth/signup`, user);
 
     commitFromRoot('changeSidebarMode', 'sign in');
@@ -16,7 +16,6 @@ export default {
         .post(`${this.$config.apiBasePath}auth/signin`, user);
 
       commit('signIn', responseUser);
-      commitFromRoot('changeSidebarMode', 'lists');
       router.push({ name: 'home', query: { sidebar: 'lists' } });
       localStorage.setItem('user', JSON.stringify(responseUser));
       setAccessToken(responseUser.accessToken);
