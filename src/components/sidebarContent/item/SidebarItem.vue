@@ -12,6 +12,7 @@ export default {
     InfoMessage,
     ButtonText,
   },
+  emits: ['scrollSidebarToTop'],
   computed: {
     ...mapGetters([
       'edittingItemObj',
@@ -21,6 +22,9 @@ export default {
     ...mapActions([
       '_addNewItemPlaceholder',
     ]),
+    scrollSidebarToTop() {
+      this.$emit('scrollSidebarToTop');
+    },
   },
 };
 </script>
@@ -31,7 +35,7 @@ export default {
     class="sidebar-item"
     :title="edittingItemObj.id ? 'edit item' : 'new item'"
   >
-    <ItemForm />
+    <ItemForm @scroll-sidebar-to-top="scrollSidebarToTop" />
   </SidebarCard>
   <div v-else>
     <ButtonText

@@ -122,7 +122,7 @@ export default {
       }
     },
     updateList() {
-      if (this.validateFiltersTitles()) {
+      if (this.validateListTitle() && this.validateFiltersTitles()) {
         this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
