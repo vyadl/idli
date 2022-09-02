@@ -165,7 +165,7 @@ export default {
   <div
     v-if="edittingItemObj"
     class="item-form"
-   >
+  >
     <div class="text-fields">
       <InputCustom
         label="item"
