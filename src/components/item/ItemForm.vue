@@ -38,7 +38,6 @@ export default {
         }
 
         serverRequests[itemActualId] = source;
-        console.log(serverRequests);
 
         store.dispatch(action, { item, cancelToken: source.token })
           .finally(() => {
@@ -90,10 +89,12 @@ export default {
       if (!item.title && !item.details) {
         item.temporaryId
           ? this._deleteItemByTemporaryId(item)
-          : this._updateItemOnServer({
-            item: { ...item, title: emptyItemTitle }, 
-            cancelToken: null,
-          });
+          : this._updateItemOnServer(
+            {
+              item: { ...item, title: emptyItemTitle }, 
+              cancelToken: null,
+            },
+          );
       }
     });
 
