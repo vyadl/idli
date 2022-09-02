@@ -7,10 +7,12 @@ import {
   changeQueryRespectingDefault,
 } from '@/router/utils';
 // eslint-disable-next-line import/no-cycle
-import { notifyAboutError } from '@/store/utils';
+import { notifyAboutError, generateTitleFromDetails } from '@/store/utils';
 // eslint-disable-next-line import/no-cycle
 import { router } from '@/router';
 import { MIN_SEARCH_SYMBOLS } from '@/store/config';
+import { Item } from '@/models/models';
+// import { debounce } from 'throttle-debounce';
 
 export default {
   // local storage
@@ -75,7 +77,9 @@ export default {
         commit('setCurrentItems', responseList.items);
       })
       .catch(error => {
-        notifyAboutError(error);
+        if (!cancelToken) {
+          notifyAboutError(error);
+        }
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -214,16 +218,49 @@ export default {
         commit('decreaseExplicitRequestsNumber');
       });
   },
-  async _addItem({ commit, dispatch, getters }, item) {
-    const listId = getters.currentListObj.id;
+  _setEdittingItemIndex({ state, commit }, targetItem) {
+    let itemIndex = null;
+
+    function compareItemsById(item1, item2) {
+      return item1.temporaryId 
+        ? item1.temporaryId === item2.temporaryId
+        : item1.id === item2.id;
+    } 
+
+    if (state.currentListId) {
+      itemIndex = state.currentListItems
+        .findIndex(item => compareItemsById(item, targetItem));
+    } else {
+      const { listId } = targetItem;
+      const listIndex = state.lists.findIndex(list => list.id === listId);
+
+      itemIndex = state.lists[listIndex].items
+        .findIndex(item => compareItemsById(item, targetItem));
+    }
+
+    commit('setEdittingItemIndex', itemIndex);
+  },
+  _addNewItemPlaceholder({ commit, dispatch }) {
+    const newItem = new Item();
     const itemWithTemporaryId = {
-      ...item,
+      ...newItem,
       temporaryId: Date.now(),
     };
 
     commit('addItem', itemWithTemporaryId);
+    dispatch('_setEdittingItemIndex', itemWithTemporaryId);
+  },
+  _addItemOnServer({ commit, getters, dispatch }, { item, cancelToken }) {
+    const listId = getters.currentListObj.id;
+    const title = item.title || generateTitleFromDetails(item.details);
+
     this.$config.axios
-      .post(`${this.$config.apiBasePath}item/add/${listId}`, itemWithTemporaryId)
+      .post(`${this.$config.apiBasePath}item/add/${listId}`, {
+        ...item,
+        title,
+      }, {
+        cancelToken,
+      })
       .then(({ data: responseItem }) => {
         commit('updateItemByTemporaryId', responseItem);
       })
@@ -232,51 +269,39 @@ export default {
         dispatch('_fetchListById', { id: listId, cancelToken: null });
       });
   },
-  _updateItem({ commit, dispatch }, {
-    title,
-    details,
-    tags,
-    category,
-    listId,
-    id,
-  }) {
-    commit('updateItem', {
-      title,
-      details,
-      tags,
-      category,
-      id,
-    });
-
-    dispatch('_setItemForEditting', null);
+  _updateItemOnServer({ commit, dispatch }, { item, cancelToken }) {
+    const title = item.title || generateTitleFromDetails(item.details);
 
     this.$config.axios
-      .patch(`${this.$config.apiBasePath}item/update/${listId}/${id}`, {
+      .patch(`${this.$config.apiBasePath}item/update/${item.listId}/${item.id}`, {
+        details: item.details,
+        tags: item.tags,
+        category: item.category,
         title,
-        details,
-        tags,
-        category,
+      }, {
+        cancelToken,
       })
       .then(({ data: responseList }) => {
-        commit('updateItem', responseList);
+        commit('updateItemFieldsByServerResponse', responseList);
       })
       .catch(error => {
-        notifyAboutError(error);
-        dispatch('_fetchListById', { id: listId, cancelToken: null });
+        if (!cancelToken) {
+          notifyAboutError(error);
+          dispatch('_fetchListById', { id: item.listId, cancelToken: null });
+        }
       });
+  },
+  _deleteItemByTemporaryId({ commit }, item) {
+    commit('deleteItemByTemporaryId', item.temporaryId);
   },
   async _deleteItem({ commit, dispatch }, item) {
     commit('deleteItem', item.id);
-    dispatch('_setItemForEditting', null);
     
     this.$config.axios.delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`)
       .catch(async error => {
         notifyAboutError(error);
         await dispatch('_fetchListById', { id: item.listId, cancelToken: null });
       });
-  },
-  _setItemForEditting({ commit }, item) {
-    commit('setItemForEditting', item);
   },
 
   // filters

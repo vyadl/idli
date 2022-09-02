@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      '_setItemForEditting',
+      '_addNewItemPlaceholder',
       '_openSidebar',
       '_closeSidebar',
     ]),
@@ -72,8 +72,8 @@ export default {
           ? this.sidebarMode : this.$options.LOGGED_OUT_DEFAULT_SIDEBAR);
     },
     createNewItem() {
-      this._setItemForEditting(null);
-      this._openSidebar('item');
+      this._addNewItemPlaceholder();
+      this.isItemFormInSidebar ? this._openSidebar('item') : this.openItemModal();
     },
   },
 };
@@ -99,7 +99,7 @@ export default {
         style-type="plus"
         big
         title="new item"
-        @click="isItemFormInSidebar ? createNewItem() : openItemModal()"
+        @click="createNewItem"
       />
     </div>
     <div class="sidebar-buttons">

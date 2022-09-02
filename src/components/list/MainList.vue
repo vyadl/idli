@@ -6,7 +6,10 @@ import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 import {
-  mapState, mapGetters, mapActions, mapMutations,
+  mapState,
+  mapGetters,
+  mapActions,
+  mapMutations,
 } from 'vuex';
 
 export default {
@@ -134,10 +137,10 @@ export default {
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
       'filterList',
+      'setEdittingItemIndex',
     ]),
     ...mapActions([
       '_fetchListById',
-      '_setItemForEditting',
       '_switchShuffleTrigger',
       '_closeSidebar',
     ]),
@@ -155,9 +158,15 @@ export default {
               .findIndex(item => item === this.edittingItemObj);
 
             if (event.code === 'ArrowUp' && this.finalList[currentItemIndex - 1]) {
-              this._setItemForEditting(this.finalList[currentItemIndex - 1]);
+              const newIndex = this.currentListObj.items
+                .findIndex(item => item === this.finalList[currentItemIndex - 1]);
+
+              this.setEdittingItemIndex(newIndex);
             } else if (event.code === 'ArrowDown' && this.finalList[currentItemIndex + 1]) {
-              this._setItemForEditting(this.finalList[currentItemIndex + 1]);
+              const newIndex = this.currentListObj.items
+                .findIndex(item => item === this.finalList[currentItemIndex + 1]);
+
+              this.setEdittingItemIndex(newIndex);
             }
           }
         }

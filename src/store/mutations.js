@@ -36,13 +36,26 @@ export default {
   addItems(state, items) {
     state.lists.find(list => list.id === state.currentListId).items = items;
   },
-  setItemForEditting(state, item) {
-    state.edittingItemObj = item;
+  setEdittingItemIndex(state, index) {
+    state.edittingItemIndex = index;
+  },
+  updateItemFieldLocally(state, { field, value }) {
+    state.currentListItems[state.edittingItemIndex][field] = value;
   },
   updateItem(state, item) {
     const index = state.currentListItems.findIndex(localItem => localItem.id === item.id);
 
     state.currentListItems.splice(index, 1, item);
+  },
+  updateItemFieldsByServerResponse(state, item) {
+    const targetIndex = state.currentListItems
+      .findIndex(localItem => localItem.id === item.id);
+    const targetItem = state.currentListItems[targetIndex];
+    const fieldsToUpdate = ['updatedAt'];
+
+    fieldsToUpdate.forEach(field => {
+      targetItem[field] = item[field];
+    });
   },
   updateItemByTemporaryId(state, { temporaryId, ...item }) {
     const index = state.currentListItems.findIndex(
@@ -53,6 +66,10 @@ export default {
   },
   deleteItem(state, id) {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);
+  },
+  deleteItemByTemporaryId(state, temporaryId) {
+    state.currentListItems = state.currentListItems
+      .filter(item => item.temporaryId !== temporaryId);
   },
 
   // filters

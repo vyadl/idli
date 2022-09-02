@@ -4,8 +4,15 @@ import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { Item } from '@/models/models';
-import { mapGetters, mapActions } from 'vuex';
+import { 
+  mapGetters,
+  mapActions,
+  mapState,
+  mapMutations,
+  useStore,
+} from 'vuex';
+import { debounce } from 'throttle-debounce';
+import axios from 'axios';
 
 export default {
   components: {
@@ -15,11 +22,45 @@ export default {
     RadioCustom,
     ButtonText,
   },
-  data: () => ({
-    item: null,
-    isRequestProcessing: false,
-  }),
+  setup() {
+    const store = useStore();
+    const API_REQUEST_DELAY = 1500;
+    const serverRequests = {};
+
+    const callActionDebounced = debounce(
+      API_REQUEST_DELAY,
+      (action, item) => {
+        const itemActualId = item.id || item.temporaryId;
+        const source = axios.CancelToken.source();
+
+        if (serverRequests[itemActualId]) {
+          serverRequests[itemActualId].cancel();
+        }
+
+        serverRequests[itemActualId] = source;
+
+        store.dispatch(action, { item, cancelToken: source.token })
+          .finally(() => {
+            delete serverRequests[itemActualId];
+          });
+      },
+    );
+
+    const cancelActionDebounced = () => {
+      callActionDebounced.cancel({ upcomingOnly: true });
+    };
+
+    return {
+      callActionDebounced,
+      cancelActionDebounced,
+      serverRequests,
+    };
+  },
   computed: {
+    ...mapState([
+      'edittingItemIndex',
+      'currentListItems',
+    ]),
     ...mapGetters([
       'currentListTags',
       'currentListCategories',
@@ -32,59 +73,86 @@ export default {
     isAnyCategoryWithIdExist() {
       return this.currentListCategories?.some(category => category.id);
     },
-  },
-  watch: {
-    edittingItemObj: {
-      handler: function edittingItemObjHandler() {
-        this.item = this.edittingItemObj
-          ? JSON.parse(JSON.stringify(this.edittingItemObj))
-          : new Item();
-      },
-      immediate: true,
+    areTagsAndCategoriesDisabled() {
+      return !this.edittingItemObj.title && !this.edittingItemObj.details;
     },
   },
   mounted() {
-    if (!this.edittingItemObj) {
+    if (!this.edittingItemObj?.id) {
       this.$refs.itemTitle.focus();
     }
   },
   unmounted() {
-    this.resetData();
+    const emptyItemTitle = '[empty item]';
+
+    this.currentListItems.forEach(item => {
+      if (!item.title && !item.details) {
+        item.temporaryId
+          ? this._deleteItemByTemporaryId(item)
+          : this._updateItemOnServer(
+            {
+              item: { ...item, title: emptyItemTitle }, 
+              cancelToken: null,
+            },
+          );
+      }
+    });
+
+    this.setEdittingItemIndex(null); 
   },
   methods: {
+    ...mapMutations([
+      'updateItemFieldLocally',
+      'setEdittingItemIndex',
+    ]),
     ...mapActions([
-      '_addItem',
-      '_updateItem',
-      '_deleteItem',
-      '_setItemForEditting',
       '_closeSidebar',
+      '_addItemOnServer',
+      '_updateItemOnServer',
+      '_deleteItem',
+      '_deleteItemByTemporaryId',
     ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
     },
-    resetData() {
-      this._setItemForEditting(null);
-      this.item = new Item();
+    updateItemField(field, value) {
+      this.updateItemFieldLocally({ field, value });
+        
+      if (this.edittingItemObj.title || this.edittingItemObj.details) {
+        this.callActionDebounced(
+          this.edittingItemObj.id ? '_updateItemOnServer' : '_addItemOnServer',
+          this.edittingItemObj,
+        );
+      }
     },
-    saveItem() {
-      this.isRequestProcessing = true;
-      this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
-      this[this.edittingItemObj ? '_updateItem' : '_addItem'](this.item)
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
-    },
-    deleteItem(item) {
-      this.isRequestProcessing = true;
-      this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
-      this._deleteItem(item)
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+    removeItem(item) {
+      const itemActualId = item.id || item.temporaryId;
+
+      this.cancelActionDebounced();
+      this[item.id ? '_deleteItem' : '_deleteItemByTemporaryId'](item);
+
+      if (this.serverRequests[itemActualId]) {
+        this.serverRequests[itemActualId].cancel();
+        delete this.serverRequests[itemActualId];
+      }
+
+      let newIndex = null;
+
+      if (this.isItemFormInSidebar && item.temporaryId) {
+        this._closeSidebar();
+      } else if (this.isItemFormInSidebar) {
+        newIndex = this.currentListItems[this.edittingItemIndex] 
+          ? this.edittingItemIndex 
+          : this.currentListItems.length - 1;
+      } else {
+        this.closeItemModal();
+      }
+
+      this.setEdittingItemIndex(newIndex);
     },
     disableCategory(id) {
-      if (this.item.category === id) {
-        this.item.category = '';
+      if (this.edittingItemObj.category === id) {
+        this.updateItemField({ field: 'category', value: '' });
       }
     },
   },
@@ -92,29 +160,29 @@ export default {
 </script>
 
 <template>
-  <form
+  <div
+    v-if="edittingItemObj"
     class="item-form"
-    v-if="item"
-    @submit.prevent="saveItem"
+    ref="itemForm"
   >
     <div class="text-fields">
       <InputCustom
         label="item"
-        v-model="item.title"
-        :disabled="isRequestProcessing"
-        required
+        :modelValue="edittingItemObj.title"
+        :placeholder="edittingItemObj.temporaryId ? 'New item...' : ''"
+        @update:modelValue="value => updateItemField('title', value)"
         ref="itemTitle"
       />
       <TextareaCustom
         label="details"
-        v-model="item.details"
-        :disabled="isRequestProcessing"
+        :modelValue="edittingItemObj.details"
+        @update:modelValue="value => updateItemField('details', value)"
       />
     </div>
     <div
       class="filters-container"
       :class="{ indent: isAnyTagWithIdExist && isAnyCategoryWithIdExist }"
-      v-if="isAnyTagWithIdExist "
+      v-if="isAnyTagWithIdExist"
     >
       <h1 class="filters-title">tags:</h1>
       <CheckboxCustom
@@ -123,9 +191,10 @@ export default {
         :key="tag.id"
         :label="tag.title"
         :value="tag.id"
-        v-model="item.tags"
-        :disabled="isRequestProcessing"
+        :modelValue="edittingItemObj.tags"
+        @update:modelValue="value => updateItemField('tags', value)"
         name="tags"
+        :disabled="areTagsAndCategoriesDisabled"
       />
     </div>
     <div
@@ -140,38 +209,23 @@ export default {
         :key="category.id"
         :label="category.title"
         :value="category.id"
-        v-model="item.category"
-        :disabled="isRequestProcessing"
-        name="category"
+        :modelValue="edittingItemObj.category"
+        @update:modelValue="value => updateItemField('category', value)"
         @click="disableCategory(category.id)"
+        name="category"
+        :disabled="areTagsAndCategoriesDisabled"
       />
     </div>
     <div class="buttons-container">
-      <div>
-        <ButtonText
-          class="save-button"
-          :text="edittingItemObj ? 'save' : 'add'"
-          :small="isItemFormInSidebar"
-          type="submit"
-          :disabled="isRequestProcessing"
-        />
-        <ButtonText
-          text="cancel"
-          :small="isItemFormInSidebar"
-          :disabled="isRequestProcessing"
-          @click="isItemFormInSidebar ? _closeSidebar() : closeItemModal()"
-        />
-      </div>
       <ButtonText
         v-if="edittingItemObj"
-        text="delete item"
+        :text="edittingItemObj.id ? 'delete item' : 'cancel'"
         style-type="underline"
         :small="isItemFormInSidebar"
-        :disabled="isRequestProcessing"
-        @click="deleteItem(item)"
+        @click="removeItem(edittingItemObj)"
       />
     </div>
-  </form>
+  </div>
 </template>
 
 <style lang="scss">
@@ -201,7 +255,7 @@ export default {
 
     .buttons-container {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: flex-end;
       padding-top: 30px;
     }

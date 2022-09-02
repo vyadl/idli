@@ -1,4 +1,5 @@
 import store from '@/store/index'; // eslint-disable-line import/no-cycle
+import { GENERATED_ITEM_TITLE_MAX_LENGTH } from '@/store/config';
 
 export function dispatchFromRoot(actionName, payload = null) {
   store.dispatch(actionName, payload, { root: true });
@@ -15,4 +16,10 @@ export function notifyAboutError(error) {
     text: isResponseMessage
       ? error.response.data.message : 'Something went wrong',
   });
+}
+
+export function generateTitleFromDetails(details) {
+  return details.length <= GENERATED_ITEM_TITLE_MAX_LENGTH
+    ? details
+    : details.slice(0, GENERATED_ITEM_TITLE_MAX_LENGTH).concat('...');
 }

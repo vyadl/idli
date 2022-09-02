@@ -34,7 +34,7 @@ export default {
   filteredListLength: (state, getters) => getters.filteredList.length,
 
   // items
-  edittingItemObj: state => state.edittingItemObj,
+  edittingItemObj: state => state.currentListItems[state.edittingItemIndex],
 
   // visualization
   sorting: state => state.visualization.sorting,
