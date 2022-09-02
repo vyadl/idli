@@ -30,23 +30,19 @@ export default {
     const callActionDebounced = debounce(
       API_REQUEST_DELAY,
       (action, item) => {
+        const itemActualId = item.id || item.temporaryId;
         const source = axios.CancelToken.source();
 
-        if (!serverRequests[item.id || item.temporaryId]) {
-          serverRequests[item.id || item.temporaryId] = [];
+        if (serverRequests[itemActualId]) {
+          serverRequests[itemActualId].cancel();
         }
 
-        serverRequests[item.id || item.temporaryId].push(source);
-
-        const sourceIndex = serverRequests[item.id || item.temporaryId].length - 1;
+        serverRequests[itemActualId] = source;
+        console.log(serverRequests);
 
         store.dispatch(action, { item, cancelToken: source.token })
           .finally(() => {
-            if (item.temporaryId) {
-              delete serverRequests[item.temporaryId];
-            } else {
-              serverRequests[item.id].splice(sourceIndex, 1);
-            }
+            delete serverRequests[itemActualId];
           });
       },
     );
@@ -67,7 +63,6 @@ export default {
       'currentListItems',
     ]),
     ...mapGetters([
-      'currentListId',
       'currentListTags',
       'currentListCategories',
       'edittingItemObj',
@@ -89,21 +84,17 @@ export default {
     }
   },
   unmounted() {
-    const itemsCreatedEmpty = this.currentListItems
-      .filter(item => item.temporaryId && !item.title && !item.details);
+    const emptyItemTitle = '[empty item]';
 
-    itemsCreatedEmpty.forEach(item => {
-      this._deleteItemByTemporaryId(item);
-    });
-
-    const itemsBecameEmpty = this.currentListItems
-      .filter(item => item.id && !item.title && !item.details);
-
-    itemsBecameEmpty.forEach(item => {
-      this._updateItemOnServer({
-        item: { ...item, title: '[empty item]' }, 
-        cancelToken: null,
-      });
+    this.currentListItems.forEach(item => {
+      if (!item.title && !item.details) {
+        item.temporaryId
+          ? this._deleteItemByTemporaryId(item)
+          : this._updateItemOnServer({
+            item: { ...item, title: emptyItemTitle }, 
+            cancelToken: null,
+          });
+      }
     });
 
     this.setEdittingItemIndex(null); 
@@ -119,7 +110,6 @@ export default {
       '_updateItemOnServer',
       '_deleteItem',
       '_deleteItemByTemporaryId',
-      '_fetchListById',
     ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
@@ -135,29 +125,29 @@ export default {
       }
     },
     removeItem(item) {
+      const itemActualId = item.id || item.temporaryId;
+
       this.cancelActionDebounced();
       this[item.id ? '_deleteItem' : '_deleteItemByTemporaryId'](item);
 
-      if (this.serverRequests[item.id || item.temporaryId]?.length) {
-        this.serverRequests[item.id || item.temporaryId].forEach(request => {
-          request.cancel();
-        });
-
-        delete this.serverRequests[item.id || item.temporaryId];
+      if (this.serverRequests[itemActualId]) {
+        this.serverRequests[itemActualId].cancel();
+        delete this.serverRequests[itemActualId];
       }
 
-      if (item.temporaryId) {
-        this.isItemFormInSidebar ? this._closeSidebar() : this.closeItemModal();
-      }
+      let newIndex = null;
 
-      if (this.isItemFormInSidebar) {
-        this.setEdittingItemIndex(this.currentListItems[this.edittingItemIndex] 
+      if (this.isItemFormInSidebar && item.temporaryId) {
+        this._closeSidebar();
+      } else if (this.isItemFormInSidebar) {
+        newIndex = this.currentListItems[this.edittingItemIndex] 
           ? this.edittingItemIndex 
-          : this.currentListItems.length - 1);
+          : this.currentListItems.length - 1;
       } else {
-        this.setEdittingItemIndex(null);
         this.closeItemModal();
       }
+
+      this.setEdittingItemIndex(newIndex);
     },
     disableCategory(id) {
       if (this.edittingItemObj.category === id) {

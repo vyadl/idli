@@ -219,6 +219,8 @@ export default {
       });
   },
   _setEdittingItemIndex({ state, commit }, targetItem) {
+    let itemIndex = null;
+
     function compareItemsById(item1, item2) {
       return item1.temporaryId 
         ? item1.temporaryId === item2.temporaryId
@@ -226,18 +228,17 @@ export default {
     } 
 
     if (state.currentListId) {
-      const itemIndex = state.currentListItems
+      itemIndex = state.currentListItems
         .findIndex(item => compareItemsById(item, targetItem));
-
-      commit('setEdittingItemIndex', itemIndex);
     } else {
       const { listId } = targetItem;
       const listIndex = state.lists.findIndex(list => list.id === listId);
-      const itemIndex = state.lists[listIndex].items
+
+      itemIndex = state.lists[listIndex].items
         .findIndex(item => compareItemsById(item, targetItem));
-  
-      commit('setEdittingItemIndex', itemIndex);
     }
+
+    commit('setEdittingItemIndex', itemIndex);
   },
   _addNewItemPlaceholder({ commit, dispatch }) {
     const newItem = new Item();
@@ -281,7 +282,7 @@ export default {
         cancelToken,
       })
       .then(({ data: responseList }) => {
-        commit('updateItemMetaFields', responseList);
+        commit('updateItemFieldsByServerResponse', responseList);
       })
       .catch(error => {
         if (!cancelToken) {

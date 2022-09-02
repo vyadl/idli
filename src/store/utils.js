@@ -1,6 +1,5 @@
 import store from '@/store/index'; // eslint-disable-line import/no-cycle
-import { GENERATED_ITEM_TITLE_MAX_LENGTH, API_REQUEST_DELAY } from '@/store/config';
-import { debounce } from 'throttle-debounce';
+import { GENERATED_ITEM_TITLE_MAX_LENGTH } from '@/store/config';
 
 export function dispatchFromRoot(actionName, payload = null) {
   store.dispatch(actionName, payload, { root: true });
@@ -24,16 +23,3 @@ export function generateTitleFromDetails(details) {
     ? details
     : details.slice(0, GENERATED_ITEM_TITLE_MAX_LENGTH).concat('...');
 }
-
-export const callActionDebounced = debounce(
-  API_REQUEST_DELAY,
-  (action, item) => {
-    const source = this.$config.axios.CancelToken.source();
-
-    this.serverRequests.push(source);
-    this[action]({ item, cancelToken: source.token });
-    // .finally(() => {
-    //   this.serverRequests = [];
-    // });
-  },
-);
