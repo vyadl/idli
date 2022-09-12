@@ -156,7 +156,7 @@ export default {
   .sidebar-bin {
     .all-buttons {
       display: flex;
-      justify-content: space-between;
+      gap: 30px;
       margin-bottom: 15px;
     }
     .message {
