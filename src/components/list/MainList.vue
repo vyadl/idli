@@ -1,6 +1,7 @@
 <script>
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -16,6 +17,7 @@ export default {
   components: {
     ListItem,
     ButtonText,
+    InfoMessage,
   },
   data() {
     return {
@@ -180,57 +182,67 @@ export default {
     :class="`${globalTheme}-theme`"
     @click="_closeSidebar"
   >
-    <div
-      class="header"
-      :class="{ hidden: isFocusOnList }"
-    >
+    <div v-if="currentListObj">
       <div
-        class="list-title"
-        v-if="currentListObj"
+        class="header"
+        :class="{ hidden: isFocusOnList }"
       >
-        {{ currentListObj.title }}
+        <div
+          class="list-title"
+        >
+          {{ currentListObj.title }}
+        </div>
+        <div class="button-container">
+          <ButtonText
+            v-if="sorting === 'shuffled'"
+            text="randomize!"
+            style-type="underline"
+            @click="_switchShuffleTrigger"
+          />
+        </div>
       </div>
-      <div class="button-container">
-        <ButtonText
-          v-if="sorting === 'shuffled'"
-          text="randomize!"
-          style-type="underline"
-          @click="_switchShuffleTrigger"
-        />
+      <div
+        class="items-container"
+        :class="[
+          `${mode}-mode`,
+          {
+            'move-to-left': !isListUnderSidebar && isSidebarOpen,
+            parallax: isSidebarOpen,
+          },
+        ]"
+        :style="styles"
+      >
+        <template v-if="mode === 'cards'">
+          <masonry-wall
+            :items="finalList"
+            :column-width="200"
+            :gap="20"
+          >
+            <template #default="{ item }">
+              <ListItem
+                :key="item.id"
+                :item="item"
+              />
+            </template>
+          </masonry-wall>
+        </template>
+          <template v-else>
+          <ListItem
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          />
+        </template>
       </div>
     </div>
     <div
-      class="items-container"
-      :class="[
-        `${mode}-mode`,
-        {
-          'move-to-left': !isListUnderSidebar && isSidebarOpen,
-          parallax: isSidebarOpen,
-        },
-      ]"
-      :style="styles"
+      v-else
+      class="message"
     >
-      <template v-if="mode === 'cards'">
-        <masonry-wall
-          :items="finalList"
-          :column-width="200"
-          :gap="20"
-        >
-          <template #default="{ item }">
-            <ListItem
-              :key="item.id"
-              :item="item"
-            />
-          </template>
-        </masonry-wall>
-      </template>
-      <template v-else>
-        <ListItem
-          v-for="item in finalList"
-          :key="item.id"
-          :item="item"
-        />
-      </template>
+      <InfoMessage
+        message="no list is chosen"
+        big
+      />
     </div>
   </div>
 </template>
@@ -299,6 +311,11 @@ export default {
       .list-title {
         color: map-get($colors, 'gray-dark');
       }
+    }
+
+    .message {
+      padding-top: 50px;
+      text-align: center;
     }
   }
 </style>
