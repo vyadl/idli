@@ -246,6 +246,12 @@ export default {
       v-if="errorMessage"
       :message="errorMessage"
     />
+    <div 
+      v-show="edittingListObj"
+      class="total-items"
+    >
+      total items: {{ edittingListObj.items.length }}
+    </div>
     <div class="buttons-container">
       <div>
         <ButtonText
@@ -313,6 +319,12 @@ export default {
 
     .modal-button {
       margin-right: 10px;
+    }
+
+    .total-items {
+      padding-top: 15px;
+      font-size: 13px;
+      color: map-get($colors, 'gray-light');
     }
   }
 </style>
