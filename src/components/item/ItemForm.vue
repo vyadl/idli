@@ -22,6 +22,7 @@ export default {
     RadioCustom,
     ButtonText,
   },
+  emits: ['scrollSidebarToTop'],
   setup() {
     const store = useStore();
     const API_REQUEST_DELAY = 1500;
@@ -141,6 +142,7 @@ export default {
       if (this.isItemFormInSidebar && item.temporaryId) {
         this._closeSidebar();
       } else if (this.isItemFormInSidebar) {
+        this.$emit('scrollSidebarToTop');
         newIndex = this.currentListItems[this.edittingItemIndex] 
           ? this.edittingItemIndex 
           : this.currentListItems.length - 1;
@@ -163,7 +165,6 @@ export default {
   <div
     v-if="edittingItemObj"
     class="item-form"
-    ref="itemForm"
   >
     <div class="text-fields">
       <InputCustom

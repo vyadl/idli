@@ -75,6 +75,12 @@ export default {
       this._addNewItemPlaceholder();
       this.isItemFormInSidebar ? this._openSidebar('item') : this.openItemModal();
     },
+    scrollSidebarToTop() {
+      this.$refs.sidebarContent.scroll({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
   },
 };
 </script>
@@ -125,7 +131,10 @@ export default {
         />
       </div>
     </div>
-    <div class="sidebar-content">
+    <div 
+      class="sidebar-content"
+      ref="sidebarContent"
+    >
       <SidebarVisualization v-if="sidebarMode === 'visualization'" />
       <SidebarFilters v-if="sidebarMode === 'filters'" />
       <SidebarLists v-if="sidebarMode === 'lists'" />
@@ -133,7 +142,10 @@ export default {
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
       <SidebarBin v-if="sidebarMode === 'bin'" />
-      <SidebarItem v-if="sidebarMode === 'item'" />
+      <SidebarItem
+        v-if="sidebarMode === 'item'"
+        @scroll-sidebar-to-top="scrollSidebarToTop"
+      />
     </div>
   </div>
 </template>
