@@ -12,7 +12,7 @@ import { notifyAboutError, generateTitleFromDetails } from '@/store/utils';
 import { router } from '@/router';
 import { MIN_SEARCH_SYMBOLS } from '@/store/config';
 import { Item } from '@/models/models';
-// import { debounce } from 'throttle-debounce';
+import { defaultVisualization } from '@/data/defaultValues';
 
 export default {
   // local storage
@@ -354,13 +354,36 @@ export default {
     commit('setListAlign', align);
     changeQueryRespectingDefault('align', align);
   },
-  _toggleItemsOrder({ state, commit }) {
+  _toggleItemsOrder({ getters, commit }) {
     commit('toggleItemsOrder');
-    changeQueryRespectingDefault('isItemsOrderReversed', state.visualization.isItemsOrderReversed);
+    changeQueryRespectingDefault('isItemsOrderReversed', getters.isItemsOrderReversed);
   },
-  _toggleItemDetailsShowingMode({ state, commit }) {
+  _toggleItemDetailsShowingMode({ getters, commit }) {
     commit('toggleItemDetailsShowingMode');
-    changeQueryRespectingDefault('areItemDetailsShown', state.visualization.areItemDetailsShown);
+    changeQueryRespectingDefault('areItemDetailsShown', getters.areItemDetailsShown);
+  },
+  _resetVisualizationToDefault({ getters, commit }) {
+    commit('setSorting', defaultVisualization.sorting);
+    commit('setMode', defaultVisualization.mode);
+    commit('setTheme', defaultVisualization.theme);
+    commit('setListAlign', defaultVisualization.listAlign);
+
+    if (getters.areItemDetailsShown) {
+      commit('toggleItemDetailsShowingMode');
+    }
+
+    if (getters.isItemsOrderReversed) {
+      commit('toggleItemsOrder');
+    }
+
+    deleteFromQuery([
+      'sorting',
+      'mode',
+      'submode',
+      'theme', 
+      'reverse-order',
+      'with-details',
+    ]);
   },
 
   // settings

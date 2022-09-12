@@ -17,7 +17,7 @@ export default {
     shuffleTrigger: false,
     listAlign: 'center',
     areItemDetailsShown: false,
-    isItemsOrderReversed: true,
+    isItemsOrderReversed: false,
   },
   settings: {
     isItemFormInSidebar: false,

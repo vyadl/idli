@@ -1,6 +1,8 @@
 export const sortByDate = (arr, dateField) => {
   return [...arr].sort((item, nextItem) => (
-    Date.parse(nextItem[dateField]) - Date.parse(item[dateField])
+    dateField === 'createdAt'
+      ? Date.parse(item[dateField]) - Date.parse(nextItem[dateField])
+      : Date.parse(nextItem[dateField]) - Date.parse(item[dateField])
   )); 
 };
 

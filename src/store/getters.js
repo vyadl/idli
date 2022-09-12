@@ -43,6 +43,7 @@ export default {
   shuffleTrigger: state => state.visualization.shuffleTrigger,
   listAlign: state => state.visualization.listAlign,
   areItemDetailsShown: state => state.visualization.areItemDetailsShown,
+  isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
 
   // settings
   settings: state => state.settings,

@@ -3,7 +3,8 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
+import { defaultVisualization } from '@/data/defaultValues';
 
 export default {
   components: {
@@ -43,20 +44,17 @@ export default {
     unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
-    ...mapState({
-      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
-    }),
     ...mapGetters([
-      'sorting',
-      'mode',
-      'theme',
-      'listAlign',
-      'areItemDetailsShown',
+      ...Object.keys(defaultVisualization),
     ]),
     listAlignTitles() {
       return ['list', 'page'].includes(this.mode)
         ? ['left', 'center', 'right', this.mode === 'list' ? 'random' : 'edges']
         : [];
+    },
+    isResetButtonActive() {
+      return Object.keys(defaultVisualization)
+        .some(option => this[option] !== defaultVisualization[option]);
     },
   },
   watch: {
@@ -85,6 +83,7 @@ export default {
       '_toggleItemDetailsShowingMode',
       '_toggleItemsOrder',
       '_switchShuffleTrigger',
+      '_resetVisualizationToDefault',
     ]),
   },
 };
@@ -189,6 +188,14 @@ export default {
         />
       </div>
     </SidebarCard>
+    <div class="single-button-container">
+      <ButtonText
+        v-if="isResetButtonActive"
+        text="reset all to default"
+        style-type="underline"
+        @click="_resetVisualizationToDefault"
+      />
+    </div>
   </div>
 </template>
 
@@ -215,6 +222,10 @@ export default {
       right: 0;
       bottom: 100%;
       font-size: 11px;
+    }
+    .single-button-container {
+      display: flex;
+      justify-content: flex-end;
     }
   }
 </style>
