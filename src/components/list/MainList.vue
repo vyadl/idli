@@ -20,6 +20,7 @@ export default {
   data() {
     return {
       sortingOptions: null,
+      shuffledList: null,
     };
   },
   computed: {
@@ -65,11 +66,6 @@ export default {
 
       return styles;
     },
-    shuffledList() {
-      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
-
-      return shuffleArray(this.filteredList);
-    },
     finalList() {
       if (!this.sortingOptions) {
         return [];
@@ -79,12 +75,17 @@ export default {
         : this.sortingOptions[this.sorting]();
     },
   },
+  watch: {
+    shuffleTrigger() {
+      this.shuffledList = shuffleArray(this.filteredList);
+    },
+  },
   created() {
     this.setArrowHotkeys();
 
     this.sortingOptions = {
       custom: () => [...this.filteredList],
-      shuffled: () => [...this.shuffledList],
+      shuffled: () => this.shuffledList || shuffleArray(this.filteredList),
       alphabetic: () => sortByAlphabet(this.filteredList, 'title'),
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
@@ -144,9 +145,6 @@ export default {
       '_switchShuffleTrigger',
       '_closeSidebar',
     ]),
-    setShuffledList() {
-      this._setShuffledList(shuffleArray(this.filteredList));
-    },
     setArrowHotkeys() {
       document.addEventListener('keyup', event => {
         if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
