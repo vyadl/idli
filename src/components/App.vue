@@ -29,7 +29,7 @@ export default {
     checkAppVersion();
 
     this._setUserFromLocalStorage();
-    this._setSettingsFromLocalStorage();
+    this._setUnitsFromLocalStorage(['settings', 'theme']);
     this._fetchTestLists();
 
     initHotkeys();
@@ -71,7 +71,7 @@ export default {
       'changeSidebarMode',
     ]),
     ...mapActions({
-      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
+      _setUnitsFromLocalStorage: '_setUnitsFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
       _fetchTestLists: '_fetchTestLists',
       _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',

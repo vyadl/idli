@@ -7,6 +7,7 @@ export default function checkAppVersion() {
     localStorage.removeItem('currentListId');
     localStorage.removeItem('user');
     localStorage.removeItem('settings');
+    localStorage.removeItem('theme');
 
     localStorage.setItem('version', packageJSON.version);
 

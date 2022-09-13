@@ -25,15 +25,21 @@ export default {
       dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
   },
-  _saveSettingsInLocalStorage({ getters }) {
-    localStorage.setItem('settings', JSON.stringify(getters.settings));
+  _saveUnitInLocalStorage({ getters }, unitName) {
+    localStorage.setItem(unitName, JSON.stringify(getters[unitName]));
   },
-  _setSettingsFromLocalStorage({ commit }) {
-    const settings = localStorage.getItem('settings');
+  _setUnitsFromLocalStorage({ commit }, units) {
+    let value = '';
 
-    if (settings) {
-      commit('setSettings', JSON.parse(settings));
-    }
+    units.forEach(unit => {
+      value = localStorage.getItem(unit);
+
+      if (value) {
+        const mutationName = 'set'.concat(unit[0].toUpperCase() + unit.substring(1));
+
+        commit(mutationName, JSON.parse(value));
+      }
+    });
   },
 
   // lists
@@ -343,8 +349,9 @@ export default {
     commit('setMode', mode);
     changeQueryRespectingDefault('mode', mode);
   },
-  _setTheme({ commit }, theme) {
+  _setTheme({ commit, dispatch }, theme) {
     commit('setTheme', theme);
+    dispatch('_saveUnitInLocalStorage', 'theme');
     changeQueryRespectingDefault('theme', theme);
   },
   _switchShuffleTrigger({ commit }) {
@@ -390,7 +397,7 @@ export default {
 
   _switchItemFormLocation({ commit, dispatch }) {
     commit('switchItemFormLocation');
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
   _switchFocusMode({ getters, commit, dispatch }) {
     commit('switchFocusMode');
@@ -399,15 +406,15 @@ export default {
       commit('setNotification', { text: 'press Esc to exit focus mode' });
     }
 
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
   _switchSidebarAndListIntersection({ commit, dispatch }) {
     commit('switchSidebarAndListIntersection');
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
   _switchUsingHotkeys({ commit, dispatch }) {
     commit('switchUsingHotkeys');
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
 
   // sidebar
