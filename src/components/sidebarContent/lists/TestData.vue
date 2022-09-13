@@ -56,35 +56,31 @@ export default {
       v-if="errorMessage"
       :message="errorMessage"
     />
-    <div
-      class="buttons-container"
-      v-if="areTestListsShown"
-    >
+    <div v-if="areTestListsShown">
       <InfoMessage
         class="info-message"
         message="choosing test list will copy it to your lists"
       />
-      <ButtonText
-        class="list-title"
-        v-for="list in testLists"
-        :key="list.title"
-        :text="list.title"
-        style-type="line"
-        :disabled="isRequestProcessing"
-        @click="addTestList(list)"
-      />
+      <div class="buttons-container">
+        <ButtonText
+          class="list-title"
+          v-for="list in testLists"
+          :key="list.title"
+          :text="list.title"
+          style-type="line"
+          :disabled="isRequestProcessing"
+          @click="addTestList(list)"
+        />
+      </div>
     </div>
   </SidebarCard>
 </template>
 
 <style lang="scss">
   .test-data {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
     .buttons-container {
-      width: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .info-message {
