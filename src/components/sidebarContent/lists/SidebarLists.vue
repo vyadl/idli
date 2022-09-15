@@ -62,9 +62,10 @@ export default {
           const index = this.listRequests.findIndex(request => request === source);
 
           this.listRequests.splice(index, 1);
-          this._resetCustomView();
           this.isRequestProcessing = false;
         });
+      
+      this._resetCustomView();
     },
   },
 };

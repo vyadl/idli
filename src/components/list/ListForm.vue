@@ -247,10 +247,10 @@ export default {
       :message="errorMessage"
     />
     <div 
-      v-show="list?.items?.length"
+      v-if="list?.items?.length"
       class="total-items"
     >
-      total items: {{ list?.items?.length }}
+      total items: {{ list.items.length }}
     </div>
     <footer class="footer">
       <div>

@@ -223,7 +223,7 @@ export default {
     @click="_closeSidebar"
   >
     <div v-if="currentListObj">
-      <div
+      <header
         class="header"
         :class="{ hidden: isFocusOnList }"
       >
@@ -238,7 +238,7 @@ export default {
             @click="_toggleShuffleTrigger"
           />
         </div>
-      </div>
+      </header>
       <div
         class="items-container"
         :class="[

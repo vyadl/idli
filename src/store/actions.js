@@ -13,6 +13,10 @@ import { router } from '@/router';
 import { MIN_SEARCH_SYMBOLS } from '@/store/config';
 import { Item } from '@/models/models';
 
+const UNITS_AND_MUTATIONS_ACCORDANCE = {
+  settings: 'setSettings',
+};
+
 export default {
   // local storage
 
@@ -32,11 +36,7 @@ export default {
       const value = localStorage.getItem(unit);
 
       if (value) {
-        const mutations = {
-          settings: 'setSettings',
-        };
-
-        commit(mutations[unit], JSON.parse(value));
+        commit(UNITS_AND_MUTATIONS_ACCORDANCE[unit], JSON.parse(value));
       }
     });
   },
@@ -334,8 +334,7 @@ export default {
 
     const filteredList = list.filter(item => {
       const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
-      const isCategoryIntersection = !categories.length || categories
-        .indexOf(item.category) !== -1;
+      const isCategoryIntersection = !categories.length || categories.includes(item.category);
       
       const isSearchValueRelevant = state.filters.currentSearchValue 
         && state.filters.currentSearchValue.length >= MIN_SEARCH_SYMBOLS;
