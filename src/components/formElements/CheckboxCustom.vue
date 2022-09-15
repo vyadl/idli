@@ -128,9 +128,15 @@ export default {
           color: map-get($colors, 'gray-light');
         }
 
-        &.checked,
-        &:hover {
+        &.checked {
           background-color: map-get($colors, 'black');
+          color: map-get($colors, 'white');
+          &:hover {
+            background-color: map-get($colors, 'gray-dark');
+          }
+        }
+        &:hover {
+          background-color: map-get($colors, 'gray-light');
           color: map-get($colors, 'white');
         }
       }

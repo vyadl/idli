@@ -5,16 +5,21 @@ import { dispatchFromRoot, commitFromRoot } from '@/store/utils'; // eslint-disa
 
 export default {
   async _signUp(state, user) {
+    commitFromRoot('increaseExplicitRequestsNumber');
     await this.$config.axios.post(`${this.$config.apiBasePath}auth/signup`, user);
+    commitFromRoot('decreaseExplicitRequestsNumber');
 
     commitFromRoot('changeSidebarMode', 'sign in');
     addQueryItems({ sidebar: 'sign in' });
   },
   async _signIn({ commit }, user) {
+    commitFromRoot('increaseExplicitRequestsNumber');
+
     try {
       const { data: responseUser } = await this.$config.axios
         .post(`${this.$config.apiBasePath}auth/signin`, user);
-
+      
+      commitFromRoot('decreaseExplicitRequestsNumber');
       commit('signIn', responseUser);
       router.push({ name: 'home', query: { sidebar: 'lists' } });
       localStorage.setItem('user', JSON.stringify(responseUser));
@@ -33,6 +38,8 @@ export default {
     deleteAccessToken();
     router.push({ name: 'auth' });
     commitFromRoot('closeSidebar');
+    commitFromRoot('resetFilters');
+    commitFromRoot('resetVisualizationToDefault');
   },
   _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');

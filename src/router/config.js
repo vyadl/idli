@@ -19,10 +19,6 @@ export const defaultQueryValues = {
     default: 'center',
     queryName: 'submode',
   },
-  theme: {
-    default: 'default',
-    queryName: 'theme',
-  },
   isItemsOrderReversed: {
     default: false,
     queryName: 'reverse-order',

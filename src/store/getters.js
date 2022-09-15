@@ -1,5 +1,3 @@
-import { MIN_SEARCH_SYMBOLS } from '@/store/config';
-
 export default {
   // lists
   lists: state => state.lists,
@@ -10,27 +8,10 @@ export default {
   currentListCategories: (state, getters) => getters.currentListObj?.categories,
   currentListItems: state => state.currentListItems,
   edittingListObj: state => state.edittingListObj,
-  checkedTags: state => state.checkedTags,
-  checkedCategories: state => state.checkedCategories,
-  filteredList: (state, getters) => {
-    const tags = getters.checkedTags;
-    const categories = getters.checkedCategories;
-    const lowerCasedSearchValue = state.currentSearchValue.toLowerCase();
-
-    return getters.currentListItems.filter(item => {
-      const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
-      const isCategoryIntersection = !categories.length || categories
-        .indexOf(item.category) !== -1;
-      
-      const isSearchValueRelevant = state.currentSearchValue 
-        && state.currentSearchValue.length >= MIN_SEARCH_SYMBOLS;
-      const isIncludesSearchValue = !isSearchValueRelevant
-        || item.title.toLowerCase().includes(lowerCasedSearchValue)
-        || item.details.toLowerCase().includes(lowerCasedSearchValue);
-
-      return areTagsIntersection && isCategoryIntersection && isIncludesSearchValue;
-    });
-  },
+  currentSearchValue: state => state.filters.currentSearchValue,
+  checkedTags: state => state.filters.checkedTags,
+  checkedCategories: state => state.filters.checkedCategories,
+  filteredList: state => state.filteredList,
   filteredListLength: (state, getters) => getters.filteredList.length,
 
   // items
@@ -39,7 +20,6 @@ export default {
   // visualization
   sorting: state => state.visualization.sorting,
   mode: state => state.visualization.mode,
-  theme: state => state.visualization.theme,
   shuffleTrigger: state => state.visualization.shuffleTrigger,
   listAlign: state => state.visualization.listAlign,
   areItemDetailsShown: state => state.visualization.areItemDetailsShown,
@@ -51,6 +31,7 @@ export default {
   isFocusOnList: state => state.settings.isFocusOnList,
   isListUnderSidebar: state => state.settings.isListUnderSidebar,
   isUsingHotkeys: state => state.settings.isUsingHotkeys,
+  theme: state => state.settings.theme,
 
   // sidebar
   isSidebarOpen: state => state.sidebar.isOpen,

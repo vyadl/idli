@@ -23,7 +23,7 @@ export default {
 <div class="search-field">
   <InputCustom 
     icon="/icons/loupe.svg"
-    :placeholder="'search items'"
+    placeholder="minimum 3 symbols"
     :modelValue="currentSearchValue"
     @input="_setCurrentSearchValue"
   />

@@ -13,7 +13,7 @@ export default {
 <template>
   <div 
     class="info-message"
-    :class="[{ big }]"
+    :class="{ big }"
   >
     {{ message }}
   </div>

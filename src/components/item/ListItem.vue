@@ -15,9 +15,9 @@ export default {
     itemName() {
       let name = '';
 
-      if (this.item.title) {
-        name = this.item.title;
-      } else if (this.item.temporaryId) {
+      if (this.item?.title) {
+        name = this.item?.title;
+      } else if (this.item?.temporaryId) {
         name = 'New item...';
       }
 
@@ -25,8 +25,8 @@ export default {
     },
     isItemActive() {
       return this.edittingItemObj?.temporaryId 
-        ? this.edittingItemObj.temporaryId === this.item.temporaryId
-        : this.edittingItemObj?.id === this.item.id;
+        ? this.edittingItemObj.temporaryId === this.item?.temporaryId
+        : this.edittingItemObj?.id === this.item?.id;
     },
     styles() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
@@ -90,9 +90,9 @@ export default {
     </div>
     <div
       class="item-details"
-      v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
+      v-if="areItemDetailsShown && item?.details && ['list', 'cards'].includes(mode)"
     >
-      {{ item.details }}
+      {{ item?.details }}
     </div>
   </div>
 </template>

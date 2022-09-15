@@ -4,7 +4,7 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -15,15 +15,13 @@ export default {
     InfoMessage,
   },
   computed: {
-    ...mapState([
-      'currentSearchValue',
-    ]),
     ...mapGetters([
       'currentListObj',
       'currentListTags',
       'currentListCategories',
       'checkedTags',
       'checkedCategories',
+      'currentSearchValue',
       'filteredListLength',
     ]),
     tagsInfoMessage() {
@@ -46,7 +44,7 @@ export default {
 <template>
 <div class="sidebar-filters">
   <div v-if="currentListObj">
-    <SidebarCard title="search">
+    <SidebarCard title="search in list">
       <SearchField />
     </SidebarCard>
     <SidebarCard
@@ -83,7 +81,7 @@ export default {
           @update:modelValue="newValue => _setCategories(newValue)"
         />
       </div>
-      <div class="bottom">
+      <footer class="footer">
         <div class="items-count">selected: {{ filteredListLength }}</div>
         <ButtonText
           v-if="checkedTags.length || checkedCategories.length || currentSearchValue"
@@ -91,7 +89,7 @@ export default {
           style-type="underline"
           @click="_resetFilters"
         />
-      </div>
+      </footer>
     </SidebarCard>
   </div>
   <div v-else>
@@ -114,7 +112,7 @@ export default {
       margin-bottom: 15px;
     }
 
-    .bottom {
+    .footer {
       display: flex;
       justify-content: space-between;
       width: 100%;

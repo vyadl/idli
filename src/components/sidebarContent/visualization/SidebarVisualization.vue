@@ -4,7 +4,7 @@ import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
-import { defaultVisualization } from '@/data/defaultValues';
+import { defaultVisualization } from '@/store/config';
 
 export default {
   components: {
@@ -39,7 +39,6 @@ export default {
       },
     },
     modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
-    themeTitles: ['default', 'inverted'],
     structuredModes: ['list', 'page', 'cards'],
     unstructuredModes: ['cloud', 'stars'],
   }),
@@ -78,11 +77,10 @@ export default {
     ...mapActions([
       '_setSorting',
       '_setMode',
-      '_setTheme',
       '_setListAlign',
       '_toggleItemDetailsShowingMode',
       '_toggleItemsOrder',
-      '_switchShuffleTrigger',
+      '_toggleShuffleTrigger',
       '_resetVisualizationToDefault',
     ]),
   },
@@ -110,7 +108,7 @@ export default {
           class="randomize"
           text="randomize!"
           style-type="underline"
-          @click="_switchShuffleTrigger"
+          @click="_toggleShuffleTrigger"
         />
       </div>
     </SidebarCard>
@@ -174,28 +172,14 @@ export default {
         @update:modelValue="_toggleItemDetailsShowingMode"
       />
     </SidebarCard>
-    <SidebarCard title="theme">
-      <div class="buttons-container">
-        <RadioCustom
-          class="theme"
-          v-for="title in themeTitles"
-          :key="title"
-          :label="title"
-          :value="title"
-          :model-value="theme"
-          name="theme"
-          @change="_setTheme(title)"
-        />
-      </div>
-    </SidebarCard>
-    <div class="single-button-container">
+    <footer class="footer">
       <ButtonText
         v-if="isResetButtonActive"
         text="reset all to default"
         style-type="underline"
         @click="_resetVisualizationToDefault"
       />
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -223,7 +207,7 @@ export default {
       bottom: 100%;
       font-size: 11px;
     }
-    .single-button-container {
+    .footer {
       display: flex;
       justify-content: flex-end;
     }

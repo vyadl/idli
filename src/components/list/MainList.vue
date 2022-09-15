@@ -23,21 +23,26 @@ export default {
     return {
       sortingOptions: null,
       shuffledList: null,
+      finalList: null,
     };
   },
   computed: {
     ...mapState({
-      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
+      visualization: state => state.visualization,
+      filters: state => state.filters,
     }),
     ...mapGetters([
       'currentListObj',
+      'currentListItems',
       'filteredList',
       'edittingItemObj',
       'sorting',
       'mode',
+      'checkedTags',
       'shuffleTrigger',
       'listAlign',
       'areItemDetailsShown',
+      'isItemsOrderReversed',
       'isItemFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
@@ -68,18 +73,46 @@ export default {
 
       return styles;
     },
-    finalList() {
-      if (!this.sortingOptions) {
-        return [];
-      }
-
-      return this.isItemsOrderReversed ? this.sortingOptions[this.sorting]().reverse() 
-        : this.sortingOptions[this.sorting]();
-    },
   },
   watch: {
     shuffleTrigger() {
-      this.shuffledList = shuffleArray(this.filteredList);
+      this.shuffledList = shuffleArray(this.finalList);
+    },
+    currentListItems(items) {
+      this.shuffledList = null;
+      this._filterList(items);
+
+      if (items.length) {
+        this.finalList = items;
+      } else {
+        this.finalList = [];
+      }
+    },
+    filters: {
+      handler() {
+        if (this.sorting === 'shuffled' && this.currentListItems.length) {
+          this._filterList(this.shuffledList || this.currentListItems);
+          this.finalList = this.filteredList;
+        } else {
+          this._filterList(this.currentListItems);
+          this.finalList = this.isItemsOrderReversed 
+            ? this.sortingOptions[this.sorting]().reverse() 
+            : this.sortingOptions[this.sorting]();
+        }
+      },
+      deep: true,
+    },
+    visualization: {
+      handler() {        
+        if (!this.sortingOptions) {
+          this.finalList = [];
+        }
+        
+        this.finalList = this.isItemsOrderReversed 
+          ? this.sortingOptions[this.sorting]().reverse() 
+          : this.sortingOptions[this.sorting]();
+      },
+      deep: true,
     },
   },
   created() {
@@ -87,7 +120,7 @@ export default {
 
     this.sortingOptions = {
       custom: () => [...this.filteredList],
-      shuffled: () => this.shuffledList || shuffleArray(this.filteredList),
+      shuffled: () => this.getShuffledList(this.filteredList),
       alphabetic: () => sortByAlphabet(this.filteredList, 'title'),
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
@@ -139,14 +172,21 @@ export default {
       'setCurrentSearchValue',
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
-      'filterList',
       'setEdittingItemIndex',
     ]),
     ...mapActions([
       '_fetchListById',
-      '_switchShuffleTrigger',
+      '_toggleShuffleTrigger',
       '_closeSidebar',
+      '_filterList',
     ]),
+    getShuffledList(list) {
+      if (!this.shuffledList) {
+        this.shuffledList = shuffleArray(list);
+      }
+
+      return this.shuffledList;
+    },
     setArrowHotkeys() {
       document.addEventListener('keyup', event => {
         if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
@@ -187,9 +227,7 @@ export default {
         class="header"
         :class="{ hidden: isFocusOnList }"
       >
-        <div
-          class="list-title"
-        >
+        <div class="list-title">
           {{ currentListObj.title }}
         </div>
         <div class="button-container">
@@ -197,7 +235,7 @@ export default {
             v-if="sorting === 'shuffled'"
             text="randomize!"
             style-type="underline"
-            @click="_switchShuffleTrigger"
+            @click="_toggleShuffleTrigger"
           />
         </div>
       </div>
@@ -220,7 +258,7 @@ export default {
           >
             <template #default="{ item }">
               <ListItem
-                :key="item.id"
+                :key="item?.id"
                 :item="item"
               />
             </template>

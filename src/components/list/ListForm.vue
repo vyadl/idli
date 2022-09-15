@@ -122,7 +122,7 @@ export default {
       }
     },
     updateList() {
-      if (this.validateListTitle() && this.validateFiltersTitles()) {
+      if (this.validateFiltersTitles()) {
         this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
@@ -247,12 +247,12 @@ export default {
       :message="errorMessage"
     />
     <div 
-      v-show="edittingListObj"
+      v-show="list?.items?.length"
       class="total-items"
     >
-      total items: {{ edittingListObj.items.length }}
+      total items: {{ list?.items?.length }}
     </div>
-    <div class="buttons-container">
+    <footer class="footer">
       <div>
         <ButtonText
           class="modal-button"
@@ -273,7 +273,7 @@ export default {
         :disabled="isRequestProcessing"
         @click="deleteList"
       />
-    </div>
+    </footer>
   </form>
 </template>
 
@@ -310,7 +310,7 @@ export default {
       margin-left: 10px;
     }
 
-    .buttons-container {
+    .footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
