@@ -3,7 +3,8 @@ import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
+import { defaultVisualization } from '@/store/config';
 
 export default {
   components: {
@@ -38,25 +39,21 @@ export default {
       },
     },
     modeTitles: ['list', 'page', 'cards', 'cloud', 'stars'],
-    themeTitles: ['default', 'inverted'],
     structuredModes: ['list', 'page', 'cards'],
     unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
-    ...mapState({
-      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
-    }),
     ...mapGetters([
-      'sorting',
-      'mode',
-      'theme',
-      'listAlign',
-      'areItemDetailsShown',
+      ...Object.keys(defaultVisualization),
     ]),
     listAlignTitles() {
       return ['list', 'page'].includes(this.mode)
         ? ['left', 'center', 'right', this.mode === 'list' ? 'random' : 'edges']
         : [];
+    },
+    isResetButtonActive() {
+      return Object.keys(defaultVisualization)
+        .some(option => this[option] !== defaultVisualization[option]);
     },
   },
   watch: {
@@ -80,11 +77,11 @@ export default {
     ...mapActions([
       '_setSorting',
       '_setMode',
-      '_setTheme',
       '_setListAlign',
       '_toggleItemDetailsShowingMode',
       '_toggleItemsOrder',
-      '_switchShuffleTrigger',
+      '_toggleShuffleTrigger',
+      '_resetVisualizationToDefault',
     ]),
   },
 };
@@ -111,7 +108,7 @@ export default {
           class="randomize"
           text="randomize!"
           style-type="underline"
-          @click="_switchShuffleTrigger"
+          @click="_toggleShuffleTrigger"
         />
       </div>
     </SidebarCard>
@@ -175,20 +172,14 @@ export default {
         @update:modelValue="_toggleItemDetailsShowingMode"
       />
     </SidebarCard>
-    <SidebarCard title="theme">
-      <div class="buttons-container">
-        <RadioCustom
-          class="theme"
-          v-for="title in themeTitles"
-          :key="title"
-          :label="title"
-          :value="title"
-          :model-value="theme"
-          name="theme"
-          @change="_setTheme(title)"
-        />
-      </div>
-    </SidebarCard>
+    <footer class="footer">
+      <ButtonText
+        v-if="isResetButtonActive"
+        text="reset all to default"
+        style-type="underline"
+        @click="_resetVisualizationToDefault"
+      />
+    </footer>
   </div>
 </template>
 
@@ -215,6 +206,10 @@ export default {
       right: 0;
       bottom: 100%;
       font-size: 11px;
+    }
+    .footer {
+      display: flex;
+      justify-content: flex-end;
     }
   }
 </style>

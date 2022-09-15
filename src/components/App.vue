@@ -29,7 +29,7 @@ export default {
     checkAppVersion();
 
     this._setUserFromLocalStorage();
-    this._setSettingsFromLocalStorage();
+    this._setUnitsFromLocalStorage(['settings']);
     this._fetchTestLists();
 
     initHotkeys();
@@ -39,9 +39,6 @@ export default {
     }
 
     const queryOptions = {
-      theme: {
-        callback: this.setTheme,
-      },
       sidebar: {
         callback: sidebar => {
           this.openSidebar();
@@ -66,12 +63,11 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'setTheme',
       'openSidebar',
       'changeSidebarMode',
     ]),
     ...mapActions({
-      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
+      _setUnitsFromLocalStorage: '_setUnitsFromLocalStorage',
       _fetchListsForUser: '_fetchListsForUser',
       _fetchTestLists: '_fetchTestLists',
       _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',

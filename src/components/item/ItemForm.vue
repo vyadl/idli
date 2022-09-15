@@ -217,7 +217,7 @@ export default {
         :disabled="areTagsAndCategoriesDisabled"
       />
     </div>
-    <div class="buttons-container">
+    <footer class="footer">
       <ButtonText
         v-if="edittingItemObj"
         :text="edittingItemObj.id ? 'delete item' : 'cancel'"
@@ -225,7 +225,7 @@ export default {
         :small="isItemFormInSidebar"
         @click="removeItem(edittingItemObj)"
       />
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -254,15 +254,11 @@ export default {
       margin-right: 7px;
     }
 
-    .buttons-container {
+    .footer {
       display: flex;
       justify-content: flex-end;
       align-items: flex-end;
       padding-top: 30px;
-    }
-
-    .save-button {
-      margin-right: 10px;
     }
   }
 </style>

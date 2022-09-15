@@ -92,7 +92,7 @@ export default {
       class="item-details"
       v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
     >
-      {{ item.details }}
+      {{ item?.details }}
     </div>
   </div>
 </template>

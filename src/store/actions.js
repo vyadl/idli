@@ -12,7 +12,10 @@ import { notifyAboutError, generateTitleFromDetails } from '@/store/utils';
 import { router } from '@/router';
 import { MIN_SEARCH_SYMBOLS } from '@/store/config';
 import { Item } from '@/models/models';
-// import { debounce } from 'throttle-debounce';
+
+const UNITS_AND_MUTATIONS_ACCORDANCE = {
+  settings: 'setSettings',
+};
 
 export default {
   // local storage
@@ -25,15 +28,17 @@ export default {
       dispatch('_fetchListById', { id: currentListId, cancelToken: null });
     }
   },
-  _saveSettingsInLocalStorage({ getters }) {
-    localStorage.setItem('settings', JSON.stringify(getters.settings));
+  _saveUnitInLocalStorage({ getters }, unitName) {
+    localStorage.setItem(unitName, JSON.stringify(getters[unitName]));
   },
-  _setSettingsFromLocalStorage({ commit }) {
-    const settings = localStorage.getItem('settings');
+  _setUnitsFromLocalStorage({ commit }, units) {
+    units.forEach(unit => {
+      const value = localStorage.getItem(unit);
 
-    if (settings) {
-      commit('setSettings', JSON.parse(settings));
-    }
+      if (value) {
+        commit(UNITS_AND_MUTATIONS_ACCORDANCE[unit], JSON.parse(value));
+      }
+    });
   },
 
   // lists
@@ -322,9 +327,25 @@ export default {
     commit('setCategories', categories);
     changeQueryRespectingDefault('categories', JSON.stringify(categories));
   },
-  _resetFilters({ commit }) {
-    commit('resetFilters');
-    deleteFromQuery(['search', 'tags', 'categories']);
+  _filterList({ state, getters, commit }, list) {
+    const tags = getters.checkedTags;
+    const categories = getters.checkedCategories;
+    const lowerCasedSearchValue = state.filters.currentSearchValue.toLowerCase();
+
+    const filteredList = list.filter(item => {
+      const areTagsIntersection = !tags.length || tags.every(tag => item.tags.includes(tag));
+      const isCategoryIntersection = !categories.length || categories.includes(item.category);
+      
+      const isSearchValueRelevant = state.filters.currentSearchValue 
+        && state.filters.currentSearchValue.length >= MIN_SEARCH_SYMBOLS;
+      const isIncludesSearchValue = !isSearchValueRelevant
+        || item.title.toLowerCase().includes(lowerCasedSearchValue)
+        || item.details.toLowerCase().includes(lowerCasedSearchValue);
+
+      return areTagsIntersection && isCategoryIntersection && isIncludesSearchValue;
+    });
+
+    commit('setFilteredList', filteredList);
   },
 
   // visualization
@@ -343,31 +364,63 @@ export default {
     commit('setMode', mode);
     changeQueryRespectingDefault('mode', mode);
   },
-  _setTheme({ commit }, theme) {
-    commit('setTheme', theme);
-    changeQueryRespectingDefault('theme', theme);
-  },
-  _switchShuffleTrigger({ commit }) {
-    commit('switchShuffleTrigger');
+  _toggleShuffleTrigger({ commit }) {
+    commit('toggleShuffleTrigger');
   },
   _setListAlign({ commit }, align) {
     commit('setListAlign', align);
     changeQueryRespectingDefault('align', align);
   },
-  _toggleItemsOrder({ state, commit }) {
+  _toggleItemsOrder({ getters, commit }) {
     commit('toggleItemsOrder');
-    changeQueryRespectingDefault('isItemsOrderReversed', state.visualization.isItemsOrderReversed);
+    changeQueryRespectingDefault('isItemsOrderReversed', getters.isItemsOrderReversed);
   },
-  _toggleItemDetailsShowingMode({ state, commit }) {
+  _toggleItemDetailsShowingMode({ getters, commit }) {
     commit('toggleItemDetailsShowingMode');
-    changeQueryRespectingDefault('areItemDetailsShown', state.visualization.areItemDetailsShown);
+    changeQueryRespectingDefault('areItemDetailsShown', getters.areItemDetailsShown);
+  },
+
+  // reset views
+
+  _resetFilters({ commit }) {
+    commit('resetFilters');
+    deleteFromQuery([
+      'search',
+      'tags',
+      'categories',
+    ]);
+  },
+  _resetVisualizationToDefault({ commit }) {
+    commit('resetVisualizationToDefault');
+
+    deleteFromQuery([
+      'sorting',
+      'mode',
+      'submode',
+      'reverse-order',
+      'with-details',
+    ]);
+  },
+  _resetCustomView({ commit }) {
+    commit('resetFilters');
+    commit('resetVisualizationToDefault');
+    deleteFromQuery([
+      'sorting',
+      'mode',
+      'submode',
+      'reverse-order',
+      'with-details',
+      'search',
+      'tags',
+      'categories',
+    ]);
   },
 
   // settings
 
   _switchItemFormLocation({ commit, dispatch }) {
     commit('switchItemFormLocation');
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
   _switchFocusMode({ getters, commit, dispatch }) {
     commit('switchFocusMode');
@@ -376,15 +429,19 @@ export default {
       commit('setNotification', { text: 'press Esc to exit focus mode' });
     }
 
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
   _switchSidebarAndListIntersection({ commit, dispatch }) {
     commit('switchSidebarAndListIntersection');
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
   _switchUsingHotkeys({ commit, dispatch }) {
     commit('switchUsingHotkeys');
-    dispatch('_saveSettingsInLocalStorage');
+    dispatch('_saveUnitInLocalStorage', 'settings');
+  },
+  _setTheme({ commit, dispatch }, theme) {
+    commit('setTheme', theme);
+    dispatch('_saveUnitInLocalStorage', 'settings');
   },
 
   // sidebar

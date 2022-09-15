@@ -8,7 +8,7 @@ export const defaultQueryValues = {
     queryName: 'categories',
   },
   sorting: {
-    default: 'custom',
+    default: 'dateCreated',
     queryName: 'sorting',
   },
   mode: {
@@ -18,10 +18,6 @@ export const defaultQueryValues = {
   align: {
     default: 'center',
     queryName: 'submode',
-  },
-  theme: {
-    default: 'default',
-    queryName: 'theme',
   },
   isItemsOrderReversed: {
     default: false,

@@ -2,6 +2,7 @@
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import UserProfile from '@/components/sidebarContent/settings/UserProfile.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import AboutModal from '@/components/modals/AboutModal.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
@@ -11,8 +12,14 @@ export default {
     SidebarCard,
     UserProfile,
     CheckboxCustom,
+    RadioCustom,
     AboutModal,
     ButtonText,
+  },
+  data() {
+    return {
+      themeTitles: ['default', 'inverted'],
+    };
   },
   computed: {
     ...mapGetters([
@@ -20,6 +27,7 @@ export default {
       'isFocusOnList',
       'isListUnderSidebar',
       'isUsingHotkeys',
+      'theme',
     ]),
   },
   methods: {
@@ -28,6 +36,7 @@ export default {
       '_switchFocusMode',
       '_switchSidebarAndListIntersection',
       '_switchUsingHotkeys',
+      '_setTheme',
     ]),
   },
 };
@@ -71,7 +80,6 @@ export default {
         name="isUsingHotkeys"
         @change="_switchUsingHotkeys"
       />
-
       <div class="hotkeys-desc">
         ESC - exit focus mode/hide modal <br>
         <template v-if="isUsingHotkeys">
@@ -84,6 +92,20 @@ export default {
         </template>
       </div>
     </div>
+    <SidebarCard title="theme">
+      <div class="buttons-container">
+        <RadioCustom
+          class="theme"
+          v-for="title in themeTitles"
+          :key="title"
+          :label="title"
+          :value="title"
+          :model-value="theme"
+          name="theme"
+          @change="_setTheme(title)"
+        />
+      </div>
+    </SidebarCard>
     <UserProfile />
     <div class="about">
       <ButtonText
@@ -99,7 +121,14 @@ export default {
 <style lang="scss">
   .sidebar-settings {
     .options-container {
-      margin-bottom: 100px;
+      margin-bottom: 20px;
+    }
+    .buttons-container {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-bottom: 50px;
     }
     .about {
       padding-top: 70px;

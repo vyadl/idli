@@ -71,7 +71,7 @@ function editCurrentList() {
 
 function randomizeList() {
   store.dispatch('_setSorting', 'shuffled');
-  store.dispatch('_switchShuffleTrigger');
+  store.dispatch('_toggleShuffleTrigger');
 }
 
 function switchFocusMode() {

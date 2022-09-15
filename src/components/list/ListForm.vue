@@ -122,7 +122,7 @@ export default {
       }
     },
     updateList() {
-      if (this.validateListTitle() && this.validateFiltersTitles()) {
+      if (this.validateFiltersTitles()) {
         this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
@@ -246,7 +246,13 @@ export default {
       v-if="errorMessage"
       :message="errorMessage"
     />
-    <div class="buttons-container">
+    <div 
+      v-if="list?.items?.length"
+      class="total-items"
+    >
+      total items: {{ list.items.length }}
+    </div>
+    <footer class="footer">
       <div>
         <ButtonText
           class="modal-button"
@@ -267,7 +273,7 @@ export default {
         :disabled="isRequestProcessing"
         @click="deleteList"
       />
-    </div>
+    </footer>
   </form>
 </template>
 
@@ -304,7 +310,7 @@ export default {
       margin-left: 10px;
     }
 
-    .buttons-container {
+    .footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -313,6 +319,12 @@ export default {
 
     .modal-button {
       margin-right: 10px;
+    }
+
+    .total-items {
+      padding-top: 15px;
+      font-size: 13px;
+      color: map-get($colors, 'gray-light');
     }
   }
 </style>

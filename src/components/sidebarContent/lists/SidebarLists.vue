@@ -35,7 +35,7 @@ export default {
       '_fetchListById',
       '_setListForEditting',
       '_setModalNameToShow',
-      '_resetFilters',
+      '_resetCustomView',
     ]),
     openListModal() {
       this._setModalNameToShow('listModal');
@@ -62,9 +62,10 @@ export default {
           const index = this.listRequests.findIndex(request => request === source);
 
           this.listRequests.splice(index, 1);
-          this._resetFilters();
           this.isRequestProcessing = false;
         });
+      
+      this._resetCustomView();
     },
   },
 };

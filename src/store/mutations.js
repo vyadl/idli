@@ -1,3 +1,5 @@
+import { defaultVisualization } from '@/store/config';
+
 export default {
   // lists
 
@@ -75,30 +77,29 @@ export default {
   // filters
 
   setCurrentSearchValue(state, value) {
-    state.currentSearchValue = value;
-  },
-  filterList(state, { tags, categories }) {
-    state.checkedTags = tags;
-    state.checkedCategories = categories;
+    state.filters.currentSearchValue = value;
   },
   setTags(state, tags) {
     if (typeof tags === 'string') {
-      state.checkedTags = JSON.parse(tags);
+      state.filters.checkedTags = JSON.parse(tags);
     } else {
-      state.checkedTags = tags;
+      state.filters.checkedTags = tags;
     }
   },
   setCategories(state, categories) {
     if (typeof categories === 'string') {
-      state.checkedCategories = JSON.parse(categories);
+      state.filters.checkedCategories = JSON.parse(categories);
     } else {
-      state.checkedCategories = categories;
+      state.filters.checkedCategories = categories;
     }
   },
+  setFilteredList(state, list) {
+    state.filteredList = list;
+  },
   resetFilters(state) {
-    state.checkedTags = [];
-    state.checkedCategories = [];
-    state.currentSearchValue = '';
+    state.filters.checkedTags = [];
+    state.filters.checkedCategories = [];
+    state.filters.currentSearchValue = '';
   },
 
   // visualization
@@ -110,9 +111,9 @@ export default {
     state.visualization.mode = mode;
   },
   setTheme(state, theme) {
-    state.visualization.theme = theme;
+    state.settings.theme = theme;
   },
-  switchShuffleTrigger(state) {
+  toggleShuffleTrigger(state) {
     state.visualization.shuffleTrigger = !state.visualization.shuffleTrigger;
   },
   setListAlign(state, align) {
@@ -123,6 +124,19 @@ export default {
   },
   toggleItemsOrder(state) {
     state.visualization.isItemsOrderReversed = !state.visualization.isItemsOrderReversed;
+  },
+  resetVisualizationToDefault(state) {
+    this.commit('setSorting', defaultVisualization.sorting);
+    this.commit('setMode', defaultVisualization.mode);
+    this.commit('setListAlign', defaultVisualization.listAlign);
+
+    if (state.visualization.areItemDetailsShown) {
+      this.commit('toggleItemDetailsShowingMode');
+    }
+
+    if (state.visualization.isItemsOrderReversed) {
+      this.commit('toggleItemsOrder');
+    }
   },
 
   // settings

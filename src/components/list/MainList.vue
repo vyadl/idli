@@ -1,6 +1,7 @@
 <script>
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -16,25 +17,32 @@ export default {
   components: {
     ListItem,
     ButtonText,
+    InfoMessage,
   },
   data() {
     return {
       sortingOptions: null,
+      shuffledList: null,
+      finalList: null,
     };
   },
   computed: {
     ...mapState({
-      isItemsOrderReversed: state => state.visualization.isItemsOrderReversed,
+      visualization: state => state.visualization,
+      filters: state => state.filters,
     }),
     ...mapGetters([
       'currentListObj',
+      'currentListItems',
       'filteredList',
       'edittingItemObj',
       'sorting',
       'mode',
+      'checkedTags',
       'shuffleTrigger',
       'listAlign',
       'areItemDetailsShown',
+      'isItemsOrderReversed',
       'isItemFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
@@ -65,18 +73,46 @@ export default {
 
       return styles;
     },
-    shuffledList() {
-      this.shuffleTrigger; // eslint-disable-line no-unused-expressions
-
-      return shuffleArray(this.filteredList);
+  },
+  watch: {
+    shuffleTrigger() {
+      this.shuffledList = shuffleArray(this.finalList);
     },
-    finalList() {
-      if (!this.sortingOptions) {
-        return [];
-      }
+    currentListItems(items) {
+      this.shuffledList = null;
+      this._filterList(items);
 
-      return this.isItemsOrderReversed ? this.sortingOptions[this.sorting]().reverse() 
-        : this.sortingOptions[this.sorting]();
+      if (items.length) {
+        this.finalList = items;
+      } else {
+        this.finalList = [];
+      }
+    },
+    filters: {
+      handler() {
+        if (this.sorting === 'shuffled' && this.currentListItems.length) {
+          this._filterList(this.shuffledList || this.currentListItems);
+          this.finalList = this.filteredList;
+        } else {
+          this._filterList(this.currentListItems);
+          this.finalList = this.isItemsOrderReversed 
+            ? this.sortingOptions[this.sorting]().reverse() 
+            : this.sortingOptions[this.sorting]();
+        }
+      },
+      deep: true,
+    },
+    visualization: {
+      handler() {        
+        if (!this.sortingOptions) {
+          this.finalList = [];
+        }
+        
+        this.finalList = this.isItemsOrderReversed 
+          ? this.sortingOptions[this.sorting]().reverse() 
+          : this.sortingOptions[this.sorting]();
+      },
+      deep: true,
     },
   },
   created() {
@@ -84,7 +120,7 @@ export default {
 
     this.sortingOptions = {
       custom: () => [...this.filteredList],
-      shuffled: () => [...this.shuffledList],
+      shuffled: () => this.getShuffledList(this.filteredList),
       alphabetic: () => sortByAlphabet(this.filteredList, 'title'),
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
@@ -136,16 +172,20 @@ export default {
       'setCurrentSearchValue',
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
-      'filterList',
       'setEdittingItemIndex',
     ]),
     ...mapActions([
       '_fetchListById',
-      '_switchShuffleTrigger',
+      '_toggleShuffleTrigger',
       '_closeSidebar',
+      '_filterList',
     ]),
-    setShuffledList() {
-      this._setShuffledList(shuffleArray(this.filteredList));
+    getShuffledList(list) {
+      if (!this.shuffledList) {
+        this.shuffledList = shuffleArray(list);
+      }
+
+      return this.shuffledList;
     },
     setArrowHotkeys() {
       document.addEventListener('keyup', event => {
@@ -182,57 +222,65 @@ export default {
     :class="`${globalTheme}-theme`"
     @click="_closeSidebar"
   >
-    <div
-      class="header"
-      :class="{ hidden: isFocusOnList }"
-    >
-      <div
-        class="list-title"
-        v-if="currentListObj"
+    <div v-if="currentListObj">
+      <header
+        class="header"
+        :class="{ hidden: isFocusOnList }"
       >
-        {{ currentListObj.title }}
-      </div>
-      <div class="button-container">
-        <ButtonText
-          v-if="sorting === 'shuffled'"
-          text="randomize!"
-          style-type="underline"
-          @click="_switchShuffleTrigger"
-        />
+        <div class="list-title">
+          {{ currentListObj.title }}
+        </div>
+        <div class="button-container">
+          <ButtonText
+            v-if="sorting === 'shuffled'"
+            text="randomize!"
+            style-type="underline"
+            @click="_toggleShuffleTrigger"
+          />
+        </div>
+      </header>
+      <div
+        class="items-container"
+        :class="[
+          `${mode}-mode`,
+          {
+            'move-to-left': !isListUnderSidebar && isSidebarOpen,
+            parallax: isSidebarOpen,
+          },
+        ]"
+        :style="styles"
+      >
+        <template v-if="mode === 'cards'">
+          <masonry-wall
+            :items="finalList"
+            :column-width="200"
+            :gap="20"
+          >
+            <template #default="{ item }">
+              <ListItem
+                :key="item?.id"
+                :item="item"
+              />
+            </template>
+          </masonry-wall>
+        </template>
+          <template v-else>
+          <ListItem
+            v-for="item in finalList"
+            :key="item.id"
+            :item="item"
+          />
+        </template>
       </div>
     </div>
     <div
-      class="items-container"
-      :class="[
-        `${mode}-mode`,
-        {
-          'move-to-left': !isListUnderSidebar && isSidebarOpen,
-          parallax: isSidebarOpen,
-        },
-      ]"
-      :style="styles"
+      v-else
+      class="message"
     >
-      <template v-if="mode === 'cards'">
-        <masonry-wall
-          :items="finalList"
-          :column-width="200"
-          :gap="20"
-        >
-          <template #default="{ item }">
-            <ListItem
-              :key="item.id"
-              :item="item"
-            />
-          </template>
-        </masonry-wall>
-      </template>
-      <template v-else>
-        <ListItem
-          v-for="item in finalList"
-          :key="item.id"
-          :item="item"
-        />
-      </template>
+      <InfoMessage
+        message="no list is chosen"
+        big
+      />
     </div>
   </div>
 </template>
@@ -301,6 +349,11 @@ export default {
       .list-title {
         color: map-get($colors, 'gray-dark');
       }
+    }
+
+    .message {
+      padding-top: 50px;
+      text-align: center;
     }
   }
 </style>
