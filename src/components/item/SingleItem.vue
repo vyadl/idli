@@ -8,6 +8,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
     ...mapGetters([
       'isItemFormInSidebar',
       'isSidebarOpen',
@@ -18,31 +21,43 @@ export default {
   created() {
     this._fetchItemById()
       .then(item => {
-        this.item = item;
-        this._fetchListById({ id: item.listId, cancelToken: null })
+        this[this.isLoggedIn 
+          ? '_fetchListById' 
+          : '_fetchPublicList'
+        ]({ id: item.listId, cancelToken: null })
           .then(() => {
+            this.item = item;
             this._setEdittingItemIndex(this.item);
+
+            if (this.isItemFormInSidebar) {
+              this._openSidebar('item');
+            } else {
+              this._switchItemFormLocation();
+              this._openSidebar('item');
+            }
+
+            this.$router.push({
+              query: { 
+                sidebar: 'item',
+                item: item.id,
+              },
+            });
+          })
+          .catch(error => {
+            console.log(error);
           });
-
-        if (this.isItemFormInSidebar) {
-          this._openSidebar('item');
-        } else {
-          this._switchItemFormLocation();
-          this._openSidebar('item');
-        }
-
-        this.$router.push({
-          query: { 
-            sidebar: 'item',
-            item: item.id,
-          },
-        });
       });
+
+    if (this.isLoggedIn) {
+      this._fetchListsForUser();
+    }
   },
   methods: {
     ...mapActions([
       '_fetchItemById',
       '_fetchListById',
+      '_fetchPublicList',
+      '_fetchListsForUser',
       '_openSidebar',
       '_closeSidebar',
       '_setEdittingItemIndex',

@@ -22,18 +22,28 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
     ...mapGetters([
       'isItemFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
       'isUsingHotkeys',
       'theme',
+      'isUserOwnsCurrentList',
+      'isPublicView',
     ]),
+    actionsWithItems() {
+      return this.isUserOwnsCurrentList && !this.isPublicView 
+        ? 'create and edit' 
+        : 'view';
+    },
   },
   methods: {
     ...mapActions([
       '_switchItemFormLocation',
-      '_switchFocusMode',
+      '_toggleFocusMode',
       '_switchSidebarAndListIntersection',
       '_switchUsingHotkeys',
       '_setTheme',
@@ -49,7 +59,7 @@ export default {
   >
     <div class="options-container">
       <CheckboxCustom
-        label="create and edit items inside the sidebar"
+        :label="`${actionsWithItems} items inside the sidebar`"
         style-type="classic"
         :value="false"
         :model-value="isItemFormInSidebar"
@@ -62,7 +72,7 @@ export default {
         :value="false"
         :model-value="isFocusOnList"
         name="isFocusOnList"
-        @change="_switchFocusMode"
+        @change="_toggleFocusMode"
       />
       <CheckboxCustom
         label="sidebar overlaps the list"
@@ -83,10 +93,22 @@ export default {
       <div class="hotkeys-desc">
         ESC - exit focus mode/hide modal <br>
         <template v-if="isUsingHotkeys">
-        I — new item <br>
-        L — new list <br>
-        E — edit current list <br>
-        R — randomize list <br>
+        I — new item 
+        <span v-if="!isUserOwnsCurrentList || isPublicView">
+          (not available now)
+        </span> <br>
+        E — edit current list 
+        <span v-if="!isUserOwnsCurrentList || isPublicView">
+          (not available now)
+        </span> <br>
+        L — new list
+        <span v-if="!isLoggedIn">
+          (not available now)
+        </span> <br>
+        R — randomize list
+        <span v-if="!isLoggedIn && $route.name === 'item'">
+          (not available now)
+        </span> <br>
         F — switch focus mode <br>
         S — show/hide sidebar
         </template>
@@ -106,7 +128,12 @@ export default {
         />
       </div>
     </SidebarCard>
-    <UserProfile />
+    <SidebarCard 
+      v-if="!isPublicView"
+      title="your profile"
+    >
+      <UserProfile />
+    </SidebarCard>
     <div class="about">
       <ButtonText
         style-type="underline"
@@ -124,14 +151,12 @@ export default {
       margin-bottom: 20px;
     }
     .buttons-container {
-      position: relative;
       display: flex;
-      flex-wrap: wrap;
-      width: 100%;
+      justify-content: center;
       margin-bottom: 50px;
     }
     .about {
-      padding-top: 70px;
+      padding-top: 50px;
       text-align: center;
     }
     .hotkeys-desc {

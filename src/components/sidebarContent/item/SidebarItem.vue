@@ -16,7 +16,20 @@ export default {
   computed: {
     ...mapGetters([
       'edittingItemObj',
+      'isUserOwnsCurrentList',
+      'isPublicView',
     ]),
+    title() {
+      let title = '';
+
+      if (this.isUserOwnsCurrentList && !this.isPublicView) {
+        title = this.edittingItemObj?.id ? 'edit item' : 'new item';
+      } else {
+        title = 'item info';
+      }
+
+      return title;
+    },
   },
   methods: {
     ...mapActions([
@@ -33,16 +46,17 @@ export default {
   <SidebarCard
     v-if="edittingItemObj"
     class="sidebar-item"
-    :title="edittingItemObj.id ? 'edit item' : 'new item'"
+    :title="title"
   >
     <ItemForm @scroll-sidebar-to-top="scrollSidebarToTop" />
   </SidebarCard>
   <div v-else>
+    <InfoMessage message="choose item from the list to see it here" />
     <ButtonText
-      text="add new item"
+      v-if="isUserOwnsCurrentList && !isPublicView"
+      text="or add new one"
       style-type="underline"
       @click="_addNewItemPlaceholder"
     />
-    <InfoMessage message="or choose one from the list" />
   </div>
 </template>

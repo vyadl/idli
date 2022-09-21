@@ -51,21 +51,21 @@ export default {
         this.listRequests.forEach(request => {
           request.cancel();
         });
-        this.decreaseExplicitRequestsNumber();
       }
 
       const source = this.$config.axios.CancelToken.source();
 
       this.listRequests.push(source);
       this._fetchListById({ id, cancelToken: source.token })
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           const index = this.listRequests.findIndex(request => request === source);
 
           this.listRequests.splice(index, 1);
           this.isRequestProcessing = false;
         });
-      
-      this._resetCustomView();
     },
   },
 };

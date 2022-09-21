@@ -1,7 +1,7 @@
 import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { addQueryItems } from '@/router/utils'; // eslint-disable-line import/no-cycle
-import { dispatchFromRoot, commitFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
+import { commitFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
 export default {
   async _signUp(state, user) {
@@ -24,7 +24,6 @@ export default {
       router.push({ name: 'home', query: { sidebar: 'lists' } });
       localStorage.setItem('user', JSON.stringify(responseUser));
       setAccessToken(responseUser.accessToken);
-      dispatchFromRoot('_fetchListsForUser');
     } catch (error) {
       localStorage.removeItem('user');
 

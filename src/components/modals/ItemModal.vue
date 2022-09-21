@@ -11,7 +11,20 @@ export default {
   computed: {
     ...mapGetters([
       'edittingItemObj',
+      'isUserOwnsCurrentList',
+      'isPublicView',
     ]),
+    title() {
+      let title = '';
+
+      if (this.isUserOwnsCurrentList && !this.isPublicView) {
+        title = this.edittingItemObj?.id ? 'edit item' : 'new item';
+      } else {
+        title = 'item info';
+      }
+
+      return title;
+    },
   },
 };
 </script>
@@ -20,7 +33,7 @@ export default {
   <ModalBasic
     class="item-modal"
     name="itemModal"
-    :title="edittingItemObj?.id ? 'edit item' : 'new item'"
+    :title="title"
   >
     <ItemForm />
   </ModalBasic>

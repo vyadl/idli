@@ -12,6 +12,12 @@ export default {
   setCurrentListId(state, id) {
     state.currentListId = id;
   },
+  setCurrentListObj(state, list) {
+    state.currentListObj = list;
+  },
+  setCurrentListView(state, view) {
+    state.currentListView = view;
+  },
   addList(state, list) {
     state.lists.push(list);
   },
@@ -147,7 +153,7 @@ export default {
   switchItemFormLocation(state) {
     state.settings.isItemFormInSidebar = !state.settings.isItemFormInSidebar;
   },
-  switchFocusMode(state) {
+  toggleFocusMode(state) {
     state.settings.isFocusOnList = !state.settings.isFocusOnList;
   },
   switchSidebarAndListIntersection(state) {

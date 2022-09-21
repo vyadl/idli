@@ -27,4 +27,8 @@ export const defaultQueryValues = {
     default: false,
     queryName: 'with-details',
   },
+  currentListView: {
+    default: 'owner',
+    queryName: 'view',
+  },
 };

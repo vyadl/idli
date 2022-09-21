@@ -3,6 +3,8 @@ export default {
   testLists: [],
   currentListId: null,
   currentListItems: [],
+  currentListObj: null,
+  currentListView: 'owner',
   edittingListObj: null,
   filteredList: [],
   edittingItemIndex: null,

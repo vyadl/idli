@@ -9,6 +9,7 @@ export default {
   computed: {
     ...mapGetters({
       user: 'auth/user',
+      isLoggedIn: 'auth/isLoggedIn',
     }),
   },
   methods: {
@@ -21,37 +22,43 @@ export default {
 
 <template>
   <div class="user-profile">
-    <h1 class="profile-title">your profile</h1>
-    <div class="user-info">
+    <div v-if="isLoggedIn">
       <div class="info-field">
         username:  {{ user.username }}
       </div>
       <div class="info-field">
         e-mail:  {{ user.email }}
       </div>
+      <ButtonText
+        text="log out"
+        style-type="underline"
+        @click="_logOut"
+      />
     </div>
-    <ButtonText
-      text="log out"
-      style-type="underline"
-      @click="_logOut"
-    />
+    <div 
+      v-else
+      class="auth-options">
+      <span>you are not authorized.</span>
+      <div>
+        <router-link :to="{ name: 'auth', query: { sidebar: 'sign up' }}">
+          sign up
+        </router-link>
+        or
+        <router-link :to="{ name: 'auth', query: { sidebar: 'sign in' }}">
+          sign in
+        </router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="scss">
   .user-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 
-    .profile-title {
-      width: 100%;
-      margin-bottom: 15px;
+    .auth-options {
+      margin: 0 auto;
+      font-size: 12px;
       text-align: center;
-    }
-
-    .user-info {
-      margin-bottom: 15px;
     }
 
     .info-field {

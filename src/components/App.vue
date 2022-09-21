@@ -1,5 +1,10 @@
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { 
+  mapState, 
+  mapGetters, 
+  mapActions, 
+  mapMutations,
+} from 'vuex';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
@@ -18,12 +23,15 @@ export default {
     AppNotification,
   },
   computed: {
-    ...mapGetters({
-      notification: 'notification',
-      modalNameToShow: 'modalNameToShow',
-      explicitRequestsNumber: 'explicitRequestsNumber',
-      isLoggedIn: 'auth/isLoggedIn',
+    ...mapState({
+      sidebarMode: state => state.sidebar.mode,
     }),
+    ...mapGetters([
+      'notification',
+      'modalNameToShow',
+      'explicitRequestsNumber',
+      'isPublicView',
+    ]),
   },
   created() {
     checkAppVersion();
@@ -34,15 +42,16 @@ export default {
 
     initHotkeys();
 
-    if (this.isLoggedIn) {
-      setTimeout(this._fetchListsForUser, 500);
-    }
-
     const queryOptions = {
       sidebar: {
         callback: sidebar => {
           this.openSidebar();
           this.changeSidebarMode(sidebar);
+        },
+      },
+      view: {
+        callback: view => {
+          this.setCurrentListView(view);
         },
       },
     };
@@ -51,6 +60,11 @@ export default {
       () => this.$route.query,
       query => {
         handleQueryOnLoad(queryOptions, query);
+
+        if (this.isPublicView && this.sidebarMode === 'lists') {
+          this.changeSidebarMode('filters');
+          this._closeSidebar();
+        }
       },
     );
   },
@@ -65,10 +79,11 @@ export default {
     ...mapMutations([
       'openSidebar',
       'changeSidebarMode',
+      'setCurrentListView',
     ]),
     ...mapActions({
+      _closeSidebar: '_closeSidebar',
       _setUnitsFromLocalStorage: '_setUnitsFromLocalStorage',
-      _fetchListsForUser: '_fetchListsForUser',
       _fetchTestLists: '_fetchTestLists',
       _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
     }),

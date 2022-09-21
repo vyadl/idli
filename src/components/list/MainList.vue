@@ -31,9 +31,15 @@ export default {
       visualization: state => state.visualization,
       filters: state => state.filters,
     }),
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
     ...mapGetters([
+      'lists',
+      'currentListId',
       'currentListObj',
       'currentListItems',
+      'isUserOwnsCurrentList',
       'filteredList',
       'edittingItemObj',
       'sorting',
@@ -155,8 +161,18 @@ export default {
       },
     };
 
-    if (this.$route.params.id) {
-      this._fetchListById({ id: this.$route.params.id, cancelToken: null })
+    if (this.isLoggedIn && !this.lists.length) {
+      this._fetchListsForUser()
+        .then(() => {
+          if (this.$route.params.id) {
+            this._fetchListById({ id: this.$route.params.id, cancelToken: null })
+              .then(() => {
+                handleQueryOnLoad(queryOptions, this.$route.query);
+              });
+          }
+        });
+    } else if (this.$route.params.id) {
+      this._fetchPublicList({ id: this.$route.params.id, cancelToken: null })
         .then(() => {
           handleQueryOnLoad(queryOptions, this.$route.query);
         });
@@ -175,10 +191,13 @@ export default {
       'setEdittingItemIndex',
     ]),
     ...mapActions([
+      '_fetchListsForUser',
       '_fetchListById',
+      '_fetchPublicList',
       '_toggleShuffleTrigger',
       '_closeSidebar',
       '_filterList',
+      '_setUnitsFromLocalStorage',
     ]),
     getShuffledList(list) {
       if (!this.shuffledList) {
