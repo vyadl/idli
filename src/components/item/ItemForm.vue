@@ -63,28 +63,19 @@ export default {
       'currentListItems',
     ]),
     ...mapGetters([
-      'isUserOwnsCurrentList',
       'currentListTags',
       'currentListCategories',
       'edittingItemObj',
       'isItemFormInSidebar',
-      'isPublicView',
+      'isOwnerView',
     ]),
-    areTagsShown() {
-      const isAnyTagWithIdExist = this.currentListTags?.some(tag => tag.id);
-
-      return this.isUserOwnsCurrentList && !this.isPublicView
-        ? isAnyTagWithIdExist
-        : isAnyTagWithIdExist && this.edittingItemObj.tags.length;
+    isAnyTagWithIdExist() {
+      return this.currentListTags?.some(tag => tag.id);
     },
-    areCategoriesShown() {
-      const isAnyCategoryWithIdExist = this.currentListCategories?.some(category => category.id);
-
-      return this.isUserOwnsCurrentList && !this.isPublicView
-        ? isAnyCategoryWithIdExist
-        : isAnyCategoryWithIdExist && this.edittingItemObj.category;
+    isAnyCategoryWithIdExist() {
+      return this.currentListCategories?.some(category => category.id);
     },
-    areTagsAndCategoriesDisabled() {
+    areTextFieldsEmpty() {
       return !this.edittingItemObj.title && !this.edittingItemObj.details;
     },
   },
@@ -183,60 +174,51 @@ export default {
         :placeholder="edittingItemObj.temporaryId ? 'New item...' : ''"
         @update:modelValue="value => updateItemField('title', value)"
         ref="itemTitle"
-        :disabled="!isUserOwnsCurrentList || isPublicView"
       />
       <TextareaCustom
         label="details"
         :modelValue="edittingItemObj.details"
         @update:modelValue="value => updateItemField('details', value)"
-        :disabled="!isUserOwnsCurrentList || isPublicView"
       />
     </div>
-    <div
-      class="filters-container"
-      :class="{ indent: areTagsShown && areCategoriesShown }"
-      v-if="areTagsShown"
-    >
-      <h1 class="filters-title">tags:</h1>
-      <CheckboxCustom
-        v-for="tag in currentListTags"
-        v-show="isUserOwnsCurrentList && !isPublicView
-          ? tag.id 
-          : edittingItemObj.tags.includes(tag.id)"
-        :key="tag.id"
-        :label="tag.title"
-        :value="tag.id"
-        :modelValue="edittingItemObj.tags"
-        @update:modelValue="value => updateItemField('tags', value)"
-        name="tags"
-        :disabled="areTagsAndCategoriesDisabled || !isUserOwnsCurrentList || isPublicView"
-      />
+    <div class="list-filters">
+      <div
+        class="filters-container"
+        v-if="isAnyTagWithIdExist"
+      >
+        <h1 class="filters-title">tags:</h1>
+        <CheckboxCustom
+          v-for="tag in currentListTags"
+          v-show="(typeof tag.id) !== 'undefined'"
+          :key="tag.id"
+          :label="tag.title"
+          :value="tag.id"
+          :modelValue="edittingItemObj.tags"
+          @update:modelValue="value => updateItemField('tags', value)"
+          name="tags"
+          :disabled="areTextFieldsEmpty"
+        />
+      </div>
+      <div
+        class="filters-container"
+        v-if="isAnyCategoryWithIdExist"
+      >
+        <h1 class="filters-title">category:</h1>
+        <RadioCustom
+          v-for="category in currentListCategories"
+          v-show="(typeof category.id) !== 'undefined'"
+          :key="category.id"
+          :label="category.title"
+          :value="category.id"
+          :modelValue="edittingItemObj.category"
+          @update:modelValue="value => updateItemField('category', value)"
+          @click="disableCategory(category.id)"
+          name="category"
+          :disabled="areTextFieldsEmpty"
+        />
+      </div>
     </div>
-    <div
-      class="filters-container"
-      v-if="areCategoriesShown"
-    >
-      <h1 class="filters-title">category:</h1>
-      <RadioCustom
-        class="item-category"
-        v-for="category in currentListCategories"
-        v-show="isUserOwnsCurrentList && !isPublicView
-          ? category.id 
-          : category.id === edittingItemObj.category"
-        :key="category.id"
-        :label="category.title"
-        :value="category.id"
-        :modelValue="edittingItemObj.category"
-        @update:modelValue="value => updateItemField('category', value)"
-        @click="disableCategory(category.id)"
-        name="category"
-        :disabled="areTagsAndCategoriesDisabled || !isUserOwnsCurrentList || isPublicView"
-      />
-    </div>
-    <footer 
-      v-if="edittingItemObj && isUserOwnsCurrentList && !isPublicView"
-      class="footer"
-    >
+    <footer class="footer">
       <ButtonText
         :text="edittingItemObj.id ? 'delete item' : 'cancel'"
         style-type="underline"
@@ -252,24 +234,22 @@ export default {
     .text-fields {
       margin-bottom: 25px;
     }
+    
+    .list-filters {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .filters-container {
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
-
-      &.indent {
-        margin-bottom: 10px;
-      }
     }
 
     .filters-title {
       padding: 5px 10px 6px 0;
-    }
-
-    .item-category {
-      margin-right: 7px;
     }
 
     .footer {

@@ -8,3 +8,22 @@ export const defaultVisualization = {
   areItemDetailsShown: false,
   isItemsOrderReversed: false,
 };
+
+export const sidebarModesForViews = {
+  loggedInView: {
+    sidebarModes: ['filters', 'visualization', 'lists', 'settings', 'bin'],
+    defaultSidebarMode: 'lists',
+  },
+  authPageView: {
+    sidebarModes: ['sign up', 'sign in'],
+    defaultSidebarMode: 'sign in',
+  },
+  itemPublicView: {
+    sidebarModes: ['settings'],
+    defaultSidebarMode: 'settings',
+  },
+  listPublicView: {
+    sidebarModes: ['filters', 'visualization', 'settings'],
+    defaultSidebarMode: 'settings',
+  },
+};

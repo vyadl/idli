@@ -47,6 +47,9 @@ export default {
   setEdittingItemIndex(state, index) {
     state.edittingItemIndex = index;
   },
+  setCurrentSingleItem(state, item) {
+    state.currentSingleItem = item;
+  },
   updateItemFieldLocally(state, { field, value }) {
     state.currentListItems[state.edittingItemIndex][field] = value;
   },

@@ -7,6 +7,7 @@ export default {
   currentListView: 'owner',
   edittingListObj: null,
   filteredList: [],
+  currentSingleItem: null,
   edittingItemIndex: null,
   deletedLists: [],
   deletedItems: [],

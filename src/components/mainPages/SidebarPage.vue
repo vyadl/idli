@@ -9,6 +9,7 @@ import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
 import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
+import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -24,50 +25,35 @@ export default {
     ButtonText,
     ButtonSign,
   },
-  LOGGED_IN_DEFAULT_SIDEBAR: 'lists',
-  LOGGED_OUT_DEFAULT_SIDEBAR: 'sign in',
-  LOGGED_OUT_PUBLIC_SIDEBAR: 'settings',
   computed: {
-    ...mapGetters({
-      isUserOwnsCurrentList: 'isUserOwnsCurrentList',
-      currentListObj: 'currentListObj',
-      isItemFormInSidebar: 'isItemFormInSidebar',
-      isFocusOnList: 'isFocusOnList',
-      isSidebarOpen: 'isSidebarOpen',
-      sidebarMode: 'sidebarMode',
-      isLoggedIn: 'auth/isLoggedIn',
-      isPublicView: 'isPublicView',
-    }),
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
+    ...mapGetters([
+      'isUserOwnsCurrentList',
+      'currentListObj',
+      'isItemFormInSidebar',
+      'isFocusOnList',
+      'isSidebarOpen',
+      'sidebarMode',
+      'isPublicView',
+      'isOwnerView',
+      'currentSidebarView',
+    ]),
     sidebarModes() {
-      let modes = [];
-
-      if (this.isLoggedIn && !this.isPublicView) {
-        modes = ['filters', 'visualization', 'lists', 'settings', 'bin'];
-      } else if (this.$route.name === 'auth') {
-        modes = ['sign up', 'sign in'];
-      } else if (!this.isLoggedIn && this.$route.name === 'item') {
-        modes = ['settings'];
-      } else {
-        modes = ['filters', 'visualization', 'settings'];
-      }
-
-      return modes;
+      return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
+    },
+    isAddItemPossible() {
+      return this.isLoggedIn 
+        && this.currentListObj 
+        && !this.isFocusOnList 
+        && this.isOwnerView;
     },
   },
   mounted() {
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
-        let mode = '';
-        
-        if (!this.isLoggedIn && this.$route.name !== 'auth') {
-          mode = this.$options.LOGGED_OUT_PUBLIC_SIDEBAR;
-        } else if (!this.isLoggedIn) {
-          mode = this.$options.LOGGED_OUT_DEFAULT_SIDEBAR;
-        } else {
-          mode = this.sidebarMode ? this.sidebarMode : this.$options.LOGGED_IN_DEFAULT_SIDEBAR;
-        }
-
-        this._openSidebar(mode);
+        this._openSidebar(sidebarModesForViews[this.currentSidebarView]?.defaultSidebarMode);
       }
     });
   },
@@ -118,11 +104,7 @@ export default {
     ></div>
     <div
       class="add-item-button"
-      v-if="isLoggedIn 
-        && currentListObj 
-        && !isFocusOnList 
-        && isUserOwnsCurrentList 
-        && !isPublicView"
+      v-if="isAddItemPossible"
     >
       <ButtonSign
         style-type="plus"

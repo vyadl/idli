@@ -1,6 +1,7 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
+import ItemView from '@/components/item/ItemView.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapActions, mapGetters } from 'vuex';
@@ -9,6 +10,7 @@ export default {
   components: {
     SidebarCard,
     ItemForm,
+    ItemView,
     InfoMessage,
     ButtonText,
   },
@@ -16,20 +18,8 @@ export default {
   computed: {
     ...mapGetters([
       'edittingItemObj',
-      'isUserOwnsCurrentList',
-      'isPublicView',
+      'isOwnerView',
     ]),
-    title() {
-      let title = '';
-
-      if (this.isUserOwnsCurrentList && !this.isPublicView) {
-        title = this.edittingItemObj?.id ? 'edit item' : 'new item';
-      } else {
-        title = 'item info';
-      }
-
-      return title;
-    },
   },
   methods: {
     ...mapActions([
@@ -46,14 +36,17 @@ export default {
   <SidebarCard
     v-if="edittingItemObj"
     class="sidebar-item"
-    :title="title"
   >
-    <ItemForm @scroll-sidebar-to-top="scrollSidebarToTop" />
+    <ItemForm 
+      v-if="isOwnerView"
+      @scroll-sidebar-to-top="scrollSidebarToTop"
+    />
+    <ItemView v-else />
   </SidebarCard>
   <div v-else>
     <InfoMessage message="choose item from the list to see it here" />
     <ButtonText
-      v-if="isUserOwnsCurrentList && !isPublicView"
+      v-if="isOwnerView"
       text="or add new one"
       style-type="underline"
       @click="_addNewItemPlaceholder"

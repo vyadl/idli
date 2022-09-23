@@ -27,6 +27,9 @@ export default {
       'edittingListObj',
       'isUserOwnsCurrentList',
     ]),
+    isPublicViewButtonShown() {
+      return this.list && !this.list.isPrivate && this.edittingListObj;
+    },
   },
   watch: {
     edittingListObj: {
@@ -133,10 +136,9 @@ export default {
       }
     },
     openListPublicView(id) {
-      const { origin } = window.location;
-      const newPathname = `/list/${id}`;
-      const { search } = window.location;
-      const newUrl = (origin + newPathname + search).concat('&view=public');
+      const { href, search } = window.location;
+      const newUrl = new URL(`/list/${id}`, href);
+      newUrl.search = `${search}&view=public`;
 
       window.open(newUrl, '_blank');
     },
@@ -186,9 +188,9 @@ export default {
         :disabled="isRequestProcessing"
       />
       <ButtonText
-        v-if="!list?.isPrivate && edittingListObj"
+        v-if="isPublicViewButtonShown"
         text="check how others will see your list"
-        styleType="underline"
+        style-type="underline"
         small
         @click="openListPublicView(list.id)"
       />
@@ -265,9 +267,7 @@ export default {
     >
       total items: {{ list.items.length }}
     </div>
-    <footer 
-      class="footer"
-    >
+    <footer class="footer">
       <div>
         <ButtonText
           class="modal-button"

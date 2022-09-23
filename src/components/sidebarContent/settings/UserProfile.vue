@@ -7,15 +7,15 @@ export default {
     ButtonText,
   },
   computed: {
-    ...mapGetters({
-      user: 'auth/user',
-      isLoggedIn: 'auth/isLoggedIn',
-    }),
+    ...mapGetters('auth', [
+      'user',
+      'isLoggedIn',
+    ]),
   },
   methods: {
-    ...mapActions({
-      _logOut: 'auth/_logOut',
-    }),
+    ...mapActions('auth', [
+      '_logOut',
+    ]),
   },
 };
 </script>
@@ -37,7 +37,8 @@ export default {
     </div>
     <div 
       v-else
-      class="auth-options">
+      class="auth-options"
+    >
       <span>you are not authorized.</span>
       <div>
         <router-link :to="{ name: 'auth', query: { sidebar: 'sign up' }}">

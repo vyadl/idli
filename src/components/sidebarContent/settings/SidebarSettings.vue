@@ -19,6 +19,7 @@ export default {
   data() {
     return {
       themeTitles: ['default', 'inverted'],
+      letterHotkeys: {},
     };
   },
   computed: {
@@ -31,14 +32,41 @@ export default {
       'isListUnderSidebar',
       'isUsingHotkeys',
       'theme',
-      'isUserOwnsCurrentList',
       'isPublicView',
+      'isOwnerView',
+      'itemPublicView',
     ]),
-    actionsWithItems() {
-      return this.isUserOwnsCurrentList && !this.isPublicView 
-        ? 'create and edit' 
-        : 'view';
+    sidebarActionsWithItems() {
+      return this.isOwnerView
+        ? 'create and edit items inside the sidebar' 
+        : 'view items inside the sidebar';
     },
+  },
+  created() {
+    this.letterHotkeys = {
+      I: {
+        desription: 'I — new item ',
+        notAvailable: !this.isOwnerView,
+      },
+      E: {
+        desription: 'E — edit current list',
+        notAvailable: !this.isOwnerView,
+      },
+      L: {
+        desription: 'L — new list',
+        notAvailable: !this.isLoggedIn,
+      },
+      R: {
+        desription: 'R — randomize list',
+        notAvailable: this.itemPublicView,
+      },
+      F: {
+        desription: 'F — switch focus mode',
+      },
+      S: {
+        desription: 'S — show/hide sidebar',
+      },
+    };
   },
   methods: {
     ...mapActions([
@@ -59,7 +87,7 @@ export default {
   >
     <div class="options-container">
       <CheckboxCustom
-        :label="`${actionsWithItems} items inside the sidebar`"
+        :label="sidebarActionsWithItems"
         style-type="classic"
         :value="false"
         :model-value="isItemFormInSidebar"
@@ -93,24 +121,15 @@ export default {
       <div class="hotkeys-desc">
         ESC - exit focus mode/hide modal <br>
         <template v-if="isUsingHotkeys">
-        I — new item 
-        <span v-if="!isUserOwnsCurrentList || isPublicView">
-          (not available now)
-        </span> <br>
-        E — edit current list 
-        <span v-if="!isUserOwnsCurrentList || isPublicView">
-          (not available now)
-        </span> <br>
-        L — new list
-        <span v-if="!isLoggedIn">
-          (not available now)
-        </span> <br>
-        R — randomize list
-        <span v-if="!isLoggedIn && $route.name === 'item'">
-          (not available now)
-        </span> <br>
-        F — switch focus mode <br>
-        S — show/hide sidebar
+          <div 
+            v-for="hotkey in letterHotkeys"
+            :key="hotkey"
+          >
+            {{ hotkey.desription }}
+            <span v-show="hotkey.notAvailable">
+              (not available now)
+            </span>
+          </div>
         </template>
       </div>
     </div>
@@ -128,7 +147,7 @@ export default {
         />
       </div>
     </SidebarCard>
-    <SidebarCard 
+    <SidebarCard
       v-if="!isPublicView"
       title="your profile"
     >

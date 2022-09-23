@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 
 import state from './state';
-import mutations from './mutations';
+import mutations from './mutations'; // eslint-disable-line import/no-cycle
 import actions from './actions'; // eslint-disable-line import/no-cycle
 import getters from './getters';
 import auth from './auth'; // eslint-disable-line import/no-cycle

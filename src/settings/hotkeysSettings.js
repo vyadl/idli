@@ -67,7 +67,9 @@ function createNewList() {
 }
 
 function editCurrentList() {
-  if (store.getters.currentListObj && store.getters.isUserOwnsCurrentList) {
+  const { currentListObj, isUserOwnsCurrentList } = store.getters;
+
+  if (currentListObj && isUserOwnsCurrentList) {
     store.dispatch('_setListForEditting', store.getters.currentListObj);
     store.dispatch('_setModalNameToShow', 'listModal');
   }

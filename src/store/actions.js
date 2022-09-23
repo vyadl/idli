@@ -93,6 +93,7 @@ export default {
       });
   },
   _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
+    commit('increaseExplicitRequestsNumber');
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj?.items?.length) {
@@ -119,7 +120,10 @@ export default {
           dispatch('_setCurrentListId', null);
         }
 
-        throw error;
+        console.log(error);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -274,7 +278,9 @@ export default {
         `${this.$config.apiBasePath}item/${router.currentRoute._value.params.id}`,
         { cancelToken: null },
       )
-      .then(({ data }) => data)
+      .then(({ data }) => {
+        commit('setCurrentSingleItem', data);
+      })
       .catch(error => {
         console.log(error);
       })
@@ -282,7 +288,7 @@ export default {
         commit('decreaseExplicitRequestsNumber');
       });
   },
-  _setEdittingItemIndex({ state, commit }, targetItem) {
+  _findAndSetEdittingItemIndex({ state, commit }, targetItem) {
     let itemIndex = null;
 
     function compareItemsById(item1, item2) {
@@ -312,7 +318,7 @@ export default {
     };
 
     commit('addItem', itemWithTemporaryId);
-    dispatch('_setEdittingItemIndex', itemWithTemporaryId);
+    dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
   },
   _addItemOnServer({ commit, getters, dispatch }, { item, cancelToken }) {
     const listId = getters.currentListObj.id;

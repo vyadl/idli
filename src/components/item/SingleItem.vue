@@ -1,5 +1,5 @@
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
   data() {
@@ -16,43 +16,49 @@ export default {
       'isSidebarOpen',
       'isListUnderSidebar',
       'edittingItemObj',
+      'currentSingleItem',
     ]),
   },
-  created() {
-    this._fetchItemById()
-      .then(item => {
-        this[this.isLoggedIn 
-          ? '_fetchListById' 
-          : '_fetchPublicList'
-        ]({ id: item.listId, cancelToken: null })
-          .then(() => {
-            this.item = item;
-            this._setEdittingItemIndex(this.item);
+  async created() {
+    try {
+      await this._fetchItemById();
 
-            if (this.isItemFormInSidebar) {
-              this._openSidebar('item');
-            } else {
-              this._switchItemFormLocation();
-              this._openSidebar('item');
-            }
-
-            this.$router.push({
-              query: { 
-                sidebar: 'item',
-                item: item.id,
-              },
-            });
-          })
-          .catch(error => {
-            console.log(error);
-          });
+      await this[this.isLoggedIn ? '_fetchListById' : '_fetchPublicList']({ 
+        id: this.currentSingleItem.listId, 
+        cancelToken: null,
       });
+
+      this.item = this.currentSingleItem;
+      this._findAndSetEdittingItemIndex(this.item);
+
+      if (this.isItemFormInSidebar) {
+        this._openSidebar('item');
+      } else {
+        this._switchItemFormLocation();
+        this._openSidebar('item');
+      }
+
+      this.$router.push({
+        query: { 
+          sidebar: 'item',
+          item: this.currentSingleItem.id,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
     if (this.isLoggedIn) {
       this._fetchListsForUser();
     }
   },
+  unmounted() {
+    this.setCurrentSingleItem(null);
+  },
   methods: {
+    ...mapMutations([
+      'setCurrentSingleItem',
+    ]),
     ...mapActions([
       '_fetchItemById',
       '_fetchListById',
@@ -60,11 +66,11 @@ export default {
       '_fetchListsForUser',
       '_openSidebar',
       '_closeSidebar',
-      '_setEdittingItemIndex',
+      '_findAndSetEdittingItemIndex',
       '_switchItemFormLocation',
     ]),
     setItemForEditting() {
-      this._setEdittingItemIndex(this.item);
+      this._findAndSetEdittingItemIndex(this.item);
 
       this.isItemFormInSidebar
         ? this._openSidebar('item')

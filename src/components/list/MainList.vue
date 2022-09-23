@@ -121,7 +121,7 @@ export default {
       deep: true,
     },
   },
-  created() {
+  async created() {
     this.setArrowHotkeys();
 
     this.sortingOptions = {
@@ -161,21 +161,21 @@ export default {
       },
     };
 
-    if (this.isLoggedIn && !this.lists.length) {
-      this._fetchListsForUser()
-        .then(() => {
-          if (this.$route.params.id) {
-            this._fetchListById({ id: this.$route.params.id, cancelToken: null })
-              .then(() => {
-                handleQueryOnLoad(queryOptions, this.$route.query);
-              });
-          }
-        });
-    } else if (this.$route.params.id) {
-      this._fetchPublicList({ id: this.$route.params.id, cancelToken: null })
-        .then(() => {
-          handleQueryOnLoad(queryOptions, this.$route.query);
-        });
+    try {
+      if (this.isLoggedIn && !this.lists.length) {
+        await this._fetchListsForUser();
+
+        if (this.$route.params.id) {
+          await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+        }
+      } else if (this.$route.params.id) {
+        await this._fetchPublicList({ id: this.$route.params.id, cancelToken: null });
+      }
+
+      handleQueryOnLoad(queryOptions, this.$route.query);
+    } catch (error) {
+      console.log(error);
+      this._closeSidebar();
     }
   },
   methods: {

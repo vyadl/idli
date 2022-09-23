@@ -1,30 +1,19 @@
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
+import ItemView from '@/components/item/ItemView.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     ModalBasic,
     ItemForm,
+    ItemView,
   },
   computed: {
     ...mapGetters([
-      'edittingItemObj',
-      'isUserOwnsCurrentList',
-      'isPublicView',
+      'isOwnerView',
     ]),
-    title() {
-      let title = '';
-
-      if (this.isUserOwnsCurrentList && !this.isPublicView) {
-        title = this.edittingItemObj?.id ? 'edit item' : 'new item';
-      } else {
-        title = 'item info';
-      }
-
-      return title;
-    },
   },
 };
 </script>
@@ -33,8 +22,8 @@ export default {
   <ModalBasic
     class="item-modal"
     name="itemModal"
-    :title="title"
   >
-    <ItemForm />
+    <ItemForm v-if=isOwnerView />
+    <ItemView v-else />
   </ModalBasic>
 </template>

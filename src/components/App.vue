@@ -1,10 +1,5 @@
 <script>
-import { 
-  mapState, 
-  mapGetters, 
-  mapActions, 
-  mapMutations,
-} from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
@@ -23,14 +18,12 @@ export default {
     AppNotification,
   },
   computed: {
-    ...mapState({
-      sidebarMode: state => state.sidebar.mode,
-    }),
     ...mapGetters([
       'notification',
       'modalNameToShow',
       'explicitRequestsNumber',
       'isPublicView',
+      'sidebarMode',
     ]),
   },
   created() {
