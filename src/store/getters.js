@@ -47,9 +47,13 @@ export default {
     && !state.currentListItems.length,
   itemPublicView: (state, getters) => !getters['auth/isLoggedIn'] 
     && getters.currentSingleItem,
-  listPublicView: (state, getters) => (!getters['auth/isLoggedIn'] 
-    && getters.currentListItems.length)
-    || (getters['auth/isLoggedIn'] && getters.isPublicView),
+  listPublicView: (state, getters) => (
+    !getters['auth/isLoggedIn'] 
+    && getters.currentListItems.length
+  ) || (
+    getters['auth/isLoggedIn'] 
+    && getters.isPublicView
+  ),
   currentSidebarView: (state, getters) => {
     const sidebarPossibleViews = {
       loggedInView: getters.loggedInView,

@@ -138,6 +138,7 @@ export default {
     openListPublicView(id) {
       const { href, search } = window.location;
       const newUrl = new URL(`/list/${id}`, href);
+      
       newUrl.search = `${search}&view=public`;
 
       window.open(newUrl, '_blank');

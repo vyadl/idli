@@ -53,7 +53,7 @@ export default {
   mounted() {
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
-        this._openSidebar(sidebarModesForViews[this.currentSidebarView]?.defaultSidebarMode);
+        this._openSidebar(sidebarModesForViews[this.currentSidebarView]?.default);
       }
     });
   },

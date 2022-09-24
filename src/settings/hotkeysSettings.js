@@ -1,4 +1,5 @@
 import store from '@/store';
+import { sidebarModesForViews } from '@/store/config';
 import { router } from '@/router';
 
 const pressedKeys = new Set();
@@ -96,9 +97,11 @@ function switchSidebarMode() {
   let mode = ''; 
   
   if (store.getters['auth/isLoggedIn']) {
-    mode = store.getters.sidebarMode || 'lists';
+    mode = store.getters.sidebarMode || sidebarModesForViews.loggedInView.default;
   } else {
-    mode = router.currentRoute._value.name === 'auth' ? 'sign in' : 'settings';
+    mode = sidebarModesForViews[
+      router.currentRoute._value.name === 'auth' ? 'authPageView' : 'listPublicView'
+    ].default;
   }
  
   store.getters.isSidebarOpen

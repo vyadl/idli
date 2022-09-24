@@ -12,18 +12,18 @@ export const defaultVisualization = {
 export const sidebarModesForViews = {
   loggedInView: {
     sidebarModes: ['filters', 'visualization', 'lists', 'settings', 'bin'],
-    defaultSidebarMode: 'lists',
+    default: 'lists',
   },
   authPageView: {
     sidebarModes: ['sign up', 'sign in'],
-    defaultSidebarMode: 'sign in',
+    default: 'sign in',
   },
   itemPublicView: {
     sidebarModes: ['settings'],
-    defaultSidebarMode: 'settings',
+    default: 'settings',
   },
   listPublicView: {
     sidebarModes: ['filters', 'visualization', 'settings'],
-    defaultSidebarMode: 'settings',
+    default: 'settings',
   },
 };

@@ -19,7 +19,6 @@ export default {
   data() {
     return {
       themeTitles: ['default', 'inverted'],
-      letterHotkeys: {},
     };
   },
   computed: {
@@ -41,32 +40,32 @@ export default {
         ? 'create and edit items inside the sidebar' 
         : 'view items inside the sidebar';
     },
-  },
-  created() {
-    this.letterHotkeys = {
-      I: {
-        desription: 'I — new item ',
-        notAvailable: !this.isOwnerView,
-      },
-      E: {
-        desription: 'E — edit current list',
-        notAvailable: !this.isOwnerView,
-      },
-      L: {
-        desription: 'L — new list',
-        notAvailable: !this.isLoggedIn,
-      },
-      R: {
-        desription: 'R — randomize list',
-        notAvailable: this.itemPublicView,
-      },
-      F: {
-        desription: 'F — switch focus mode',
-      },
-      S: {
-        desription: 'S — show/hide sidebar',
-      },
-    };
+    letterHotkeys() {
+      return {
+        I: {
+          desription: 'I — new item ',
+          notAvailable: !this.isOwnerView,
+        },
+        E: {
+          desription: 'E — edit current list',
+          notAvailable: !this.isOwnerView,
+        },
+        L: {
+          desription: 'L — new list',
+          notAvailable: !this.isLoggedIn,
+        },
+        R: {
+          desription: 'R — randomize list',
+          notAvailable: this.itemPublicView,
+        },
+        F: {
+          desription: 'F — switch focus mode',
+        },
+        S: {
+          desription: 'S — show/hide sidebar',
+        },
+      };
+    },
   },
   methods: {
     ...mapActions([
