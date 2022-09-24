@@ -25,7 +25,11 @@ export default {
     ...mapGetters([
       'lists',
       'edittingListObj',
+      'isUserOwnsCurrentList',
     ]),
+    isPublicViewButtonShown() {
+      return this.list && !this.list.isPrivate && this.edittingListObj;
+    },
   },
   watch: {
     edittingListObj: {
@@ -131,6 +135,14 @@ export default {
           });
       }
     },
+    openListPublicView(id) {
+      const { href, search } = window.location;
+      const newUrl = new URL(`/list/${id}`, href);
+      
+      newUrl.search = `${search}&view=public`;
+
+      window.open(newUrl, '_blank');
+    },
     async deleteList() {
       const confirmationModalTitle = `are you sure you want to delete list  
         '${this.edittingListObj?.title}' ?`;
@@ -169,15 +181,19 @@ export default {
       required
       ref="listTitle"
     />
-    <div
-      class="private-option"
-      v-if="false"
-    >
+    <div class="private-option">
       <CheckboxCustom
         label="private"
         style-type="classic"
         v-model="list.isPrivate"
         :disabled="isRequestProcessing"
+      />
+      <ButtonText
+        v-if="isPublicViewButtonShown"
+        text="check how others will see your list"
+        style-type="underline"
+        small
+        @click="openListPublicView(list.id)"
       />
     </div>
     <div class="filters-container">
@@ -247,7 +263,7 @@ export default {
       :message="errorMessage"
     />
     <div 
-      v-if="list?.items?.length"
+      v-if="list?.createdAt"
       class="total-items"
     >
       total items: {{ list.items.length }}

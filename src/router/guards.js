@@ -10,6 +10,6 @@ export function beforeEach(router) {
 
     if (isRedirectToAuthNeeded) {
       return { name: 'auth' };
-    } 
+    }
   });
 }

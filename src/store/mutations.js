@@ -12,6 +12,12 @@ export default {
   setCurrentListId(state, id) {
     state.currentListId = id;
   },
+  setCurrentListObj(state, list) {
+    state.currentListObj = list;
+  },
+  setCurrentListView(state, view) {
+    state.currentListView = view;
+  },
   addList(state, list) {
     state.lists.push(list);
   },
@@ -40,6 +46,9 @@ export default {
   },
   setEdittingItemIndex(state, index) {
     state.edittingItemIndex = index;
+  },
+  setCurrentSingleItem(state, item) {
+    state.currentSingleItem = item;
   },
   updateItemFieldLocally(state, { field, value }) {
     state.currentListItems[state.edittingItemIndex][field] = value;
@@ -147,7 +156,7 @@ export default {
   switchItemFormLocation(state) {
     state.settings.isItemFormInSidebar = !state.settings.isItemFormInSidebar;
   },
-  switchFocusMode(state) {
+  toggleFocusMode(state) {
     state.settings.isFocusOnList = !state.settings.isFocusOnList;
   },
   switchSidebarAndListIntersection(state) {

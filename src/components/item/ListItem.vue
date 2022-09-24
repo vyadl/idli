@@ -58,10 +58,10 @@ export default {
   methods: {
     ...mapActions([
       '_openSidebar',
-      '_setEdittingItemIndex',
+      '_findAndSetEdittingItemIndex',
     ]),
     setItemForEditting() {
-      this._setEdittingItemIndex(this.item);
+      this._findAndSetEdittingItemIndex(this.item);
 
       this.isItemFormInSidebar
         ? this._openSidebar('item')

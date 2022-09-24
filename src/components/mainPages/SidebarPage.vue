@@ -9,6 +9,7 @@ import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
 import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
+import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
@@ -24,35 +25,35 @@ export default {
     ButtonText,
     ButtonSign,
   },
-  LOGGED_IN_DEFAULT_SIDEBAR: 'lists',
-  LOGGED_OUT_DEFAULT_SIDEBAR: 'sign in',
   computed: {
-    ...mapGetters({
-      currentListObj: 'currentListObj',
-      isItemFormInSidebar: 'isItemFormInSidebar',
-      isFocusOnList: 'isFocusOnList',
-      isSidebarOpen: 'isSidebarOpen',
-      sidebarMode: 'sidebarMode',
-      isLoggedIn: 'auth/isLoggedIn',
-    }),
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
+    ...mapGetters([
+      'isUserOwnsCurrentList',
+      'currentListObj',
+      'isItemFormInSidebar',
+      'isFocusOnList',
+      'isSidebarOpen',
+      'sidebarMode',
+      'isPublicView',
+      'isOwnerView',
+      'currentSidebarView',
+    ]),
     sidebarModes() {
-      return this.isLoggedIn
-        ? ['filters', 'visualization', 'lists', 'settings', 'bin']
-        : ['sign up', 'sign in'];
+      return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
+    },
+    isAddItemPossible() {
+      return this.isLoggedIn 
+        && this.currentListObj 
+        && !this.isFocusOnList 
+        && this.isOwnerView;
     },
   },
   mounted() {
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
-        let mode = '';
-
-        if (!this.isLoggedIn) {
-          mode = this.$options.LOGGED_OUT_DEFAULT_SIDEBAR;
-        } else {
-          mode = this.sidebarMode ? this.sidebarMode : this.$options.LOGGED_IN_DEFAULT_SIDEBAR;
-        }
-
-        this._openSidebar(mode);
+        this._openSidebar(sidebarModesForViews[this.currentSidebarView]?.default);
       }
     });
   },
@@ -61,9 +62,13 @@ export default {
       '_addNewItemPlaceholder',
       '_openSidebar',
       '_closeSidebar',
+      '_setCurrentListView',
     ]),
     openItemModal() {
       this.$vfm.show('itemModal');
+    },
+    exitPublicView() {
+      this._setCurrentListView('owner');
     },
     changeSidebarState() {
       this.isSidebarOpen
@@ -99,7 +104,7 @@ export default {
     ></div>
     <div
       class="add-item-button"
-      v-if="isLoggedIn && currentListObj && !isFocusOnList"
+      v-if="isAddItemPossible"
     >
       <ButtonSign
         style-type="plus"
@@ -107,6 +112,28 @@ export default {
         title="new item"
         @click="createNewItem"
       />
+    </div>
+    <div
+      v-if="isPublicView"
+      class="exit-public-view-button"
+    >
+      <ButtonText
+        text="back to profile"
+        style-type="underline"
+        @click="exitPublicView"
+      />
+    </div>
+    <div
+      v-if="!isLoggedIn && $route.name !== 'auth'"
+      class="auth-buttons"
+    >
+      <router-link :to="{ name: 'auth', query: { sidebar: 'sign up' }}">
+        sign up
+      </router-link>
+      or
+      <router-link :to="{ name: 'auth', query: { sidebar: 'sign in' }}">
+        sign in
+      </router-link>
     </div>
     <div class="sidebar-buttons">
       <div class="mode-buttons">
@@ -182,6 +209,13 @@ export default {
       height: 100vh;
       width: 1px;
       left: -1px;
+    }
+
+    .exit-public-view-button,
+    .auth-buttons {
+      position: fixed;
+      top: 10px;
+      transform: translateX(-100%) translateX(-20px);
     }
 
     .sidebar-content {

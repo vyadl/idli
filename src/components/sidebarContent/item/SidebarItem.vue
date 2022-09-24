@@ -1,6 +1,7 @@
 <script>
 import SidebarCard from '@/components/wrappers/SidebarCard.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
+import ItemView from '@/components/item/ItemView.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapActions, mapGetters } from 'vuex';
@@ -9,6 +10,7 @@ export default {
   components: {
     SidebarCard,
     ItemForm,
+    ItemView,
     InfoMessage,
     ButtonText,
   },
@@ -16,6 +18,7 @@ export default {
   computed: {
     ...mapGetters([
       'edittingItemObj',
+      'isOwnerView',
     ]),
   },
   methods: {
@@ -33,16 +36,20 @@ export default {
   <SidebarCard
     v-if="edittingItemObj"
     class="sidebar-item"
-    :title="edittingItemObj.id ? 'edit item' : 'new item'"
   >
-    <ItemForm @scroll-sidebar-to-top="scrollSidebarToTop" />
+    <ItemForm 
+      v-if="isOwnerView"
+      @scroll-sidebar-to-top="scrollSidebarToTop"
+    />
+    <ItemView v-else />
   </SidebarCard>
   <div v-else>
+    <InfoMessage message="choose item from the list to see it here" />
     <ButtonText
-      text="add new item"
+      v-if="isOwnerView"
+      text="or add new one"
       style-type="underline"
       @click="_addNewItemPlaceholder"
     />
-    <InfoMessage message="or choose one from the list" />
   </div>
 </template>

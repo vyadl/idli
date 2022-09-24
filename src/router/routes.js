@@ -19,12 +19,12 @@ export const routes = [
       isLoginRequired: false,
     },
   },
-  { 
+  {
     path: '/list/:id',
     name: 'list',
     component: MainList,
     meta: {
-      isLoginRequired: true,
+      isLoginRequired: false,
     },
   },
   { 
@@ -32,7 +32,7 @@ export const routes = [
     name: 'item',
     component: SingleItem,
     meta: {
-      isLoginRequired: true,
+      isLoginRequired: false,
     },
   },
 ];

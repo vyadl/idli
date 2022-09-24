@@ -67,6 +67,7 @@ export default {
       'currentListCategories',
       'edittingItemObj',
       'isItemFormInSidebar',
+      'isOwnerView',
     ]),
     isAnyTagWithIdExist() {
       return this.currentListTags?.some(tag => tag.id);
@@ -74,7 +75,7 @@ export default {
     isAnyCategoryWithIdExist() {
       return this.currentListCategories?.some(category => category.id);
     },
-    areTagsAndCategoriesDisabled() {
+    areTextFieldsEmpty() {
       return !this.edittingItemObj.title && !this.edittingItemObj.details;
     },
   },
@@ -180,46 +181,45 @@ export default {
         @update:modelValue="value => updateItemField('details', value)"
       />
     </div>
-    <div
-      class="filters-container"
-      :class="{ indent: isAnyTagWithIdExist && isAnyCategoryWithIdExist }"
-      v-if="isAnyTagWithIdExist"
-    >
-      <h1 class="filters-title">tags:</h1>
-      <CheckboxCustom
-        v-for="tag in currentListTags"
-        v-show="tag.id"
-        :key="tag.id"
-        :label="tag.title"
-        :value="tag.id"
-        :modelValue="edittingItemObj.tags"
-        @update:modelValue="value => updateItemField('tags', value)"
-        name="tags"
-        :disabled="areTagsAndCategoriesDisabled"
-      />
-    </div>
-    <div
-      class="filters-container"
-      v-if="isAnyCategoryWithIdExist"
-    >
-      <h1 class="filters-title">category:</h1>
-      <RadioCustom
-        class="item-category"
-        v-for="category in currentListCategories"
-        v-show="category.id"
-        :key="category.id"
-        :label="category.title"
-        :value="category.id"
-        :modelValue="edittingItemObj.category"
-        @update:modelValue="value => updateItemField('category', value)"
-        @click="disableCategory(category.id)"
-        name="category"
-        :disabled="areTagsAndCategoriesDisabled"
-      />
+    <div class="list-filters">
+      <div
+        class="filters-container"
+        v-if="isAnyTagWithIdExist"
+      >
+        <h1 class="filters-title">tags:</h1>
+        <CheckboxCustom
+          v-for="tag in currentListTags"
+          v-show="(typeof tag.id) !== 'undefined'"
+          :key="tag.id"
+          :label="tag.title"
+          :value="tag.id"
+          :modelValue="edittingItemObj.tags"
+          @update:modelValue="value => updateItemField('tags', value)"
+          name="tags"
+          :disabled="areTextFieldsEmpty"
+        />
+      </div>
+      <div
+        class="filters-container"
+        v-if="isAnyCategoryWithIdExist"
+      >
+        <h1 class="filters-title">category:</h1>
+        <RadioCustom
+          v-for="category in currentListCategories"
+          v-show="(typeof category.id) !== 'undefined'"
+          :key="category.id"
+          :label="category.title"
+          :value="category.id"
+          :modelValue="edittingItemObj.category"
+          @update:modelValue="value => updateItemField('category', value)"
+          @click="disableCategory(category.id)"
+          name="category"
+          :disabled="areTextFieldsEmpty"
+        />
+      </div>
     </div>
     <footer class="footer">
       <ButtonText
-        v-if="edittingItemObj"
         :text="edittingItemObj.id ? 'delete item' : 'cancel'"
         style-type="underline"
         :small="isItemFormInSidebar"
@@ -234,24 +234,22 @@ export default {
     .text-fields {
       margin-bottom: 25px;
     }
+    
+    .list-filters {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .filters-container {
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
-
-      &.indent {
-        margin-bottom: 10px;
-      }
     }
 
     .filters-title {
       padding: 5px 10px 6px 0;
-    }
-
-    .item-category {
-      margin-right: 7px;
     }
 
     .footer {

@@ -1,4 +1,6 @@
-import store from '@/store/index';
+import store from '@/store';
+import { sidebarModesForViews } from '@/store/config';
+import { router } from '@/router';
 
 const pressedKeys = new Set();
 
@@ -21,7 +23,6 @@ export function initHotkeys() {
     if (
       !event.target.closest('input[type=text]')
       && !event.target.closest('textarea')
-      && store.getters['auth/isLoggedIn']
       && store.getters.settings.isUsingHotkeys
       && pressedKeys.size === 1
     ) {
@@ -39,7 +40,7 @@ export function initHotkeys() {
           randomizeList();
           break;
         case 'KeyF':
-          switchFocusMode();
+          toggleFocusMode();
           break;
         case 'KeyS':
           switchSidebarMode();
@@ -53,39 +54,57 @@ export function initHotkeys() {
 }
 
 function createNewItem() {
-  store.getters.isItemFormInSidebar
-    ? store.dispatch('_openSidebar', 'item')
-    : store.dispatch('_setModalNameToShow', 'itemModal');
+  if (store.getters.isUserOwnsCurrentList) {
+    store.getters.isItemFormInSidebar
+      ? store.dispatch('_openSidebar', 'item')
+      : store.dispatch('_setModalNameToShow', 'itemModal');
+  }
 }
 
 function createNewList() {
-  store.dispatch('_setModalNameToShow', 'listModal');
+  if (store.getters['auth/isLoggedIn']) {
+    store.dispatch('_setModalNameToShow', 'listModal');
+  }
 }
 
 function editCurrentList() {
-  if (store.getters.currentListObj) {
+  const { currentListObj, isUserOwnsCurrentList } = store.getters;
+
+  if (currentListObj && isUserOwnsCurrentList) {
     store.dispatch('_setListForEditting', store.getters.currentListObj);
     store.dispatch('_setModalNameToShow', 'listModal');
   }
 }
 
 function randomizeList() {
-  store.dispatch('_setSorting', 'shuffled');
-  store.dispatch('_toggleShuffleTrigger');
+  if (router.currentRoute._value.name === 'list') {
+    store.dispatch('_setSorting', 'shuffled');
+    store.dispatch('_toggleShuffleTrigger');
+  }
 }
 
-function switchFocusMode() {
-  store.dispatch('_switchFocusMode');
+function toggleFocusMode() {
+  store.dispatch('_toggleFocusMode');
 }
 
 function exitFocusMode() {
   if (store.getters.isFocusOnList) {
-    store.dispatch('_switchFocusMode');
+    store.dispatch('_toggleFocusMode');
   }
 }
 
 function switchSidebarMode() {
+  let mode = ''; 
+  
+  if (store.getters['auth/isLoggedIn']) {
+    mode = store.getters.sidebarMode || sidebarModesForViews.loggedInView.default;
+  } else {
+    mode = sidebarModesForViews[
+      router.currentRoute._value.name === 'auth' ? 'authPageView' : 'listPublicView'
+    ].default;
+  }
+ 
   store.getters.isSidebarOpen
     ? store.dispatch('_closeSidebar')
-    : store.dispatch('_openSidebar', store.getters.sidebarMode || 'lists');
+    : store.dispatch('_openSidebar', mode);
 }

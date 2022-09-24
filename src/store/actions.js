@@ -29,7 +29,9 @@ export default {
     }
   },
   _saveUnitInLocalStorage({ getters }, unitName) {
-    localStorage.setItem(unitName, JSON.stringify(getters[unitName]));
+    if (!getters.isPublicView) {
+      localStorage.setItem(unitName, JSON.stringify(getters[unitName]));
+    }
   },
   _setUnitsFromLocalStorage({ commit }, units) {
     units.forEach(unit => {
@@ -66,7 +68,32 @@ export default {
         commit('setTestLists', responseLists);
       });
   },
+  _fetchPublicList({ commit, dispatch, getters }, { id, cancelToken }) {
+    dispatch('_setCurrentListId', id);
+
+    return this.$config.axios
+      .get(`${this.$config.apiBasePath}list/public/${id}`, { cancelToken })
+      .then(({ data: responseList }) => {
+        if (getters.isUserOwnsCurrentList) {
+          commit('updateList', responseList);
+        }
+        
+        commit('setCurrentItems', responseList.items);
+        commit('setCurrentListObj', responseList);
+
+        return responseList;
+      })
+      .catch(error => {
+        if (!cancelToken) {
+          notifyAboutError(error);
+          dispatch('_setCurrentListId', null);
+        }
+
+        throw error;
+      });
+  },
   _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
+    commit('increaseExplicitRequestsNumber');
     dispatch('_setCurrentListId', id);
 
     if (getters.currentListObj?.items?.length) {
@@ -78,13 +105,25 @@ export default {
     return this.$config.axios
       .get(`${this.$config.apiBasePath}list/${id}`, { cancelToken })
       .then(({ data: responseList }) => {
-        commit('updateList', responseList);
+        if (getters.isUserOwnsCurrentList) {
+          commit('updateList', responseList);
+        }
+        
         commit('setCurrentItems', responseList.items);
+        commit('setCurrentListObj', responseList);
+
+        return responseList;
       })
       .catch(error => {
         if (!cancelToken) {
           notifyAboutError(error);
+          dispatch('_setCurrentListId', null);
         }
+
+        console.log(error);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
       });
   },
   _fetchCurrentItems({ commit, getters }) {
@@ -107,6 +146,7 @@ export default {
       .then(({ data: responseList }) => {
         commit('addList', responseList);
         dispatch('_setCurrentListId', responseList.id);
+        commit('setCurrentListObj', responseList);
       })
       .finally(() => {
         commit('decreaseExplicitRequestsNumber');
@@ -141,6 +181,7 @@ export default {
 
     commit('addItems', responseItems);
     commit('setCurrentItems', responseItems);
+    commit('setCurrentListObj', responseList);
     commit('decreaseExplicitRequestsNumber');
   },
   _updateList({ commit, dispatch }, {
@@ -167,6 +208,7 @@ export default {
       })
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
+        commit('setCurrentListObj', responseList);
       })
       .catch(error => {
         notifyAboutError(error);
@@ -185,24 +227,45 @@ export default {
         dispatch('_fetchListById', { id: anotherId, cancelToken: null });
       } else {
         commit('setCurrentItems', []);
+        commit('setCurrentListObj', null);
         localStorage.removeItem('currentListId');
+        router.push({ name: 'home', query: { sidebar: 'lists' } });
       }
+
+      commit('resetVisualizationToDefault');
+      commit('resetFilters');
     }
 
     commit('deleteList', id);
     commit('decreaseExplicitRequestsNumber');
   },
-  _setCurrentListId({ commit, getters }, id) {
-    commit('setCurrentListId', id);
+  _setCurrentListId({ commit }, id) {
     commit('setCurrentItems', []);
-    localStorage.setItem('currentListId', getters.currentListId);
-    pushRouteKeepQuery({
-      name: 'list',
-      params: { id },
-    });
+
+    if (id) {
+      commit('setCurrentListId', id);
+      localStorage.setItem('currentListId', id);
+
+      if (router.currentRoute._value.name !== 'item') {
+        pushRouteKeepQuery({
+          name: 'list',
+          params: { id },
+        });
+      }
+    } else {
+      commit('setCurrentListId', null);
+      localStorage.removeItem('currentListId');
+      pushRouteKeepQuery({
+        name: 'home',
+      });
+    }
   },
   _setListForEditting({ commit }, list) {
     commit('setListForEditting', list);
+  },
+  _setCurrentListView({ commit }, viewType) {
+    changeQueryRespectingDefault('currentListView', viewType);
+    commit('setCurrentListView', viewType);
   },
 
   // items
@@ -215,7 +278,9 @@ export default {
         `${this.$config.apiBasePath}item/${router.currentRoute._value.params.id}`,
         { cancelToken: null },
       )
-      .then(({ data }) => data)
+      .then(({ data }) => {
+        commit('setCurrentSingleItem', data);
+      })
       .catch(error => {
         console.log(error);
       })
@@ -223,7 +288,7 @@ export default {
         commit('decreaseExplicitRequestsNumber');
       });
   },
-  _setEdittingItemIndex({ state, commit }, targetItem) {
+  _findAndSetEdittingItemIndex({ state, commit }, targetItem) {
     let itemIndex = null;
 
     function compareItemsById(item1, item2) {
@@ -253,7 +318,7 @@ export default {
     };
 
     commit('addItem', itemWithTemporaryId);
-    dispatch('_setEdittingItemIndex', itemWithTemporaryId);
+    dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
   },
   _addItemOnServer({ commit, getters, dispatch }, { item, cancelToken }) {
     const listId = getters.currentListObj.id;
@@ -422,8 +487,8 @@ export default {
     commit('switchItemFormLocation');
     dispatch('_saveUnitInLocalStorage', 'settings');
   },
-  _switchFocusMode({ getters, commit, dispatch }) {
-    commit('switchFocusMode');
+  _toggleFocusMode({ getters, commit, dispatch }) {
+    commit('toggleFocusMode');
 
     if (getters.isFocusOnList) {
       commit('setNotification', { text: 'press Esc to exit focus mode' });

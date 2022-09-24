@@ -22,18 +22,55 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
     ...mapGetters([
       'isItemFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
       'isUsingHotkeys',
       'theme',
+      'isPublicView',
+      'isOwnerView',
+      'itemPublicView',
     ]),
+    sidebarActionsWithItems() {
+      return this.isOwnerView
+        ? 'create and edit items inside the sidebar' 
+        : 'view items inside the sidebar';
+    },
+    letterHotkeys() {
+      return {
+        I: {
+          desription: 'I — new item ',
+          notAvailable: !this.isOwnerView,
+        },
+        E: {
+          desription: 'E — edit current list',
+          notAvailable: !this.isOwnerView,
+        },
+        L: {
+          desription: 'L — new list',
+          notAvailable: !this.isLoggedIn,
+        },
+        R: {
+          desription: 'R — randomize list',
+          notAvailable: this.itemPublicView,
+        },
+        F: {
+          desription: 'F — switch focus mode',
+        },
+        S: {
+          desription: 'S — show/hide sidebar',
+        },
+      };
+    },
   },
   methods: {
     ...mapActions([
       '_switchItemFormLocation',
-      '_switchFocusMode',
+      '_toggleFocusMode',
       '_switchSidebarAndListIntersection',
       '_switchUsingHotkeys',
       '_setTheme',
@@ -49,7 +86,7 @@ export default {
   >
     <div class="options-container">
       <CheckboxCustom
-        label="create and edit items inside the sidebar"
+        :label="sidebarActionsWithItems"
         style-type="classic"
         :value="false"
         :model-value="isItemFormInSidebar"
@@ -62,7 +99,7 @@ export default {
         :value="false"
         :model-value="isFocusOnList"
         name="isFocusOnList"
-        @change="_switchFocusMode"
+        @change="_toggleFocusMode"
       />
       <CheckboxCustom
         label="sidebar overlaps the list"
@@ -83,12 +120,15 @@ export default {
       <div class="hotkeys-desc">
         ESC - exit focus mode/hide modal <br>
         <template v-if="isUsingHotkeys">
-        I — new item <br>
-        L — new list <br>
-        E — edit current list <br>
-        R — randomize list <br>
-        F — switch focus mode <br>
-        S — show/hide sidebar
+          <div 
+            v-for="hotkey in letterHotkeys"
+            :key="hotkey"
+          >
+            {{ hotkey.desription }}
+            <span v-show="hotkey.notAvailable">
+              (not available now)
+            </span>
+          </div>
         </template>
       </div>
     </div>
@@ -106,7 +146,12 @@ export default {
         />
       </div>
     </SidebarCard>
-    <UserProfile />
+    <SidebarCard
+      v-if="!isPublicView"
+      title="your profile"
+    >
+      <UserProfile />
+    </SidebarCard>
     <div class="about">
       <ButtonText
         style-type="underline"
@@ -124,14 +169,12 @@ export default {
       margin-bottom: 20px;
     }
     .buttons-container {
-      position: relative;
       display: flex;
-      flex-wrap: wrap;
-      width: 100%;
+      justify-content: center;
       margin-bottom: 50px;
     }
     .about {
-      padding-top: 70px;
+      padding-top: 50px;
       text-align: center;
     }
     .hotkeys-desc {

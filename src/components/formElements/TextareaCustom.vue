@@ -44,10 +44,6 @@ export default {
     width: 100%;
     margin-bottom: 15px;
 
-    &.disabled {
-      pointer-events: none;
-    }
-
     .label {
       font-size: 12px;
       color: map-get($colors, 'gray-dark');

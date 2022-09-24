@@ -1,16 +1,18 @@
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
+import ItemView from '@/components/item/ItemView.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     ModalBasic,
     ItemForm,
+    ItemView,
   },
   computed: {
     ...mapGetters([
-      'edittingItemObj',
+      'isOwnerView',
     ]),
   },
 };
@@ -20,8 +22,8 @@ export default {
   <ModalBasic
     class="item-modal"
     name="itemModal"
-    :title="edittingItemObj?.id ? 'edit item' : 'new item'"
   >
-    <ItemForm />
+    <ItemForm v-if=isOwnerView />
+    <ItemView v-else />
   </ModalBasic>
 </template>

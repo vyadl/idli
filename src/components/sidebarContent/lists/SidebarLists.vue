@@ -51,7 +51,6 @@ export default {
         this.listRequests.forEach(request => {
           request.cancel();
         });
-        this.decreaseExplicitRequestsNumber();
       }
 
       const source = this.$config.axios.CancelToken.source();
@@ -63,9 +62,8 @@ export default {
 
           this.listRequests.splice(index, 1);
           this.isRequestProcessing = false;
+          this._resetCustomView();
         });
-      
-      this._resetCustomView();
     },
   },
 };

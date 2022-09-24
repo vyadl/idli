@@ -31,9 +31,15 @@ export default {
       visualization: state => state.visualization,
       filters: state => state.filters,
     }),
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
     ...mapGetters([
+      'lists',
+      'currentListId',
       'currentListObj',
       'currentListItems',
+      'isUserOwnsCurrentList',
       'filteredList',
       'edittingItemObj',
       'sorting',
@@ -115,7 +121,7 @@ export default {
       deep: true,
     },
   },
-  created() {
+  async created() {
     this.setArrowHotkeys();
 
     this.sortingOptions = {
@@ -155,11 +161,21 @@ export default {
       },
     };
 
-    if (this.$route.params.id) {
-      this._fetchListById({ id: this.$route.params.id, cancelToken: null })
-        .then(() => {
-          handleQueryOnLoad(queryOptions, this.$route.query);
-        });
+    try {
+      if (this.isLoggedIn && !this.lists.length) {
+        await this._fetchListsForUser();
+
+        if (this.$route.params.id) {
+          await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+        }
+      } else if (this.$route.params.id) {
+        await this._fetchPublicList({ id: this.$route.params.id, cancelToken: null });
+      }
+
+      handleQueryOnLoad(queryOptions, this.$route.query);
+    } catch (error) {
+      console.log(error);
+      this._closeSidebar();
     }
   },
   methods: {
@@ -175,10 +191,13 @@ export default {
       'setEdittingItemIndex',
     ]),
     ...mapActions([
+      '_fetchListsForUser',
       '_fetchListById',
+      '_fetchPublicList',
       '_toggleShuffleTrigger',
       '_closeSidebar',
       '_filterList',
+      '_setUnitsFromLocalStorage',
     ]),
     getShuffledList(list) {
       if (!this.shuffledList) {
