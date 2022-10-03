@@ -80,9 +80,7 @@ export default {
 
 <template>
   <div class="sidebar-bin">
-    <div
-      v-if="deletedLists.length || deletedItems.length"
-    >
+    <div v-if="deletedLists.length || deletedItems.length">
       <SidebarCard
         v-show="deletedLists.length"
         title="lists"
