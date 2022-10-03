@@ -6,7 +6,10 @@ module.exports = {
   },
 
   extends: [
-    'plugin:vue/essential',
+    'plugin:vue/base',
+    'plugin:vue/vue3-essential',
+    'plugin:vue/vue3-strongly-recommended',
+    'plugin:vue/vue3-recommended',
     '@vue/airbnb',
   ],
 
@@ -27,6 +30,7 @@ module.exports = {
     'vuejs-accessibility/click-events-have-key-events': 'off',
     'no-trailing-spaces': 'off',
     'import/prefer-default-export': 'off',
+    'vue/require-default-prop': 'off',
   },
 
   globals: {

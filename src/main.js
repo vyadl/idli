@@ -24,11 +24,13 @@ app.config.globalProperties.$config = {
 app.use(router);
 app.use(store);
 app.use(MasonryWall);
-app.use(vfmPlugin({
-  key: '$vfm',
-  componentName: 'VueFinalModal',
-  dynamicContainerName: 'ModalsContainer',
-}));
+app.use(
+  vfmPlugin({
+    key: '$vfm',
+    componentName: 'VueFinalModal',
+    dynamicContainerName: 'ModalsContainer',
+  }),
+);
 app.mixin(themes);
 
 app.mount('#app');

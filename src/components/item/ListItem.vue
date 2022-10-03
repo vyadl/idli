@@ -2,7 +2,9 @@
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  props: ['item'],
+  props: {
+    item: Object,
+  },
   computed: {
     ...mapGetters([
       'edittingItemObj',
@@ -89,8 +91,8 @@ export default {
       {{ itemName }}
     </div>
     <div
-      class="item-details"
       v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
+      class="item-details"
     >
       {{ item?.details }}
     </div>
@@ -112,7 +114,7 @@ export default {
       display: inline-block;
       padding: 5px;
       font-size: map-get($text, 'title-font-size');
-      transition: .2s text-shadow;
+      transition: 0.2s text-shadow;
     }
 
     .item-details {

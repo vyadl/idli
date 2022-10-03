@@ -67,7 +67,7 @@ export default {
     text-align: left;
     vertical-align: middle;
     line-height: 1.5;
-    letter-spacing: .3px;
+    letter-spacing: 0.3px;
     cursor: pointer;
 
     &:disabled {

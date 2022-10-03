@@ -6,9 +6,12 @@ import { commitFromRoot } from '@/store/utils'; // eslint-disable-line import/no
 export default {
   async _signUp(state, user) {
     commitFromRoot('increaseExplicitRequestsNumber');
-    await this.$config.axios.post(`${this.$config.apiBasePath}auth/signup`, user);
+    await this.$config.axios.post(
+      `${this.$config.apiBasePath}auth/signup`,
+      user,
+    );
     commitFromRoot('decreaseExplicitRequestsNumber');
-
+    commitFromRoot('setNotification', { text: 'Registration is successful' });
     commitFromRoot('changeSidebarMode', 'sign in');
     addQueryItems({ sidebar: 'sign in' });
   },
@@ -16,8 +19,10 @@ export default {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     try {
-      const { data: responseUser } = await this.$config.axios
-        .post(`${this.$config.apiBasePath}auth/signin`, user);
+      const { data: responseUser } = await this.$config.axios.post(
+        `${this.$config.apiBasePath}auth/signin`,
+        user,
+      );
       
       commitFromRoot('decreaseExplicitRequestsNumber');
       commit('signIn', responseUser);

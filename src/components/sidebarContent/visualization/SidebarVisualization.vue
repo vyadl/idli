@@ -52,8 +52,11 @@ export default {
         : [];
     },
     isResetButtonActive() {
-      return Object.keys(defaultVisualization)
-        .some(option => this[option] !== defaultVisualization[option]);
+      return Object
+        .keys(defaultVisualization)
+        .some(
+          option => this[option] !== defaultVisualization[option],
+        );
     },
   },
   watch: {
@@ -115,7 +118,7 @@ export default {
     <hr
       v-if="sorting !== 'shuffled'"
       class="break-line"
-    />
+    >
     <SidebarCard v-if="sorting !== 'shuffled'">
       <div class="buttons-container">
         <RadioCustom
@@ -133,7 +136,7 @@ export default {
         style-type="classic"
         :value="false"
         :model-value="isItemsOrderReversed"
-        @update:modelValue="_toggleItemsOrder"
+        @update:model-value="_toggleItemsOrder"
       />
     </SidebarCard>
     <SidebarCard title="mode">
@@ -149,8 +152,8 @@ export default {
         />
       </div>
       <div
-        class="buttons-container"
         v-if="listAlignTitles.length"
+        class="buttons-container"
       >
         <RadioCustom
           v-for="title in listAlignTitles"
@@ -169,7 +172,7 @@ export default {
         style-type="classic"
         :value="false"
         :model-value="areItemDetailsShown"
-        @update:modelValue="_toggleItemDetailsShowingMode"
+        @update:model-value="_toggleItemDetailsShowingMode"
       />
     </SidebarCard>
     <footer class="footer">

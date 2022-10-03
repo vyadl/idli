@@ -2,6 +2,9 @@
 import ButtonText from '@/components/formElements/ButtonText.vue';
 
 export default {
+  components: {
+    ButtonText,
+  },
   props: {
     type: {
       type: String,
@@ -15,9 +18,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  components: {
-    ButtonText,
   },
   emits: [
     'restore',
@@ -77,7 +77,7 @@ export default {
   .common-deleted-item {
     font-size: 12px;
     margin-bottom: 15px;
-    opacity: .8;
+    opacity: 0.8;
     transition: opacity .2s;
 
     &:hover {

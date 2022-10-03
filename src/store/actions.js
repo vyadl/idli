@@ -48,7 +48,8 @@ export default {
   _fetchListsForUser({ commit, dispatch }) {
     commit('increaseExplicitRequestsNumber');
 
-    return this.$config.axios.get(`${this.$config.apiBasePath}lists`)
+    return this.$config.axios
+      .get(`${this.$config.apiBasePath}lists`)
       .then(({ data: responseLists }) => {
         commit('setLists', responseLists);
 
@@ -63,7 +64,8 @@ export default {
       });
   },
   _fetchTestLists({ commit }) {
-    return this.$config.axios.get('/test_data.json')
+    return this.$config.axios
+      .get('/test_data.json')
       .then(({ data: responseLists }) => {
         commit('setTestLists', responseLists);
       });
@@ -72,7 +74,10 @@ export default {
     dispatch('_setCurrentListId', id);
 
     return this.$config.axios
-      .get(`${this.$config.apiBasePath}list/public/${id}`, { cancelToken })
+      .get(
+        `${this.$config.apiBasePath}list/public/${id}`,
+        { cancelToken },
+      )
       .then(({ data: responseList }) => {
         if (getters.isUserOwnsCurrentList) {
           commit('updateList', responseList);
@@ -103,7 +108,10 @@ export default {
     }
 
     return this.$config.axios
-      .get(`${this.$config.apiBasePath}list/${id}`, { cancelToken })
+      .get(
+        `${this.$config.apiBasePath}list/${id}`,
+        { cancelToken },
+      )
       .then(({ data: responseList }) => {
         if (getters.isUserOwnsCurrentList) {
           commit('updateList', responseList);
@@ -142,7 +150,10 @@ export default {
     commit('increaseExplicitRequestsNumber');
 
     return this.$config.axios
-      .post(`${this.$config.apiBasePath}list/add`, list)
+      .post(
+        `${this.$config.apiBasePath}list/add`,
+        list,
+      )
       .then(({ data: responseList }) => {
         commit('addList', responseList);
         dispatch('_setCurrentListId', responseList.id);
@@ -161,13 +172,15 @@ export default {
   }) {
     commit('increaseExplicitRequestsNumber');
 
-    const { data: responseList } = await this.$config.axios
-      .post(`${this.$config.apiBasePath}list/add`, {
+    const { data: responseList } = await this.$config.axios.post(
+      `${this.$config.apiBasePath}list/add`,
+      {
         title,
         isPrivate,
         tags,
         categories,
-      });
+      },
+    );
 
     commit('addList', responseList);
     dispatch('_setCurrentListId', responseList.id);
@@ -176,8 +189,10 @@ export default {
       params: { id: responseList.id },
     });
 
-    const { data: responseItems } = await this.$config.axios
-      .post(`${this.$config.apiBasePath}items/add-many/${responseList.id}`, { items });
+    const { data: responseItems } = await this.$config.axios.post(
+      `${this.$config.apiBasePath}items/add-many/${responseList.id}`,
+      { items },
+    );
 
     commit('addItems', responseItems);
     commit('setCurrentItems', responseItems);
@@ -200,12 +215,15 @@ export default {
     });
 
     this.$config.axios
-      .patch(`${this.$config.apiBasePath}list/update/${id}`, {
-        title,
-        isPrivate,
-        tags,
-        categories,
-      })
+      .patch(
+        `${this.$config.apiBasePath}list/update/${id}`,
+        {
+          title,
+          isPrivate,
+          tags,
+          categories,
+        },
+      )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setCurrentListObj', responseList);
@@ -325,12 +343,14 @@ export default {
     const title = item.title || generateTitleFromDetails(item.details);
 
     this.$config.axios
-      .post(`${this.$config.apiBasePath}item/add/${listId}`, {
-        ...item,
-        title,
-      }, {
-        cancelToken,
-      })
+      .post(
+        `${this.$config.apiBasePath}item/add/${listId}`, 
+        {
+          ...item,
+          title,
+        }, 
+        { cancelToken },
+      )
       .then(({ data: responseItem }) => {
         commit('updateItemByTemporaryId', responseItem);
       })
@@ -343,14 +363,16 @@ export default {
     const title = item.title || generateTitleFromDetails(item.details);
 
     this.$config.axios
-      .patch(`${this.$config.apiBasePath}item/update/${item.listId}/${item.id}`, {
-        details: item.details,
-        tags: item.tags,
-        category: item.category,
-        title,
-      }, {
-        cancelToken,
-      })
+      .patch(
+        `${this.$config.apiBasePath}item/update/${item.listId}/${item.id}`,
+        {
+          details: item.details,
+          tags: item.tags,
+          category: item.category,
+          title,
+        },
+        { cancelToken },
+      )
       .then(({ data: responseList }) => {
         commit('updateItemFieldsByServerResponse', responseList);
       })
@@ -367,7 +389,8 @@ export default {
   async _deleteItem({ commit, dispatch }, item) {
     commit('deleteItem', item.id);
     
-    this.$config.axios.delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`)
+    this.$config.axios
+      .delete(`${this.$config.apiBasePath}item/delete/${item.listId}/${item.id}`)
       .catch(async error => {
         notifyAboutError(error);
         await dispatch('_fetchListById', { id: item.listId, cancelToken: null });
@@ -540,13 +563,17 @@ export default {
   // bin
 
   async _fetchDeletedLists({ commit }) {
-    const { data: deletedLists } = await this.$config.axios.get(`${this.$config.apiBasePath}lists/deleted`);
+    const { data: deletedLists } = await this.$config.axios.get(
+      `${this.$config.apiBasePath}lists/deleted`,
+    );
 
     commit('setDeletedLists', deletedLists);
   },
 
   async _fetchDeletedItems({ commit }) {
-    const { data: deletedItems } = await this.$config.axios.get(`${this.$config.apiBasePath}items/deleted`);
+    const { data: deletedItems } = await this.$config.axios.get(
+      `${this.$config.apiBasePath}items/deleted`,
+    );
 
     commit('setDeletedItems', deletedItems);
   },
@@ -554,7 +581,11 @@ export default {
   _fetchBin({ commit, dispatch }) {
     commit('increaseExplicitRequestsNumber');
 
-    Promise.all([dispatch('_fetchDeletedLists'), dispatch('_fetchDeletedItems')])
+    Promise
+      .all([
+        dispatch('_fetchDeletedLists'),
+        dispatch('_fetchDeletedItems'),
+      ])
       .finally(() => {
         commit('decreaseExplicitRequestsNumber');
       });
@@ -564,7 +595,8 @@ export default {
     commit('increaseExplicitRequestsNumber');
     commit('removeListFromBin', listId);
 
-    this.$config.axios.patch(`${this.$config.apiBasePath}list/restore/${listId}`)
+    this.$config.axios
+      .patch(`${this.$config.apiBasePath}list/restore/${listId}`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -582,7 +614,8 @@ export default {
     commit('increaseExplicitRequestsNumber');
     commit('removeItemFromBin', itemId);
 
-    this.$config.axios.patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
+    this.$config.axios
+      .patch(`${this.$config.apiBasePath}item/restore/${listId}/${itemId}`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -595,7 +628,8 @@ export default {
   _hardDeleteList({ dispatch, commit }, listId) {
     commit('removeListFromBin', listId);
 
-    this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`)
+    this.$config.axios
+      .delete(`${this.$config.apiBasePath}list/hard-delete/${listId}`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -607,7 +641,8 @@ export default {
   _hardDeleteItem({ dispatch, commit }, { listId, itemId }) {
     commit('removeItemFromBin', itemId);
 
-    this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`)
+    this.$config.axios
+      .delete(`${this.$config.apiBasePath}item/hard-delete/${listId}/${itemId}`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -619,7 +654,8 @@ export default {
   _hardDeleteAllItems({ commit, dispatch }) {
     commit('removeBulkFromBin', 'items');
 
-    this.$config.axios.delete(`${this.$config.apiBasePath}item/hard-delete-all`)
+    this.$config.axios
+      .delete(`${this.$config.apiBasePath}item/hard-delete-all`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -632,7 +668,8 @@ export default {
     commit('increaseExplicitRequestsNumber');
     commit('removeBulkFromBin', 'items');
 
-    this.$config.axios.patch(`${this.$config.apiBasePath}item/restore-all`)
+    this.$config.axios
+      .patch(`${this.$config.apiBasePath}item/restore-all`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -645,7 +682,8 @@ export default {
   _hardDeleteAllLists({ commit, dispatch }) {
     commit('removeBulkFromBin', 'lists');
 
-    this.$config.axios.delete(`${this.$config.apiBasePath}list/hard-delete-all`)
+    this.$config.axios
+      .delete(`${this.$config.apiBasePath}list/hard-delete-all`)
       .catch(error => {
         notifyAboutError(error);
       })
@@ -658,7 +696,8 @@ export default {
     commit('increaseExplicitRequestsNumber');
     commit('removeBulkFromBin', 'lists');
 
-    this.$config.axios.patch(`${this.$config.apiBasePath}list/restore-all`)
+    this.$config.axios
+      .patch(`${this.$config.apiBasePath}list/restore-all`)
       .catch(error => {
         notifyAboutError(error);
       })

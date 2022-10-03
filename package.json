@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@vue/eslint-config-airbnb": "^6.0.0",
-    "eslint": "^8.20.0",
+    "eslint": "^8.24.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-vue": "^8.7.1",
     "eslint-plugin-vuejs-accessibility": "^1.1.1",

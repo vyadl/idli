@@ -70,10 +70,14 @@ export default {
       'isOwnerView',
     ]),
     isAnyTagWithIdExist() {
-      return this.currentListTags?.some(tag => tag.id);
+      return this.currentListTags?.some(
+        tag => tag.id,
+      );
     },
     isAnyCategoryWithIdExist() {
-      return this.currentListCategories?.some(category => category.id);
+      return this.currentListCategories?.some(
+        category => category.id,
+      );
     },
     areTextFieldsEmpty() {
       return !this.edittingItemObj.title && !this.edittingItemObj.details;
@@ -169,52 +173,56 @@ export default {
   >
     <div class="text-fields">
       <InputCustom
-        label="item"
-        :modelValue="edittingItemObj.title"
-        :placeholder="edittingItemObj.temporaryId ? 'New item...' : ''"
-        @update:modelValue="value => updateItemField('title', value)"
         ref="itemTitle"
+        label="item"
+        :model-value="edittingItemObj.title"
+        :placeholder="edittingItemObj.temporaryId ? 'New item...' : ''"
+        @update:model-value="value => updateItemField('title', value)"    
       />
       <TextareaCustom
         label="details"
-        :modelValue="edittingItemObj.details"
-        @update:modelValue="value => updateItemField('details', value)"
+        :model-value="edittingItemObj.details"
+        @update:model-value="value => updateItemField('details', value)"
       />
     </div>
     <div class="list-filters">
       <div
-        class="filters-container"
         v-if="isAnyTagWithIdExist"
+        class="filters-container"
       >
-        <h1 class="filters-title">tags:</h1>
+        <h1 class="filters-title">
+          tags:
+        </h1>
         <CheckboxCustom
           v-for="tag in currentListTags"
           v-show="(typeof tag.id) !== 'undefined'"
           :key="tag.id"
           :label="tag.title"
           :value="tag.id"
-          :modelValue="edittingItemObj.tags"
-          @update:modelValue="value => updateItemField('tags', value)"
           name="tags"
           :disabled="areTextFieldsEmpty"
+          :model-value="edittingItemObj.tags"
+          @update:model-value="value => updateItemField('tags', value)"
         />
       </div>
       <div
-        class="filters-container"
         v-if="isAnyCategoryWithIdExist"
+        class="filters-container"
       >
-        <h1 class="filters-title">category:</h1>
+        <h1 class="filters-title">
+          category:
+        </h1>
         <RadioCustom
           v-for="category in currentListCategories"
           v-show="(typeof category.id) !== 'undefined'"
           :key="category.id"
           :label="category.title"
           :value="category.id"
-          :modelValue="edittingItemObj.category"
-          @update:modelValue="value => updateItemField('category', value)"
-          @click="disableCategory(category.id)"
+          :model-value="edittingItemObj.category"
           name="category"
           :disabled="areTextFieldsEmpty"
+          @update:model-value="value => updateItemField('category', value)"
+          @click="disableCategory(category.id)"
         />
       </div>
     </div>
