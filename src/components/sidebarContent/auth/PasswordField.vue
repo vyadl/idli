@@ -42,7 +42,7 @@ export default {
     padding-right
     :label="label"
     :type="inputType"
-    :modelValue="modelValue"
+    :model-value="modelValue"
     @input="input"
     required
   />

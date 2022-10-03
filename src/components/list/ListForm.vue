@@ -178,17 +178,17 @@ export default {
     @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <InputCustom
-      label="title"
+      ref="listTitle"
       v-model="list.title"
+      label="title"
       :disabled="isRequestProcessing"
       required
-      ref="listTitle"
     />
     <div class="private-option">
       <CheckboxCustom
+        v-model="list.isPrivate"
         label="private"
         style-type="classic"
-        v-model="list.isPrivate"
         :disabled="isRequestProcessing"
       />
       <ButtonText
@@ -205,15 +205,15 @@ export default {
           tags
         </h1>
         <div
-          class="filter"
           v-for="(tag, index) in list.tags"
           :key="index"
+          class="filter"
         >
           <InputCustom
+            ref="tagsInput"
             v-model="tag.title"
             required
             :disabled="isRequestProcessing"
-            ref="tagsInput"
           />
           <ButtonSign
             class="delete-filter-button"
@@ -235,15 +235,15 @@ export default {
           categories
         </h1>
         <div
-          class="filter"
           v-for="(category, index) in list.categories"
           :key="index"
+          class="filter"
         >
           <InputCustom
+            ref="categoriesInput"
             v-model="category.title"
             required
             :disabled="isRequestProcessing"
-            ref="categoriesInput"
           />
           <ButtonSign
             class="delete-filter-button"

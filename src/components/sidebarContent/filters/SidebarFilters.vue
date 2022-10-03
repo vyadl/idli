@@ -63,7 +63,7 @@ export default {
           :label="tag.title"
           :value="tag.id"
           :model-value="checkedTags"
-          @update:modelValue="newValue => _setTags(newValue)"
+          @update:model-value="newValue => _setTags(newValue)"
         />
       </div>
       <h1 class="filters-title">categories</h1>
@@ -78,7 +78,7 @@ export default {
           :label="category.title"
           :value="category.id"
           :model-value="checkedCategories"
-          @update:modelValue="newValue => _setCategories(newValue)"
+          @update:model-value="newValue => _setCategories(newValue)"
         />
       </div>
       <footer class="footer">

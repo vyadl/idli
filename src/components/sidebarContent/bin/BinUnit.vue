@@ -2,6 +2,9 @@
 import ButtonText from '@/components/formElements/ButtonText.vue';
 
 export default {
+  components: {
+    ButtonText,
+  },
   props: {
     type: {
       type: String,
@@ -15,9 +18,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  components: {
-    ButtonText,
   },
   emits: [
     'restore',

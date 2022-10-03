@@ -349,9 +349,7 @@ export default {
           ...item,
           title,
         }, 
-        {
-          cancelToken,
-        },
+        { cancelToken },
       )
       .then(({ data: responseItem }) => {
         commit('updateItemByTemporaryId', responseItem);
@@ -373,9 +371,7 @@ export default {
           category: item.category,
           title,
         },
-        {
-          cancelToken,
-        },
+        { cancelToken },
       )
       .then(({ data: responseList }) => {
         commit('updateItemFieldsByServerResponse', responseList);
