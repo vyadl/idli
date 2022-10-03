@@ -77,7 +77,7 @@ export default {
   .common-deleted-item {
     font-size: 12px;
     margin-bottom: 15px;
-    opacity: .8;
+    opacity: 0.8;
     transition: opacity .2s;
 
     &:hover {

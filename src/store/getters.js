@@ -7,7 +7,9 @@ export default {
   currentListTags: (state, getters) => getters.currentListObj?.tags,
   currentListCategories: (state, getters) => getters.currentListObj?.categories,
   currentListItems: state => state.currentListItems,
-  isUserOwnsCurrentList: state => state.lists.some(list => list.id === state.currentListId),
+  isUserOwnsCurrentList: state => state.lists.some(
+    list => list.id === state.currentListId,
+  ),
   isPublicView: state => state.currentListView === 'public',
   isOwnerView: (state, getters) => getters.isUserOwnsCurrentList && !getters.isPublicView,
   edittingListObj: state => state.edittingListObj,

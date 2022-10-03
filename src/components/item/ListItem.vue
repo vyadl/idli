@@ -112,7 +112,7 @@ export default {
       display: inline-block;
       padding: 5px;
       font-size: map-get($text, 'title-font-size');
-      transition: .2s text-shadow;
+      transition: 0.2s text-shadow;
     }
 
     .item-details {

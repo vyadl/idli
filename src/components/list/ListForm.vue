@@ -79,22 +79,25 @@ export default {
       });
     },
     validateListTitle() {
-      const isListTitleUnique = !this.lists.some(storeList => storeList.title === this.list.title);
+      const isListTitleUnique = !this.lists.some(
+        storeList => storeList.title === this.list.title,
+      );
 
       this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
 
       return isListTitleUnique;
     },
     checkFiltersTitlesIntersections(filtersType, filtersTitles) {
-      return this.list[filtersType].some(filter => {
-        const isSameTitleFilter = filtersTitles.has(filter.title);
+      return this.list[filtersType]
+        .some(filter => {
+          const isSameTitleFilter = filtersTitles.has(filter.title);
 
-        if (!isSameTitleFilter) {
-          filtersTitles.add(filter.title);
-        }
+          if (!isSameTitleFilter) {
+            filtersTitles.add(filter.title);
+          }
 
-        return isSameTitleFilter;
-      });
+          return isSameTitleFilter;
+        });
     },
     validateFiltersTitles() {
       let isValid = true;

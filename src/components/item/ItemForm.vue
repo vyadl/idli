@@ -70,10 +70,14 @@ export default {
       'isOwnerView',
     ]),
     isAnyTagWithIdExist() {
-      return this.currentListTags?.some(tag => tag.id);
+      return this.currentListTags?.some(
+        tag => tag.id,
+      );
     },
     isAnyCategoryWithIdExist() {
-      return this.currentListCategories?.some(category => category.id);
+      return this.currentListCategories?.some(
+        category => category.id,
+      );
     },
     areTextFieldsEmpty() {
       return !this.edittingItemObj.title && !this.edittingItemObj.details;

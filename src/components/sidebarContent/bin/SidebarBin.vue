@@ -152,7 +152,7 @@ export default {
 </div>
 </template>
 
-.<style lang="scss">
+<style lang="scss">
   .sidebar-bin {
     .all-buttons {
       display: flex;

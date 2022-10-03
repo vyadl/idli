@@ -52,8 +52,11 @@ export default {
         : [];
     },
     isResetButtonActive() {
-      return Object.keys(defaultVisualization)
-        .some(option => this[option] !== defaultVisualization[option]);
+      return Object
+        .keys(defaultVisualization)
+        .some(
+          option => this[option] !== defaultVisualization[option],
+        );
     },
   },
   watch: {
