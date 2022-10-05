@@ -64,23 +64,27 @@ export default {
     </div>
     <div class="item-filters">
       <div
-        class="filters-container"
         v-if="currentItemTags.length"
+        class="filters-container"
       >
-        <h1 class="filters-title">tags:</h1>
+        <h1 class="filters-title">
+          tags:
+        </h1>
         <span
-          class="tag"
           v-for="(tag, index) in currentItemTags"
           :key="tag.id"
+          class="tag"
         >
           {{ tag.title }}<span v-if="index !== currentItemTags.length - 1">, </span>
-      </span>
+        </span>
       </div>
       <div
-        class="filters-container"
         v-if="currentItemCategory"
+        class="filters-container"
       >
-        <h1 class="filters-title">category:</h1>
+        <h1 class="filters-title">
+          category:
+        </h1>
         <div class="category">
           {{ currentItemCategory.title }}
         </div>

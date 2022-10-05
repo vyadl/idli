@@ -80,9 +80,9 @@ export default {
       border-radius: 3px;
       background-color: map-get($colors, 'white');
       transition:
-        background-color .3s .05s,
-        color .2s .05s,
-        border-color .2s .05s;
+        background-color 0.3s .05s,
+        color 0.2s .05s,
+        border-color 0.2s .05s;
 
       &.small {
         padding: 3px 10px 4px;
@@ -105,7 +105,7 @@ export default {
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
-      transition: color .2s;
+      transition: color 0.2s;
 
       &.small {
         padding: 3px 0;
@@ -121,7 +121,7 @@ export default {
       padding: 5px 0;
       line-height: 1.3;
       color: map-get($colors, 'gray-dark');
-      transition: color .2s;
+      transition: color 0.2s;
 
       &.active,
       &:hover {

@@ -83,7 +83,7 @@ export default {
           commit('updateList', responseList);
         }
         
-        commit('setCurrentItems', responseList.items);
+        commit('setCurrentListItems', responseList.items);
         commit('setCurrentListObj', responseList);
 
         return responseList;
@@ -97,13 +97,41 @@ export default {
         throw error;
       });
   },
+  _refreshListForEdittingForm({ commit }, { id, cancelToken }) {
+    commit('increaseExplicitRequestsNumber');
+
+    return this.$config.axios
+      .get(
+        `${this.$config.apiBasePath}list/${id}`,
+        { cancelToken },
+      )
+      .then(({ data: responseList }) => {
+        commit('updateList', responseList);
+        commit('setListForEditting', responseList);
+
+        return responseList;
+      })
+      .catch(error => {
+        if (!cancelToken) {
+          notifyAboutError(error);
+        }
+
+        console.log(error);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
+      });
+  },
   _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
     commit('increaseExplicitRequestsNumber');
-    dispatch('_setCurrentListId', id);
+    
+    if (!getters.modalNameToShow) {
+      dispatch('_setCurrentListId', id);
+    }
 
     if (getters.currentListObj?.items?.length) {
       if (getters.currentListObj.items[0] instanceof Object) {
-        commit('setCurrentItems', getters.currentListObj.items);
+        commit('setCurrentListItems', getters.currentListObj.items);
       }
     }
 
@@ -117,7 +145,7 @@ export default {
           commit('updateList', responseList);
         }
         
-        commit('setCurrentItems', responseList.items);
+        commit('setCurrentListItems', responseList.items);
         commit('setCurrentListObj', responseList);
 
         return responseList;
@@ -134,16 +162,33 @@ export default {
         commit('decreaseExplicitRequestsNumber');
       });
   },
-  _fetchCurrentItems({ commit, getters }) {
+  _fetchCurrentListItems({ commit, getters }) {
     commit('increaseExplicitRequestsNumber');
 
     return this.$config.axios
       .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
       .then(({ data: responseList }) => {
-        commit('setCurrentItems', responseList.items);
+        commit('setCurrentListItems', responseList.items);
       })
       .finally(() => {
         commit('decreaseExplicitRequestsNumber');
+      });
+  },
+  _fetchItemsByListId(state, { id, cancelToken }) {
+    return this.$config.axios
+      .get(
+        `${this.$config.apiBasePath}list/${id}`,
+        { cancelToken },
+      )
+      .then(({ data: responseList }) => {
+        return responseList;
+      })
+      .catch(error => {
+        if (!cancelToken) {
+          notifyAboutError(error);
+        }
+
+        throw error;
       });
   },
   _addList({ commit, dispatch }, list) {
@@ -195,7 +240,7 @@ export default {
     );
 
     commit('addItems', responseItems);
-    commit('setCurrentItems', responseItems);
+    commit('setCurrentListItems', responseItems);
     commit('setCurrentListObj', responseList);
     commit('decreaseExplicitRequestsNumber');
   },
@@ -244,7 +289,7 @@ export default {
 
         dispatch('_fetchListById', { id: anotherId, cancelToken: null });
       } else {
-        commit('setCurrentItems', []);
+        commit('setCurrentListItems', []);
         commit('setCurrentListObj', null);
         localStorage.removeItem('currentListId');
         router.push({ name: 'home', query: { sidebar: 'lists' } });
@@ -258,7 +303,7 @@ export default {
     commit('decreaseExplicitRequestsNumber');
   },
   _setCurrentListId({ commit }, id) {
-    commit('setCurrentItems', []);
+    commit('setCurrentListItems', []);
 
     if (id) {
       commit('setCurrentListId', id);
@@ -278,8 +323,12 @@ export default {
       });
     }
   },
-  _setListForEditting({ commit }, list) {
+  _setListForEditting({ commit, dispatch }, list) {
     commit('setListForEditting', list);
+
+    if (list) {
+      dispatch('_refreshListForEdittingForm', { id: list.id, cancelToken: null });
+    }
   },
   _setCurrentListView({ commit }, viewType) {
     changeQueryRespectingDefault('currentListView', viewType);
@@ -288,18 +337,22 @@ export default {
 
   // items
 
-  _fetchItemById({ commit }) {
+  _fetchItemById({ commit }, { id, cancelToken }) {
     commit('increaseExplicitRequestsNumber');
 
     return this.$config.axios
       .get(
-        `${this.$config.apiBasePath}item/${router.currentRoute._value.params.id}`,
-        { cancelToken: null },
+        `${this.$config.apiBasePath}item/${id}`,
+        { cancelToken },
       )
       .then(({ data }) => {
-        commit('setCurrentSingleItem', data);
+        commit('setCurrentItemObj', data);
       })
       .catch(error => {
+        if (!cancelToken) {
+          notifyAboutError(error);
+        }
+
         console.log(error);
       })
       .finally(() => {
@@ -353,6 +406,7 @@ export default {
       )
       .then(({ data: responseItem }) => {
         commit('updateItemByTemporaryId', responseItem);
+        commit('setCurrentItemObj', responseItem);
       })
       .catch(error => {
         notifyAboutError(error);
@@ -369,6 +423,8 @@ export default {
           details: item.details,
           tags: item.tags,
           category: item.category,
+          relatedLists: item.relatedLists,
+          relatedItems: item.relatedItems,
           title,
         },
         { cancelToken },
@@ -605,7 +661,7 @@ export default {
         await dispatch('_fetchingAfterBinActions', false);
 
         if (getters.lists.length) {
-          dispatch('_fetchCurrentItems');
+          dispatch('_fetchCurrentListItems');
         }
       });
   },
@@ -706,14 +762,14 @@ export default {
         await dispatch('_fetchingAfterBinActions', false);
 
         if (getters.currentListObj) {
-          dispatch('_fetchCurrentItems');
+          dispatch('_fetchCurrentListItems');
         }
       });
   },
 
   async _fetchingAfterBinActions({ dispatch }, isItem) {
     if (isItem) {
-      dispatch('_fetchCurrentItems');
+      dispatch('_fetchCurrentListItems');
       dispatch('_fetchDeletedItems');
     } else {
       dispatch('_fetchListsForUser');

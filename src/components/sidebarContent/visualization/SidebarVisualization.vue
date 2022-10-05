@@ -196,7 +196,6 @@ export default {
       display: flex;
       flex-wrap: wrap;
       width: 100%;
-      margin-bottom: 10px;
     }
     .break-line {
       margin: 0;

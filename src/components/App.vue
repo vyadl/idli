@@ -26,6 +26,13 @@ export default {
       'sidebarMode',
     ]),
   },
+  watch: {
+    modalNameToShow() {
+      if (this.modalNameToShow) {
+        this.$vfm.show(this.modalNameToShow);
+      }
+    },
+  },
   created() {
     checkAppVersion();
 
@@ -61,25 +68,20 @@ export default {
       },
     );
   },
-  watch: {
-    modalNameToShow() {
-      if (this.modalNameToShow) {
-        this.$vfm.show(this.modalNameToShow);
-      }
-    },
-  },
   methods: {
     ...mapMutations([
       'openSidebar',
       'changeSidebarMode',
       'setCurrentListView',
     ]),
-    ...mapActions({
-      _closeSidebar: '_closeSidebar',
-      _setUnitsFromLocalStorage: '_setUnitsFromLocalStorage',
-      _fetchTestLists: '_fetchTestLists',
-      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
-    }),
+    ...mapActions('auth', [
+      '_setUserFromLocalStorage',
+    ]),
+    ...mapActions([
+      '_closeSidebar',
+      '_setUnitsFromLocalStorage',
+      '_fetchTestLists',
+    ]),
   },
 };
 </script>
@@ -91,15 +93,15 @@ export default {
   >
     <transition name="fade">
       <div
-        class="preloader"
         v-if="explicitRequestsNumber"
-      ></div>
+        class="preloader"
+      />
     </transition>
-    <router-view></router-view>
+    <router-view />
     <SidebarPage />
-    <ListModal/>
-    <ItemModal/>
-    <ConfirmationModal/>
+    <ListModal />
+    <ItemModal />
+    <ConfirmationModal />
     <AppNotification v-if="notification" />
   </div>
 </template>

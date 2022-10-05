@@ -53,7 +53,7 @@ export default {
       width: 100%;
       padding: 5px;
       border-bottom: 1px solid map-get($colors, 'gray-light');
-      transition: border-color .3s;
+      transition: border-color 0.3s;
 
       &:focus {
         border-color: map-get($colors, 'black');

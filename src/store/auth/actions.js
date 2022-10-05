@@ -44,6 +44,7 @@ export default {
     commitFromRoot('closeSidebar');
     commitFromRoot('resetFilters');
     commitFromRoot('resetVisualizationToDefault');
+    commitFromRoot('setCurrentListItems', []);
   },
   _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');

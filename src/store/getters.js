@@ -20,7 +20,7 @@ export default {
   filteredListLength: (state, getters) => getters.filteredList.length,
 
   // items
-  currentSingleItem: state => state.currentSingleItem,
+  currentItemObj: state => state.currentItemObj,
   edittingItemObj: state => state.currentListItems[state.edittingItemIndex],
 
   // visualization
@@ -45,13 +45,13 @@ export default {
   loggedInView: (state, getters) => getters['auth/isLoggedIn'] 
     && !getters.isPublicView,
   authPageView: (state, getters) => !getters['auth/isLoggedIn'] 
-    && !getters.currentSingleItem
-    && !state.currentListItems.length,
+    && !getters.currentItemObj
+    && !state.currentListItems?.length,
   itemPublicView: (state, getters) => !getters['auth/isLoggedIn'] 
-    && getters.currentSingleItem,
+    && getters.currentItemObj,
   listPublicView: (state, getters) => (
     !getters['auth/isLoggedIn'] 
-    && getters.currentListItems.length
+    && getters.currentListItems?.length
   ) || (
     getters['auth/isLoggedIn'] 
     && getters.isPublicView

@@ -135,9 +135,9 @@ export default {
     <SidebarCard title="theme">
       <div class="buttons-container">
         <RadioCustom
-          class="theme"
           v-for="title in themeTitles"
           :key="title"
+          class="theme"
           :label="title"
           :value="title"
           :model-value="theme"
@@ -154,9 +154,9 @@ export default {
     </SidebarCard>
     <div class="about">
       <ButtonText
+        text="about idli"
         style-type="underline"
         @click="$vfm.show('aboutModal')"
-        text="about idli"
       />
     </div>
     <AboutModal />

@@ -3,6 +3,9 @@ import { mapActions } from 'vuex';
 import { VueFinalModal } from 'vue-final-modal';
 
 export default {
+  components: {
+    VueFinalModal,
+  },
   props: {
     name: String,
     title: {
@@ -22,9 +25,6 @@ export default {
     showModal: false,
     showInner: false,
   }),
-  components: {
-    VueFinalModal,
-  },
   methods: {
     ...mapActions([
       '_setModalNameToShow',
@@ -61,8 +61,8 @@ export default {
       @closed="close"
     >
       <header
-        class="header"
         v-if="title"
+        class="header"
       >
         <h1 class="title">
           {{ title }}

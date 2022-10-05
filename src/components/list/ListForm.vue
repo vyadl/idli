@@ -7,6 +7,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
+import { getFormattedDate } from '@/utils/misc';
 
 export default {
   components: {
@@ -20,6 +21,7 @@ export default {
     list: null,
     isRequestProcessing: false,
     errorMessage: '',
+    areReferringItemsShown: false,
   }),
   computed: {
     ...mapGetters([
@@ -27,7 +29,7 @@ export default {
       'edittingListObj',
       'isUserOwnsCurrentList',
     ]),
-    isPublicViewButtonShown() {
+    isPublicViewLinkShown() {
       return this.list && !this.list.isPrivate && this.edittingListObj;
     },
   },
@@ -138,14 +140,6 @@ export default {
           });
       }
     },
-    openListPublicView(id) {
-      const { href, search } = window.location;
-      const newUrl = new URL(`/list/${id}`, href);
-      
-      newUrl.search = `${search}&view=public`;
-
-      window.open(newUrl, '_blank');
-    },
     async deleteList() {
       const confirmationModalTitle = `are you sure you want to delete list  
         '${this.edittingListObj?.title}' ?`;
@@ -167,6 +161,12 @@ export default {
         .finally(() => {
           this.isRequestProcessing = false;
         });
+    },
+    toggleReferringItems() {
+      this.areReferringItemsShown = !this.areReferringItemsShown;
+    },
+    getFormattedDate(val) {
+      return getFormattedDate(val);
     },
   },
 };
@@ -191,13 +191,18 @@ export default {
         style-type="classic"
         :disabled="isRequestProcessing"
       />
-      <ButtonText
-        v-if="isPublicViewButtonShown"
-        text="check how others will see your list"
-        style-type="underline"
-        small
-        @click="openListPublicView(list.id)"
-      />
+      <router-link
+        v-if="isPublicViewLinkShown"
+        class="publick-view-link"
+        :to="{ 
+          name: 'list',
+          params: { id: list.id },
+          query: { view: 'public' }
+        }"
+        target="_blank"
+      >
+        check how others will see your list
+      </router-link>
     </div>
     <div class="filters-container">
       <div class="tags">
@@ -265,11 +270,44 @@ export default {
       v-if="errorMessage"
       :message="errorMessage"
     />
+    <div
+      v-if="edittingListObj?.referringItems?.length"
+    >
+      <ButtonText
+        :text="areReferringItemsShown ? 'hide referring items' : 'show referring items'"
+        style-type="underline"
+        @click="toggleReferringItems"
+      />
+      <div v-if="areReferringItemsShown">
+        <h1>
+          referring items:
+        </h1>
+        <div class="referring-units-container">
+          <router-link
+            v-for="item in edittingListObj.referringItems"
+            :key="item.id"
+            :to="{ name: 'item', params: { id: item.id || item } }"
+            class="referring-unit"
+            target="_blank"
+          >
+            {{ item.title }}
+          </router-link> 
+        </div>
+      </div>
+    </div>
     <div 
       v-if="list?.createdAt"
-      class="total-items"
+      class="stats"
     >
-      total items: {{ list.items.length }}
+      <div>
+        created at: {{ getFormattedDate(edittingListObj.createdAt) }}
+      </div>
+      <div>
+        updated at: {{ getFormattedDate(edittingListObj.updatedAt) }}
+      </div>
+      <div>
+        total items: {{ list.items.length }}
+      </div>
     </div>
     <footer class="footer">
       <div>
@@ -302,17 +340,25 @@ export default {
       padding: 8px 0 15px;
     }
 
+    .publick-view-link {
+      font-size: 13px;
+      color: map-get($colors, 'gray-dark');
+    }
+
     .filters-container {
       display: flex;
       justify-content: space-between;
-      width: 100%;
+      gap: 10px;
       margin-bottom: 15px;
       padding-top: 10px;
     }
 
     .tags,
     .categories {
-      width: 210px;
+      flex: 1 1 0px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid map-get($colors, 'gray-light');
     }
 
     .filters-header {
@@ -329,6 +375,17 @@ export default {
       margin-left: 10px;
     }
 
+    .referring-units-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .referring-unit {
+      padding: 5px 10px 0 0;
+      font-size: 13px;
+      color: map-get($colors, 'gray-dark');
+    }
+
     .footer {
       display: flex;
       justify-content: space-between;
@@ -340,9 +397,10 @@ export default {
       margin-right: 10px;
     }
 
-    .total-items {
+    .stats {
       padding-top: 15px;
       font-size: 13px;
+      line-height: 1.7;
       color: map-get($colors, 'gray-light');
     }
   }

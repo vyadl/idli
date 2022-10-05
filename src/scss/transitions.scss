@@ -1,6 +1,6 @@
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 
 .fade-enter,
@@ -11,8 +11,8 @@
 .modal-enter-active,
 .modal-leave-active {
   transition:
-    opacity .2s,
-    transform .2s;
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .modal-enter {
@@ -26,7 +26,7 @@
 }
 
 .notification-enter-active {
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 
 .notification-leave-to {

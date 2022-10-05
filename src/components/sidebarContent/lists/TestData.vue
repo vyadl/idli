@@ -63,9 +63,9 @@ export default {
       />
       <div class="buttons-container">
         <ButtonText
-          class="list-title"
           v-for="list in testLists"
           :key="list.title"
+          class="list-title"
           :text="list.title"
           style-type="line"
           :disabled="isRequestProcessing"

@@ -1,5 +1,6 @@
 <script>
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import { getFormattedDate } from '@/utils/misc';
 
 export default {
   components: {
@@ -31,17 +32,7 @@ export default {
       this.$emit('delete');
     },
     getFormattedDate(val) {
-      const options = {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: false,
-      };
-
-      return new Intl.DateTimeFormat('en', options).format(new Date(val));
+      return getFormattedDate(val);
     },
   },
 };
@@ -78,7 +69,7 @@ export default {
     font-size: 12px;
     margin-bottom: 15px;
     opacity: 0.8;
-    transition: opacity .2s;
+    transition: opacity 0.2s;
 
     &:hover {
       opacity: 1;

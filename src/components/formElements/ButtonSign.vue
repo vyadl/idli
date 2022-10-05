@@ -48,7 +48,7 @@ export default {
     :type="type"
     :disabled="disabled"
     @click="click($event)"
-  ></button>
+  />
 </template>
 
 <style lang="scss">
@@ -95,7 +95,7 @@ export default {
         letter-spacing: 1px;
         color: map-get($colors, 'gray-dark');
         transform: translate(-5px, -9px) rotate(90deg);
-        transition: color .2s;
+        transition: color 0.2s;
       }
     }
 
@@ -132,7 +132,7 @@ export default {
         height: 100%;
         background-color: map-get($colors, 'black');
         transform-origin: center center;
-        transition: color .2s;
+        transition: color 0.2s;
       }
 
       &::before {
@@ -165,7 +165,7 @@ export default {
         height: 100%;
         background-color: map-get($colors, 'black');
         transform-origin: center center;
-        transition: color .2s;
+        transition: color 0.2s;
       }
 
       &::before {

@@ -115,8 +115,8 @@ export default {
         background-color: map-get($colors, 'white');
         font-size: 14px;
         transition:
-          background-color .3s .05s,
-          color .2s .05s;
+          background-color 0.3s .05s,
+          color 0.2s .05s;
 
         &.disabled {
           &.checked {
@@ -190,7 +190,7 @@ export default {
           opacity: 0;
           transform-origin: center center;
           transform: translateY(-50%) translate(-1px, -1px) rotate(-45deg);
-          transition: opacity .2s;
+          transition: opacity 0.2s;
         }
       }
     }

@@ -74,7 +74,7 @@ export default {
       this.isSidebarOpen
         ? this._closeSidebar()
         : this._openSidebar(this.isLoggedIn 
-          ? this.sidebarMode : this.$options.LOGGED_OUT_DEFAULT_SIDEBAR);
+          ? this.sidebarMode : sidebarModesForViews.authPageView.default);
     },
     createNewItem() {
       this._addNewItemPlaceholder();
@@ -99,12 +99,12 @@ export default {
     ]"
   >
     <div
-      class="edge-move-catcher"
       ref="edgeMoveCatcher"
-    ></div>
+      class="edge-move-catcher"
+    />
     <div
-      class="add-item-button"
       v-if="isAddItemPossible"
+      class="add-item-button"
     >
       <ButtonSign
         style-type="plus"
@@ -127,20 +127,26 @@ export default {
       v-if="!isLoggedIn && $route.name !== 'auth'"
       class="auth-buttons"
     >
-      <router-link :to="{ name: 'auth', query: { sidebar: 'sign up' }}">
+      <router-link
+        :to="{ name: 'auth', query: { sidebar: 'sign up' }}"
+        target="_blank"
+      >
         sign up
       </router-link>
       or
-      <router-link :to="{ name: 'auth', query: { sidebar: 'sign in' }}">
+      <router-link
+        :to="{ name: 'auth', query: { sidebar: 'sign in' }}"
+        target="_blank"
+      >
         sign in
       </router-link>
     </div>
     <div class="sidebar-buttons">
       <div class="mode-buttons">
         <ButtonText
-          class="mode-button"
           v-for="mode in sidebarModes"
           :key="mode"
+          class="mode-button"
           :text="mode"
           :style-type="mode === 'bin' ? 'underline' : 'bordered'"
           :small="mode === 'bin'"
@@ -149,8 +155,8 @@ export default {
         />
       </div>
       <div
-        class="state-button"
         v-if="!isFocusOnList"
+        class="state-button"
       >
         <ButtonSign
           style-type="arrow"
@@ -158,14 +164,14 @@ export default {
         />
       </div>
     </div>
-    <div 
-      class="sidebar-content"
+    <div
       ref="sidebarContent"
+      class="sidebar-content"
     >
       <SidebarVisualization v-if="sidebarMode === 'visualization'" />
       <SidebarFilters v-if="sidebarMode === 'filters'" />
       <SidebarLists v-if="sidebarMode === 'lists'" />
-      <SidebarSettings v-if="sidebarMode === 'settings'"/>
+      <SidebarSettings v-if="sidebarMode === 'settings'" />
       <RegistrationForm v-if="sidebarMode === 'sign up'" />
       <AuthForm v-if="sidebarMode === 'sign in'" />
       <SidebarBin v-if="sidebarMode === 'bin'" />
@@ -187,8 +193,8 @@ export default {
     background-color: map-get($colors, 'white');
     transform: translateX(300px);
     transition:
-      transform .5s,
-      box-shadow .7s;
+      transform 0.5s,
+      box-shadow 0.7s;
 
     &.shown {
       box-shadow: 15px 0 30px 0 map-get($colors, 'gray-light');
@@ -238,7 +244,7 @@ export default {
       flex-direction: column;
       align-items: flex-end;
       margin-bottom: 10px;
-      transition: transform .4s;
+      transition: transform 0.4s;
     }
 
     .mode-button {
@@ -259,7 +265,7 @@ export default {
 
     .state-button {
       width: fit-content;
-      transition: transform .4s;
+      transition: transform 0.4s;
       transform: translateX(-100%);
     }
 
