@@ -75,7 +75,7 @@ export default {
       pointer-events: none;
     }
 
-    &.classic {
+    &.initial {
       .title {
         padding-left: 5px;
       }
@@ -101,8 +101,8 @@ export default {
         background-color: map-get($colors, 'white');
         font-size: 14px;
         transition:
-          background-color 0.3s .05s,
-          color 0.2s .05s;
+          background-color 0.3s 0.05s,
+          color 0.2s 0.05s;
         &:last-of-type {
           margin-right: 0;
         }

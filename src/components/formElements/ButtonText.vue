@@ -80,9 +80,9 @@ export default {
       border-radius: 3px;
       background-color: map-get($colors, 'white');
       transition:
-        background-color 0.3s .05s,
-        color 0.2s .05s,
-        border-color 0.2s .05s;
+        background-color 0.3s 0.05s,
+        color 0.2s 0.05s,
+        border-color 0.2s 0.05s;
 
       &.small {
         padding: 3px 10px 4px;

@@ -133,7 +133,7 @@ export default {
       </div>
       <CheckboxCustom
         label="reverse order"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="isItemsOrderReversed"
         @update:model-value="_toggleItemsOrder"
@@ -169,7 +169,7 @@ export default {
       <CheckboxCustom
         v-if="['list', 'cards'].includes(mode)"
         label="show items' details"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="areItemDetailsShown"
         @update:model-value="_toggleItemDetailsShowingMode"

@@ -193,7 +193,7 @@ export default {
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
       'setEdittingItemIndex',
-      'resetItemRelatedUnitsLocally',
+      'resetRelatedUnitsLocally',
     ]),
     ...mapActions([
       '_fetchItemById',
@@ -206,7 +206,7 @@ export default {
       '_setUnitsFromLocalStorage',
     ]),
     fetchItemById(id) {
-      this.resetItemRelatedUnitsLocally();
+      this.resetRelatedUnitsLocally();
 
       if (this.serverRequests.length) {
         this.serverRequests.forEach(request => {

@@ -9,11 +9,6 @@ export default {
     disabled: Boolean,
   },
   emits: ['update:modelValue'],
-  watch: {
-    options(value) {
-      console.log(value);
-    },
-  },
   methods: {
     change(value) {
       this.$emit('update:modelValue', value);
@@ -41,6 +36,7 @@ export default {
       <option 
         class="default-option"
         :selected="defaultOptionSelected"
+        value=""
       >
         {{ defaultOption }}
       </option>

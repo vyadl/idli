@@ -188,7 +188,7 @@ export default {
       <CheckboxCustom
         v-model="list.isPrivate"
         label="private"
-        style-type="classic"
+        style-type="initial"
         :disabled="isRequestProcessing"
       />
       <router-link

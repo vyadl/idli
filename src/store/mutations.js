@@ -53,7 +53,7 @@ export default {
   updateItemRelatedUnitsLocally(state, { field, value }) {
     state.currentItemObj[field] = value;
   },
-  resetItemRelatedUnitsLocally(state) {
+  resetRelatedUnitsLocally(state) {
     if (state.currentItemObj) {
       state.currentItemObj.relatedItems = null;
       state.currentItemObj.relatedLists = null;

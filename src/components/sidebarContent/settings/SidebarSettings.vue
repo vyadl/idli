@@ -87,7 +87,7 @@ export default {
     <div class="options-container">
       <CheckboxCustom
         :label="sidebarActionsWithItems"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="isItemFormInSidebar"
         name="isItemFormInSidebar"
@@ -95,7 +95,7 @@ export default {
       />
       <CheckboxCustom
         label="focus on list"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="isFocusOnList"
         name="isFocusOnList"
@@ -103,7 +103,7 @@ export default {
       />
       <CheckboxCustom
         label="sidebar overlaps the list"
-        style-type="classic"
+        style-type="initial"
         :value="true"
         :model-value="isListUnderSidebar"
         name="isListUnderSidebar"
@@ -111,7 +111,7 @@ export default {
       />
       <CheckboxCustom
         label="using hotkeys"
-        style-type="classic"
+        style-type="initial"
         :value="true"
         :model-value="isUsingHotkeys"
         name="isUsingHotkeys"
