@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import UserProfile from '@/components/sidebarContent/settings/UserProfile.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
@@ -9,7 +9,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     UserProfile,
     CheckboxCustom,
     RadioCustom,
@@ -80,9 +80,10 @@ export default {
 </script>
 
 <template>
-  <SidebarCard
+  <SectionCard
     class="sidebar-settings"
     title="settings"
+    centered
   >
     <div class="options-container">
       <CheckboxCustom
@@ -132,7 +133,10 @@ export default {
         </template>
       </div>
     </div>
-    <SidebarCard title="theme">
+    <SectionCard
+      title="theme"
+      centered
+    >
       <div class="buttons-container">
         <RadioCustom
           v-for="title in themeTitles"
@@ -145,13 +149,14 @@ export default {
           @change="_setTheme(title)"
         />
       </div>
-    </SidebarCard>
-    <SidebarCard
+    </SectionCard>
+    <SectionCard
       v-if="!isPublicView"
       title="your profile"
+      centered
     >
       <UserProfile />
-    </SidebarCard>
+    </SectionCard>
     <div class="about">
       <ButtonText
         text="about idli"
@@ -160,7 +165,7 @@ export default {
       />
     </div>
     <AboutModal />
-  </SidebarCard>
+  </SectionCard>
 </template>
 
 <style lang="scss">

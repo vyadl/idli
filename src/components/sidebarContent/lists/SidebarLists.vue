@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import TestData from '@/components/sidebarContent/lists/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -8,7 +8,7 @@ import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     TestData,
     ButtonSign,
     ButtonText,
@@ -75,10 +75,11 @@ export default {
 </script>
 
 <template>
-  <SidebarCard
+  <SectionCard
     class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
+    centered
   >
     <div class="lists-container">
       <div
@@ -108,7 +109,7 @@ export default {
       />
     </div>
     <TestData />
-  </SidebarCard>
+  </SectionCard>
 </template>
 
 <style lang="scss">

@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
 import ItemView from '@/components/item/ItemView.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -8,7 +8,7 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     ItemForm,
     ItemView,
     InfoMessage,
@@ -33,7 +33,7 @@ export default {
 </script>
 
 <template>
-  <SidebarCard
+  <SectionCard
     v-if="edittingItemObj"
     class="sidebar-item"
   >
@@ -42,7 +42,7 @@ export default {
       @scroll-sidebar-to-top="scrollSidebarToTop"
     />
     <ItemView v-else />
-  </SidebarCard>
+  </SectionCard>
   <div v-else>
     <InfoMessage message="choose item from the list to see it here" />
     <ButtonText

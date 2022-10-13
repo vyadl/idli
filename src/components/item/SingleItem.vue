@@ -1,6 +1,9 @@
 <script>
 import { 
-  mapActions, mapGetters, mapMutations, mapState,
+  mapActions,
+  mapGetters,
+  mapMutations,
+  mapState,
 } from 'vuex';
 
 export default {
@@ -157,7 +160,7 @@ export default {
     .item-title {
       display: inline-block;
       padding: 5px;
-      font-size: map-get($text, 'title-font-size');
+      font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
     }
 

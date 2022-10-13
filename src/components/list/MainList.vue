@@ -350,7 +350,7 @@ export default {
     }
 
     .list-title {
-      font-size: map-get($text, 'title-font-size');
+      font-size: map-get($text, 'big-title-font-size');
       color: map-get($colors, 'gray-light');
     }
 

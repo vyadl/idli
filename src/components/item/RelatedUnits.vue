@@ -3,6 +3,7 @@ import SelectCustom from '@/components/formElements/SelectCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import { 
   mapGetters,
   mapActions,
@@ -16,6 +17,7 @@ export default {
     RadioCustom,
     ButtonText,
     ButtonSign,
+    SectionCard,
   },
   props: {
     areTextFieldsEmpty: Boolean,
@@ -43,6 +45,9 @@ export default {
       'currentItemObj',
       'isItemFormInSidebar',
     ]),
+    isNewRelatedUnitAnItem() {
+      return this.newRelatedUnitType === 'item';
+    },
     chosenItemIndex() {
       return this.itemsFromPossibleRelatedList
         .findIndex(item => item.id === this.chosenItemId);
@@ -52,7 +57,7 @@ export default {
         .findIndex(list => list.id === this.chosenListId);
     },
     isAddRelatedButtonDisabled() {
-      return this.newRelatedUnitType === 'item' 
+      return this.isNewRelatedUnitAnItem
         ? !this.chosenItemId
         : !this.chosenListId;
     },
@@ -70,16 +75,21 @@ export default {
     },
   },
   watch: {
-    chosenListId(value) {
+    chosenListId(listId) {
       this.itemsFromPossibleRelatedList = [];
 
-      const listIndex = this.lists.findIndex(list => list.id === value);
+      if (!this.isNewRelatedUnitAnItem || !listId) {
+        return false;
+      }
 
-      if (this.newRelatedUnitType === 'item' && this.lists[listIndex]?.items?.[0] instanceof Object) {
+      const listIndex = this.lists.findIndex(list => list.id === listId);
+      const isListItemsAlreadyLoaded = this.lists[listIndex]?.items?.[0] instanceof Object;
+
+      if (isListItemsAlreadyLoaded) {
         this.itemsFromPossibleRelatedList = this.lists[listIndex].items;
-      } else if (value && this.newRelatedUnitType === 'item') {
+      } else {
         this._fetchItemsByListId({
-          id: value,
+          id: listId,
           cancelToken: null,
         })
           .then(responseList => {
@@ -113,9 +123,8 @@ export default {
         : this.chosenItemId = value;
     },
     isUnitChoosable(unit, unitIdFieldName, targetRelatedArr) {
-      const isItemAddingMode = this.newRelatedUnitType === 'item';
       const isCurrentUnitList = !unit.listId;
-      const isListChoosingOnlyToShowItems = isItemAddingMode && isCurrentUnitList;
+      const isListChoosingOnlyToShowItems = this.isNewRelatedUnitAnItem && isCurrentUnitList;
 
       const isSavedOnServer = typeof unit.id !== 'undefined';
       const isItself = this.edittingItemObj[unitIdFieldName] === unit.id;
@@ -125,9 +134,9 @@ export default {
 
       return isListChoosingOnlyToShowItems ? isSavedOnServer : isChoosable;
     },
-    updateItemField({ field, stringsArray, objectsArray }) {  
-      this.updateItemFieldLocally({ field, value: stringsArray });
-      this.updateItemRelatedUnitsLocally({ field, value: objectsArray });
+    updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {  
+      this.updateItemFieldLocally({ field, value: idsForServerUpdate });
+      this.updateItemRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
 
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
         this[this.edittingItemObj.id 
@@ -141,11 +150,11 @@ export default {
     addRelatedItem() {
       this.updateItemField({
         field: 'relatedItems',
-        stringsArray: [
+        idsForServerUpdate: [
           ...(this.edittingItemObj.relatedItems || []),
           this.chosenItemId,
         ],
-        objectsArray: [
+        fullUnitsForLocalUpdate: [
           ...(this.currentItemObj.relatedItems || []),
           this.itemsFromPossibleRelatedList[this.chosenItemIndex],
         ],
@@ -156,11 +165,11 @@ export default {
     addRelatedList() {
       this.updateItemField({
         field: 'relatedLists',
-        stringsArray: [
+        idsForServerUpdate: [
           ...(this.edittingItemObj.relatedLists || []),
           this.chosenItemId,
         ],
-        objectsArray: [
+        fullUnitsForLocalUpdate: [
           ...(this.currentItemObj.relatedLists || []),
           this.lists[this.chosenListIndex],
         ],
@@ -169,46 +178,46 @@ export default {
       this.chosenListId = null;
     },
     deleteRelatedItem(id) {
-      const stringsArray = this.getArrayWithoutDeletedUnit({
+      const idsForServerUpdate = this.getArrayWithoutDeletedUnit({
         initialArray: this.edittingItemObj.relatedItems,
         unitIdToDelete: id,
       });
-      const objectsArray = this.getArrayWithoutDeletedUnit({
+      const fullUnitsForLocalUpdate = this.getArrayWithoutDeletedUnit({
         initialArray: this.currentItemObj.relatedItems,
         unitIdToDelete: id,
       });
 
       this.updateItemField({
         field: 'relatedItems',
-        stringsArray,
-        objectsArray,
+        idsForServerUpdate,
+        fullUnitsForLocalUpdate,
       });
     },
     deleteRelatedList(id) {
-      const stringsArray = this.getArrayWithoutDeletedUnit({
+      const idsForServerUpdate = this.getArrayWithoutDeletedUnit({
         initialArray: this.edittingItemObj.relatedLists,
         unitIdToDelete: id,
       });
-      const objectsArray = this.getArrayWithoutDeletedUnit({
+      const fullUnitsForLocalUpdate = this.getArrayWithoutDeletedUnit({
         initialArray: this.currentItemObj.relatedLists,
         unitIdToDelete: id,
       });
 
       this.updateItemField({
         field: 'relatedLists',
-        stringsArray,
-        objectsArray,
+        idsForServerUpdate,
+        fullUnitsForLocalUpdate,
       });
     },
-    getArrayWithoutDeletedUnit({ initialArray, unitIdToDelete }) {
-      const arrayCopy = [...initialArray];
+    getFieldPropertyWithoutElementById({ initialArray, unitIdToDelete }) {
+      const copiedArray = [...initialArray];
       const indexToRemove = initialArray.findIndex(unit => {
         return unitIdToDelete === (initialArray[0] instanceof Object ? unit.id : unit);
       });
 
-      arrayCopy.splice(indexToRemove, 1);
+      copiedArray.splice(indexToRemove, 1);
 
-      return arrayCopy.length ? arrayCopy : null;
+      return copiedArray.length ? copiedArray : null;
     },
   },
 };
@@ -216,8 +225,11 @@ export default {
 
 <template>
   <div class="related-units">
-    <div v-if="currentItemObj?.relatedItems?.length">
-      <h1>related items:</h1>
+    <SectionCard
+      v-if="currentItemObj?.relatedItems?.length"
+      title="related items:"
+      small
+    >
       <div 
         v-for="item in currentItemObj?.relatedItems"
         :key="item.id"
@@ -237,9 +249,12 @@ export default {
           {{ item.title }}
         </router-link>
       </div>
-    </div>
-    <div v-if="currentItemObj?.relatedLists?.length">
-      <h1>related lists:</h1>
+    </SectionCard>
+    <SectionCard
+      v-if="currentItemObj?.relatedLists?.length"
+      title="related lists:"
+      small
+    >
       <div 
         v-for="list in currentItemObj?.relatedLists"
         :key="list.id"
@@ -259,7 +274,7 @@ export default {
           {{ list.title }}
         </router-link>
       </div>
-    </div>
+    </SectionCard>
     <div class="single-button-container">
       <ButtonText
         text="add related list or item"
@@ -313,7 +328,7 @@ export default {
           </optgroup>
         </SelectCustom>
         <SelectCustom
-          v-show="newRelatedUnitType === 'item'"
+          v-if="isNewRelatedUnitAnItem"
           :default-option="$options.ITEMS_DEFAULT_OPTION"
           :default-option-selected="!chosenItemId"
           :disabled="!itemsFromPossibleRelatedList?.length"
@@ -344,7 +359,7 @@ export default {
         text="add"
         small
         :disabled="isAddRelatedButtonDisabled"
-        @click="newRelatedUnitType === 'item' ? addRelatedItem() : addRelatedList()"
+        @click="isNewRelatedUnitAnItem ? addRelatedItem() : addRelatedList()"
       />
     </div>
     <div v-if="currentItemObj?.referringItems?.length">
@@ -355,10 +370,11 @@ export default {
           @click="toggleShowingStatus('referringItems')"
         />
       </div>
-      <div v-if="showingStatuses.referringItems">
-        <h1>
-          referring items:
-        </h1>
+      <SectionCard
+        v-if="showingStatuses.referringItems"
+        title="referring items:"
+        small
+      >
         <div class="referring-units-container">
           <router-link
             v-for="item in currentItemObj?.referringItems"
@@ -370,7 +386,7 @@ export default {
             {{ item.title }}
           </router-link> 
         </div>
-      </div>
+      </SectionCard>
     </div>
   </div>
 </template>
@@ -379,7 +395,6 @@ export default {
 .related-units {
   display: flex;
   flex-direction: column;
-  gap: 20px;
   padding-bottom: 20px;
 
   .related-unit,

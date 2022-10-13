@@ -117,7 +117,7 @@ export default {
     .header {
       margin-bottom: 20px;
       text-align: center;
-      font-size: map-get($text, 'title-font-size');
+      font-size: map-get($text, 'big-title-font-size');
     }
 
     &.inverted-theme {
