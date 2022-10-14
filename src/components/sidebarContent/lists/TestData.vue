@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -7,7 +7,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     ButtonText,
     ErrorMessage,
     InfoMessage,
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <template>
-  <SidebarCard class="test-data">
+  <SectionCard class="test-data">
     <ButtonText
       :text="areTestListsShown ? 'hide test lists' : 'show test lists'"
       style-type="underline"
@@ -63,9 +63,9 @@ export default {
       />
       <div class="buttons-container">
         <ButtonText
-          class="list-title"
           v-for="list in testLists"
           :key="list.title"
+          class="list-title"
           :text="list.title"
           style-type="line"
           :disabled="isRequestProcessing"
@@ -73,7 +73,7 @@ export default {
         />
       </div>
     </div>
-  </SidebarCard>
+  </SectionCard>
 </template>
 
 <style lang="scss">

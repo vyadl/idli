@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import UserProfile from '@/components/sidebarContent/settings/UserProfile.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
@@ -9,7 +9,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     UserProfile,
     CheckboxCustom,
     RadioCustom,
@@ -80,14 +80,15 @@ export default {
 </script>
 
 <template>
-  <SidebarCard
+  <SectionCard
     class="sidebar-settings"
     title="settings"
+    centered
   >
     <div class="options-container">
       <CheckboxCustom
         :label="sidebarActionsWithItems"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="isItemFormInSidebar"
         name="isItemFormInSidebar"
@@ -95,7 +96,7 @@ export default {
       />
       <CheckboxCustom
         label="focus on list"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="isFocusOnList"
         name="isFocusOnList"
@@ -103,7 +104,7 @@ export default {
       />
       <CheckboxCustom
         label="sidebar overlaps the list"
-        style-type="classic"
+        style-type="initial"
         :value="true"
         :model-value="isListUnderSidebar"
         name="isListUnderSidebar"
@@ -111,7 +112,7 @@ export default {
       />
       <CheckboxCustom
         label="using hotkeys"
-        style-type="classic"
+        style-type="initial"
         :value="true"
         :model-value="isUsingHotkeys"
         name="isUsingHotkeys"
@@ -132,12 +133,15 @@ export default {
         </template>
       </div>
     </div>
-    <SidebarCard title="theme">
+    <SectionCard
+      title="theme"
+      centered
+    >
       <div class="buttons-container">
         <RadioCustom
-          class="theme"
           v-for="title in themeTitles"
           :key="title"
+          class="theme"
           :label="title"
           :value="title"
           :model-value="theme"
@@ -145,22 +149,23 @@ export default {
           @change="_setTheme(title)"
         />
       </div>
-    </SidebarCard>
-    <SidebarCard
+    </SectionCard>
+    <SectionCard
       v-if="!isPublicView"
       title="your profile"
+      centered
     >
       <UserProfile />
-    </SidebarCard>
+    </SectionCard>
     <div class="about">
       <ButtonText
+        text="about idli"
         style-type="underline"
         @click="$vfm.show('aboutModal')"
-        text="about idli"
       />
     </div>
     <AboutModal />
-  </SidebarCard>
+  </SectionCard>
 </template>
 
 <style lang="scss">

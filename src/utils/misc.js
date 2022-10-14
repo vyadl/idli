@@ -20,3 +20,17 @@ export class DeferredBoolean {
       .catch(() => false);
   }
 }
+
+export function getFormattedDate(val) {
+  const options = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false,
+  };
+
+  return new Intl.DateTimeFormat('en', options).format(new Date(val));
+}

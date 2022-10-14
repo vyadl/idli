@@ -42,7 +42,7 @@ export default {
         stop-propagation
         @click="_openSidebar('sign up')"
       />
-      <div class="divider">|</div>
+      <span class="divider">|</span>
       <ButtonText
         text="sign in"
         style-type="line"
@@ -61,7 +61,7 @@ export default {
     align-items: center;
     width: 100%;
     min-height: 100vh;
-    transition: transform .5s;
+    transition: transform 0.5s;
 
       &.parallax {
         transform: translateX(-20px);

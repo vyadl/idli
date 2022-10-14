@@ -41,11 +41,17 @@ export default {
     >
       <span>you are not authorized.</span>
       <div>
-        <router-link :to="{ name: 'auth', query: { sidebar: 'sign up' }}">
+        <router-link
+          :to="{ name: 'auth', query: { sidebar: 'sign up' }}"
+          target="_blank"
+        >
           sign up
         </router-link>
         or
-        <router-link :to="{ name: 'auth', query: { sidebar: 'sign in' }}">
+        <router-link
+          :to="{ name: 'auth', query: { sidebar: 'sign in' }}"
+          target="_blank"
+        >
           sign in
         </router-link>
       </div>

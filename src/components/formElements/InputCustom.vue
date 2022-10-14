@@ -57,6 +57,7 @@ export default {
       {{ label }}
     </div>
     <input
+      ref="input"
       class="input"
       :class="{ 'with-icon' : icon }"
       :type="type"
@@ -65,7 +66,6 @@ export default {
       :required="required"
       :placeholder="placeholder"
       @input="input($event.target.value)"
-      ref="input"
     >
     <div 
       v-if="icon"
@@ -76,7 +76,7 @@ export default {
         alt="icon" 
         :width="15"
         :src="icon" 
-      />
+      >
     </div>
   </label>
 </template>
@@ -100,7 +100,7 @@ export default {
       width: 100%;
       padding: 9px 3px 4px;
       border-bottom: 1px solid map-get($colors, 'gray-light');
-      transition: border-color .3s;
+      transition: border-color 0.3s;
 
       &.with-icon {
         padding-right: 20px;

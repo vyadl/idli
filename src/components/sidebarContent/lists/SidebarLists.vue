@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import TestData from '@/components/sidebarContent/lists/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -8,7 +8,7 @@ import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     TestData,
     ButtonSign,
     ButtonText,
@@ -56,34 +56,40 @@ export default {
       const source = this.$config.axios.CancelToken.source();
 
       this.listRequests.push(source);
-      this._fetchListById({ id, cancelToken: source.token })
-        .finally(() => {
-          const index = this.listRequests.findIndex(request => request === source);
 
-          this.listRequests.splice(index, 1);
-          this.isRequestProcessing = false;
-          this._resetCustomView();
-        });
+      if (this.$route.name !== 'list') {
+        this.$router.push({ name: 'list', params: { id } });
+      } else {
+        this._fetchListById({ id, cancelToken: source.token })
+          .finally(() => {
+            const index = this.listRequests.findIndex(request => request === source);
+
+            this.listRequests.splice(index, 1);
+            this.isRequestProcessing = false;
+            this._resetCustomView();
+          });
+      }
     },
   },
 };
 </script>
 
 <template>
-  <SidebarCard
+  <SectionCard
     class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
+    centered
   >
     <div class="lists-container">
       <div
-        class="list"
         v-for="list in sortedLists"
         :key="list.id"
+        class="list"
       >
         <ButtonSign
           class="edit-button"
-          :class="{ active:  list.id === currentListId }"
+          :class="{ active: list.id === currentListId }"
           style-type="dots"
           @click="setListForEditting(list)"
         />
@@ -102,8 +108,8 @@ export default {
         @click="openListModal"
       />
     </div>
-    <TestData/>
-  </SidebarCard>
+    <TestData />
+  </SectionCard>
 </template>
 
 <style lang="scss">
@@ -141,7 +147,7 @@ export default {
     .list-title {
       max-width: 220px;
       border-bottom: 2px solid map-get($colors, 'white');
-      transition: border-color .2s;
+      transition: border-color 0.2s;
 
       &.active {
         border-color: map-get($colors, 'black');

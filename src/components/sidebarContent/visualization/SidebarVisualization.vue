@@ -1,5 +1,5 @@
 <script>
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -8,7 +8,7 @@ import { defaultVisualization } from '@/store/config';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     RadioCustom,
     CheckboxCustom,
     ButtonText,
@@ -92,9 +92,10 @@ export default {
 
 <template>
   <div class="sidebar-visualization">
-    <SidebarCard 
+    <SectionCard 
       title="sorting"
       class="main-sorting"
+      centered
     >
       <div class="buttons-container">
         <RadioCustom
@@ -114,12 +115,12 @@ export default {
           @click="_toggleShuffleTrigger"
         />
       </div>
-    </SidebarCard>
+    </SectionCard>
     <hr
       v-if="sorting !== 'shuffled'"
       class="break-line"
     >
-    <SidebarCard v-if="sorting !== 'shuffled'">
+    <SectionCard v-if="sorting !== 'shuffled'">
       <div class="buttons-container">
         <RadioCustom
           v-for="sortingOption in secondarySortingOptions"
@@ -133,13 +134,16 @@ export default {
       </div>
       <CheckboxCustom
         label="reverse order"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="isItemsOrderReversed"
         @update:model-value="_toggleItemsOrder"
       />
-    </SidebarCard>
-    <SidebarCard title="mode">
+    </SectionCard>
+    <SectionCard
+      title="mode"
+      centered
+    >
       <div class="buttons-container">
         <RadioCustom
           v-for="title in modeTitles"
@@ -169,12 +173,12 @@ export default {
       <CheckboxCustom
         v-if="['list', 'cards'].includes(mode)"
         label="show items' details"
-        style-type="classic"
+        style-type="initial"
         :value="false"
         :model-value="areItemDetailsShown"
         @update:model-value="_toggleItemDetailsShowingMode"
       />
-    </SidebarCard>
+    </SectionCard>
     <footer class="footer">
       <ButtonText
         v-if="isResetButtonActive"
@@ -196,7 +200,7 @@ export default {
       display: flex;
       flex-wrap: wrap;
       width: 100%;
-      margin-bottom: 10px;
+      padding-top: 15px;
     }
     .break-line {
       margin: 0;

@@ -24,6 +24,7 @@ export default {
       sortingOptions: null,
       shuffledList: null,
       finalList: null,
+      serverRequests: [],
     };
   },
   computed: {
@@ -39,7 +40,6 @@ export default {
       'currentListId',
       'currentListObj',
       'currentListItems',
-      'isUserOwnsCurrentList',
       'filteredList',
       'edittingItemObj',
       'sorting',
@@ -84,15 +84,18 @@ export default {
     shuffleTrigger() {
       this.shuffledList = shuffleArray(this.finalList);
     },
-    currentListItems(items) {
-      this.shuffledList = null;
-      this._filterList(items);
+    currentListItems: {
+      handler(items) {
+        this.shuffledList = null;
+        this._filterList(items);
 
-      if (items.length) {
-        this.finalList = items;
-      } else {
-        this.finalList = [];
-      }
+        if (items.length) {
+          this.finalList = items;
+        } else {
+          this.finalList = [];
+        }
+      },
+      deep: true,
     },
     filters: {
       handler() {
@@ -162,14 +165,15 @@ export default {
     };
 
     try {
-      if (this.isLoggedIn && !this.lists.length) {
-        await this._fetchListsForUser();
-
-        if (this.$route.params.id) {
-          await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
-        }
+      if (this.isLoggedIn) {
+        this._fetchListsForUser()
+          .then(() => {
+            if (this.$route.params.id) {
+              this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+            }
+          });
       } else if (this.$route.params.id) {
-        await this._fetchPublicList({ id: this.$route.params.id, cancelToken: null });
+        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
       }
 
       handleQueryOnLoad(queryOptions, this.$route.query);
@@ -189,16 +193,39 @@ export default {
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
       'setEdittingItemIndex',
+      'resetRelatedUnitsLocally',
     ]),
     ...mapActions([
+      '_fetchItemById',
       '_fetchListsForUser',
       '_fetchListById',
-      '_fetchPublicList',
       '_toggleShuffleTrigger',
       '_closeSidebar',
       '_filterList',
       '_setUnitsFromLocalStorage',
     ]),
+    fetchItemById(id) {
+      this.resetRelatedUnitsLocally();
+
+      if (this.serverRequests.length) {
+        this.serverRequests.forEach(request => {
+          request.cancel();
+        });
+      }
+
+      const source = this.$config.axios.CancelToken.source();
+
+      this.serverRequests.push(source);
+      this._fetchItemById({
+        id,
+        cancelToken: source.token,
+      })
+        .finally(() => {
+          const index = this.serverRequests.findIndex(request => request === source);
+
+          this.serverRequests.splice(index, 1);
+        });
+    },
     getShuffledList(list) {
       if (!this.shuffledList) {
         this.shuffledList = shuffleArray(list);
@@ -227,6 +254,8 @@ export default {
 
               this.setEdittingItemIndex(newIndex);
             }
+
+            this.fetchItemById(this.edittingItemObj.id);
           }
         }
       });
@@ -279,15 +308,17 @@ export default {
               <ListItem
                 :key="item?.id"
                 :item="item"
+                @click="fetchItemById"
               />
             </template>
           </masonry-wall>
         </template>
-          <template v-else>
+        <template v-else>
           <ListItem
             v-for="item in finalList"
             :key="item.id"
             :item="item"
+            @click="fetchItemById"
           />
         </template>
       </div>
@@ -318,7 +349,7 @@ export default {
     }
 
     .list-title {
-      font-size: map-get($text, 'title-font-size');
+      font-size: map-get($text, 'big-title-font-size');
       color: map-get($colors, 'gray-light');
     }
 
@@ -330,8 +361,8 @@ export default {
     .items-container {
       padding: 30px 50px 50px;
       transition:
-        margin .5s,
-        transform .5s;
+        margin 0.5s,
+        transform 0.5s;
 
       &.list-mode {
         display: flex;

@@ -5,6 +5,7 @@ export default {
   props: {
     item: Object,
   },
+  emits: ['click'],
   computed: {
     ...mapGetters([
       'edittingItemObj',
@@ -63,6 +64,7 @@ export default {
       '_findAndSetEdittingItemIndex',
     ]),
     setItemForEditting() {
+      this.$emit('click', this.item.id);
       this._findAndSetEdittingItemIndex(this.item);
 
       this.isItemFormInSidebar
@@ -113,7 +115,7 @@ export default {
     .item-title {
       display: inline-block;
       padding: 5px;
-      font-size: map-get($text, 'title-font-size');
+      font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
     }
 
@@ -126,8 +128,8 @@ export default {
     &.active {
       .item-title {
         text-shadow:
-          .5px 0 currentColor,
-          .5px 0 1px currentColor;
+          0.5px 0 currentColor,
+          0.5px 0 1px currentColor;
       }
     }
 
@@ -137,14 +139,14 @@ export default {
       padding: 10px 10px;
       border: 2px solid map-get($colors, 'black');
       border-radius: 3px;
-      transition: box-shadow .1s;
+      transition: box-shadow 0.1s;
 
       &.active {
         box-shadow:
-          1px 1px 0 .5px map-get($colors, 'black'),
-          1px -1px 0 .5px map-get($colors, 'black'),
-          -1px 1px 0 .5px map-get($colors, 'black'),
-          -1px -1px 0 .5px map-get($colors, 'black');
+          1px 1px 0 0.5px map-get($colors, 'black'),
+          1px -1px 0 0.5px map-get($colors, 'black'),
+          -1px 1px 0 0.5px map-get($colors, 'black'),
+          -1px -1px 0 0.5px map-get($colors, 'black');
       }
 
       .item-title {
@@ -210,7 +212,7 @@ export default {
 
       .item-title {
         opacity: 0;
-        transition: opacity .2s;
+        transition: opacity 0.2s;
         transform: scale(0);
       }
     }

@@ -1,6 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import SidebarCard from '@/components/wrappers/SidebarCard.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -8,7 +8,7 @@ import { isConfirmed } from '@/settings/confirmationPromise';
 
 export default {
   components: {
-    SidebarCard,
+    SectionCard,
     BinUnit,
     ButtonText,
     InfoMessage,
@@ -81,9 +81,10 @@ export default {
 <template>
   <div class="sidebar-bin">
     <div v-if="deletedLists.length || deletedItems.length">
-      <SidebarCard
+      <SectionCard
         v-show="deletedLists.length"
         title="lists"
+        centered
       >
         <div class="all-buttons">
           <ButtonText
@@ -109,11 +110,12 @@ export default {
           @delete="resolveAction('_hardDeleteList', item.id)"
           @restore="resolveAction('_restoreList', item.id)"
         />
-      </SidebarCard>
-      <SidebarCard
+      </SectionCard>
+      <SectionCard
         v-show="deletedItems.length"
         title="items"
         class="items"
+        centered
       >
         <div class="all-buttons">
           <ButtonText
@@ -139,7 +141,7 @@ export default {
           @delete="resolveAction('_hardDeleteItem', { itemId: item.id, listId: item.listId })"
           @restore="resolveAction('_restoreItem',{ itemId: item.id, listId: item.listId })"
         />
-      </SidebarCard>
+      </SectionCard>
     </div>
     <div 
       v-else

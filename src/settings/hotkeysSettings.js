@@ -21,7 +21,7 @@ export function initHotkeys() {
     }
 
     if (
-      !event.target.closest('input[type=text]')
+      !event.target.closest('input')
       && !event.target.closest('textarea')
       && store.getters.settings.isUsingHotkeys
       && pressedKeys.size === 1

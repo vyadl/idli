@@ -31,6 +31,7 @@ module.exports = {
     'no-trailing-spaces': 'off',
     'import/prefer-default-export': 'off',
     'vue/require-default-prop': 'off',
+    'vue/require-prop-types': 'off',
   },
 
   globals: {

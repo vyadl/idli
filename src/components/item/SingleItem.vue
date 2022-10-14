@@ -1,5 +1,10 @@
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { 
+  mapActions,
+  mapGetters,
+  mapMutations,
+  mapState,
+} from 'vuex';
 
 export default {
   data() {
@@ -8,6 +13,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(['edittingItemIndex']),
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
@@ -16,36 +22,37 @@ export default {
       'isSidebarOpen',
       'isListUnderSidebar',
       'edittingItemObj',
-      'currentSingleItem',
+      'currentItemObj',
     ]),
   },
   async created() {
     try {
-      await this._fetchItemById();
-
-      await this[this.isLoggedIn ? '_fetchListById' : '_fetchPublicList']({ 
-        id: this.currentSingleItem.listId, 
+      await this._fetchItemById({
+        id: this.$route.params.id,
         cancelToken: null,
       });
 
-      this.item = this.currentSingleItem;
-      this._findAndSetEdittingItemIndex(this.item);
+      this._fetchListById({
+        id: this.currentItemObj.listId, 
+        cancelToken: null,
+      })
+        .then(() => {
+          this.item = this.currentItemObj;
+          this._findAndSetEdittingItemIndex(this.item);
 
-      if (this.isItemFormInSidebar) {
-        this._openSidebar('item');
-      } else {
-        this._switchItemFormLocation();
-        this._openSidebar('item');
-      }
+          if (this.isItemFormInSidebar) {
+            this._openSidebar('item');
+          } else {
+            this._switchItemFormLocation();
+            this._openSidebar('item');
+          }
 
-      this.$router.push({
-        query: { 
-          sidebar: 'item',
-          item: this.currentSingleItem.id,
-        },
-      });
+          this.$router.push({ query: { sidebar: 'item' } });
+        });
     } catch (error) {
       console.log(error);
+
+      this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
     }
 
     if (this.isLoggedIn) {
@@ -53,16 +60,15 @@ export default {
     }
   },
   unmounted() {
-    this.setCurrentSingleItem(null);
+    this.setCurrentItemObj(null);
   },
   methods: {
     ...mapMutations([
-      'setCurrentSingleItem',
+      'setCurrentItemObj',
     ]),
     ...mapActions([
       '_fetchItemById',
       '_fetchListById',
-      '_fetchPublicList',
       '_fetchListsForUser',
       '_openSidebar',
       '_closeSidebar',
@@ -75,6 +81,11 @@ export default {
       this.isItemFormInSidebar
         ? this._openSidebar('item')
         : this.$vfm.show('itemModal');
+
+      this._fetchItemById({
+        id: this.item.id,
+        cancelToken: null,
+      });
     },
   },
 };
@@ -150,7 +161,7 @@ export default {
     .item-title {
       display: inline-block;
       padding: 5px;
-      font-size: map-get($text, 'title-font-size');
+      font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
     }
 
@@ -163,8 +174,8 @@ export default {
     &.active {
       .item-title {
         text-shadow:
-          .5px 0 currentColor,
-          .5px 0 1px currentColor;
+          0.5px 0 currentColor,
+          0.5px 0 1px currentColor;
       }
     }
 

@@ -35,7 +35,7 @@ export default {
 
   // items
 
-  setCurrentItems(state, items) {
+  setCurrentListItems(state, items) {
     state.currentListItems = items;
   },
   addItem(state, item) {
@@ -47,8 +47,18 @@ export default {
   setEdittingItemIndex(state, index) {
     state.edittingItemIndex = index;
   },
-  setCurrentSingleItem(state, item) {
-    state.currentSingleItem = item;
+  setCurrentItemObj(state, item) {
+    state.currentItemObj = item;
+  },
+  updateRelatedUnitsLocally(state, { field, value }) {
+    state.currentItemObj[field] = value;
+  },
+  resetRelatedUnitsLocally(state) {
+    if (state.currentItemObj) {
+      state.currentItemObj.relatedItems = null;
+      state.currentItemObj.relatedLists = null;
+      state.currentItemObj.referringItems = null;
+    }
   },
   updateItemFieldLocally(state, { field, value }) {
     state.currentListItems[state.edittingItemIndex][field] = value;
