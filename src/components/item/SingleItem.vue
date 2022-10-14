@@ -32,7 +32,7 @@ export default {
         cancelToken: null,
       });
 
-      this[this.isLoggedIn ? '_fetchListById' : '_fetchPublicList']({ 
+      this._fetchListById({
         id: this.currentItemObj.listId, 
         cancelToken: null,
       })
@@ -51,6 +51,8 @@ export default {
         });
     } catch (error) {
       console.log(error);
+
+      this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
     }
 
     if (this.isLoggedIn) {
@@ -67,7 +69,6 @@ export default {
     ...mapActions([
       '_fetchItemById',
       '_fetchListById',
-      '_fetchPublicList',
       '_fetchListsForUser',
       '_openSidebar',
       '_closeSidebar',

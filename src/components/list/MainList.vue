@@ -173,7 +173,7 @@ export default {
             }
           });
       } else if (this.$route.params.id) {
-        await this._fetchPublicList({ id: this.$route.params.id, cancelToken: null });
+        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
       }
 
       handleQueryOnLoad(queryOptions, this.$route.query);
@@ -199,7 +199,6 @@ export default {
       '_fetchItemById',
       '_fetchListsForUser',
       '_fetchListById',
-      '_fetchPublicList',
       '_toggleShuffleTrigger',
       '_closeSidebar',
       '_filterList',

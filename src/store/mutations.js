@@ -57,6 +57,7 @@ export default {
     if (state.currentItemObj) {
       state.currentItemObj.relatedItems = null;
       state.currentItemObj.relatedLists = null;
+      state.currentItemObj.referringItems = null;
     }
   },
   updateItemFieldLocally(state, { field, value }) {

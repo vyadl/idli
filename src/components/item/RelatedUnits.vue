@@ -166,7 +166,7 @@ export default {
         field: 'relatedLists',
         idsForServerUpdate: [
           ...(this.edittingItemObj.relatedLists || []),
-          this.chosenItemId,
+          this.chosenListId,
         ],
         fullUnitsForLocalUpdate: [
           ...(this.currentItemObj.relatedLists || []),
@@ -177,11 +177,11 @@ export default {
       this.chosenListId = null;
     },
     deleteRelatedItem(id) {
-      const idsForServerUpdate = this.getArrayWithoutDeletedUnit({
+      const idsForServerUpdate = this.getFieldPropertyWithoutElementById({
         initialArray: this.edittingItemObj.relatedItems,
         unitIdToDelete: id,
       });
-      const fullUnitsForLocalUpdate = this.getArrayWithoutDeletedUnit({
+      const fullUnitsForLocalUpdate = this.getFieldPropertyWithoutElementById({
         initialArray: this.currentItemObj.relatedItems,
         unitIdToDelete: id,
       });
@@ -193,11 +193,11 @@ export default {
       });
     },
     deleteRelatedList(id) {
-      const idsForServerUpdate = this.getArrayWithoutDeletedUnit({
+      const idsForServerUpdate = this.getFieldPropertyWithoutElementById({
         initialArray: this.edittingItemObj.relatedLists,
         unitIdToDelete: id,
       });
-      const fullUnitsForLocalUpdate = this.getArrayWithoutDeletedUnit({
+      const fullUnitsForLocalUpdate = this.getFieldPropertyWithoutElementById({
         initialArray: this.currentItemObj.relatedLists,
         unitIdToDelete: id,
       });

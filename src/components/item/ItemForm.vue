@@ -178,10 +178,13 @@ export default {
 
       this.resetRelatedUnitsLocally();
       this.setEdittingItemIndex(newIndex);
-      this._fetchItemById({
-        id: this.edittingItemObj.id,
-        cancelToken: null,
-      });
+
+      if (this.isItemFormInSidebar) {
+        this._fetchItemById({
+          id: this.edittingItemObj.id,
+          cancelToken: null,
+        });
+      }
     },
     disableCategory(id) {
       if (this.edittingItemObj.category === id) {

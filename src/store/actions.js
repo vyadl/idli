@@ -70,33 +70,6 @@ export default {
         commit('setTestLists', responseLists);
       });
   },
-  _fetchPublicList({ commit, dispatch, getters }, { id, cancelToken }) {
-    dispatch('_setCurrentListId', id);
-
-    return this.$config.axios
-      .get(
-        `${this.$config.apiBasePath}list/public/${id}`,
-        { cancelToken },
-      )
-      .then(({ data: responseList }) => {
-        if (getters.isUserOwnsCurrentList) {
-          commit('updateList', responseList);
-        }
-        
-        commit('setCurrentListItems', responseList.items);
-        commit('setCurrentListObj', responseList);
-
-        return responseList;
-      })
-      .catch(error => {
-        if (!cancelToken) {
-          notifyAboutError(error);
-          dispatch('_setCurrentListId', null);
-        }
-
-        throw error;
-      });
-  },
   _refreshListForEdittingForm({ commit }, { id, cancelToken }) {
     commit('increaseExplicitRequestsNumber');
 
@@ -217,32 +190,37 @@ export default {
   }) {
     commit('increaseExplicitRequestsNumber');
 
-    const { data: responseList } = await this.$config.axios.post(
-      `${this.$config.apiBasePath}list/add`,
-      {
-        title,
-        isPrivate,
-        tags,
-        categories,
-      },
-    );
-
-    commit('addList', responseList);
-    dispatch('_setCurrentListId', responseList.id);
-    pushRouteKeepQuery({
-      name: 'list',
-      params: { id: responseList.id },
-    });
-
-    const { data: responseItems } = await this.$config.axios.post(
-      `${this.$config.apiBasePath}items/add-many/${responseList.id}`,
-      { items },
-    );
-
-    commit('addItems', responseItems);
-    commit('setCurrentListItems', responseItems);
-    commit('setCurrentListObj', responseList);
-    commit('decreaseExplicitRequestsNumber');
+    try {
+      const { data: responseList } = await this.$config.axios.post(
+        `${this.$config.apiBasePath}list/add`,
+        {
+          title,
+          isPrivate,
+          tags,
+          categories,
+        },
+      );
+  
+      commit('addList', responseList);
+      dispatch('_setCurrentListId', responseList.id);
+      pushRouteKeepQuery({
+        name: 'list',
+        params: { id: responseList.id },
+      });
+  
+      const { data: responseItems } = await this.$config.axios.post(
+        `${this.$config.apiBasePath}items/add-many/${responseList.id}`,
+        { items },
+      );
+  
+      commit('addItems', responseItems);
+      commit('setCurrentListItems', responseItems);
+      commit('setCurrentListObj', responseList);
+      commit('decreaseExplicitRequestsNumber');
+    } catch (error) {
+      notifyAboutError(error);
+      commit('decreaseExplicitRequestsNumber');
+    }
   },
   _updateList({ commit, dispatch }, {
     title,
@@ -435,7 +413,7 @@ export default {
       .catch(error => {
         if (!cancelToken) {
           notifyAboutError(error);
-          dispatch('_fetchListById', { id: item.listId, cancelToken: null });
+          dispatch('_fetchItemById', { id: item.id, cancelToken: null });
         }
       });
   },
