@@ -50,7 +50,7 @@ export default {
   setCurrentItemObj(state, item) {
     state.currentItemObj = item;
   },
-  updateItemRelatedUnitsLocally(state, { field, value }) {
+  updateRelatedUnitsLocally(state, { field, value }) {
     state.currentItemObj[field] = value;
   },
   resetRelatedUnitsLocally(state) {

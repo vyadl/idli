@@ -137,7 +137,6 @@ export default {
       '_updateItemOnServer',
       '_deleteItem',
       '_deleteItemByTemporaryId',
-      '_fetchItemsByListId',
       '_fetchItemById',
     ]),
     closeItemModal() {

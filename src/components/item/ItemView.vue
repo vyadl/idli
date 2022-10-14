@@ -1,10 +1,5 @@
 <script>
-import { 
-  mapGetters,
-  mapActions,
-  mapState,
-  mapMutations,
-} from 'vuex';
+import { mapGetters, mapState, mapMutations } from 'vuex';
 
 export default {
   computed: {
@@ -15,8 +10,6 @@ export default {
       'currentListTags',
       'currentListCategories',
       'edittingItemObj',
-      'isItemFormInSidebar',
-      'isOwnerView',
     ]),
     currentItemTags() {
       return this.currentListTags.filter(
@@ -35,9 +28,6 @@ export default {
   methods: {
     ...mapMutations([
       'setEdittingItemIndex',
-    ]),
-    ...mapActions([
-      '_closeSidebar',
     ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');

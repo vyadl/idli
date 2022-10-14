@@ -38,7 +38,6 @@ export default {
       }
       &.small {
         font-size: map-get($text, 'small-title-font-size');
-        
       }
     }
 

@@ -30,7 +30,7 @@ export default {
         addRelatedForm: false,
         referringItems: false,
       },
-      newRelatedUnitType: 'item',
+      relatedUnitMode: 'item',
       chosenListId: null,
       chosenItemId: null,
       itemsFromPossibleRelatedList: [],
@@ -45,8 +45,8 @@ export default {
       'currentItemObj',
       'isItemFormInSidebar',
     ]),
-    isNewRelatedUnitAnItem() {
-      return this.newRelatedUnitType === 'item';
+    isRelatedUnitModeAnItem() {
+      return this.relatedUnitMode === 'item';
     },
     chosenItemIndex() {
       return this.itemsFromPossibleRelatedList
@@ -57,7 +57,7 @@ export default {
         .findIndex(list => list.id === this.chosenListId);
     },
     isAddRelatedButtonDisabled() {
-      return this.isNewRelatedUnitAnItem
+      return this.isRelatedUnitModeAnItem
         ? !this.chosenItemId
         : !this.chosenListId;
     },
@@ -78,7 +78,7 @@ export default {
     chosenListId(listId) {
       this.itemsFromPossibleRelatedList = [];
 
-      if (!this.isNewRelatedUnitAnItem || !listId) {
+      if (!this.isRelatedUnitModeAnItem || !listId) {
         return false;
       }
 
@@ -101,8 +101,7 @@ export default {
   methods: {
     ...mapMutations([
       'updateItemFieldLocally',
-      'updateItemRelatedUnitsLocally',
-      'resetRelatedUnitsLocally',
+      'updateRelatedUnitsLocally',
     ]),
     ...mapActions([
       '_fetchItemsByListId',
@@ -112,8 +111,8 @@ export default {
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
-    changeNewRelatedUnitType(value) {
-      this.newRelatedUnitType = value;
+    changeRelatedUnitMode(value) {
+      this.relatedUnitMode = value;
       this.chosenListId = null;
       this.chosenItemId = null;
     },
@@ -124,7 +123,7 @@ export default {
     },
     isUnitChoosable(unit, unitIdFieldName, targetRelatedArr) {
       const isCurrentUnitList = !unit.listId;
-      const isListChoosingOnlyToShowItems = this.isNewRelatedUnitAnItem && isCurrentUnitList;
+      const isListChoosingOnlyToShowItems = this.isRelatedUnitModeAnItem && isCurrentUnitList;
 
       const isSavedOnServer = typeof unit.id !== 'undefined';
       const isItself = this.edittingItemObj[unitIdFieldName] === unit.id;
@@ -136,7 +135,7 @@ export default {
     },
     updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {  
       this.updateItemFieldLocally({ field, value: idsForServerUpdate });
-      this.updateItemRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
+      this.updateRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
 
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
         this[this.edittingItemObj.id 
@@ -293,10 +292,10 @@ export default {
           :key="relatedUnitType"
           :label="relatedUnitType"
           :value="relatedUnitType"
-          :model-value="newRelatedUnitType"
+          :model-value="relatedUnitMode"
           style-type="initial"
           small
-          @update:model-value="value => changeNewRelatedUnitType(value)"
+          @update:model-value="value => changeRelatedUnitMode(value)"
         />
       </div>
       <div class="unit-options">
@@ -315,7 +314,7 @@ export default {
             {{ list.title }}
           </option>
           <optgroup
-            v-if="newRelatedUnitType === 'list' && edittingItemObj.relatedLists?.length"
+            v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
             label="already related lists:"
             disabled
           >
@@ -328,7 +327,7 @@ export default {
           </optgroup>
         </SelectCustom>
         <SelectCustom
-          v-if="isNewRelatedUnitAnItem"
+          v-if="isRelatedUnitModeAnItem"
           :default-option="$options.ITEMS_DEFAULT_OPTION"
           :default-option-selected="!chosenItemId"
           :disabled="!itemsFromPossibleRelatedList?.length"
@@ -359,7 +358,7 @@ export default {
         text="add"
         small
         :disabled="isAddRelatedButtonDisabled"
-        @click="isNewRelatedUnitAnItem ? addRelatedItem() : addRelatedList()"
+        @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
       />
     </div>
     <div v-if="currentItemObj?.referringItems?.length">
