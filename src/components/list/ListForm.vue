@@ -24,7 +24,7 @@ export default {
     areReferringItemsShown: false,
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('lists', [
       'lists',
       'edittingListObj',
       'isUserOwnsCurrentList',
@@ -52,7 +52,7 @@ export default {
     this.resetData();
   },
   methods: {
-    ...mapActions([
+    ...mapActions('lists', [
       '_addList',
       '_updateList',
       '_deleteList',

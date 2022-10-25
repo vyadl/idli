@@ -16,13 +16,13 @@ export default {
   },
   emits: ['scrollSidebarToTop'],
   computed: {
-    ...mapGetters([
-      'edittingItemObj',
+    ...mapGetters('lists', [
       'isOwnerView',
+      'edittingItemObj',
     ]),
   },
   methods: {
-    ...mapActions([
+    ...mapActions('lists', [
       '_addNewItemPlaceholder',
     ]),
     scrollSidebarToTop() {

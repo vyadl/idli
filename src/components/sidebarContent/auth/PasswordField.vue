@@ -37,30 +37,31 @@ export default {
 </script>
 
 <template>
-<div class="password-field">
-  <InputCustom
-    padding-right
-    :label="label"
-    :type="inputType"
-    :model-value="modelValue"
-    @input="input"
-    required
-  />
-  <div class="eye-button">
-    <img 
-      alt="show pw" 
-      :width="20"
-      :src="isPasswordShown ? '/icons/eye-closed.svg' : '/icons/eye-open.svg'" 
-      @click="togglePassword"
+  <div class="password-field">
+    <InputCustom
+      padding-right
+      :label="label"
+      :type="inputType"
+      :model-value="modelValue"
+      required
+      @input="input"
     />
+    <div class="eye-button">
+      <img 
+        alt="show pw" 
+        :width="20"
+        :src="isPasswordShown ? '/icons/eye-closed.svg' : '/icons/eye-open.svg'" 
+        @click="togglePassword"
+      >
+    </div>
   </div>
-</div>
 </template>
 
 <style lang="scss">
 .password-field {
   position: relative;
   width: 100%;
+  
   .eye-button {
     display: block;
     position: absolute;

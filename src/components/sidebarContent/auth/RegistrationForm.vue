@@ -54,15 +54,15 @@ export default {
     @submit.prevent="signUp(user)"
   >
     <InputCustom
-      label="username"
       v-model="user.username"
+      label="username"
       required
       @input="clearMessage"
     />
     <InputCustom
+      v-model="user.email"
       label="e-mail"
       type="email"
-      v-model="user.email"
       required
       @input="clearMessage"
     />
@@ -71,8 +71,8 @@ export default {
       @input="clearMessage"
     />
     <PasswordField
-      label="confirm password"
       v-model="passwordToCheck"
+      label="confirm password"
       @input="clearMessage"
     />
     <div class="message-container">

@@ -8,7 +8,6 @@ import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import { 
   mapGetters,
   mapActions,
-  mapState,
   mapMutations,
   useStore,
 } from 'vuex';
@@ -70,16 +69,15 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'edittingItemIndex',
-      'currentListItems',
-    ]),
-    ...mapGetters([
+    ...mapGetters('lists', [
       'currentListTags',
       'currentListCategories',
+      'currentListItems',
+      'edittingItemIndex',
       'edittingItemObj',
+    ]),
+    ...mapGetters('settings', [
       'isItemFormInSidebar',
-      'currentItemObj',
     ]),
     currentItemTags() {
       return this.currentListTags.filter(
@@ -102,7 +100,7 @@ export default {
   },
   mounted() {
     if (!this.edittingItemObj?.id) {
-      this.$refs.itemTitle.focus();
+      this.$refs.itemTitle.$el.focus();
     }
   },
   unmounted() {
@@ -111,7 +109,7 @@ export default {
     this.currentListItems.forEach(item => {
       if (!item.title && !item.details) {
         item.temporaryId
-          ? this._deleteItemByTemporaryId(item)
+          ? this.deleteItemByTemporaryId(item.temporaryId)
           : this._updateItemOnServer(
             {
               item: { ...item, title: emptyItemTitle }, 
@@ -125,18 +123,19 @@ export default {
     this.setCurrentItemObj(null);
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('lists', [
       'updateItemFieldLocally',
+      'deleteItemByTemporaryId',
       'setEdittingItemIndex',
       'setCurrentItemObj',
       'resetRelatedUnitsLocally',
     ]),
-    ...mapActions([
+    ...mapActions('sidebar', [
       '_closeSidebar',
-      '_addItemOnServer',
+    ]),
+    ...mapActions('lists', [
       '_updateItemOnServer',
       '_deleteItem',
-      '_deleteItemByTemporaryId',
       '_fetchItemById',
     ]),
     closeItemModal() {
@@ -147,7 +146,7 @@ export default {
         
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
         this.callActionDebounced(
-          this.edittingItemObj.id ? '_updateItemOnServer' : '_addItemOnServer',
+          this.edittingItemObj.id ? 'lists/_updateItemOnServer' : 'lists/_addItemOnServer',
           this.edittingItemObj,
         );
       }
@@ -156,7 +155,10 @@ export default {
       const itemActualId = item.id || item.temporaryId;
 
       this.cancelActionDebounced();
-      this[item.id ? '_deleteItem' : '_deleteItemByTemporaryId'](item);
+
+      item.id
+        ? this._deleteItem(item)
+        : this.deleteItemByTemporaryId(item.temporaryId);
 
       if (this.serverRequests[itemActualId]) {
         this.serverRequests[itemActualId].cancel();

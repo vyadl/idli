@@ -21,9 +21,9 @@ export default {
     errorMessage: '',
   }),
   methods: {
-    ...mapActions({
-      _signIn: 'auth/_signIn',
-    }),
+    ...mapActions('auth', [
+      '_signIn',
+    ]),
     clearMessage() {
       this.errorMessage = '';
     },
@@ -47,8 +47,8 @@ export default {
     @submit.prevent="signIn(signInData)"
   >
     <InputCustom
-      label="username"
       v-model="signInData.username"
+      label="username"
       required
       @input="clearMessage"
     />

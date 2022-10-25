@@ -7,7 +7,6 @@ import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 import {
-  mapState,
   mapGetters,
   mapActions,
   mapMutations,
@@ -28,30 +27,33 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      visualization: state => state.visualization,
-      filters: state => state.filters,
-    }),
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
-    ...mapGetters([
+    ...mapGetters('lists', [
       'lists',
-      'currentListId',
       'currentListObj',
       'currentListItems',
-      'filteredList',
       'edittingItemObj',
+    ]),
+    ...mapGetters('filters', [
+      'allFilters',
+      'filteredList',
+    ]),
+    ...mapGetters('visualization', [
+      'visualization',
       'sorting',
       'mode',
-      'checkedTags',
       'shuffleTrigger',
       'listAlign',
-      'areItemDetailsShown',
       'isItemsOrderReversed',
+    ]),
+    ...mapGetters('settings', [
       'isItemFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
+    ]),
+    ...mapGetters('sidebar', [
       'isSidebarOpen',
     ]),
     styles() {
@@ -97,7 +99,7 @@ export default {
       },
       deep: true,
     },
-    filters: {
+    allFilters: {
       handler() {
         if (this.sorting === 'shuffled' && this.currentListItems.length) {
           this._filterList(this.shuffledList || this.currentListItems);
@@ -183,26 +185,34 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('filters', [
       'setTags',
       'setCategories',
+      'setCurrentSearchValue',
+    ]),
+    ...mapMutations('visualization', [
       'setSorting',
       'setMode',
       'setListAlign',
-      'setCurrentSearchValue',
+      'toggleShuffleTrigger',
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
+    ]),
+    ...mapMutations('lists', [
       'setEdittingItemIndex',
       'resetRelatedUnitsLocally',
     ]),
-    ...mapActions([
-      '_fetchItemById',
+    ...mapActions('lists', [
       '_fetchListsForUser',
       '_fetchListById',
-      '_toggleShuffleTrigger',
-      '_closeSidebar',
-      '_filterList',
+      '_fetchItemById',
       '_setUnitsFromLocalStorage',
+    ]),
+    ...mapActions('filters', [
+      '_filterList',
+    ]),
+    ...mapActions('sidebar', [
+      '_closeSidebar',
     ]),
     fetchItemById(id) {
       this.resetRelatedUnitsLocally();
@@ -283,7 +293,7 @@ export default {
             v-if="sorting === 'shuffled'"
             text="randomize!"
             style-type="underline"
-            @click="_toggleShuffleTrigger"
+            @click="toggleShuffleTrigger"
           />
         </div>
       </header>

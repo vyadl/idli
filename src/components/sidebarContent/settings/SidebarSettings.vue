@@ -25,15 +25,19 @@ export default {
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
-    ...mapGetters([
+    ...mapGetters('lists', [
+      'isPublicView',
+      'isOwnerView',
+    ]),
+    ...mapGetters('settings', [
       'isItemFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
       'isUsingHotkeys',
       'theme',
-      'isPublicView',
-      'isOwnerView',
-      'itemPublicView',
+    ]),
+    ...mapGetters('sidebar', [
+      'itemPublicView', 
     ]),
     sidebarActionsWithItems() {
       return this.isOwnerView
@@ -68,11 +72,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
-      '_switchItemFormLocation',
+    ...mapActions('settings', [
+      '_toggleItemFormLocation',
       '_toggleFocusMode',
-      '_switchSidebarAndListIntersection',
-      '_switchUsingHotkeys',
+      '_toggleSidebarAndListIntersection',
+      '_toggleUsingHotkeys',
       '_setTheme',
     ]),
   },
@@ -92,7 +96,7 @@ export default {
         :value="false"
         :model-value="isItemFormInSidebar"
         name="isItemFormInSidebar"
-        @change="_switchItemFormLocation"
+        @change="_toggleItemFormLocation"
       />
       <CheckboxCustom
         label="focus on list"
@@ -108,7 +112,7 @@ export default {
         :value="true"
         :model-value="isListUnderSidebar"
         name="isListUnderSidebar"
-        @change="_switchSidebarAndListIntersection"
+        @change="_toggleSidebarAndListIntersection"
       />
       <CheckboxCustom
         label="using hotkeys"
@@ -116,7 +120,7 @@ export default {
         :value="true"
         :model-value="isUsingHotkeys"
         name="isUsingHotkeys"
-        @change="_switchUsingHotkeys"
+        @change="_toggleUsingHotkeys"
       />
       <div class="hotkeys-desc">
         ESC - exit focus mode/hide modal <br>

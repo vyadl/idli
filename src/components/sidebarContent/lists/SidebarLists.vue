@@ -18,7 +18,7 @@ export default {
     listRequests: [],
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('lists', [
       'lists',
       'currentListId',
       'edittingListObj',
@@ -30,15 +30,17 @@ export default {
   methods: {
     ...mapMutations([
       'decreaseExplicitRequestsNumber',
+      'setModalNameToShow',
     ]),
-    ...mapActions([
+    ...mapActions('lists', [
       '_fetchListById',
       '_setListForEditting',
-      '_setModalNameToShow',
+    ]),
+    ...mapActions([
       '_resetCustomView',
     ]),
     openListModal() {
-      this._setModalNameToShow('listModal');
+      this.setModalNameToShow('listModal');
     },
     setListForEditting(list) {
       this._setListForEditting(list);

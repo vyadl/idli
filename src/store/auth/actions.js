@@ -1,7 +1,7 @@
 import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { addQueryItems } from '@/router/utils'; // eslint-disable-line import/no-cycle
-import { commitFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
+import { commitFromRoot, dispatchFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
 export default {
   async _signUp(state, user) {
@@ -12,9 +12,10 @@ export default {
     );
     commitFromRoot('decreaseExplicitRequestsNumber');
     commitFromRoot('setNotification', { text: 'Registration is successful' });
-    commitFromRoot('changeSidebarMode', 'sign in');
+    commitFromRoot('sidebar/changeSidebarMode', 'sign in');
     addQueryItems({ sidebar: 'sign in' });
   },
+
   async _signIn({ commit }, user) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
@@ -35,17 +36,19 @@ export default {
       throw error;
     }
   },
+
   _logOut({ commit }) {
     commit('logOut');
     localStorage.removeItem('user');
     localStorage.removeItem('currentListId');
     deleteAccessToken();
     router.push({ name: 'auth' });
-    commitFromRoot('closeSidebar');
-    commitFromRoot('resetFilters');
-    commitFromRoot('resetVisualizationToDefault');
-    commitFromRoot('setCurrentListItems', []);
+    commitFromRoot('sidebar/closeSidebar');
+    commitFromRoot('filters/resetFilters');
+    dispatchFromRoot('visualization/_resetVisualizationToDefault');
+    commitFromRoot('lists/setCurrentListItems', []);
   },
+  
   _setUserFromLocalStorage({ commit }) {
     const user = localStorage.getItem('user');
 

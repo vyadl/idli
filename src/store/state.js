@@ -1,40 +1,4 @@
-export default {
-  lists: [],
-  testLists: [],
-  currentListId: null,
-  currentListItems: [],
-  currentListObj: null,
-  currentListView: 'owner',
-  edittingListObj: null,
-  filteredList: [],
-  currentItemObj: null,
-  edittingItemIndex: null,
-  deletedLists: [],
-  deletedItems: [],
-  filters: {
-    currentSearchValue: '',
-    checkedTags: [],
-    checkedCategories: [],
-  },
-  visualization: {
-    sorting: 'dateCreated',
-    mode: 'list',
-    shuffleTrigger: false,
-    listAlign: 'center',
-    areItemDetailsShown: false,
-    isItemsOrderReversed: false,
-  },
-  settings: {
-    isItemFormInSidebar: false,
-    isFocusOnList: false,
-    isListUnderSidebar: true,
-    isUsingHotkeys: true,
-    theme: 'default',
-  },
-  sidebar: {
-    isOpen: false,
-    mode: 'lists',
-  },
+export default {  
   notification: {
     time: null,
     text: '',

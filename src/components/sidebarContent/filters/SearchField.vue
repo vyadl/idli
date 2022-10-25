@@ -1,18 +1,18 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
     InputCustom,
   },
   computed: {
-    ...mapState([
+    ...mapGetters('filters', [
       'currentSearchValue',
     ]),
   },
   methods: {
-    ...mapActions([
+    ...mapActions('filters', [
       '_setCurrentSearchValue',
     ]),
   },
@@ -20,12 +20,12 @@ export default {
 </script>
 
 <template>
-<div class="search-field">
-  <InputCustom 
-    icon="/icons/loupe.svg"
-    placeholder="minimum 3 symbols"
-    :model-value="currentSearchValue"
-    @input="_setCurrentSearchValue"
-  />
-</div>
+  <div class="search-field">
+    <InputCustom 
+      icon="/icons/loupe.svg"
+      placeholder="minimum 3 symbols"
+      :model-value="currentSearchValue"
+      @input="_setCurrentSearchValue"
+    />
+  </div>
 </template>

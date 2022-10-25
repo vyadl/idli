@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 const RESET_NOTIFICATION_TIME = 4500;
 
@@ -27,7 +27,7 @@ export default {
           }, resetNotificationTime);
 
           setTimeout(() => {
-            this._setNotification({
+            this.setNotification({
               time: null,
               text: '',
             });
@@ -38,8 +38,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
-      '_setNotification',
+    ...mapMutations([
+      'setNotification',
     ]),
   },
 };
@@ -49,11 +49,11 @@ export default {
   <div
     class="app-notification"
     :class="[{
-        shown: isNotificationShown,
-        hide: !isNotificationShown && !isIniting,
-        hidden: isIniting,
-      },
-      `${globalTheme}-theme`,
+               shown: isNotificationShown,
+               hide: !isNotificationShown && !isIniting,
+               hidden: isIniting,
+             },
+             `${globalTheme}-theme`,
     ]"
   >
     <div class="text">

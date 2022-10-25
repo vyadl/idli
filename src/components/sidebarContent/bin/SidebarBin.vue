@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -17,7 +17,7 @@ export default {
     isRequestProcessing: false,
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('bin', [
       'deletedLists',
       'deletedItems',
     ]),
@@ -26,13 +26,15 @@ export default {
     this._fetchBin();
   },
   methods: {
-    ...mapActions([
+    ...mapMutations([
+      'setNotification',
+    ]),
+    ...mapActions('bin', [
       '_fetchBin',
       '_restoreList',
       '_restoreItem',
       '_hardDeleteList',
       '_hardDeleteItem',
-      '_setNotification',
       '_hardDeleteAllItems',
       '_hardDeleteAllLists',
       '_restoreAllItems',
@@ -43,8 +45,9 @@ export default {
 
       this[action](payload).then(res => {
         if (res?.data?.isListDeleted) {
-          this._setNotification({
-            text: `To see the restored item you need to restore this list - "${res?.data?.listTitle}"`,
+          this.setNotification({
+            text: `To see the restored item you need to restore this list - 
+              "${res?.data?.listTitle}"`,
             time: 15000,
           });
         }
@@ -64,7 +67,7 @@ export default {
       this.isRequestProcessing = true;
       this[action]().then(res => {
         if (res?.data?.listsTitlesArray?.length) {
-          this._setNotification({
+          this.setNotification({
             text: `To see the restored items you need to restore these lists
               - "${res.data.listsTitlesArray.join(', ')}"`,
             time: 20000,
