@@ -69,10 +69,14 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'currentListItems',
+    ]),
     ...mapGetters('lists', [
       'currentListTags',
       'currentListCategories',
-      'currentListItems',
+    ]),
+    ...mapGetters('items', [
       'edittingItemIndex',
       'edittingItemObj',
     ]),
@@ -123,19 +127,21 @@ export default {
     this.setCurrentItemObj(null);
   },
   methods: {
-    ...mapMutations('lists', [
+    ...mapMutations([
       'updateItemFieldLocally',
       'deleteItemByTemporaryId',
-      'setEdittingItemIndex',
+    ]),
+    ...mapMutations('items', [
       'setCurrentItemObj',
+      'setEdittingItemIndex',
       'resetRelatedUnitsLocally',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',
     ]),
-    ...mapActions('lists', [
+    ...mapActions('items', [
       '_updateItemOnServer',
-      '_deleteItem',
+      '_deleteItemOnServer',
       '_fetchItemById',
     ]),
     closeItemModal() {
@@ -146,7 +152,7 @@ export default {
         
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
         this.callActionDebounced(
-          this.edittingItemObj.id ? 'lists/_updateItemOnServer' : 'lists/_addItemOnServer',
+          this.edittingItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
           this.edittingItemObj,
         );
       }
@@ -156,9 +162,11 @@ export default {
 
       this.cancelActionDebounced();
 
-      item.id
-        ? this._deleteItem(item)
-        : this.deleteItemByTemporaryId(item.temporaryId);
+      if (item.id) {
+        this._deleteItemOnServer({ itemId: item.id, listId: item.listId });
+      } else {
+        this.deleteItemByTemporaryId(item.temporaryId);
+      }
 
       if (this.serverRequests[itemActualId]) {
         this.serverRequests[itemActualId].cancel();

@@ -8,6 +8,7 @@ import auth from './auth'; // eslint-disable-line import/no-cycle
 import bin from './bin';
 import filters from './filters';
 import lists from './lists';
+import items from './items';
 import settings from './settings';
 import sidebar from './sidebar';
 import visualization from './visualization';
@@ -22,6 +23,7 @@ const store = createStore({
     bin,
     filters,
     lists,
+    items,
     settings,
     sidebar,
     visualization,

@@ -67,6 +67,8 @@ export default {
     ]),
     ...mapActions('lists', [
       '_setCurrentListView',
+    ]),
+    ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
     ...mapActions('sidebar', [

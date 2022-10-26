@@ -38,6 +38,8 @@ export default {
   computed: {
     ...mapGetters('lists', [
       'lists',
+    ]),
+    ...mapGetters('items', [
       'edittingItemObj',
       'currentItemObj',
     ]),
@@ -98,12 +100,16 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('lists', [
+    ...mapMutations([
       'updateItemFieldLocally',
+    ]),
+    ...mapMutations('items', [
       'updateRelatedUnitsLocally',
     ]),
     ...mapActions('lists', [
       '_fetchItemsByListId',
+    ]),
+    ...mapActions('items', [
       '_updateItemOnServer',
       '_addItemOnServer',
     ]),

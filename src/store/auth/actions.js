@@ -42,11 +42,11 @@ export default {
     localStorage.removeItem('user');
     localStorage.removeItem('currentListId');
     deleteAccessToken();
-    router.push({ name: 'auth' });
     commitFromRoot('sidebar/closeSidebar');
     commitFromRoot('filters/resetFilters');
     dispatchFromRoot('visualization/_resetVisualizationToDefault');
-    commitFromRoot('lists/setCurrentListItems', []);
+    commitFromRoot('setCurrentListItems', []);
+    router.push({ name: 'auth' });
   },
   
   _setUserFromLocalStorage({ commit }) {

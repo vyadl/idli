@@ -15,7 +15,7 @@ export default {
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
-    ...mapGetters('lists', [
+    ...mapGetters('items', [
       'edittingItemIndex',
       'edittingItemObj',
       'currentItemObj',
@@ -66,12 +66,14 @@ export default {
     this.setCurrentItemObj(null);
   },
   methods: {
-    ...mapMutations('lists', [
+    ...mapMutations('items', [
       'setCurrentItemObj',
     ]),
     ...mapActions('lists', [
       '_fetchListById',
       '_fetchListsForUser',
+    ]),
+    ...mapActions('items', [
       '_fetchItemById',
       '_findAndSetEdittingItemIndex',
     ]),

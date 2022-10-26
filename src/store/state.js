@@ -1,4 +1,5 @@
 export default {  
+  currentListItems: [],
   notification: {
     time: null,
     text: '',

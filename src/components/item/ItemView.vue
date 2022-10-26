@@ -6,6 +6,8 @@ export default {
     ...mapGetters('lists', [
       'currentListTags',
       'currentListCategories',
+    ]),
+    ...mapGetters('items', [
       'edittingItemObj',
     ]),
     currentItemTags() {
@@ -23,7 +25,7 @@ export default {
     this.setEdittingItemIndex(null); 
   },
   methods: {
-    ...mapMutations('lists', [
+    ...mapMutations('items', [
       'setEdittingItemIndex',
     ]),
     closeItemModal() {

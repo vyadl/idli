@@ -59,7 +59,7 @@ export default {
         (idea, product owner, frontend, backend, design)
         <br>
         <a
-          href="http://vyadl.me"
+          href="https://vyadl.me"
           target="_blank"
         >
           vyadl.me

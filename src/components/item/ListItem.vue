@@ -16,7 +16,7 @@ export default {
       'listAlign',
       'areItemDetailsShown',
     ]),
-    ...mapGetters('lists', [
+    ...mapGetters('items', [
       'edittingItemObj',
     ]),
     itemName() {
@@ -63,7 +63,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('lists', [
+    ...mapActions('items', [
       '_findAndSetEdittingItemIndex',
     ]),
     ...mapActions('sidebar', [

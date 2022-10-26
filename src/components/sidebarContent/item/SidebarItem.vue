@@ -18,11 +18,13 @@ export default {
   computed: {
     ...mapGetters('lists', [
       'isOwnerView',
+    ]),
+    ...mapGetters('items', [
       'edittingItemObj',
     ]),
   },
   methods: {
-    ...mapActions('lists', [
+    ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
     scrollSidebarToTop() {

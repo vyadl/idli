@@ -48,7 +48,7 @@ export default {
     />
     <div class="eye-button">
       <img 
-        alt="show pw" 
+        alt="show password"
         :width="20"
         :src="isPasswordShown ? '/icons/eye-closed.svg' : '/icons/eye-open.svg'" 
         @click="togglePassword"

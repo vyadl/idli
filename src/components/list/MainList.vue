@@ -27,13 +27,17 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'currentListItems',
+    ]),
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
     ...mapGetters('lists', [
       'lists',
       'currentListObj',
-      'currentListItems',
+    ]),
+    ...mapGetters('items', [
       'edittingItemObj',
     ]),
     ...mapGetters('filters', [
@@ -198,15 +202,19 @@ export default {
       'toggleItemDetailsShowingMode',
       'toggleItemsOrder',
     ]),
-    ...mapMutations('lists', [
+    ...mapMutations('items', [
       'setEdittingItemIndex',
       'resetRelatedUnitsLocally',
+    ]),
+    ...mapActions([
+      '_setUnitsFromLocalStorage',
     ]),
     ...mapActions('lists', [
       '_fetchListsForUser',
       '_fetchListById',
+    ]),
+    ...mapActions('items', [
       '_fetchItemById',
-      '_setUnitsFromLocalStorage',
     ]),
     ...mapActions('filters', [
       '_filterList',
