@@ -1,14 +1,13 @@
 <script>
-import { mapGetters, mapState, mapMutations } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   computed: {
-    ...mapState([
-      'edittingItemIndex',
-    ]),
-    ...mapGetters([
+    ...mapGetters('lists', [
       'currentListTags',
       'currentListCategories',
+    ]),
+    ...mapGetters('items', [
       'edittingItemObj',
     ]),
     currentItemTags() {
@@ -26,7 +25,7 @@ export default {
     this.setEdittingItemIndex(null); 
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('items', [
       'setEdittingItemIndex',
     ]),
     closeItemModal() {

@@ -11,7 +11,7 @@ export default {
     ItemView,
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('lists', [
       'isOwnerView',
     ]),
   },
@@ -23,7 +23,7 @@ export default {
     class="item-modal"
     name="itemModal"
   >
-    <ItemForm v-if=isOwnerView />
+    <ItemForm v-if="isOwnerView" />
     <ItemView v-else />
   </ModalBasic>
 </template>

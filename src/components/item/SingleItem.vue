@@ -3,7 +3,6 @@ import {
   mapActions,
   mapGetters,
   mapMutations,
-  mapState,
 } from 'vuex';
 
 export default {
@@ -13,16 +12,20 @@ export default {
     };
   },
   computed: {
-    ...mapState(['edittingItemIndex']),
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
-    ...mapGetters([
-      'isItemFormInSidebar',
-      'isSidebarOpen',
-      'isListUnderSidebar',
+    ...mapGetters('items', [
+      'edittingItemIndex',
       'edittingItemObj',
       'currentItemObj',
+    ]),
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+      'isListUnderSidebar',
+    ]),
+    ...mapGetters('sidebar', [
+      'isSidebarOpen',
     ]),
   },
   async created() {
@@ -43,7 +46,7 @@ export default {
           if (this.isItemFormInSidebar) {
             this._openSidebar('item');
           } else {
-            this._switchItemFormLocation();
+            this._toggleItemFormLocation();
             this._openSidebar('item');
           }
 
@@ -63,17 +66,23 @@ export default {
     this.setCurrentItemObj(null);
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('items', [
       'setCurrentItemObj',
     ]),
-    ...mapActions([
-      '_fetchItemById',
+    ...mapActions('lists', [
       '_fetchListById',
       '_fetchListsForUser',
+    ]),
+    ...mapActions('items', [
+      '_fetchItemById',
+      '_findAndSetEdittingItemIndex',
+    ]),
+    ...mapActions('settings', [
+      '_toggleItemFormLocation',
+    ]),
+    ...mapActions('sidebar', [
       '_openSidebar',
       '_closeSidebar',
-      '_findAndSetEdittingItemIndex',
-      '_switchItemFormLocation',
     ]),
     setItemForEditting() {
       this._findAndSetEdittingItemIndex(this.item);

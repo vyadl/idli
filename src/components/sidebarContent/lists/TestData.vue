@@ -18,7 +18,7 @@ export default {
     errorMessage: '',
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('lists', [
       'lists',
       'testLists',
     ]),
@@ -27,7 +27,7 @@ export default {
     this.areTestListsShown = !this.lists.length;
   },
   methods: {
-    ...mapActions([
+    ...mapActions('lists', [
       '_copyTestListToUserLists',
     ]),
     addTestList(list) {

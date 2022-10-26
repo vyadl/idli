@@ -18,12 +18,16 @@ export default {
     AppNotification,
   },
   computed: {
+    ...mapGetters('lists', [
+      'isPublicView',
+    ]),
+    ...mapGetters('sidebar', [
+      'sidebarMode',
+    ]),
     ...mapGetters([
       'notification',
       'modalNameToShow',
       'explicitRequestsNumber',
-      'isPublicView',
-      'sidebarMode',
     ]),
   },
   watch: {
@@ -69,18 +73,24 @@ export default {
     );
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('sidebar', [
       'openSidebar',
       'changeSidebarMode',
+    ]),
+    ...mapMutations('lists', [
       'setCurrentListView',
     ]),
     ...mapActions('auth', [
       '_setUserFromLocalStorage',
     ]),
-    ...mapActions([
-      '_closeSidebar',
-      '_setUnitsFromLocalStorage',
+    ...mapActions('lists', [
       '_fetchTestLists',
+    ]),
+    ...mapActions('sidebar', [
+      '_closeSidebar',
+    ]),
+    ...mapActions([
+      '_setUnitsFromLocalStorage',
     ]),
   },
 };

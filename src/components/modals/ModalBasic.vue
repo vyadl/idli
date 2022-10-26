@@ -1,5 +1,5 @@
 <script>
-import { mapActions } from 'vuex';
+import { mapMutations } from 'vuex';
 import { VueFinalModal } from 'vue-final-modal';
 
 export default {
@@ -26,14 +26,14 @@ export default {
     showInner: false,
   }),
   methods: {
-    ...mapActions([
-      '_setModalNameToShow',
+    ...mapMutations([
+      'setModalNameToShow',
     ]),
     open() {
       this.showInner = true;
     },
     close() {
-      this._setModalNameToShow('');
+      this.setModalNameToShow('');
       setTimeout(() => {
         this.showInner = false;
       }, 300);

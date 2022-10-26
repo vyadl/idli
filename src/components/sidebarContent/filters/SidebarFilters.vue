@@ -15,14 +15,16 @@ export default {
     InfoMessage,
   },
   computed: {
-    ...mapGetters([
-      'currentListObj',
-      'currentListTags',
-      'currentListCategories',
+    ...mapGetters('filters', [
       'checkedTags',
       'checkedCategories',
       'currentSearchValue',
       'filteredListLength',
+    ]),
+    ...mapGetters('lists', [
+      'currentListObj',
+      'currentListTags',
+      'currentListCategories',
     ]),
     tagsInfoMessage() {
       return !this.currentListTags?.length ? 'no tags in this list' : '';
@@ -32,7 +34,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
+    ...mapActions('filters', [
       '_resetFilters',
       '_setCategories',
       '_setTags',

@@ -23,7 +23,7 @@ export function initHotkeys() {
     if (
       !event.target.closest('input')
       && !event.target.closest('textarea')
-      && store.getters.settings.isUsingHotkeys
+      && store.getters['settings/isUsingHotkeys']
       && pressedKeys.size === 1
     ) {
       switch (key) {
@@ -54,42 +54,45 @@ export function initHotkeys() {
 }
 
 function createNewItem() {
-  if (store.getters.isUserOwnsCurrentList) {
-    store.getters.isItemFormInSidebar
-      ? store.dispatch('_openSidebar', 'item')
-      : store.dispatch('_setModalNameToShow', 'itemModal');
+  if (store.getters['lists/isUserOwnsCurrentList']) {
+    store.dispatch('items/_addNewItemPlaceholder');
+
+    store.getters['settings/isItemFormInSidebar']
+      ? store.dispatch('sidebar/_openSidebar', 'item')
+      : store.commit('setModalNameToShow', 'itemModal');
   }
 }
 
 function createNewList() {
   if (store.getters['auth/isLoggedIn']) {
-    store.dispatch('_setModalNameToShow', 'listModal');
+    store.commit('setModalNameToShow', 'listModal');
   }
 }
 
 function editCurrentList() {
-  const { currentListObj, isUserOwnsCurrentList } = store.getters;
+  const currentListObj = store.getters['lists/currentListObj'];
+  const isUserOwnsCurrentList = store.getters['lists/isUserOwnsCurrentList'];
 
   if (currentListObj && isUserOwnsCurrentList) {
-    store.dispatch('_setListForEditting', store.getters.currentListObj);
-    store.dispatch('_setModalNameToShow', 'listModal');
+    store.dispatch('lists/_setListForEditting', currentListObj);
+    store.commit('setModalNameToShow', 'listModal');
   }
 }
 
 function randomizeList() {
   if (router.currentRoute._value.name === 'list') {
-    store.dispatch('_setSorting', 'shuffled');
-    store.dispatch('_toggleShuffleTrigger');
+    store.dispatch('visualization/_setSorting', 'shuffled');
+    store.commit('visualization/toggleShuffleTrigger');
   }
 }
 
 function toggleFocusMode() {
-  store.dispatch('_toggleFocusMode');
+  store.dispatch('settings/_toggleFocusMode');
 }
 
 function exitFocusMode() {
-  if (store.getters.isFocusOnList) {
-    store.dispatch('_toggleFocusMode');
+  if (store.getters['settings/isFocusOnList']) {
+    store.dispatch('settings/_toggleFocusMode');
   }
 }
 
@@ -97,14 +100,14 @@ function switchSidebarMode() {
   let mode = ''; 
   
   if (store.getters['auth/isLoggedIn']) {
-    mode = store.getters.sidebarMode || sidebarModesForViews.loggedInView.default;
+    mode = store.getters['sidebar/sidebarMode'] || sidebarModesForViews.loggedInView.default;
   } else {
     mode = sidebarModesForViews[
       router.currentRoute._value.name === 'auth' ? 'authPageView' : 'listPublicView'
     ].default;
   }
  
-  store.getters.isSidebarOpen
-    ? store.dispatch('_closeSidebar')
-    : store.dispatch('_openSidebar', mode);
+  store.getters['sidebar/isSidebarOpen']
+    ? store.dispatch('sidebar/_closeSidebar')
+    : store.dispatch('sidebar/_openSidebar', mode);
 }

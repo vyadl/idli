@@ -10,7 +10,7 @@ import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { sidebarModesForViews } from '@/store/config';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -29,15 +29,19 @@ export default {
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
-    ...mapGetters([
+    ...mapGetters('lists', [
       'isUserOwnsCurrentList',
       'currentListObj',
-      'isItemFormInSidebar',
-      'isFocusOnList',
-      'isSidebarOpen',
-      'sidebarMode',
       'isPublicView',
       'isOwnerView',
+    ]),
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+      'isFocusOnList',
+    ]),
+    ...mapGetters('sidebar', [
+      'isSidebarOpen',
+      'sidebarMode',
       'currentSidebarView',
     ]),
     sidebarModes() {
@@ -58,14 +62,21 @@ export default {
     });
   },
   methods: {
-    ...mapActions([
-      '_addNewItemPlaceholder',
-      '_openSidebar',
-      '_closeSidebar',
+    ...mapMutations([
+      'setModalNameToShow',
+    ]),
+    ...mapActions('lists', [
       '_setCurrentListView',
     ]),
+    ...mapActions('items', [
+      '_addNewItemPlaceholder',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
+      '_closeSidebar',
+    ]),
     openItemModal() {
-      this.$vfm.show('itemModal');
+      this.setModalNameToShow('itemModal');
     },
     exitPublicView() {
       this._setCurrentListView('owner');

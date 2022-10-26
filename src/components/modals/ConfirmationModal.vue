@@ -2,7 +2,7 @@
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { confirmationPromise } from '@/settings/confirmationPromise';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -11,7 +11,7 @@ export default {
   },
 
   computed: {
-    ...mapState([
+    ...mapGetters([
       'confirmationModalTitle',
     ]),
   },
@@ -42,13 +42,11 @@ export default {
       <ButtonText
         text="yes"
         @click="confirm"
-      >
-      </ButtonText>
+      />
       <ButtonText
         text="no"
         @click="close"
-      >
-      </ButtonText>
+      />
     </div>
   </ModalBasic>
 </template>

@@ -3,7 +3,7 @@ import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { defaultVisualization } from '@/store/config';
 
 export default {
@@ -43,7 +43,7 @@ export default {
     unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('visualization', [
       ...Object.keys(defaultVisualization),
     ]),
     listAlignTitles() {
@@ -77,13 +77,15 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
+    ...mapMutations('visualization', [
+      'toggleShuffleTrigger',
+    ]),
+    ...mapActions('visualization', [
       '_setSorting',
       '_setMode',
       '_setListAlign',
       '_toggleItemDetailsShowingMode',
       '_toggleItemsOrder',
-      '_toggleShuffleTrigger',
       '_resetVisualizationToDefault',
     ]),
   },
@@ -112,7 +114,7 @@ export default {
           class="randomize"
           text="randomize!"
           style-type="underline"
-          @click="_toggleShuffleTrigger"
+          @click="toggleShuffleTrigger"
         />
       </div>
     </SectionCard>

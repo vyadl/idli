@@ -9,7 +9,7 @@ export default {
     ListForm,
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('lists', [
       'edittingListObj',
     ]),
   },

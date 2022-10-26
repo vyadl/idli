@@ -7,13 +7,17 @@ export default {
   },
   emits: ['click'],
   computed: {
-    ...mapGetters([
-      'edittingItemObj',
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+    ]),
+    ...mapGetters('visualization', [
       'mode',
       'shuffleTrigger',
       'listAlign',
       'areItemDetailsShown',
-      'isItemFormInSidebar',
+    ]),
+    ...mapGetters('items', [
+      'edittingItemObj',
     ]),
     itemName() {
       let name = '';
@@ -59,9 +63,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
-      '_openSidebar',
+    ...mapActions('items', [
       '_findAndSetEdittingItemIndex',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
     ]),
     setItemForEditting() {
       this.$emit('click', this.item.id);

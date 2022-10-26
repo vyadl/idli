@@ -7,7 +7,6 @@ import SectionCard from '@/components/wrappers/SectionCard.vue';
 import { 
   mapGetters,
   mapActions,
-  mapState,
   mapMutations,
 } from 'vuex';
 
@@ -37,12 +36,14 @@ export default {
     };
   },
   computed: {
-    ...mapState([
+    ...mapGetters('lists', [
       'lists',
     ]),
-    ...mapGetters([
+    ...mapGetters('items', [
       'edittingItemObj',
       'currentItemObj',
+    ]),
+    ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
     isRelatedUnitModeAnItem() {
@@ -101,10 +102,14 @@ export default {
   methods: {
     ...mapMutations([
       'updateItemFieldLocally',
+    ]),
+    ...mapMutations('items', [
       'updateRelatedUnitsLocally',
     ]),
-    ...mapActions([
+    ...mapActions('lists', [
       '_fetchItemsByListId',
+    ]),
+    ...mapActions('items', [
       '_updateItemOnServer',
       '_addItemOnServer',
     ]),

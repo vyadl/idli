@@ -7,7 +7,7 @@ export default {
     ButtonText,
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('sidebar', [
       'isSidebarOpen',
     ]),
     logoSrc() {
@@ -16,7 +16,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
+    ...mapActions('sidebar', [
       '_openSidebar',
       '_closeSidebar',
     ]),
