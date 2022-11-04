@@ -1,7 +1,13 @@
 <script>
+import SectionCard from '@/components/wrappers/SectionCard.vue';
+import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {
+  components: {
+    SectionCard,
+    RelatedUnits,
+  },
   computed: {
     ...mapGetters('lists', [
       'currentListTags',
@@ -52,40 +58,45 @@ export default {
       </div>
     </div>
     <div class="item-filters">
-      <div
+      <SectionCard
         v-if="currentItemTags.length"
-        class="filters-container"
+        title="tags"
+        small
+        centered
+        caps
       >
-        <h1 class="filters-title">
-          tags:
-        </h1>
-        <span
-          v-for="(tag, index) in currentItemTags"
-          :key="tag.id"
-          class="tag"
-        >
-          {{ tag.title }}<span v-if="index !== currentItemTags.length - 1">, </span>
-        </span>
-      </div>
-      <div
-        v-if="currentItemCategory"
-        class="filters-container"
-      >
-        <h1 class="filters-title">
-          category:
-        </h1>
-        <div class="category">
-          {{ currentItemCategory.title }}
+        <div class="filters-container">
+          <span
+            v-for="(tag, index) in currentItemTags"
+            :key="tag.id"
+            class="tag"
+          >
+            {{ tag.title }}<span v-if="index !== currentItemTags.length - 1">, </span>
+          </span>
         </div>
-      </div>
+      </SectionCard>
+      <SectionCard
+        v-if="currentItemCategory"
+        title="category"
+        small
+        centered
+        caps
+      >
+        <div class="filter-container">
+          <div class="category">
+            {{ currentItemCategory.title }}
+          </div>
+        </div>
+      </SectionCard>
     </div>
+    <RelatedUnits />
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .item-view {
     .text-fields {
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
 
     .title {
@@ -102,15 +113,10 @@ export default {
       overflow-wrap: break-word;
     }
 
-    .item-filters {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
     .filters-container {
       display: flex;
       align-items: baseline;
+      justify-content: center;
       flex-wrap: wrap;
       gap: 7px;
     }
@@ -119,6 +125,7 @@ export default {
     .category {
       color: map-get($colors, 'gray-dark');
       font-size: 14px;
+      text-align: center;
     }
   }
 </style>

@@ -11,5 +11,12 @@ export function beforeEach(router) {
     if (isRedirectToAuthNeeded) {
       return { name: 'auth' };
     }
+
+    const isRedirectFromAuthNeeded = to.name === 'auth'
+      && store.getters['auth/isLoggedIn'];
+
+    if (isRedirectFromAuthNeeded) {
+      return { name: 'home' };
+    }
   });
 }

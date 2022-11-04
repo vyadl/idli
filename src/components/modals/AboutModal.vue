@@ -23,7 +23,7 @@ export default {
       <br><br>
       Mariia Br
       <div class="descr">
-        (frontend)
+        (frontend, design)
         <br>
         <a
           href="mailto:tnuocc@gmail.com"

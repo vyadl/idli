@@ -12,7 +12,7 @@ export const List = function List() {
   this.categories = [];
 };
 export const Item = function Item() {
-  this.title = null;
+  this.title = '';
   this.details = '';
   this.tags = [];
   this.category = null;

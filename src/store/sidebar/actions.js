@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { addQueryItems, deleteFromQuery } from '@/router/utils';
 
 export default {

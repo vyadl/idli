@@ -26,12 +26,22 @@ export default {
       type: String,
       default: '',
     },
+    isFocus: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   emits: [
     'input',
     'update:modelValue',
   ],
+
+  mounted() {
+    if (this.isFocus) {
+      this.$nextTick(() => this.focus());
+    }
+  },
 
   methods: {
     input(value) {

@@ -9,6 +9,10 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },    
+    big: {
+      type: Boolean,
+      default: false,
     },
     active: {
       type: Boolean,
@@ -49,7 +53,7 @@ export default {
     class="button-text"
     :class="[
       styleType,
-      { small, active },
+      { small, big, active },
       `${globalTheme}-theme`,
     ]"
     :title="title"
@@ -112,6 +116,10 @@ export default {
         font-size: 11px;
       }
 
+      &.big {
+        font-size: 15px;
+      }
+
       &:hover {
         color: map-get($colors, 'gray-light');
       }
@@ -122,6 +130,10 @@ export default {
       line-height: 1.3;
       color: map-get($colors, 'gray-dark');
       transition: color 0.2s;
+
+      &.small {
+        font-size: 13px;
+      }
 
       &.active,
       &:hover {

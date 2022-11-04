@@ -4,6 +4,7 @@ export default {
     title: String,
     small: Boolean,
     centered: Boolean,
+    caps: Boolean,
   },
 };
 </script>
@@ -16,7 +17,7 @@ export default {
     <h1
       v-if="title"
       class="title"
-      :class="{ small, centered }"
+      :class="{ small, centered, caps }"
     >
       {{ title }}
     </h1>
@@ -38,6 +39,11 @@ export default {
       }
       &.small {
         font-size: map-get($text, 'small-title-font-size');
+      }
+      &.caps {
+        font-variant-caps: all-small-caps;
+        letter-spacing: 1.8px;
+        margin-bottom: 0;
       }
     }
 

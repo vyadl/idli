@@ -54,11 +54,12 @@ export default {
     commit('setEdittingItemIndex', itemIndex);
   },
 
-  _addNewItemPlaceholder({ dispatch }) {
+  _addNewItemPlaceholder({ dispatch, rootGetters }) {
     const newItem = new Item();
     const itemWithTemporaryId = {
       ...newItem,
       temporaryId: Date.now(),
+      listId: rootGetters['lists/currentListId'],
     };
 
     commitFromRoot('addItem', itemWithTemporaryId);
@@ -89,7 +90,11 @@ export default {
   },
 
   _updateItemOnServer({ dispatch }, { item, cancelToken }) {
-    const title = item.title || generateTitleFromDetails(item.details);
+    let { title } = item;
+
+    if (item.details) {
+      title = generateTitleFromDetails(item.details);
+    }
 
     this.$config.axios
       .patch(
