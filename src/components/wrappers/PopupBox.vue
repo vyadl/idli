@@ -26,6 +26,9 @@ export default {
       isShown: false,
     };
   },
+  beforeUnmount() {
+    document.removeEventListener('click', this.validatePopUpClosing);
+  },
   methods: {
     validatePopUpClosing(event) {
       const target = document.querySelector('.popup-content');
