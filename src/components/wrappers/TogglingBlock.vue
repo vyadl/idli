@@ -1,10 +1,10 @@
 <script>
-import PopUp from '@/components/wrappers/PopUp.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    PopUp,
+    PopupBox,
   },
   props: {
     forceShow: {
@@ -72,14 +72,14 @@ export default {
           v-if="hintText"
           class="hint-area"
         >
-          <PopUp 
+          <PopupBox 
             button-style-type="hint"
             stop-propagation
             informational
             :position="isItemFormInSidebar ? 'upper-center' : 'right'"
           >
             {{ hintText }}
-          </PopUp>
+          </PopupBox>
         </div>
       </div>
       <div

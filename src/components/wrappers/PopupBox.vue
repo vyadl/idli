@@ -26,13 +26,9 @@ export default {
       isShown: false,
     };
   },
-  beforeUnmount() {
-    console.log('hehehe');
-  },
   methods: {
     validatePopUpClosing(event) {
-      console.log('validating...');
-      const target = document.querySelector('.pop-up-content');
+      const target = document.querySelector('.popup-content');
 
       if (event.target !== target && !target.contains(event.target)) {
         this.closePopUp();
@@ -54,7 +50,7 @@ export default {
 </script>
 
 <template>
-  <div class="pop-up">
+  <div class="popup">
     <ButtonSign
       class="toggling-button"
       :style-type="buttonStyleType"
@@ -64,7 +60,7 @@ export default {
     <Transition>
       <div
         v-if="isShown"
-        class="pop-up-content"
+        class="popup-content"
         :class="[{ informational }, position, `${globalTheme}-theme` ]"
       >
         <slot />
@@ -74,10 +70,10 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.pop-up {
+.popup {
   position: relative;
 
-  .pop-up-content {
+  .popup-content {
     position: absolute;
     z-index: 100;
     padding: 7px 12px;

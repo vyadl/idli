@@ -3,7 +3,7 @@ import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
-import PopUp from '@/components/wrappers/PopUp.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -24,7 +24,7 @@ export default {
     TextareaCustom,
     ButtonText,
     TogglingBlock,
-    PopUp,
+    PopupBox,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -129,7 +129,7 @@ export default {
       });
     }
 
-    this._chooseBetweenAddOrUpdateItemOnServer();
+    this._saveItemOnServer();
 
     this.currentListItems.forEach(item => {
       if (!item.title && !item.details) {
@@ -164,7 +164,7 @@ export default {
       '_fetchListById',
     ]),
     ...mapActions('items', [
-      '_chooseBetweenAddOrUpdateItemOnServer',
+      '_saveItemOnServer',
       '_addItemOnServer',
       '_updateItemOnServer',
       '_deleteItemOnServer',
@@ -248,7 +248,7 @@ export default {
       v-if="edittingItemObj.id"
       class="header"
     >
-      <PopUp
+      <PopupBox
         button-style-type="dots"
         stop-propagation
         position="lower-left"
@@ -267,7 +267,7 @@ export default {
           small
           @click="removeItem(edittingItemObj)"
         />
-      </PopUp>
+      </PopupBox>
     </header> -->
     <div class="text-fields">
       <InputCustom
@@ -335,7 +335,7 @@ export default {
       v-if="edittingItemObj?.id"
       class="footer"
     >
-      <PopUp
+      <PopupBox
         informational
         button-style-type="info"
         position="upper-right"
@@ -347,7 +347,7 @@ export default {
         <div>
           updated at: {{ getFormattedDate(edittingItemObj.updatedAt) }}
         </div>
-      </PopUp>
+      </PopupBox>
       <ButtonText
         text="delete"
         style-type="underline"

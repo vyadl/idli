@@ -66,7 +66,7 @@ export default {
     dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
   },
 
-  _chooseBetweenAddOrUpdateItemOnServer({ dispatch, getters }) {
+  _saveItemOnServer({ dispatch, getters }) {
     dispatch(
       getters.edittingItemObj.temporaryId
         ? '_addItemOnServer'

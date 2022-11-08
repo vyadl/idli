@@ -46,7 +46,7 @@ export default {
     ...mapActions('items', [
       '_addItemOnServer',
       '_updateItemOnServer',
-      '_chooseBetweenAddOrUpdateItemOnServer',
+      '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
       '_updateList',
@@ -109,7 +109,7 @@ export default {
         });
       }
 
-      this._chooseBetweenAddOrUpdateItemOnServer();
+      this._saveItemOnServer();
     },
   },
 };

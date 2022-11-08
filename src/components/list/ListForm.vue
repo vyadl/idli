@@ -4,7 +4,7 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
-import PopUp from '@/components/wrappers/PopUp.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
@@ -19,7 +19,7 @@ export default {
     ButtonText,
     ButtonSign,
     ErrorMessage,
-    PopUp,
+    PopupBox,
     TogglingBlock,
   },
   data: () => ({
@@ -275,7 +275,7 @@ export default {
       <div>
         total items: {{ list.items.length }}
       </div>
-      <PopUp
+      <PopupBox
         button-style-type="info"
         stop-propagation
         informational
@@ -286,7 +286,7 @@ export default {
         <div>
           updated at: {{ getFormattedDate(edittingListObj.updatedAt) }}
         </div>
-      </PopUp>
+      </PopupBox>
     </div>
     <footer class="footer">
       <div>
