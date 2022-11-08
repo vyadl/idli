@@ -374,7 +374,6 @@ export default {
           </div>  
           <div class="single-button-container">
             <ButtonText
-              
               text="add"
               small
               :disabled="isAddRelatedButtonDisabled"

@@ -23,7 +23,7 @@ export default {
       default: false,
     },
   },
-  emits: ['click', 'hover-change'],
+  emits: ['click'],
   methods: {
     click(event) {
       if (this.stopPropagation) {

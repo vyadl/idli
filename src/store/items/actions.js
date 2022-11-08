@@ -66,6 +66,15 @@ export default {
     dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
   },
 
+  _chooseBetweenAddOrUpdateItemOnServer({ dispatch, getters }) {
+    dispatch(
+      getters.edittingItemObj.temporaryId
+        ? '_addItemOnServer'
+        : '_updateItemOnServer',
+      { item: getters.edittingItemObj, cancelToken: null },
+    );
+  },
+
   _addItemOnServer({ rootGetters, commit, dispatch }, { item, cancelToken }) {
     const listId = rootGetters['lists/currentListObj'].id;
     const title = item.title || generateTitleFromDetails(item.details);

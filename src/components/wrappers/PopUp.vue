@@ -26,8 +26,12 @@ export default {
       isShown: false,
     };
   },
+  beforeUnmount() {
+    console.log('hehehe');
+  },
   methods: {
     validatePopUpClosing(event) {
+      console.log('validating...');
       const target = document.querySelector('.pop-up-content');
 
       if (event.target !== target && !target.contains(event.target)) {

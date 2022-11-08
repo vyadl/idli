@@ -34,9 +34,8 @@ export default {
   },
 
   addTagToListLocally(state, { listId, tagTitle }) {
-    const index = state.lists.findIndex(localList => localList.id === listId);
-    const { tags } = state.lists[index];
-
+    const { tags } = state.lists.find(localList => localList.id === listId);
+    
     tags.push({ 
       title: tagTitle,
       id: null,
@@ -44,8 +43,7 @@ export default {
   },
 
   addCategoryToListLocally(state, { listId, categoryTitle }) {
-    const index = state.lists.findIndex(localList => localList.id === listId);
-    const { categories } = state.lists[index];
+    const { categories } = state.lists.find(localList => localList.id === listId);
 
     categories.push({ 
       title: categoryTitle,

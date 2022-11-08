@@ -31,11 +31,7 @@ export default {
       'edittingItemObj',
     ]),
     currentListCategoriesTitles() {
-      const titlesArr = [];
-
-      this.currentListCategories.forEach(category => titlesArr.push(category.title));
-
-      return titlesArr;
+      return this.currentListCategories.map(category => category.title);
     },
     currentItemCategoryTitle() {
       const categoryObj = this.currentListCategories.find(
@@ -55,6 +51,7 @@ export default {
     ...mapActions('items', [
       '_addItemOnServer',
       '_updateItemOnServer',
+      '_chooseBetweenAddOrUpdateItemOnServer',
     ]),
     ...mapActions('lists', [
       '_updateList',
@@ -80,8 +77,7 @@ export default {
         this.errorMessage = 'filter with this name already exists';
       } else {
         const { listId } = this.edittingItemObj;
-        const listIndex = this.lists.findIndex(list => list.id === listId);
-        const listObj = this.lists[listIndex];
+        const listObj = this.lists.find(list => list.id === listId);
 
         this.addCategoryToListLocally({ listId, categoryTitle });
         this.isRequestProcessing = true;
@@ -98,7 +94,7 @@ export default {
       this.updateItemCategory(null);
     },
     updateItemCategory(value) {
-      const { title, details, temporaryId } = this.edittingItemObj;
+      const { title, details } = this.edittingItemObj;
 
       this.updateItemFieldLocally({ field: 'category', value });
 
@@ -109,10 +105,7 @@ export default {
         });
       }
 
-      this[temporaryId 
-        ? '_addItemOnServer'
-        : '_updateItemOnServer'
-      ]({ item: this.edittingItemObj, cancelToken: null });
+      this._chooseBetweenAddOrUpdateItemOnServer();
     },
   },
 };

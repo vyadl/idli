@@ -30,30 +30,10 @@ export default {
       'currentItemTags',
     ]),
     currentListTagsTitles() {
-      const titlesArr = [];
-
-      this.currentListTags.forEach(tag => titlesArr.push(tag.title));
-
-      return titlesArr;
-    }, 
-    currentListTagsArray() {
-      const array = [];
-
-      this.currentListTags.forEach(tag => {
-        array.push({
-          label: tag.title,
-          value: tag.id,
-        });
-      });
-
-      return array;
+      return this.currentListTags.map(tag => tag.title);
     },
     currentItemTagsTitles() {
-      const titlesArr = [];
-
-      this.currentItemTags.forEach(tag => titlesArr.push(tag.title));
-
-      return titlesArr;
+      return this.currentItemTags.map(tag => tag.title);
     },
   },
   methods: {
@@ -66,6 +46,7 @@ export default {
     ...mapActions('items', [
       '_addItemOnServer',
       '_updateItemOnServer',
+      '_chooseBetweenAddOrUpdateItemOnServer',
     ]),
     ...mapActions('lists', [
       '_updateList',
@@ -89,8 +70,7 @@ export default {
         this.errorMessage = 'filter with this name already exists';
       } else {
         const { listId } = this.edittingItemObj;
-        const listIndex = this.lists.findIndex(list => list.id === listId);
-        const listObj = this.lists[listIndex];
+        const listObj = this.lists.find(list => list.id === listId);
 
         this.addTagToListLocally({ listId, tagTitle });
         this.isRequestProcessing = true;
@@ -118,7 +98,7 @@ export default {
       this.updateItemTags(tagsArrayCopy);
     },
     updateItemTags(value) {
-      const { title, details, temporaryId } = this.edittingItemObj;
+      const { title, details } = this.edittingItemObj;
 
       this.updateItemFieldLocally({ field: 'tags', value });
 
@@ -129,10 +109,7 @@ export default {
         });
       }
 
-      this[temporaryId 
-        ? '_addItemOnServer'
-        : '_updateItemOnServer'
-      ]({ item: this.edittingItemObj, cancelToken: null });
+      this._chooseBetweenAddOrUpdateItemOnServer();
     },
   },
 };

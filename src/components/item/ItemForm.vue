@@ -120,7 +120,7 @@ export default {
     },
   },
   unmounted() {
-    const { title, details, temporaryId } = this.edittingItemObj;
+    const { title, details } = this.edittingItemObj;
 
     if (!title && details) {
       this.updateItemFieldLocally({
@@ -129,10 +129,7 @@ export default {
       });
     }
 
-    this[temporaryId 
-      ? '_addItemOnServer'
-      : '_updateItemOnServer'
-    ]({ item: this.edittingItemObj, cancelToken: null });
+    this._chooseBetweenAddOrUpdateItemOnServer();
 
     this.currentListItems.forEach(item => {
       if (!item.title && !item.details) {
@@ -167,6 +164,8 @@ export default {
       '_fetchListById',
     ]),
     ...mapActions('items', [
+      '_chooseBetweenAddOrUpdateItemOnServer',
+      '_addItemOnServer',
       '_updateItemOnServer',
       '_deleteItemOnServer',
       '_fetchItemById',
