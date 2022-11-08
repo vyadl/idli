@@ -75,7 +75,15 @@ export default {
       pointer-events: none;
     }
 
+    .title {
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
     &.initial {
+      display: flex;
+
       .title {
         padding-left: 5px;
       }

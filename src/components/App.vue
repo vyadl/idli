@@ -18,11 +18,15 @@ export default {
     AppNotification,
   },
   computed: {
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
     ...mapGetters('lists', [
       'isPublicView',
     ]),
     ...mapGetters('sidebar', [
       'sidebarMode',
+      'currentSidebarView',
     ]),
     ...mapGetters([
       'notification',
@@ -49,8 +53,10 @@ export default {
     const queryOptions = {
       sidebar: {
         callback: sidebar => {
-          this.openSidebar();
-          this.changeSidebarMode(sidebar);
+          if (this.currentSidebarView !== 'authPageView') {
+            this.openSidebar();
+            this.changeSidebarMode(sidebar);
+          }
         },
       },
       view: {

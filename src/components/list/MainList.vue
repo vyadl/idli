@@ -65,13 +65,24 @@ export default {
 
       if (this.mode === 'list') {
         const alignStyles = {
-          left: 'flex-start',
-          center: 'center',
-          right: 'flex-end',
-          random: null,
+          textAlign: {
+            left: 'left',
+            center: 'center',
+            right: 'right',
+            random: null,
+          },
+          alignItems: {
+            left: 'flex-start',
+            center: 'center',
+            right: 'flex-end',
+            random: null,
+          },
         };
 
-        styles = { 'align-items': alignStyles[this.listAlign] };
+        styles = { 
+          'text-align': alignStyles.textAlign[this.listAlign], 
+          'align-items': alignStyles.alignItems[this.listAlign],
+        };
       } else if (this.mode === 'page') {
         const alignStyles = {
           left: 'flex-start',

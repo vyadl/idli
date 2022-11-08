@@ -19,14 +19,19 @@ export default {
     ...mapGetters('items', [
       'edittingItemObj',
     ]),
+    isUntitled() {
+      return !this.item.title;
+    },
     itemName() {
       let name = '';
 
-      if (this.item.title) {
+      if (this.isUntitled) {
+        name = 'Untitled';
+      } else if (this.item.title) {
         name = this.item.title;
       } else if (this.item.temporaryId) {
         name = 'New item...';
-      }
+      } 
 
       return name;
     },
@@ -54,9 +59,13 @@ export default {
 
         styles = { transform: `${translateStyle} ${scaleStyle} ${rotateStyle}` };
       } else if (this.listAlign === 'random') {
-        const alignStyles = ['flex-start', 'center', 'flex-end'];
+        const alignItemsStyles = ['flex-start', 'center', 'flex-end'];
+        const textAlignStyles = ['left', 'center', 'right'];
 
-        styles = { 'align-self': `${alignStyles[this.randomNumber(0, 2)]}` };
+        styles = { 
+          'align-items': `${alignItemsStyles[this.randomNumber(0, 2)]}`,
+          'text-align': `${textAlignStyles[this.randomNumber(0, 2)]}`,
+        };
       }
 
       return styles;
@@ -95,7 +104,10 @@ export default {
     :style="styles"
     @click.stop="setItemForEditting"
   >
-    <div class="item-title">
+    <div 
+      class="item-title"
+      :class="{ untitled: isUntitled }"
+    >
       {{ itemName }}
     </div>
     <div
@@ -123,6 +135,10 @@ export default {
       padding: 5px;
       font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
+
+      &.untitled{
+        opacity: 0.5;
+      }
     }
 
     .item-details {

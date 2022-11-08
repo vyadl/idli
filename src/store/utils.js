@@ -23,3 +23,29 @@ export function generateTitleFromDetails(details) {
     ? details
     : details.slice(0, GENERATED_ITEM_TITLE_MAX_LENGTH).concat('...');
 }
+
+function checkFiltersTitlesIntersections(listObj, filtersType, filtersTitles) {
+  return listObj[filtersType]
+    .some(filter => {
+      const isSameTitleFilter = filtersTitles.has(filter.title);
+
+      if (!isSameTitleFilter) {
+        filtersTitles.add(filter.title);
+      }
+
+      return isSameTitleFilter;
+    });
+}
+
+export function validateFiltersTitles(listObj) {
+  let isValid = true;
+  const filtersTitles = new Set();
+
+  isValid = !checkFiltersTitlesIntersections(listObj, 'tags', filtersTitles);
+
+  if (isValid) {
+    isValid = !checkFiltersTitlesIntersections(listObj, 'categories', filtersTitles);
+  }
+
+  return isValid;
+}

@@ -145,8 +145,8 @@ export default {
     }
 
     &.cross {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
 
       &:hover {
         &::before,
@@ -163,7 +163,7 @@ export default {
         left: 50%;
         width: 1px;
         height: 100%;
-        background-color: map-get($colors, 'black');
+        background-color: map-get($colors, 'gray-light');
         transform-origin: center center;
         transition: color 0.2s;
       }
@@ -174,6 +174,35 @@ export default {
 
       &::after {
         transform: translateX(-50%) rotate(-45deg);
+      }
+    }
+
+    &.info,
+    &.hint {
+      position: relative;
+      border: 1px solid map-get($colors, 'gray-dark');
+      border-radius: 50%;
+      &::before {
+        position: absolute;
+        color: map-get($colors, 'gray-dark');
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    &.info {
+      width: 20px;
+      height: 20px;
+      &::before {
+        content: 'i';
+      }
+    }
+
+    &.hint {
+      width: 12px;
+      height: 12px;
+      &::before {
+        content: '?';
+        font-size: 9px;
       }
     }
 
@@ -196,8 +225,7 @@ export default {
         }
       }
 
-      &.plus,
-      &.cross {
+      &.plus {
         &:hover,
         &:disabled {
           &::before,
@@ -209,6 +237,20 @@ export default {
         &::before,
         &::after {
           background-color: map-get($colors, 'white');
+        }
+      }
+
+      &.cross {
+        &:hover {
+          &::before,
+          &::after {
+            background-color: map-get($colors, 'gray-light');
+          }
+        }
+
+        &::before,
+        &::after {
+          background-color: map-get($colors, 'gray-dark');
         }
       }
     }

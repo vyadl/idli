@@ -4,4 +4,9 @@ export default {
   edittingItemObj: (state, getters, rootState, rootGetters) => {
     return rootGetters.currentListItems[state.edittingItemIndex];
   },
+  currentItemTags: (state, getters, rootState, rootGetters) => {
+    return rootGetters['lists/currentListTags'].filter(
+      listTag => getters.edittingItemObj.tags.includes(listTag.id),
+    );
+  },
 };

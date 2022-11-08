@@ -1,10 +1,12 @@
 <script>
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
-import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
-import SelectCustom from '@/components/formElements/SelectCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
+import ItemTags from '@/components/item/ItemTags.vue';
+import ItemCategories from '@/components/item/ItemCategories.vue';
 import { 
   mapGetters,
   mapActions,
@@ -14,19 +16,24 @@ import {
 import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
+import { generateTitleFromDetails } from '@/store/utils';
 
 export default {
   components: {
     InputCustom,
     TextareaCustom,
-    CheckboxCustom,
-    SelectCustom,
     ButtonText,
+    TogglingBlock,
+    PopupBox,
     RelatedUnits,
+    ItemTags,
+    ItemCategories,
   },
   emits: ['scrollSidebarToTop'],
   NEW_ITEM_PLACEHOLDER: 'New item...',
-  CATEGORIES_DEFAULT_OPTION: '- not chosen -',
+  UNTITLED_ITEM_PLACEHOLDER: 'untitled',
+  RELATED_UNITS_HINT_TEXT: `Сonnect item with another item or list
+    directly, not by grouping (like tags or category)`,
   setup() {
     const store = useStore();
     const API_REQUEST_DELAY = 1500;
@@ -64,7 +71,8 @@ export default {
   data() {
     return {
       showingStatuses: {
-        editTagsForm: false,
+        detailsTextarea: false,
+        addons: false,
       },
     };
   },
@@ -72,54 +80,67 @@ export default {
     ...mapGetters([
       'currentListItems',
     ]),
-    ...mapGetters('lists', [
-      'currentListTags',
-      'currentListCategories',
-    ]),
     ...mapGetters('items', [
       'edittingItemIndex',
       'edittingItemObj',
+      'currentItemTags',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
-    currentItemTags() {
-      return this.currentListTags.filter(
-        listTag => this.edittingItemObj.tags.includes(listTag.id),
-      );
+    itemName() {
+      return this.isUntitled
+        ? ''
+        : this.edittingItemObj.title;
     },
-    isAnyTagWithIdExist() {
-      return this.currentListTags?.some(
-        tag => tag.id,
-      );
+    isUntitled() {
+      return !this.edittingItemObj.title;
     },
-    isAnyCategoryWithIdExist() {
-      return this.currentListCategories?.some(
-        category => category.id,
-      );
+    titlePlaceholder() {
+      let placeholder = '';
+
+      if (this.edittingItemObj.temporaryId) {
+        placeholder = this.$options.NEW_ITEM_PLACEHOLDER;
+      } else if (this.isUntitled) {
+        placeholder = this.$options.UNTITLED_ITEM_PLACEHOLDER;
+      }  
+
+      return placeholder;
     },
-    areTextFieldsEmpty() {
-      return !this.edittingItemObj.title && !this.edittingItemObj.details;
+    isDetailsTextareaShown() {
+      return !!this.edittingItemObj.details.length 
+        || this.showingStatuses.detailsTextarea;
     },
-  },
-  mounted() {
-    if (!this.edittingItemObj?.id) {
-      this.$refs.itemTitle.$el.focus();
-    }
+    areAddonsShown() {
+      return typeof this.edittingItemObj.category === 'number'
+        || !!this.currentItemTags?.length
+        || !!this.edittingItemObj.relatedItems?.length
+        || !!this.edittingItemObj.relatedLists?.length
+        || this.showingStatuses.addons;
+    },
   },
   unmounted() {
-    const emptyItemTitle = '[empty item]';
+    const { title, details } = this.edittingItemObj;
+
+    if (!title && details) {
+      this.updateItemFieldLocally({
+        field: 'title',
+        value: generateTitleFromDetails(details),
+      });
+    }
+
+    this._saveItemOnServer();
 
     this.currentListItems.forEach(item => {
       if (!item.title && !item.details) {
-        item.temporaryId
-          ? this.deleteItemByTemporaryId(item.temporaryId)
-          : this._updateItemOnServer(
-            {
-              item: { ...item, title: emptyItemTitle }, 
-              cancelToken: null,
-            },
-          );
+        if (item.temporaryId) {
+          this.deleteItemByTemporaryId(item.temporaryId);
+        } else {
+          this._updateItemOnServer({
+            item, 
+            cancelToken: null,
+          });
+        }
       }
     });
 
@@ -139,7 +160,12 @@ export default {
     ...mapActions('sidebar', [
       '_closeSidebar',
     ]),
+    ...mapActions('lists', [
+      '_fetchListById',
+    ]),
     ...mapActions('items', [
+      '_saveItemOnServer',
+      '_addItemOnServer',
       '_updateItemOnServer',
       '_deleteItemOnServer',
       '_fetchItemById',
@@ -215,154 +241,181 @@ export default {
   <div
     v-if="edittingItemObj"
     class="item-form"
+    :class="`${globalTheme}-theme`"
   >
+    <!-- for future use
+    <header 
+      v-if="edittingItemObj.id"
+      class="header"
+    >
+      <PopupBox
+        button-style-type="dots"
+        stop-propagation
+        position="lower-left"
+        class="additional-options-button"
+      >
+        <ButtonText
+          class="additional-option"
+          text="move to another list"
+          style-type="line"
+          small
+        />
+        <ButtonText
+          class="additional-option"
+          text="move to bin 🗑"
+          style-type="line"
+          small
+          @click="removeItem(edittingItemObj)"
+        />
+      </PopupBox>
+    </header> -->
     <div class="text-fields">
       <InputCustom
-        ref="itemTitle"
-        label="item"
-        :model-value="edittingItemObj.title"
-        :placeholder="edittingItemObj.temporaryId ? $options.NEW_ITEM_PLACEHOLDER : ''"
+        class="title-input"
+        :model-value="itemName"
+        :placeholder="titlePlaceholder"
+        :is-focus="!edittingItemObj.id"
         @update:model-value="value => updateItemField('title', value)"    
       />
       <TextareaCustom
+        v-if="isDetailsTextareaShown"
         label="details"
         :model-value="edittingItemObj.details"
         @update:model-value="value => updateItemField('details', value)"
       />
-    </div>
-    <div class="filters-section">
-      <div v-if="isAnyTagWithIdExist">
-        <div 
-          v-if="currentItemTags.length"
-          class="filters-container"
-        >
-          <h1 class="filters-title">
-            tags:
-          </h1>
-          <div class="tags-container">
-            <div
-              v-for="tag in currentItemTags"
-              :key="tag.id"
-              class="tag"
-            >
-              {{ tag.title }}
-            </div>
-          </div>
-        </div>
-        <div class="single-button-container">
-          <ButtonText
-            text="edit tags"
-            style-type="underline"
-            @click="toggleShowingStatus('editTagsForm')"
-          />
-        </div>
-        <div 
-          v-if="showingStatuses.editTagsForm"
-          class="tags-container"
-        >
-          <CheckboxCustom
-            v-for="tag in currentListTags"
-            v-show="(typeof tag.id) !== 'undefined'"
-            :key="tag.id"
-            :label="tag.title"
-            :value="tag.id"
-            name="tags"
-            :disabled="areTextFieldsEmpty"
-            :model-value="edittingItemObj.tags"
-            @update:model-value="value => updateItemField('tags', value)"
-          />
-        </div>
-      </div>
-      <div v-if="isAnyCategoryWithIdExist">
-        <SelectCustom
-          label="category:"
-          :default-option="$options.CATEGORIES_DEFAULT_OPTION"
-          :default-option-selected="!edittingItemObj.category"
-          :custom-option-selected="edittingItemObj.category"
-          :options="currentListCategories"
-          :disabled="areTextFieldsEmpty"
-          :model-value="edittingItemObj.category"
-          @update:model-value="value => updateItemField('category', value)"
-        />
-      </div>
-    </div>
-    <RelatedUnits
-      :are-text-fields-empty="areTextFieldsEmpty"
-    />
-    <div 
-      v-if="edittingItemObj?.id"
-      class="stats"
-    >
-      <div>
-        created at: {{ getFormattedDate(edittingItemObj.createdAt) }}
-      </div>
-      <div>
-        updated at: {{ getFormattedDate(edittingItemObj.updatedAt) }}
-      </div>
-    </div>
-    <footer class="footer">
       <ButtonText
-        :text="edittingItemObj.id ? 'delete item' : 'cancel'"
+        v-else
+        text="add details"
         style-type="underline"
-        :small="isItemFormInSidebar"
-        @click="removeItem(edittingItemObj)"
+        big
+        @click="toggleShowingStatus('detailsTextarea')"
+      />
+    </div>
+    <div>
+      <div
+        v-if="areAddonsShown"
+        class="extra-content"
+      >
+        <TogglingBlock 
+          title="category"
+          caps
+          :bordered="!isItemFormInSidebar"
+          :force-show="typeof edittingItemObj.category === 'number'"
+        >
+          <ItemCategories />
+        </TogglingBlock>
+        <TogglingBlock
+          title="tags"
+          caps
+          :bordered="!isItemFormInSidebar"
+          :force-show="!!edittingItemObj.tags.length"
+        >
+          <ItemTags />
+        </TogglingBlock>
+        <TogglingBlock
+          title="related entities"
+          caps
+          :bordered="!isItemFormInSidebar"
+          :hint-text="$options.RELATED_UNITS_HINT_TEXT"
+          :force-show="!!edittingItemObj.relatedItems?.length
+            || !!edittingItemObj.relatedLists?.length"
+        >
+          <RelatedUnits />
+        </TogglingBlock>
+      </div>
+      <ButtonText
+        v-else
+        text="tags, categories, related items & lists"
+        style-type="underline"
+        big
+        @click="toggleShowingStatus('addons')"
+      />
+    </div>
+    <footer
+      v-if="edittingItemObj?.id"
+      class="footer"
+    >
+      <PopupBox
+        informational
+        button-style-type="info"
+        position="upper-right"
+        stop-propagation
+      >
+        <div>
+          created at: {{ getFormattedDate(edittingItemObj.createdAt) }}
+        </div>
+        <div>
+          updated at: {{ getFormattedDate(edittingItemObj.updatedAt) }}
+        </div>
+      </PopupBox>
+      <ButtonText
+        text="delete"
+        style-type="underline"
+        @click="removeItem(edittingItmeObj)"
       />
     </footer>
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .item-form {
-    .text-fields {
-      margin-bottom: 25px;
-    }
+    // for future use
+    // 
+    // .header {
+    //   position: relative;
+    //   display: flex;
+    //   justify-content: flex-end;
+    //   align-items: flex-end;
+    //   margin-bottom: 0;
+    // }
+
+    // .additional-options-button {
+    //   position: absolute;
+    //   right: -20px;
+    // }
+
+    // .additional-option {
+    //   display: block;
+    //   padding: 10px 15px;
+    //   width: 100%;
+    //   transition: background-color 0.3s;
+
+    //   &:hover {
+    //     background-color: map-get($colors, 'gray-very-light');
+    //   }
+    // }
     
-    .filters-section {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      padding-bottom: 20px;
+    .title-input {
+      padding-bottom: 10px;
+    }
+    .extra-content {
+      padding-top: 15px;
     }
 
     .filters-container {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      gap: 5px;
     }
 
-    .filters-title {
-      padding: 5px 10px 6px 0;
-    }
-
-    .single-button-container,
-    .tags-container {
+    .single-button-container {
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
     }
 
-    .tag {
-      margin-bottom: 10px;
-      margin-right: 7px;
-      padding: 5px 10px;
-      border: 2px solid map-get($colors, 'white');
-      border-radius: 25px;
-      background-color: map-get($colors, 'gray-light');
-      color: map-get($colors, 'white');
-    }
-
-    .stats {
-      padding: 20px 0;
-      font-size: 12px;
-      line-height: 1.7;
-      color: map-get($colors, 'gray-light');
-    }
-
     .footer {
       display: flex;
-      justify-content: flex-end;
-      align-items: flex-end;
+      justify-content: space-between;
+      padding-top: 25px;
+    }
+
+    &.inverted-theme {
+      .additional-option {
+        &:hover {
+          background-color: map-get($colors, 'gray-dark');
+        }
+      }
     }
   }
 </style>

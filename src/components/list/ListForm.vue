@@ -4,9 +4,12 @@ import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
+import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
+import { validateFiltersTitles } from '@/store/utils';
 import { getFormattedDate } from '@/utils/misc';
 
 export default {
@@ -16,12 +19,13 @@ export default {
     ButtonText,
     ButtonSign,
     ErrorMessage,
+    PopupBox,
+    TogglingBlock,
   },
   data: () => ({
     list: null,
     isRequestProcessing: false,
     errorMessage: '',
-    areReferringItemsShown: false,
   }),
   computed: {
     ...mapGetters('lists', [
@@ -42,11 +46,6 @@ export default {
       },
       immediate: true,
     },
-  },
-  mounted() {
-    if (!this.edittingListObj) {
-      this.$refs.listTitle.focus();
-    }
   },
   unmounted() {
     this.resetData();
@@ -81,42 +80,21 @@ export default {
       });
     },
     validateListTitle() {
-      const isListTitleUnique = !this.lists.some(
-        storeList => storeList.title === this.list.title,
-      );
+      const isListTitleUnique = !this.lists.some(storeList => {
+        return storeList.title === this.list.title
+          && storeList.id !== this.list.id;
+      });
 
       this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
 
       return isListTitleUnique;
     },
-    checkFiltersTitlesIntersections(filtersType, filtersTitles) {
-      return this.list[filtersType]
-        .some(filter => {
-          const isSameTitleFilter = filtersTitles.has(filter.title);
-
-          if (!isSameTitleFilter) {
-            filtersTitles.add(filter.title);
-          }
-
-          return isSameTitleFilter;
-        });
-    },
-    validateFiltersTitles() {
-      let isValid = true;
-      const filtersTitles = new Set();
-
-      isValid = !this.checkFiltersTitlesIntersections('tags', filtersTitles);
-
-      if (isValid) {
-        isValid = !this.checkFiltersTitlesIntersections('categories', filtersTitles);
-      }
-
-      this.errorMessage = isValid ? '' : 'you have filters with same titles';
-
-      return isValid;
-    },
     addList() {
-      if (this.validateListTitle() && this.validateFiltersTitles()) {
+      const areFiltersTitlesValid = validateFiltersTitles(this.list);
+
+      this.errorMessage = areFiltersTitlesValid ? '' : 'you have filters with same titles';
+
+      if (this.validateListTitle() && areFiltersTitlesValid) {
         this.isRequestProcessing = true;
         this._addList(this.list)
           .then(() => {
@@ -131,7 +109,11 @@ export default {
       }
     },
     updateList() {
-      if (this.validateFiltersTitles()) {
+      const areFiltersTitlesValid = validateFiltersTitles(this.list);
+
+      this.errorMessage = areFiltersTitlesValid ? '' : 'you have filters with same titles';
+
+      if (this.validateListTitle() && areFiltersTitlesValid) {
         this.closeListModal();
         this.isRequestProcessing = true;
         this._updateList(this.list)
@@ -162,9 +144,6 @@ export default {
           this.isRequestProcessing = false;
         });
     },
-    toggleReferringItems() {
-      this.areReferringItemsShown = !this.areReferringItemsShown;
-    },
     getFormattedDate(val) {
       return getFormattedDate(val);
     },
@@ -178,9 +157,9 @@ export default {
     @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <InputCustom
-      ref="listTitle"
       v-model="list.title"
       label="title"
+      :is-focus="!edittingListObj"
       :disabled="isRequestProcessing"
       required
     />
@@ -270,44 +249,44 @@ export default {
       v-if="errorMessage"
       :message="errorMessage"
     />
-    <div
+    <TogglingBlock
       v-if="edittingListObj?.referringItems?.length"
+      title="referring items"
+      caps
+      bordered
     >
-      <ButtonText
-        :text="areReferringItemsShown ? 'hide referring items' : 'show referring items'"
-        style-type="underline"
-        @click="toggleReferringItems"
-      />
-      <div v-if="areReferringItemsShown">
-        <h1>
-          referring items:
-        </h1>
-        <div class="referring-units-container">
-          <router-link
-            v-for="item in edittingListObj.referringItems"
-            :key="item.id"
-            :to="{ name: 'item', params: { id: item.id || item } }"
-            class="referring-unit"
-            target="_blank"
-          >
-            {{ item.title }}
-          </router-link> 
-        </div>
+      <div class="referring-units-container">
+        <router-link
+          v-for="item in edittingListObj.referringItems"
+          :key="item.id"
+          :to="{ name: 'item', params: { id: item.id || item } }"
+          class="referring-unit"
+          :class="{ 'untitled-item': !item.title}"
+          target="_blank"
+        >
+          {{ item.title || 'untitled' }}
+        </router-link> 
       </div>
-    </div>
+    </TogglingBlock>
     <div 
       v-if="list?.createdAt"
       class="stats"
     >
       <div>
-        created at: {{ getFormattedDate(edittingListObj.createdAt) }}
-      </div>
-      <div>
-        updated at: {{ getFormattedDate(edittingListObj.updatedAt) }}
-      </div>
-      <div>
         total items: {{ list.items.length }}
       </div>
+      <PopupBox
+        button-style-type="info"
+        stop-propagation
+        informational
+      >
+        <div>
+          created at: {{ getFormattedDate(edittingListObj.createdAt) }}
+        </div>
+        <div>
+          updated at: {{ getFormattedDate(edittingListObj.updatedAt) }}
+        </div>
+      </PopupBox>
     </div>
     <footer class="footer">
       <div>
@@ -334,7 +313,7 @@ export default {
   </form>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .list-form {
     .private-option {
       padding: 8px 0 15px;
@@ -357,7 +336,7 @@ export default {
     .categories {
       flex: 1 1 0px;
       padding: 15px;
-      border-radius: 10px;
+      border-radius: 5px;
       border: 1px solid map-get($colors, 'gray-light');
     }
 
@@ -376,14 +355,19 @@ export default {
     }
 
     .referring-units-container {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
     }
 
     .referring-unit {
       padding: 5px 10px 0 0;
       font-size: 13px;
       color: map-get($colors, 'gray-dark');
+    }
+
+    .untitled-item {
+      color: map-get($colors, 'gray-light');
     }
 
     .footer {
@@ -398,6 +382,9 @@ export default {
     }
 
     .stats {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       padding-top: 15px;
       font-size: 13px;
       line-height: 1.7;

@@ -126,6 +126,7 @@ export default {
     categories,
     id,
   }) {
+    commitFromRoot('increaseExplicitRequestsNumber');
     commit('updateList', {
       title,
       isPrivate,
@@ -134,7 +135,7 @@ export default {
       id,
     });
 
-    this.$config.axios
+    return this.$config.axios
       .patch(
         `${this.$config.apiBasePath}list/update/${id}`,
         {
@@ -147,10 +148,16 @@ export default {
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setCurrentListObj', responseList);
+
+        return responseList;
       })
       .catch(error => {
+        console.log(error);
         notifyAboutError(error);
         dispatch('_fetchListsForUser');
+      })
+      .finally(() => {
+        commitFromRoot('decreaseExplicitRequestsNumber');
       });
   },
 

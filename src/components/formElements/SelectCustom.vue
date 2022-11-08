@@ -56,7 +56,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .select-custom {
     .label {
       padding-right: 15px;

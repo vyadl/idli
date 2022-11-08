@@ -32,6 +32,24 @@ export default {
 
     state.lists.splice(index, 1, list);
   },
+
+  addTagToListLocally(state, { listId, tagTitle }) {
+    const { tags } = state.lists.find(localList => localList.id === listId);
+    
+    tags.push({ 
+      title: tagTitle,
+      id: null,
+    });
+  },
+
+  addCategoryToListLocally(state, { listId, categoryTitle }) {
+    const { categories } = state.lists.find(localList => localList.id === listId);
+
+    categories.push({ 
+      title: categoryTitle,
+      id: null,
+    });
+  },
   
   deleteList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);

@@ -4,6 +4,7 @@ import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
+import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import { 
   mapGetters,
   mapActions,
@@ -17,18 +18,12 @@ export default {
     ButtonText,
     ButtonSign,
     SectionCard,
-  },
-  props: {
-    areTextFieldsEmpty: Boolean,
+    TogglingBlock,
   },
   LISTS_DEFAULT_OPTION: '- choose list -',
   ITEMS_DEFAULT_OPTION: '- choose item -',
   data() {
     return {
-      showingStatuses: {
-        addRelatedForm: false,
-        referringItems: false,
-      },
       relatedUnitMode: 'item',
       chosenListId: null,
       chosenItemId: null,
@@ -38,6 +33,7 @@ export default {
   computed: {
     ...mapGetters('lists', [
       'lists',
+      'isOwnerView',
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
@@ -73,6 +69,9 @@ export default {
     alreadyRelatedItemsInChosenList() {
       return this.currentItemObj?.relatedItems
         ?.filter(item => item.listId === this.chosenListId);
+    },
+    areTextFieldsEmpty() {
+      return !this.edittingItemObj.title && !this.edittingItemObj.details;
     },
   },
   watch: {
@@ -228,190 +227,198 @@ export default {
 </script>
 
 <template>
-  <div class="related-units">
-    <SectionCard
-      v-if="currentItemObj?.relatedItems?.length"
-      title="related items:"
-      small
-    >
-      <div 
-        v-for="item in currentItemObj?.relatedItems"
-        :key="item.id"
-        class="related-unit-container"
-      >
-        <ButtonSign
-          class="delete-related-unit-button"
-          style-type="cross"
-          title="delete"
-          @click="deleteRelatedItem(item.id)"
-        />
-        <router-link
-          :to="{ name: 'item', params: { id: item.id || item } }"
-          class="related-unit"
-          target="_blank"
-        >
-          {{ item.title }}
-        </router-link>
-      </div>
-    </SectionCard>
-    <SectionCard
-      v-if="currentItemObj?.relatedLists?.length"
-      title="related lists:"
-      small
-    >
-      <div 
-        v-for="list in currentItemObj?.relatedLists"
-        :key="list.id"
-        class="related-unit-container"
-      >
-        <ButtonSign
-          class="delete-related-unit-button"
-          style-type="cross"
-          title="delete"
-          @click="deleteRelatedList(list.id)"
-        />
-        <router-link
-          :to="{ name: 'list', params: { id: list.id || list } }"
-          class="related-unit"
-          target="_blank"
-        >
-          {{ list.title }}
-        </router-link>
-      </div>
-    </SectionCard>
-    <div class="single-button-container">
-      <ButtonText
-        text="add related list or item"
-        style-type="underline"
-        @click="toggleShowingStatus('addRelatedForm')"
-      />
-    </div>
-    <div 
-      v-if="showingStatuses.addRelatedForm"
-      class="add-related-form"
-      :class="{ bordered: !isItemFormInSidebar}"
-    >
-      <div class="related-unit-type">
-        <RadioCustom 
-          v-for="relatedUnitType in ['list', 'item']"
-          :key="relatedUnitType"
-          :label="relatedUnitType"
-          :value="relatedUnitType"
-          :model-value="relatedUnitMode"
-          style-type="initial"
-          small
-          @update:model-value="value => changeRelatedUnitMode(value)"
-        />
-      </div>
-      <div class="unit-options">
-        <SelectCustom 
-          :default-option="$options.LISTS_DEFAULT_OPTION"
-          :default-option-selected="!chosenListId"
-          :disabled="areTextFieldsEmpty"
-          :model-value="chosenListId"
-          @update:model-value="value => setNewRelatedUnitId('list', value)"
-        >
-          <option
-            v-for="list in choosableLists"
-            :key="list.id"
-            :value="list.id"
-          >
-            {{ list.title }}
-          </option>
-          <optgroup
-            v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
-            label="already related lists:"
-            disabled
-          >
-            <option
-              v-for="list in currentItemObj?.relatedLists"
-              :key="list.id"
-            >
-              {{ list.title }}
-            </option>
-          </optgroup>
-        </SelectCustom>
-        <SelectCustom
-          v-if="isRelatedUnitModeAnItem"
-          :default-option="$options.ITEMS_DEFAULT_OPTION"
-          :default-option-selected="!chosenItemId"
-          :disabled="!itemsFromPossibleRelatedList?.length"
-          @update:model-value="value => setNewRelatedUnitId('item', value)"
-        >
-          <option
-            v-for="item in choosableItems"
-            :key="item.id"
-            :value="item.id"
-          >
-            {{ item.title }}
-          </option>
-          <optgroup
-            v-if="alreadyRelatedItemsInChosenList?.length"
-            label="already related items:"
-            disabled
-          >
-            <option
-              v-for="item in alreadyRelatedItemsInChosenList"
-              :key="item.id"
-            >
-              {{ item.title }}
-            </option>
-          </optgroup>
-        </SelectCustom>
-      </div>
-      <ButtonText
-        text="add"
-        small
-        :disabled="isAddRelatedButtonDisabled"
-        @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
-      />
-    </div>
-    <div v-if="currentItemObj?.referringItems?.length">
-      <div class="single-button-container">
-        <ButtonText
-          :text="showingStatuses.referringItems ? 'hide referring items' : 'show referring items'"
-          style-type="underline"
-          @click="toggleShowingStatus('referringItems')"
-        />
-      </div>
+  <div
+    class="related-units"
+    :class="`${globalTheme}-theme`"
+  >
+    <div class="already-related">
       <SectionCard
-        v-if="showingStatuses.referringItems"
-        title="referring items:"
+        v-if="currentItemObj?.relatedItems?.length"
+        title="related items"
         small
+        centered
+        caps
+        class="already-related-block"
       >
-        <div class="referring-units-container">
+        <div 
+          v-for="item in currentItemObj?.relatedItems"
+          :key="item.id"
+          class="related-unit-container"
+        >
+          <ButtonSign
+            v-if="isOwnerView"
+            class="delete-related-unit-button"
+            style-type="cross"
+            title="delete"
+            @click="deleteRelatedItem(item.id)"
+          />
           <router-link
-            v-for="item in currentItemObj?.referringItems"
-            :key="item.id"
             :to="{ name: 'item', params: { id: item.id || item } }"
-            class="referring-unit"
+            class="related-unit"
+            :class="{ 'untitled-item': !item.title }"
             target="_blank"
           >
-            {{ item.title }}
-          </router-link> 
+            {{ item.title || 'untitled' }}
+          </router-link>
+        </div>
+      </SectionCard>
+      <SectionCard
+        v-if="currentItemObj?.relatedLists?.length"
+        title="related lists"
+        small
+        centered
+        caps
+        class="already-related-block"
+      >
+        <div 
+          v-for="list in currentItemObj?.relatedLists"
+          :key="list.id"
+          class="related-unit-container"
+        >
+          <ButtonSign
+            v-if="isOwnerView"
+            class="delete-related-unit-button"
+            style-type="cross"
+            title="delete"
+            @click="deleteRelatedList(list.id)"
+          />
+          <router-link
+            :to="{ name: 'list', params: { id: list.id || list } }"
+            class="related-unit"
+            target="_blank"
+          >
+            {{ list.title }}
+          </router-link>
         </div>
       </SectionCard>
     </div>
+    <TogglingBlock
+      v-if="isOwnerView"
+      title="add related list/item"
+      caps
+      :bordered="!isItemFormInSidebar"
+    >
+      <div
+        class="add-related-form"
+        :class="{ compact: isItemFormInSidebar }"
+      >
+        <div class="new-related-unit-type">
+          <RadioCustom 
+            v-for="relatedUnitType in ['item', 'list']"
+            :key="relatedUnitType"
+            :label="relatedUnitType"
+            :value="relatedUnitType"
+            :model-value="relatedUnitMode"
+            style-type="initial"
+            small
+            @update:model-value="value => changeRelatedUnitMode(value)"
+          />
+        </div>
+        <div class="unit-adding-section">
+          <div class="select-units">
+            <SelectCustom 
+              :default-option="$options.LISTS_DEFAULT_OPTION"
+              :default-option-selected="!chosenListId"
+              :disabled="areTextFieldsEmpty"
+              :model-value="chosenListId"
+              @update:model-value="value => setNewRelatedUnitId('list', value)"
+            >
+              <option
+                v-for="list in choosableLists"
+                :key="list.id"
+                :value="list.id"
+              >
+                {{ list.title }}
+              </option>
+              <optgroup
+                v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
+                label="already related lists:"
+                disabled
+              >
+                <option
+                  v-for="list in currentItemObj?.relatedLists"
+                  :key="list.id"
+                >
+                  {{ list.title }}
+                </option>
+              </optgroup>
+            </SelectCustom>
+            <SelectCustom
+              v-if="isRelatedUnitModeAnItem"
+              :default-option="$options.ITEMS_DEFAULT_OPTION"
+              :default-option-selected="!chosenItemId"
+              :disabled="!itemsFromPossibleRelatedList?.length"
+              @update:model-value="value => setNewRelatedUnitId('item', value)"
+            >
+              <option
+                v-for="item in choosableItems"
+                :key="item.id"
+                :class="{ 'untitled-item': !item.title }"
+                :value="item.id"
+              >
+                {{ item.title || 'untitled' }}
+              </option>
+              <optgroup
+                v-if="alreadyRelatedItemsInChosenList?.length"
+                label="already related items:"
+                disabled
+              >
+                <option
+                  v-for="item in alreadyRelatedItemsInChosenList"
+                  :key="item.id"
+                >
+                  {{ item.title }}
+                </option>
+              </optgroup>
+            </SelectCustom>
+          </div>  
+          <div class="single-button-container">
+            <ButtonText
+              text="add"
+              small
+              :disabled="isAddRelatedButtonDisabled"
+              @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
+            />
+          </div>
+        </div>
+      </div>
+    </TogglingBlock>
+    <TogglingBlock
+      v-if="currentItemObj?.referringItems?.length"
+      title="referring items"
+      caps
+      :bordered="!isItemFormInSidebar"
+    >
+      <div class="referring-units-container">
+        <router-link
+          v-for="item in currentItemObj?.referringItems"
+          :key="item.id"
+          :to="{ name: 'item', params: { id: item.id || item } }"
+          class="referring-unit"
+          :class="{ 'untitled-item': !item.title}"
+          target="_blank"
+        >
+          {{ item.title || 'untitled' }}
+        </router-link> 
+      </div>
+    </TogglingBlock>
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .related-units {
   display: flex;
   flex-direction: column;
-  padding-bottom: 20px;
+
+  .already-related {
+    padding-bottom: 15px;
+  }
 
   .related-unit,
   .referring-unit {
-    padding: 5px 10px 0 0;
+    padding: 6px 10px 0 0;
     font-size: 13px;
     color: map-get($colors, 'gray-dark');
-  }
-
-  .related-unit-type {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
   }
 
   .related-unit-container {
@@ -419,38 +426,75 @@ export default {
   }
 
   .delete-related-unit-button {
-    transform: translateY(60%);
-    padding-right: 20px;
+    transform: translateY(90%);
+    padding: 0 3px 0 20px;
   }
 
   .referring-units-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
   }
 
-  .single-button-container {
+  .single-button-container,
+  .select-units {
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .select-units {
+    gap: 20px;
   }
 
   .add-related-form {
     display: flex;
+    align-items: center;
+  }
+
+  .new-related-unit-type,
+  .unit-adding-section {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-    &.bordered {
-      padding: 20px;
-      margin: 0 20px;
-      border-radius: 5px;
-      border: 1px solid map-get($colors, 'gray-light');
+    gap: 15px;
+  }
+
+  .unit-adding-section {
+    flex-grow: 1;
+  }
+
+  .untitled-item {
+    color: map-get($colors, 'gray-light');
+  }
+
+  .compact {
+    &.add-related-form {
+      flex-direction: column;
+    }
+
+    .new-related-unit-type {
+      flex-direction: row;
+      padding-bottom: 20px;
+    }
+
+    .select-units {
+      gap: 10px;
+      padding-bottom: 10px;
     }
   }
 
-  .unit-options {
-    display: flex;
-    gap: 20px;
+  &.inverted-theme {
+    .show-related-form-button {
+      background-color: map-get($colors, 'black');
+    }
+
+    .related-unit,
+    .referring-unit {
+      color: map-get($colors, 'gray-light');
+    }
+
+    .untitled-item {
+      color: map-get($colors, 'gray-dark');
+    }
   }
 }
 </style>

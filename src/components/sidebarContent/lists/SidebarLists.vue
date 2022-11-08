@@ -55,22 +55,22 @@ export default {
         });
       }
 
+      if (this.$route.name !== 'list') {
+        this.$router.push({ name: 'list', params: { id } });
+      }
+
       const source = this.$config.axios.CancelToken.source();
 
       this.listRequests.push(source);
 
-      if (this.$route.name !== 'list') {
-        this.$router.push({ name: 'list', params: { id } });
-      } else {
-        this._fetchListById({ id, cancelToken: source.token })
-          .finally(() => {
-            const index = this.listRequests.findIndex(request => request === source);
+      this._fetchListById({ id, cancelToken: source.token })
+        .finally(() => {
+          const index = this.listRequests.findIndex(request => request === source);
 
-            this.listRequests.splice(index, 1);
-            this.isRequestProcessing = false;
-            this._resetCustomView();
-          });
-      }
+          this.listRequests.splice(index, 1);
+          this.isRequestProcessing = false;
+          this._resetCustomView();
+        });
     },
   },
 };
@@ -147,7 +147,7 @@ export default {
     }
 
     .list-title {
-      max-width: 220px;
+      max-width: 200px;
       border-bottom: 2px solid map-get($colors, 'white');
       transition: border-color 0.2s;
 

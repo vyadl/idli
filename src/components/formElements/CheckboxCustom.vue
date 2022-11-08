@@ -107,6 +107,12 @@ export default {
       display: none;
     }
 
+    .label {
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
     &.custom {
       .label {
         border: 2px solid map-get($colors, 'black');

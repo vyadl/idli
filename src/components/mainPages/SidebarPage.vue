@@ -125,7 +125,7 @@ export default {
       />
     </div>
     <div
-      v-if="isPublicView"
+      v-if="isPublicView && isLoggedIn"
       class="exit-public-view-button"
     >
       <ButtonText
