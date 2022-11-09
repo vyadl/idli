@@ -2,17 +2,10 @@
 export default {
   props: {
     text: String,
+    size: String,
     styleType: {
       type: String,
       default: 'bordered',
-    },
-    small: {
-      type: Boolean,
-      default: false,
-    },    
-    big: {
-      type: Boolean,
-      default: false,
     },
     active: {
       type: Boolean,
@@ -53,7 +46,7 @@ export default {
     class="button-text"
     :class="[
       styleType,
-      { small, big, active },
+      [size, { active }],
       `${globalTheme}-theme`,
     ]"
     :title="title"

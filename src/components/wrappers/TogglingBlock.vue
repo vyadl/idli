@@ -19,13 +19,13 @@ export default {
       type: String,
       default: '',
     },
-    caps: {
-      type: Boolean,
-      default: false,
+    textStyle: {
+      type: String,
+      default: 'caps',
     },
-    bordered: {
-      type: Boolean,
-      default: true,
+    blockStyle: {
+      type: String,
+      default: 'bordered',
     },
   },
   data() {
@@ -54,7 +54,7 @@ export default {
 <template>
   <div
     class="toggling-block"
-    :class="{ bordered }"
+    :class="[ blockStyle ]"
   >
     <div
       class="button-area"
@@ -64,7 +64,7 @@ export default {
       <div class="title-section">
         <div
           class="title"
-          :class="{ caps }"
+          :class="[ textStyle ]"
         >
           {{ title }}
         </div>
@@ -75,7 +75,6 @@ export default {
           <PopupBox 
             button-style-type="hint"
             stop-propagation
-            informational
             :position="isItemFormInSidebar ? 'upper-center' : 'right'"
           >
             {{ hintText }}
@@ -102,7 +101,10 @@ export default {
     width: 100%;
     margin-bottom: 7px;
     padding: 5px;
-    box-shadow: 0 3px 3px -3px map-get($colors, 'gray-light');
+
+    &.underline {
+      box-shadow: 0 3px 3px -3px map-get($colors, 'gray-light');
+    }
 
     &.bordered {
       padding: 5px 12px;

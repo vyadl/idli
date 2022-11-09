@@ -49,14 +49,14 @@ export default {
     <div class="buttons">
       <ButtonText
         text="restore"
-        small
+        size="small"
         :disabled="disabled"
         @click="restore"
       />
       <ButtonText
         text="delete"
         style-type="underline"
-        small
+        size="small"
         :disabled="disabled"
         @click="remove"
       />

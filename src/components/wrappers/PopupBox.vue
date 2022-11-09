@@ -6,7 +6,6 @@ export default {
     ButtonSign,
   },
   props: {
-    informational: Boolean,
     stopPropagation: {
       type: Boolean,
       default: false,
@@ -14,6 +13,10 @@ export default {
     buttonStyleType: {
       type: String,
       default: 'hint',
+    },
+    contentType: {
+      type: String,
+      default: 'informational',
     },
     position: {
       type: String,
@@ -64,7 +67,7 @@ export default {
       <div
         v-if="isShown"
         class="popup-content"
-        :class="[{ informational }, position, `${globalTheme}-theme` ]"
+        :class="[ contentType, position, `${globalTheme}-theme` ]"
       >
         <slot />
       </div>

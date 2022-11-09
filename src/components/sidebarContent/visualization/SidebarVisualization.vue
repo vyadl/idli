@@ -97,7 +97,6 @@ export default {
     <SectionCard 
       title="sorting"
       class="main-sorting"
-      centered
     >
       <div class="buttons-container">
         <RadioCustom
@@ -142,10 +141,7 @@ export default {
         @update:model-value="_toggleItemsOrder"
       />
     </SectionCard>
-    <SectionCard
-      title="mode"
-      centered
-    >
+    <SectionCard title="mode">
       <div class="buttons-container">
         <RadioCustom
           v-for="title in modeTitles"

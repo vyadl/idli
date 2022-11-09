@@ -235,9 +235,8 @@ export default {
       <SectionCard
         v-if="currentItemObj?.relatedItems?.length"
         title="related items"
-        small
-        centered
-        caps
+        size="small"
+        text-style="caps"
         class="already-related-block"
       >
         <div 
@@ -265,9 +264,8 @@ export default {
       <SectionCard
         v-if="currentItemObj?.relatedLists?.length"
         title="related lists"
-        small
-        centered
-        caps
+        size="small"
+        text-style="caps"
         class="already-related-block"
       >
         <div 
@@ -295,8 +293,7 @@ export default {
     <TogglingBlock
       v-if="isOwnerView"
       title="add related list/item"
-      caps
-      :bordered="!isItemFormInSidebar"
+      :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
     >
       <div
         class="add-related-form"
@@ -375,7 +372,7 @@ export default {
           <div class="single-button-container">
             <ButtonText
               text="add"
-              small
+              size="small"
               :disabled="isAddRelatedButtonDisabled"
               @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
             />
@@ -386,8 +383,7 @@ export default {
     <TogglingBlock
       v-if="currentItemObj?.referringItems?.length"
       title="referring items"
-      caps
-      :bordered="!isItemFormInSidebar"
+      :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
     >
       <div class="referring-units-container">
         <router-link

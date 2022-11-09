@@ -252,8 +252,6 @@ export default {
     <TogglingBlock
       v-if="edittingListObj?.referringItems?.length"
       title="referring items"
-      caps
-      bordered
     >
       <div class="referring-units-container">
         <router-link
@@ -278,7 +276,6 @@ export default {
       <PopupBox
         button-style-type="info"
         stop-propagation
-        informational
       >
         <div>
           created at: {{ getFormattedDate(edittingListObj.createdAt) }}

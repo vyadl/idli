@@ -2,10 +2,7 @@
 export default {
   props: {
     styleType: String,
-    big: {
-      type: Boolean,
-      default: false,
-    },
+    size: String,
     title: {
       type: String,
       default: '',
@@ -41,7 +38,7 @@ export default {
     class="button-sign"
     :class="[
       styleType,
-      { big },
+      size,
       `${globalTheme}-theme`,
     ]"
     :title="title"

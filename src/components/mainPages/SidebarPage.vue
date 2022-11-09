@@ -119,7 +119,7 @@ export default {
     >
       <ButtonSign
         style-type="plus"
-        big
+        size="big"
         title="new item"
         @click="createNewItem"
       />
@@ -160,7 +160,7 @@ export default {
           class="mode-button"
           :text="mode"
           :style-type="mode === 'bin' ? 'underline' : 'bordered'"
-          :small="mode === 'bin'"
+          :size="mode === 'bin' ? 'small' : ''"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />

@@ -61,9 +61,8 @@ export default {
       <SectionCard
         v-if="currentItemTags.length"
         title="tags"
-        small
-        centered
-        caps
+        size="small"
+        text-style="caps"
       >
         <div class="filters-container">
           <span
@@ -78,9 +77,8 @@ export default {
       <SectionCard
         v-if="currentItemCategory"
         title="category"
-        small
-        centered
-        caps
+        size="small"
+        text-style="caps"
       >
         <div class="filter-container">
           <div class="category">
