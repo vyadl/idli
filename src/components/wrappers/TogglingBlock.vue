@@ -23,18 +23,14 @@ export default {
       type: String,
       default: 'caps',
       validator(value) {
-        if (value) {
-          return ['caps'].includes(value);
-        }
+        return value ? ['caps'].includes(value) : true;
       },
     },
     blockStyle: {
       type: String,
       default: 'bordered',
       validator(value) {
-        if (value) {
-          return ['bordered', 'underline'].includes(value);
-        }
+        return value ? ['bordered', 'underline'].includes(value) : true;
       },
     },
   },
