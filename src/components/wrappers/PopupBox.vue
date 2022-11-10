@@ -13,14 +13,25 @@ export default {
     buttonStyleType: {
       type: String,
       default: 'hint',
+      validator(value) {
+        return value ? ['hint', 'info', 'dots'].includes(value) : true;
+      },
     },
     contentType: {
       type: String,
       default: 'informational',
+      validator(value) {
+        return value ? ['informational'].includes(value) : true;
+      },
     },
     position: {
       type: String,
       default: 'right',
+      validator(value) {
+        return value
+          ? ['right', 'lower-left', 'upper-right', 'upper-center'].includes(value)
+          : true;
+      },
     },
   },
   emits: ['close'],

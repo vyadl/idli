@@ -2,11 +2,24 @@
 export default {
   props: {
     title: String,
-    textStyle: String,
-    size: String,
+    textStyle: {
+      type: String,
+      validator(value) {
+        return value ? ['caps'].includes(value) : true;
+      },
+    },
+    size: {
+      type: String,
+      validator(value) {
+        return value ? ['small'].includes(value) : true;
+      },
+    },
     position: {
       type: String,
       default: 'centered',
+      validator(value) {
+        return value ? ['centered'].includes(value) : true;
+      },
     },
   },
 };

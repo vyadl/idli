@@ -22,10 +22,20 @@ export default {
     textStyle: {
       type: String,
       default: 'caps',
+      validator(value) {
+        if (value) {
+          return ['caps'].includes(value);
+        }
+      },
     },
     blockStyle: {
       type: String,
       default: 'bordered',
+      validator(value) {
+        if (value) {
+          return ['bordered', 'underline'].includes(value);
+        }
+      },
     },
   },
   data() {

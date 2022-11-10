@@ -34,7 +34,7 @@ export default {
       :value="modelValue"
       :disabled="disabled"
       @input="input($event)"
-    ></textarea>
+    />
   </label>
 </template>
 

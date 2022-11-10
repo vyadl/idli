@@ -2,10 +2,19 @@
 export default {
   props: {
     text: String,
-    size: String,
+    size: {
+      type: String,
+      default: 'medium',
+      validator(value) {
+        return value ? ['big', 'medium', 'small'].includes(value) : true;
+      },
+    },
     styleType: {
       type: String,
       default: 'bordered',
+      validator(value) {
+        return value ? ['bordered', 'line', 'underline'].includes(value) : true;
+      },
     },
     active: {
       type: Boolean,
@@ -18,6 +27,9 @@ export default {
     type: {
       type: String,
       default: 'button',
+      validator(value) {
+        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+      },
     },
     disabled: {
       type: Boolean,

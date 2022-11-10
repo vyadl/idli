@@ -1,8 +1,20 @@
 <script>
 export default {
   props: {
-    styleType: String,
-    size: String,
+    styleType: {
+      type: String,
+      validator(value) {
+        return value 
+          ? ['hint', 'info', 'dots', 'cross', 'arrow', 'plus'].includes(value)
+          : true;
+      },
+    },
+    size: {
+      type: String,
+      validator(value) {
+        return value ? ['big'].includes(value) : true;
+      },
+    },
     title: {
       type: String,
       default: '',
@@ -10,6 +22,9 @@ export default {
     type: {
       type: String,
       default: 'button',
+      validator(value) {
+        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+      },
     },
     disabled: {
       type: Boolean,
