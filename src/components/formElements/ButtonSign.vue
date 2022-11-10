@@ -1,10 +1,19 @@
 <script>
 export default {
   props: {
-    styleType: String,
-    big: {
-      type: Boolean,
-      default: false,
+    styleType: {
+      type: String,
+      validator(value) {
+        return value 
+          ? ['hint', 'info', 'dots', 'cross', 'arrow', 'plus'].includes(value)
+          : true;
+      },
+    },
+    size: {
+      type: String,
+      validator(value) {
+        return value ? ['big'].includes(value) : true;
+      },
     },
     title: {
       type: String,
@@ -13,6 +22,9 @@ export default {
     type: {
       type: String,
       default: 'button',
+      validator(value) {
+        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+      },
     },
     disabled: {
       type: Boolean,
@@ -41,7 +53,7 @@ export default {
     class="button-sign"
     :class="[
       styleType,
-      { big },
+      size,
       `${globalTheme}-theme`,
     ]"
     :title="title"

@@ -46,21 +46,17 @@ export default {
 <template>
   <div class="sidebar-filters">
     <div v-if="currentListObj">
-      <SectionCard
-        title="search in list"
-        centered
-      >
+      <SectionCard title="search in list">
         <SearchField />
       </SectionCard>
       <SectionCard
         :class="`${globalTheme}-theme`"
         title="filters"
-        centered
       >
         <SectionCard
           class="filters-title"
           title="tags"
-          small
+          size="small"
         >
           <InfoMessage
             v-if="tagsInfoMessage"
@@ -80,7 +76,7 @@ export default {
         <SectionCard
           class="filters-title"
           title="categories"
-          small
+          size="small"
         >
           <InfoMessage
             v-if="categoriesInfoMessage"

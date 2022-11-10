@@ -87,7 +87,6 @@ export default {
   <SectionCard
     class="sidebar-settings"
     title="settings"
-    centered
   >
     <div class="options-container">
       <CheckboxCustom
@@ -137,10 +136,7 @@ export default {
         </template>
       </div>
     </div>
-    <SectionCard
-      title="theme"
-      centered
-    >
+    <SectionCard title="theme">
       <div class="buttons-container">
         <RadioCustom
           v-for="title in themeTitles"
@@ -157,7 +153,6 @@ export default {
     <SectionCard
       v-if="!isPublicView"
       title="your profile"
-      centered
     >
       <UserProfile />
     </SectionCard>

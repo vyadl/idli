@@ -81,7 +81,6 @@ export default {
     class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
-    centered
   >
     <div class="lists-container">
       <div

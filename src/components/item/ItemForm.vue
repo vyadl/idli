@@ -258,13 +258,13 @@ export default {
           class="additional-option"
           text="move to another list"
           style-type="line"
-          small
+          size="small"
         />
         <ButtonText
           class="additional-option"
           text="move to bin 🗑"
           style-type="line"
-          small
+          size="small"
           @click="removeItem(edittingItemObj)"
         />
       </PopupBox>
@@ -287,7 +287,7 @@ export default {
         v-else
         text="add details"
         style-type="underline"
-        big
+        size="big"
         @click="toggleShowingStatus('detailsTextarea')"
       />
     </div>
@@ -298,24 +298,21 @@ export default {
       >
         <TogglingBlock 
           title="category"
-          caps
-          :bordered="!isItemFormInSidebar"
+          :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
           :force-show="typeof edittingItemObj.category === 'number'"
         >
           <ItemCategories />
         </TogglingBlock>
         <TogglingBlock
           title="tags"
-          caps
-          :bordered="!isItemFormInSidebar"
+          :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
           :force-show="!!edittingItemObj.tags.length"
         >
           <ItemTags />
         </TogglingBlock>
         <TogglingBlock
           title="related entities"
-          caps
-          :bordered="!isItemFormInSidebar"
+          :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
           :hint-text="$options.RELATED_UNITS_HINT_TEXT"
           :force-show="!!edittingItemObj.relatedItems?.length
             || !!edittingItemObj.relatedLists?.length"
@@ -327,7 +324,7 @@ export default {
         v-else
         text="tags, categories, related items & lists"
         style-type="underline"
-        big
+        size="big"
         @click="toggleShowingStatus('addons')"
       />
     </div>
@@ -336,7 +333,6 @@ export default {
       class="footer"
     >
       <PopupBox
-        informational
         button-style-type="info"
         position="upper-right"
         stop-propagation

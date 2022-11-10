@@ -2,9 +2,25 @@
 export default {
   props: {
     title: String,
-    small: Boolean,
-    centered: Boolean,
-    caps: Boolean,
+    textStyle: {
+      type: String,
+      validator(value) {
+        return value ? ['caps'].includes(value) : true;
+      },
+    },
+    size: {
+      type: String,
+      validator(value) {
+        return value ? ['small'].includes(value) : true;
+      },
+    },
+    position: {
+      type: String,
+      default: 'centered',
+      validator(value) {
+        return value ? ['centered'].includes(value) : true;
+      },
+    },
   },
 };
 </script>
@@ -17,7 +33,7 @@ export default {
     <h1
       v-if="title"
       class="title"
-      :class="{ small, centered, caps }"
+      :class="[ textStyle, size, position ]"
     >
       {{ title }}
     </h1>

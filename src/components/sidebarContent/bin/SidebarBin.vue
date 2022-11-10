@@ -87,19 +87,18 @@ export default {
       <SectionCard
         v-show="deletedLists.length"
         title="lists"
-        centered
       >
         <div class="all-buttons">
           <ButtonText
             text="restore all lists"
-            small
+            size="small"
             :disabled="isRequestProcessing"
             @click="resolveAllAction('_restoreAllLists')"
           />
           <ButtonText
             text="delete all lists"
             style-type="underline"
-            small
+            size="small"
             :disabled="isRequestProcessing"
             @click="resolveAllAction('_hardDeleteAllLists')"
           />
@@ -118,19 +117,18 @@ export default {
         v-show="deletedItems.length"
         title="items"
         class="items"
-        centered
       >
         <div class="all-buttons">
           <ButtonText
             text="restore all items"
-            small
+            size="small"
             :disabled="isRequestProcessing"
             @click="resolveAllAction('_restoreAllItems')"
           />
           <ButtonText
             text="delete all items"
             style-type="underline"
-            small
+            size="small"
             :disabled="isRequestProcessing"
             @click="resolveAllAction('_hardDeleteAllItems')"
           />

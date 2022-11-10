@@ -2,17 +2,19 @@
 export default {
   props: {
     text: String,
+    size: {
+      type: String,
+      default: 'medium',
+      validator(value) {
+        return value ? ['big', 'medium', 'small'].includes(value) : true;
+      },
+    },
     styleType: {
       type: String,
       default: 'bordered',
-    },
-    small: {
-      type: Boolean,
-      default: false,
-    },    
-    big: {
-      type: Boolean,
-      default: false,
+      validator(value) {
+        return value ? ['bordered', 'line', 'underline'].includes(value) : true;
+      },
     },
     active: {
       type: Boolean,
@@ -25,6 +27,9 @@ export default {
     type: {
       type: String,
       default: 'button',
+      validator(value) {
+        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+      },
     },
     disabled: {
       type: Boolean,
@@ -53,7 +58,7 @@ export default {
     class="button-text"
     :class="[
       styleType,
-      { small, big, active },
+      [size, { active }],
       `${globalTheme}-theme`,
     ]"
     :title="title"
