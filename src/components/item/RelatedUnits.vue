@@ -109,6 +109,7 @@ export default {
       '_fetchItemsByListId',
     ]),
     ...mapActions('items', [
+      '_saveItemOnServer',
       '_updateItemOnServer',
       '_addItemOnServer',
     ]),
@@ -142,12 +143,7 @@ export default {
       this.updateRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
 
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
-        this[this.edittingItemObj.id 
-          ? '_updateItemOnServer' 
-          : '_addItemOnServer']({ 
-          item: this.edittingItemObj, 
-          cancelToken: null,
-        });
+        this._saveItemOnServer();
       }
     },
     addRelatedItem() {
