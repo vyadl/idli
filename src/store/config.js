@@ -27,3 +27,26 @@ export const sidebarModesForViews = {
     default: 'settings',
   },
 };
+
+export const publicListsForAuthScreen = [
+  {
+    title: 'Конституция республики Ужупис',
+    id: '636ce561dd4921ae75617abe',
+  },
+  {
+    title: 'Stars',
+    id: '636ce565dd4921ae75617aed',
+  },
+  {
+    title: 'mikromir',
+    id: '636ce570dd4921ae75617b58',
+  },
+  {
+    title: 'Почему котики классные',
+    id: '636ce55add4921ae75617a99',
+  },
+  {
+    title: 'План на лето',
+    id: '636ce55edd4921ae75617aab',
+  },
+];
