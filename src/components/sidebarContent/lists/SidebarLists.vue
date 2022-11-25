@@ -30,7 +30,6 @@ export default {
   methods: {
     ...mapMutations([
       'decreaseExplicitRequestsNumber',
-      'setModalNameToShow',
     ]),
     ...mapActions('lists', [
       '_fetchListById',
@@ -40,7 +39,7 @@ export default {
       '_resetCustomView',
     ]),
     openListModal() {
-      this.setModalNameToShow('listModal');
+      this.$vfm.show('listModal');
     },
     setListForEditting(list) {
       this._setListForEditting(list);

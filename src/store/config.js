@@ -14,10 +14,6 @@ export const sidebarModesForViews = {
     sidebarModes: ['filters', 'visualization', 'lists', 'settings', 'bin'],
     default: 'lists',
   },
-  authPageView: {
-    sidebarModes: ['sign up', 'sign in'],
-    default: 'sign in',
-  },
   itemPublicView: {
     sidebarModes: ['settings'],
     default: 'settings',

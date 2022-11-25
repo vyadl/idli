@@ -175,7 +175,7 @@ export default {
     .buttons-container {
       display: flex;
       justify-content: center;
-      margin-bottom: 50px;
+      margin-bottom: 20px;
     }
     .about {
       padding-top: 50px;

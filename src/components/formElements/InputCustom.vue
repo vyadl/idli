@@ -31,18 +31,15 @@ export default {
       default: false,
     },
   },
-
   emits: [
     'input',
     'update:modelValue',
   ],
-
   mounted() {
     if (this.isFocus) {
       this.$nextTick(() => this.focus());
     }
   },
-
   methods: {
     input(value) {
       this.$emit('input', value);
@@ -99,6 +96,10 @@ export default {
 
     &.disabled {
       pointer-events: none;
+
+      .input {
+        color: map-get($colors, 'gray-light');
+      }
     }
 
     .label {
@@ -137,6 +138,12 @@ export default {
     &.inverted-theme {
       .label {
         color: map-get($colors, 'gray-light');
+      }
+
+      &.disabled {
+        .input {
+          color: map-get($colors, 'gray-dark');
+        }
       }
 
       .input {

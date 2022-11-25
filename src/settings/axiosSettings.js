@@ -1,34 +1,57 @@
 import axios from 'axios';
+import { router } from '@/router'; // eslint-disable-line import/no-cycle
+import getBrowserFingerprint from 'get-browser-fingerprint';
 
 export const initAxios = function initAxios(store) {
+  const apiBasePath = import.meta.env.VITE_API_BASE_PATH;
+  const user = JSON.parse(localStorage.getItem('user'));
+  const fingerprint = JSON.stringify(getBrowserFingerprint());
+
   axios.interceptors.response.use(
-    response => response,
+    response => {
+      if (response.data.accessToken && response.data.refreshToken) {
+        user.accessToken = response.accessToken;
+        user.refreshToken = response.refreshToken;
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+
+      return response;
+    },
 
     error => {
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
       } 
 
-      if (error.response?.data?.message === 'Invalid JWT Token') {
-        store.dispatch('auth/_logOut');
-        store.dispatch('_openSidebar', 'sign in');
-
-        throw new Error('Invalid JWT Token');
+      if (error.response?.status !== 401) {
+        throw error;
       }
 
-      throw error;
+      if (error.response?.status === 401) {
+        // store.dispatch('auth/_logOut');
+        // router.push({ name: 'signIn' });
+        console.log(error.response.status);
+        axios.post(`${apiBasePath}auth/refresh`, {
+          fingerprint,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+        })
+          .then(response => {
+            console.log(response);
+          })
+
+        // throw new Error('Invalid JWT Token');
+      }
     },
   );
-
-  const user = JSON.parse(localStorage.getItem('user'));
-
+  
   if (user) {
     axios.defaults.headers.common['x-access-token'] = user.accessToken;
   }
 
   return {
     axios,
-    apiBasePath: import.meta.env.VITE_API_BASE_PATH,
+    apiBasePath,
   };
 };
 

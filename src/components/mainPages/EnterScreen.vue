@@ -1,7 +1,6 @@
 <script>
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
-import { mapGetters, mapActions } from 'vuex';
 import { publicListsForAuthScreen } from '@/store/config';
 
 export default {
@@ -10,51 +9,34 @@ export default {
     CustomLink,
   },
   computed: {
-    ...mapGetters('sidebar', [
-      'isSidebarOpen',
-    ]),
-    logoSrc() {
-      return this.globalTheme === 'default' 
-        ? '/images/black-logo.svg' : '/images/white-logo.svg';
-    },
     publicListsForAuthScreen() {
       return publicListsForAuthScreen;
     },
   },
   methods: {
-    ...mapActions('sidebar', [
-      '_openSidebar',
-      '_closeSidebar',
-    ]),
+    openForm(name) {
+      this.$router.push({ name });
+    },
   },
 };
 </script>
 
 <template>
-  <div
-    class="enter-screen"
-    :class="{ parallax: isSidebarOpen }"
-    @click="_closeSidebar"
-  >
-    <img
-      class="logo"
-      alt="logo"
-      :src="logoSrc"
-    >
+  <div class="enter-screen">
     <div class="buttons-container">
       <ButtonText
         text="sign up"
         style-type="bordered"
         size="small"
         stop-propagation
-        @click="_openSidebar('sign up')"
+        @click="openForm('requestRegistration')"
       />
       <ButtonText
         text="sign in"
         style-type="bordered"
         size="small"
         stop-propagation
-        @click="_openSidebar('sign in')"
+        @click="openForm('signIn')"
       />
     </div>
     <div class="conjunction">
@@ -90,18 +72,7 @@ export default {
     align-items: center;
     gap: 20px;
     width: 100%;
-    min-height: 100vh;
     transition: transform 0.5s;
-
-      &.parallax {
-        transform: translateX(-20px);
-      }
-
-    .logo {
-      display: block;
-      width: 400px;
-      margin-bottom: 20px;
-    }
 
     .buttons-container {
       display: flex;
