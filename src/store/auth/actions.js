@@ -53,18 +53,6 @@ export default {
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    // try {
-    console.log('are you here?');
-
-    // const { data: responseUser } = await this.$config.axios.post(
-    //   `${this.$config.apiBasePath}auth/signin`,
-    //   {
-    //     username,
-    //     password,
-    //     fingerprint,
-    //   },
-    // );
-
     this.$config.axios.post(
       `${this.$config.apiBasePath}auth/signin`,
       {
@@ -78,6 +66,7 @@ export default {
         console.log('are you here?');
         router.push({ name: 'home', query: { sidebar: 'lists' } });
         localStorage.setItem('user', JSON.stringify(responseUser));
+        console.log(responseUser);
         setAccessToken(responseUser.accessToken);
       })
       .catch((error) => {
@@ -88,19 +77,6 @@ export default {
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
-    
-    // commit('signIn', responseUser);
-    // console.log('are you here?');
-    // router.push({ name: 'home', query: { sidebar: 'lists' } });
-    // localStorage.setItem('user', JSON.stringify(responseUser));
-    // setAccessToken(responseUser.accessToken);
-    // } catch (error) {
-    //   localStorage.removeItem('user');
-
-    //   throw error;
-    // } finally {
-    //   commitFromRoot('decreaseExplicitRequestsNumber');
-    // }
   },
 
   _requestResetPassword(state, email) {
