@@ -13,6 +13,7 @@ export const routes = [
     component: MainList,
     meta: {
       isLoginRequired: true,
+      isAuthPage: false,
     },
   },
   {
@@ -24,6 +25,7 @@ export const routes = [
     },
     meta: {
       isLoginRequired: false,
+      isAuthPage: true,
     },
   },
   {
@@ -35,6 +37,7 @@ export const routes = [
     },
     meta: {
       isLoginRequired: false,
+      isAuthPage: true,
     },
   },
   {
@@ -47,6 +50,7 @@ export const routes = [
     },
     meta: {
       isLoginRequired: false,
+      isAuthPage: true,
     },
   },
   {
@@ -58,6 +62,7 @@ export const routes = [
     },
     meta: {
       isLoginRequired: false,
+      isAuthPage: true,
     },
   },
   {
@@ -69,6 +74,7 @@ export const routes = [
     },
     meta: {
       isLoginRequired: false,
+      isAuthPage: true,
     },
   },
   {
@@ -80,6 +86,7 @@ export const routes = [
     },
     meta: {
       isLoginRequired: false,
+      isAuthPage: true,
     },
   },
   {
@@ -88,6 +95,7 @@ export const routes = [
     component: MainList,
     meta: {
       isLoginRequired: false,
+      isAuthPage: false,
     },
   },
   { 
@@ -96,6 +104,7 @@ export const routes = [
     component: SingleItem,
     meta: {
       isLoginRequired: false,
+      isAuthPage: false,
     },
   },
 ];

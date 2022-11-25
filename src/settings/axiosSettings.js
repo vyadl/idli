@@ -9,37 +9,44 @@ export const initAxios = function initAxios(store) {
 
   axios.interceptors.response.use(
     response => {
-      if (response.data.accessToken && response.data.refreshToken) {
-        user.accessToken = response.accessToken;
-        user.refreshToken = response.refreshToken;
+      console.log(response);
+      console.log(user);
+      if (user && response.data.accessToken && response.data.refreshToken) {
+        user.accessToken = response.data.accessToken;
+        user.refreshToken = response.data.refreshToken;
         localStorage.setItem('user', JSON.stringify(user));
       }
 
       return response;
     },
 
-    error => {
+    async error => {
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
       } 
 
-      if (error.response?.status !== 401) {
+      if (error.response?.status !== 401 && error.config.retry) {
         throw error;
       }
 
       if (error.response?.status === 401) {
-        // store.dispatch('auth/_logOut');
-        // router.push({ name: 'signIn' });
         console.log(error.response.status);
-        axios.post(`${apiBasePath}auth/refresh`, {
+        const res = await axios.post(`${apiBasePath}auth/refresh`, {
           fingerprint,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
-        })
-          .then(response => {
-            console.log(response);
-          })
+        });
+        console.log(res);
 
+        const newRequest = {
+          ...error.config,
+          retry: true,
+        };
+
+        return axios(newRequest);
+
+        // store.dispatch('auth/_logOut');
+        // router.push({ name: 'signIn' });
         // throw new Error('Invalid JWT Token');
       }
     },

@@ -53,27 +53,54 @@ export default {
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    try {
-      const { data: responseUser } = await this.$config.axios.post(
-        `${this.$config.apiBasePath}auth/signin`,
-        {
-          username,
-          password,
-          fingerprint,
-        },
-      );
-      
-      commit('signIn', responseUser);
-      router.push({ name: 'home', query: { sidebar: 'lists' } });
-      localStorage.setItem('user', JSON.stringify(responseUser));
-      setAccessToken(responseUser.accessToken);
-    } catch (error) {
-      localStorage.removeItem('user');
+    // try {
+    console.log('are you here?');
 
-      throw error;
-    } finally {
-      commitFromRoot('decreaseExplicitRequestsNumber');
-    }
+    // const { data: responseUser } = await this.$config.axios.post(
+    //   `${this.$config.apiBasePath}auth/signin`,
+    //   {
+    //     username,
+    //     password,
+    //     fingerprint,
+    //   },
+    // );
+
+    this.$config.axios.post(
+      `${this.$config.apiBasePath}auth/signin`,
+      {
+        username,
+        password,
+        fingerprint,
+      },
+    )
+      .then(({ data: responseUser }) => {
+        commit('signIn', responseUser);
+        console.log('are you here?');
+        router.push({ name: 'home', query: { sidebar: 'lists' } });
+        localStorage.setItem('user', JSON.stringify(responseUser));
+        setAccessToken(responseUser.accessToken);
+      })
+      .catch((error) => {
+        localStorage.removeItem('user');
+
+        throw error;
+      })
+      .finally(() => {
+        commitFromRoot('decreaseExplicitRequestsNumber');
+      });
+    
+    // commit('signIn', responseUser);
+    // console.log('are you here?');
+    // router.push({ name: 'home', query: { sidebar: 'lists' } });
+    // localStorage.setItem('user', JSON.stringify(responseUser));
+    // setAccessToken(responseUser.accessToken);
+    // } catch (error) {
+    //   localStorage.removeItem('user');
+
+    //   throw error;
+    // } finally {
+    //   commitFromRoot('decreaseExplicitRequestsNumber');
+    // }
   },
 
   _requestResetPassword(state, email) {

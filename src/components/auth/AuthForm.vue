@@ -34,7 +34,7 @@ export default {
         password: this.signInData.password,
       })
         .catch(error => {
-          this.errorMessage = error.response.data.message;
+          this.errorMessage = error.response?.data?.message;
         })
         .finally(() => {
           this.isRequestProcessing = false;
