@@ -6,7 +6,7 @@ export default {
       type: String,
       default: 'medium',
       validator(value) {
-        return value ? ['big', 'medium', 'small'].includes(value) : true;
+        return value ? ['big', 'medium', 'small', 'smallest'].includes(value) : true;
       },
     },
     styleType: {
@@ -121,6 +121,16 @@ export default {
         font-size: 11px;
       }
 
+      &.smallest {
+        padding: 3px 0;
+        font-size: 12px;
+        color: map-get($colors, 'gray-light');
+
+        &:hover {
+          color: map-get($colors, 'gray-dark');
+        }
+      }
+
       &.big {
         font-size: 15px;
       }
@@ -170,6 +180,10 @@ export default {
 
       &.underline {
         color: map-get($colors, 'gray-light');
+
+        &.smallest {
+          color: map-get($colors, 'gray-dark');
+        }
 
         &:hover {
           color: map-get($colors, 'gray-dark');

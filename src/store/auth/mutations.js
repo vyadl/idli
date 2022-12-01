@@ -7,4 +7,7 @@ export default {
   logOut(state) {
     state.user = new User();
   },
+  setCodeLifetimeInMinutes(state, minutes) {
+    state.codeLifetimeInMinutes = minutes;
+  },
 };

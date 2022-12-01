@@ -1,75 +1,80 @@
 import axios from 'axios';
-import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import getBrowserFingerprint from 'get-browser-fingerprint';
+import { router } from '@/router'; // eslint-disable-line import/no-cycle
 
-export const initAxios = function initAxios(store) {
+const REFRESH_TRIGGER_ERROR_CODE = 'ACCESS_TOKEN_INVALID_ERROR';
+const LOGOUT_TRIGGER_ERROR_CODES = new Set([
+  'ACCESS_TOKEN_ABSENT_ERROR',
+  'REFRESH_TOKEN_WRONG_ERROR',
+  'REFRESH_TOKEN_EXPIRED_ERROR',
+]);
+
+const SIGNIN_ERROR_MESSAGE = 'Invalid username and/or password';
+const WRONG_CODE_ERROR_MESSAGE = 'Validation code is invalid';
+const EXPIRED_CODE_ERROR_MESSAGE = 'Validation code is expired. Please resend it.';
+
+const ERROR_CODES_AND_MESSAGES_ACCORDANCE = {
+  CREDENTIALS_ERROR: SIGNIN_ERROR_MESSAGE,
+  NOT_FOUND_USER_ERROR: SIGNIN_ERROR_MESSAGE,
+  DELETED_USER_ERROR: SIGNIN_ERROR_MESSAGE,
+
+  SIGNUP_WRONG_CODE_ERROR: WRONG_CODE_ERROR_MESSAGE,
+  SIGNUP_EXPIRED_CODE_ERROR: EXPIRED_CODE_ERROR_MESSAGE,
+
+  RESET_PASSWORD_WRONG_CODE_ERROR: WRONG_CODE_ERROR_MESSAGE,
+  RESET_PASSWORD_EXPIRED_CODE_ERROR: EXPIRED_CODE_ERROR_MESSAGE,
+};
+
+export function initAxios(store) {
   const apiBasePath = import.meta.env.VITE_API_BASE_PATH;
-  const fingerprint = JSON.stringify(getBrowserFingerprint());
-  const userInitial = JSON.parse(localStorage.getItem('user'));
+  const savedUser = JSON.parse(localStorage.getItem('user'));
 
-  if (userInitial) {
-    axios.defaults.headers.common['x-access-token'] = userInitial.accessToken;
+  if (savedUser) {
+    setAccessToken(savedUser.accessToken);
   }
 
   axios.interceptors.response.use(
-    response => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      console.log(response);
-      console.log(user);
-      if (user && response.data.accessToken && response.data.refreshToken) {
-        user.accessToken = response.data.accessToken;
-        user.refreshToken = response.data.refreshToken;
-        localStorage.setItem('user', JSON.stringify(user));
-      }
+    response => response,
 
-      return response;
-    },
-
-    async error => {
+    error => {
+      const fingerprint = JSON.stringify(getBrowserFingerprint());
       const user = JSON.parse(localStorage.getItem('user'));
-      console.log(user);
+      const { code } = error.response.data;
+
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
       } 
 
-      if (error.response?.status !== 401 || error.config.retry) {
-        throw error;
+      if (LOGOUT_TRIGGER_ERROR_CODES.has(code)) {
+        store.dispatch('auth/_logOut', { mode: 'current' });
+        router.push({ name: 'signIn' });
       }
 
-      // console.log(error.response.status);
-      // console.log(error.response.data.message);
-
-      const args = {
+      if (code !== REFRESH_TRIGGER_ERROR_CODE || error.config.retry) {
+        throw error;
+      }
+      
+      return axios.post(`${apiBasePath}auth/refresh`, {
         fingerprint,
         accessToken: user.accessToken,
         refreshToken: user.refreshToken,
-      };
-      console.log(args);
+      })
+        .then(response => {
+          user.accessToken = response.data.accessToken;
+          user.refreshToken = response.data.refreshToken;
 
-      const res = await axios.post(`${apiBasePath}auth/refresh`, args);
+          localStorage.setItem('user', JSON.stringify(user));
+          setAccessToken(response.data.accessToken);
 
-      console.log(res);
-        // .then(res => {
-        //   console.log(res);
-        //   const newRequest = {
-        //     ...error.config,
-        //     retry: true,
-        //   };
+          const newRequest = {
+            ...error.config,
+            retry: true,
+          };
+
+          newRequest.headers['x-access-token'] = response.data.accessToken;
     
-        //   return axios(newRequest);
-        // })
-        // .catch(refreshError => {
-        //   throw refreshError;
-        // });
-
-      // user.accessToken = response.data.accessToken;
-      // user.refreshToken = response.data.refreshToken;
-      // localStorage.setItem('user', JSON.stringify(user));
-
-
-      // store.dispatch('auth/_logOut');
-      // router.push({ name: 'signIn' });
-      // throw new Error('e');
+          return axios(newRequest);
+        });
     },
   );
 
@@ -77,12 +82,20 @@ export const initAxios = function initAxios(store) {
     axios,
     apiBasePath,
   };
-};
+}
 
-export const setAccessToken = function setAccessToken(token) {
+export function getErrorMessage(errorData) {
+  const { code, message } = errorData;
+
+  return ERROR_CODES_AND_MESSAGES_ACCORDANCE[code]
+    || message
+    || 'Something went wrong';
+}
+
+export function setAccessToken(token) {
   axios.defaults.headers.common['x-access-token'] = token;
-};
+}
 
-export const deleteAccessToken = function deleteAccessToken() {
+export function deleteAccessToken() {
   delete axios.defaults.headers.common['x-access-token'];
-};
+}

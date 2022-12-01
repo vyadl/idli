@@ -1,7 +1,9 @@
 import EnterScreen from '@/components/mainPages/EnterScreen.vue';
+import RequestRegistration from '@/components/auth/RequestRegistration.vue';
 import RegistrationForm from '@/components/auth/RegistrationForm.vue';
 import AuthForm from '@/components/auth/AuthForm.vue';
-import PasswordReset from '@/components/auth/PasswordReset.vue';
+import RequestResetPassword from '@/components/auth/RequestResetPassword.vue';
+import ResetPassword from '@/components/auth/ResetPassword.vue';
 import AppLogo from '@/components/auth/AppLogo.vue';
 import MainList from '@/components/list/MainList.vue';
 import SingleItem from '@/components/item/SingleItem.vue';
@@ -33,7 +35,7 @@ export const routes = [
     name: 'requestRegistration',
     components: {
       logo: AppLogo,
-      form: RegistrationForm,
+      form: RequestRegistration,
     },
     meta: {
       isLoginRequired: false,
@@ -70,7 +72,7 @@ export const routes = [
     name: 'resetPassword',
     components: {
       logo: AppLogo,
-      form: PasswordReset,
+      form: ResetPassword,
     },
     meta: {
       isLoginRequired: false,
@@ -82,7 +84,7 @@ export const routes = [
     name: 'requestResetPassword',
     components: {
       logo: AppLogo,
-      form: PasswordReset,
+      form: RequestResetPassword,
     },
     meta: {
       isLoginRequired: false,

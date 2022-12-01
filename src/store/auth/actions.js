@@ -1,19 +1,24 @@
-import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
+import getBrowserFingerprint from 'get-browser-fingerprint';
+import {
+  setAccessToken, 
+  deleteAccessToken, 
+  getErrorMessage,
+} from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { commitFromRoot, dispatchFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
-import getBrowserFingerprint from 'get-browser-fingerprint';
 
 export default {
-  _requestRegistration(state, { email, username }) {
+  _requestRegistration({ commit }, { email, username }) {
     commitFromRoot('increaseExplicitRequestsNumber');
-    this.$config.axios.post(
+
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/signup-validate`,
       {
         email,
         username,
       },
     )
-      .then(() => {
+      .then(response => {
         router.push({ 
           name: 'signUp',
           query: {
@@ -21,18 +26,22 @@ export default {
             username,
           },
         });
+        
+        commit('setCodeLifetimeInMinutes', response.data.codeLifetimeInMinutes);
+        commitFromRoot('setNotification', { text: 'Email with validation code has been sent' });
       })
       .catch(error => {
-        throw error;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
   },
 
-  async _signUp(state, user) {
+  _signUp(state, user) {
     commitFromRoot('increaseExplicitRequestsNumber');
-    this.$config.axios.post(
+
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/signup`,
       user,
     )
@@ -48,52 +57,52 @@ export default {
       });
   },
 
-  async _signIn({ commit }, { username, password }) {
+  _signIn({ commit }, credentials) {
     const fingerprint = JSON.stringify(getBrowserFingerprint());
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    this.$config.axios.post(
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/signin`,
       {
-        username,
-        password,
+        ...credentials,
         fingerprint,
       },
     )
       .then(({ data: responseUser }) => {
         commit('signIn', responseUser);
-        console.log('are you here?');
         router.push({ name: 'home', query: { sidebar: 'lists' } });
         localStorage.setItem('user', JSON.stringify(responseUser));
-        console.log(responseUser);
         setAccessToken(responseUser.accessToken);
       })
-      .catch((error) => {
+      .catch(error => {
         localStorage.removeItem('user');
 
-        throw error;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
   },
 
-  _requestResetPassword(state, email) {
+  _requestResetPassword({ commit }, email) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    this.$config.axios.post(
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/request-reset-password`,
       { email },
     )
-      .then(() => {
+      .then(response => {
         router.push({
           name: 'resetPassword',
           query: { email },
         });
+
+        commit('setCodeLifetimeInMinutes', response.data.codeLifetimeInMinutes);
+        commitFromRoot('setNotification', { text: 'Email with validation code has been sent' });
       })
       .catch(error => {
-        throw error;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -103,7 +112,7 @@ export default {
   _resetPassword(state, { email, code, password }) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    this.$config.axios.post(
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/reset-password`,
       { 
         email,
@@ -116,7 +125,7 @@ export default {
         router.push({ name: 'signIn' });
       })
       .catch(error => {
-        throw error;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -124,7 +133,7 @@ export default {
   },
 
   _changePassword(state, {
-    oldPassword,
+    currentPassword,
     newPassword,
     isLogoutFromAllDevices,
   }) {
@@ -133,23 +142,23 @@ export default {
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    this.$config.axios.post(
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/change-password`,
       { 
         email: user.email,
         accessToken: user.accessToken,
         refreshToken: user.refreshToken,
-        oldPassword,
+        currentPassword,
         newPassword,
         isLogoutFromAllDevices,
         fingerprint,
       },
     )
       .then(() => {
-        commitFromRoot('setNotification', { text: 'Password successfully changed' });
+        commitFromRoot('setNotification', { text: 'Password changed successfully' });
       })
       .catch(error => {
-        throw error;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -162,7 +171,7 @@ export default {
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    this.$config.axios.post(
+    return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/logout`,
       {
         mode,
@@ -172,39 +181,27 @@ export default {
         userId: user.id,
       },
     )
-      .then(response => {
-        // if (mode !== 'allExceptCurrent') {
-        //   console.log(response);
-        //   commit('logOut');
-        //   localStorage.removeItem('user');
-        //   localStorage.removeItem('currentListId');
-        //   deleteAccessToken();
-        //   commitFromRoot('sidebar/closeSidebar');
-        //   commitFromRoot('filters/resetFilters');
-        //   commitFromRoot('setCurrentListItems', []);
-        //   dispatchFromRoot('visualization/_resetVisualizationToDefault');
-        //   router.push({ name: 'auth' });
-        // }
-        commitFromRoot('setNotification', { text: `${response.data}` });
+      .then(() => {
+        if (mode !== 'allExceptCurrent') {
+          commit('logOut');
+          localStorage.removeItem('user');
+          localStorage.removeItem('currentListId');
+          deleteAccessToken();
+          commitFromRoot('sidebar/closeSidebar');
+          commitFromRoot('filters/resetFilters');
+          commitFromRoot('setCurrentListItems', []);
+          dispatchFromRoot('visualization/_resetVisualizationToDefault');
+          router.push({ name: 'auth' });
+        } else {
+          commitFromRoot('setNotification', { text: 'All other sessions were terminated' });
+        }
       })
       .catch(error => {
-        throw error;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
-
-    if (mode !== 'allExceptCurrent') {
-      commit('logOut');
-      localStorage.removeItem('user');
-      localStorage.removeItem('currentListId');
-      deleteAccessToken();
-      commitFromRoot('sidebar/closeSidebar');
-      commitFromRoot('filters/resetFilters');
-      commitFromRoot('setCurrentListItems', []);
-      dispatchFromRoot('visualization/_resetVisualizationToDefault');
-      router.push({ name: 'auth' });
-    }
   },
   
   _setUserFromLocalStorage({ commit }) {

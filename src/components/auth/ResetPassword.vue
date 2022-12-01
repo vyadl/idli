@@ -4,7 +4,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 // eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 
@@ -23,12 +23,14 @@ export default {
     passwordToCheck: '',
     isRequestProcessing: false,
     errorMessage: '',
-
   }),
   computed: {
+    ...mapGetters('auth', [
+      'codeLifetimeInMinutes',
+    ]),
     infoMessage() {
       return `Validation code has been sent to the email.
-          It will be valid for 10 minutes`;
+          It will be valid for ${this.codeLifetimeInMinutes} minutes`;
     },
   },
   created() {
@@ -52,11 +54,10 @@ export default {
     },
     requestResetPassword() {
       this.isRequestProcessing = true;
-      console.log(this.isRequestProcessing);
       this.clearMessage();
       this._requestResetPassword(this.email)
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
+        .catch(errorMessage => {
+          this.errorMessage = errorMessage;
         })
         .finally(() => {
           this.isRequestProcessing = false;
@@ -71,14 +72,14 @@ export default {
           code: this.validationCode,
           password: this.newPassword,
         })
-          .catch(error => {
-            this.errorMessage = error.response.data.message;
+          .catch(errorMessage => {
+            this.errorMessage = errorMessage;
           })
           .finally(() => {
             this.isRequestProcessing = false;
           });
       } else {
-        this.errorMessage = 'passwords don`t match';
+        this.errorMessage = 'passwords don\'t match';
       }
     },
   },
@@ -86,83 +87,59 @@ export default {
 </script>
 
 <template>
-  <div class="password-reset">
+  <form
+    class="password-reset"
+    @submit.prevent="resetPassword()"
+  >
     <InputCustom
       v-model="email"
       label="e-mail"
       type="email"
       required
-      :disabled="$route.name === 'resetPassword'"
+      disabled
       @input="clearMessage"
     />
-    <div
-      v-if="$route.name === 'requestResetPassword'"
-      class="input-form"
-    >
-      <div class="message-container">
-        <InfoMessage
-          message="Enter email used for registration"
-        />
-      </div>
-      <div class="message-container">
-        <ErrorMessage
-          v-if="errorMessage"
-          :message="errorMessage"
-        />
-      </div>
-      <ButtonText
-        text="send validation code"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
-        @click="requestResetPassword"
+    <div class="info-container">
+      <InfoMessage
+        :message="infoMessage"
       />
     </div>
-    <div
-      v-else
-      class="input-form"
-    >
-      <div class="message-container">
-        <InfoMessage
-          :message="infoMessage"
-        />
-      </div>
-      <ButtonText
-        class="resend-code-button"
-        text="resend code"
-        style-type="underline"
-        @click="requestResetPassword"
-      />
-      <InputCustom
-        v-model="validationCode"
-        class="validation-code"
-        label="validation code"
-        required
-        @input="clearMessage"
-      />
-      <PasswordField
-        v-model="newPassword"
-        label="new password"
-        @input="clearMessage"
-      />
-      <PasswordField
-        v-model="passwordToCheck"
-        label="confirm password"
-        @input="clearMessage"
-      />
-      <div class="message-container">
-        <ErrorMessage
-          v-if="errorMessage"
-          :message="errorMessage"
-        />
-      </div>
-      <ButtonText
-        text="reset password"
-        style-type="bordered"
-        :disabled="isRequestProcessing"
-        @click="resetPassword"
+    <ButtonText
+      text="resend code"
+      style-type="underline"
+      size="smallest"
+      @click="requestResetPassword"
+    />
+    <InputCustom
+      v-model="validationCode"
+      class="validation-code"
+      label="validation code"
+      required
+      @input="clearMessage"
+    />
+    <PasswordField
+      v-model="newPassword"
+      label="new password"
+      @input="clearMessage"
+    />
+    <PasswordField
+      v-model="passwordToCheck"
+      label="confirm password"
+      @input="clearMessage"
+    />
+    <div class="error-container">
+      <ErrorMessage
+        v-if="errorMessage"
+        :message="errorMessage"
       />
     </div>
-  </div>
+    <ButtonText
+      text="reset password"
+      style-type="bordered"
+      type="submit"
+      :disabled="isRequestProcessing"
+    />
+  </form>
 </template>
 
 <style lang="scss">
@@ -171,30 +148,23 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
   width: 250px;
-
-  .input-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-
-  .resend-code-button {
-    font-size: 12px;
-    color: map-get($colors, 'gray-light');
-  }
 
   .validation-code {
     padding-top: 10px;
   }
 
-  .message-container {
+  .info-container,
+  .error-container {
     width: 100%;
-    height: 30px;
+  }
+
+  .info-container {
     text-align: center;
+  }
+
+  .error-container {
+    height: 40px;
   }
 }
 </style>

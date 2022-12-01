@@ -44,6 +44,7 @@ export default {
       :type="inputType"
       :model-value="modelValue"
       required
+      with-icon
       @input="input"
     />
     <div class="eye-button">
@@ -66,8 +67,8 @@ export default {
     display: block;
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
     right: 0;
+    transform: translate(-25%, -50%);
     cursor: pointer;
   }
 }

@@ -43,23 +43,21 @@ export default {
         this.clearMessage();
         this.isRequestProcessing = true;
         this._changePassword({
-          oldPassword: this.currentPassword,
+          currentPassword: this.currentPassword,
           newPassword: this.newPassword,
           isLogoutFromAllDevices: this.logoutFromAllDevices,
         })
           .then(() => {
             this.closePasswordChangeModal();
           })
-          .catch(error => {
-            console.log(error);
-            this.errorMessage = error.response.data.message;
-            console.log(this.errorMessage);
+          .catch(errorMessage => {
+            this.errorMessage = errorMessage;
           })
           .finally(() => {
             this.isRequestProcessing = false;
           });
       } else {
-        this.errorMessage = 'passwords don`t match';
+        this.errorMessage = 'passwords don\'t match';
       }
     },
   },
@@ -67,7 +65,10 @@ export default {
 </script>
 
 <template>
-  <div class="password-change">
+  <form
+    class="password-change-form"
+    @submit.prevent="changePassword"
+  >
     <div class="input-fields">
       <PasswordField
         v-model="currentPassword"
@@ -84,13 +85,15 @@ export default {
         label="confirm password"
         @input="clearMessage"
       />
+    </div>
+    <div class="logout-checkbox">
       <CheckboxCustom
         v-model="logoutFromAllDevices"
         style-type="initial"
         label="Log out from all devices"
       />
     </div>
-    <div class="message-container">
+    <div class="error-container">
       <ErrorMessage
         v-if="errorMessage"
         :message="errorMessage"
@@ -101,27 +104,36 @@ export default {
       style-type="bordered"
       type="submit"
       :disabled="!isChangeButtonActive"
-      @click="changePassword"
     />
-  </div>
+  </form>
 </template>
 
 <style lang="scss">
-.password-change {
+.password-change-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
+  gap: 5px;
   padding: 10px;
 
   .input-fields {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .input-fields,
+  .logout-checkbox,
+  .error-container {
     width: 100%;
   }
 
-  .message-container {
-    width: 100%;
-    height: 20px;
+  .logout-checkbox {
+    padding-top: 10px;
+  }
+
+  .error-container {
+    height: 30px;
   }
 }
   

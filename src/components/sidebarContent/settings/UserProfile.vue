@@ -1,10 +1,12 @@
 <script>
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
     ButtonText,
+    SectionCard,
   },
   computed: {
     ...mapGetters('auth', [
@@ -37,25 +39,40 @@ export default {
       </div>
       <div class="profile-options">
         <ButtonText
+          class="profile-button"
           text="change password"
           style-type="underline"
           @click="openPasswordChangeModal"
         />
-        <ButtonText
-          text="log out"
-          style-type="underline"
-          @click="logOut('current')"
-        />
-        <ButtonText
-          text="log out from all devices"
-          style-type="underline"
-          @click="logOut('all')"
-        />
-        <ButtonText
-          text="log out from all devices except current"
-          style-type="underline"
-          @click="logOut('allExceptCurrent')"
-        />
+        <SectionCard
+          title="logout options"
+          size="small"
+          text-style="caps"
+        >
+          <div class="logout-options">
+            <ButtonText
+              class="profile-button"
+              text="log out"
+              style-type="underline"
+              size="smallest"
+              @click="logOut('current')"
+            />
+            <ButtonText
+              class="profile-button"
+              text="finish all sessions"
+              style-type="underline"
+              size="smallest"
+              @click="logOut('all')"
+            />
+            <ButtonText
+              class="profile-button"
+              text="finish all sessions except current"
+              style-type="underline"
+              size="smallest"
+              @click="logOut('allExceptCurrent')"
+            />
+          </div>
+        </SectionCard>
       </div>
     </div>
     <div 
@@ -89,10 +106,18 @@ export default {
       flex-direction: column;
     }
 
+    .profile-button {
+      width: fit-content;
+    }
+
     .auth-options {
       margin: 0 auto;
       font-size: 12px;
       text-align: center;
+    }
+
+    .logout-options {
+      display: grid;
     }
 
     .info-field {

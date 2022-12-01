@@ -13,10 +13,8 @@ export default {
     ErrorMessage,
   },
   data: () => ({
-    signInData: {
-      username: '',
-      password: '',
-    },
+    user: '',
+    password: '',
     isRequestProcessing: false,
     errorMessage: '',
   }),
@@ -28,13 +26,16 @@ export default {
       this.errorMessage = '';
     },
     signIn() {
+      const credentials = {};
+      const signInOption = this.user.includes('@') ? 'email' : 'username';
+
+      credentials[signInOption] = this.user;
+      credentials.password = this.password;
+
       this.isRequestProcessing = true;
-      this._signIn({
-        username: this.signInData.username,
-        password: this.signInData.password,
-      })
-        .catch(error => {
-          this.errorMessage = error.response?.data?.message;
+      this._signIn(credentials)
+        .catch(errorMessage => {
+          this.errorMessage = errorMessage;
         })
         .finally(() => {
           this.isRequestProcessing = false;
@@ -47,20 +48,18 @@ export default {
 <template>
   <form
     class="auth-form"
-    @submit.prevent="signIn(signInData)"
+    @submit.prevent="signIn()"
   >
-    <div class="input-fields">
-      <InputCustom
-        v-model="signInData.username"
-        label="username"
-        required
-        @input="clearMessage"
-      />
-      <PasswordField
-        v-model="signInData.password"
-        @input="clearMessage"
-      />
-    </div>
+    <InputCustom
+      v-model="user"
+      label="username or email"
+      required
+      @input="clearMessage"
+    />
+    <PasswordField
+      v-model="password"
+      @input="clearMessage"
+    />
     <div class="message-container">
       <ErrorMessage 
         v-if="errorMessage"
@@ -95,12 +94,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
     width: 250px;
-
-    .input-fields {
-      width: 100%;
-    }
 
     .message-container,
     .reset-password-link {

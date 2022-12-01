@@ -33,7 +33,7 @@ export default {
 .app-logo {
   .logo {
     display: block;
-    margin: 0 auto 60px;
+    margin: 0 auto 50px;
     cursor: pointer;
   }
 }

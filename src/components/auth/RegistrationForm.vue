@@ -4,7 +4,7 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 // eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 
@@ -28,9 +28,12 @@ export default {
     errorMessage: '',
   }),
   computed: {
+    ...mapGetters('auth', [
+      'codeLifetimeInMinutes',
+    ]),
     infoMessage() {
       return `Validation code has been sent to the email.
-          It will be valid for 10 minutes`;
+          It will be valid for ${this.codeLifetimeInMinutes} minutes`;
     },
   },
   created() {
@@ -64,9 +67,8 @@ export default {
         email: this.user.email,
         username: this.user.username,
       })
-        .catch(error => {
-          console.log(error);
-          this.errorMessage = error.response.data.message;
+        .catch(errorMessage => {
+          this.errorMessage = errorMessage;
         })
         .finally(() => {
           this.isRequestProcessing = false;
@@ -77,15 +79,14 @@ export default {
         this.clearMessage();
         this.isRequestProcessing = true;
         this._signUp(this.user)
-          .catch(error => {
-            console.log(error);
-            this.errorMessage = error.response.data.message;
+          .catch(errorMessage => {
+            this.errorMessage = errorMessage;
           })
           .finally(() => {
             this.isRequestProcessing = false;
           });
       } else {
-        this.errorMessage = 'passwords don`t match';
+        this.errorMessage = 'passwords don\'t match';
       }
     },
   },
@@ -102,74 +103,55 @@ export default {
       label="e-mail"
       type="email"
       required
-      :disabled="$route.name === 'signUp'"
+      disabled
       @input="clearMessage"
     />
     <InputCustom
       v-model="user.username"
       label="username"
       required
+      :disabled="isRequestProcessing"
       @input="clearMessage"
     />
-    <div v-if="$route.name === 'requestRegistration'">
-      <div class="error-container">
-        <ErrorMessage
-          v-if="errorMessage"
-          :message="errorMessage"
-        />
-      </div>
-      <div class="single-button-container">
-        <ButtonText
-          text="send validation code"
-          style-type="bordered"
-          :disabled="!user.username || !user.email"
-          @click="requestRegistration"
-        />
-      </div>
+    <PasswordField
+      v-model="user.password"
+      @input="clearMessage"
+    />
+    <PasswordField
+      v-model="passwordToCheck"
+      label="confirm password"
+      @input="clearMessage"
+    />
+    <div class="info-container">
+      <InfoMessage
+        :message="infoMessage"
+      />
+      <ButtonText
+        text="resend code"
+        style-type="underline"
+        size="smallest"
+        @click="requestRegistration"
+      />
     </div>
-    <div v-else>
-      <PasswordField
-        v-model="user.password"
-        @input="clearMessage"
+    <InputCustom
+      v-model="user.validationCode"
+      class="validation-code"
+      label="validation code"
+      required
+      @input="clearMessage"
+    />
+    <div class="error-container">
+      <ErrorMessage
+        v-if="errorMessage"
+        :message="errorMessage"
       />
-      <PasswordField
-        v-model="passwordToCheck"
-        label="confirm password"
-        @input="clearMessage"
-      />
-      <div class="info-container">
-        <InfoMessage
-          :message="infoMessage"
-        />
-        <ButtonText
-          class="resend-code-button"
-          text="resend code"
-          style-type="underline"
-          @click="requestRegistration"
-        />
-      </div>
-      <InputCustom
-        v-model="user.validationCode"
-        class="validation-code"
-        label="validation code"
-        required
-        @input="clearMessage"
-      />
-      <div class="error-container">
-        <ErrorMessage
-          v-if="errorMessage"
-          :message="errorMessage"
-        />
-      </div>
-      <div class="single-button-container">
-        <ButtonText
-          text="sign up"
-          style-type="bordered"
-          type="submit"
-          :disabled="isRequestProcessing"
-        />
-      </div>
     </div>
+    <ButtonText
+      text="sign up"
+      style-type="bordered"
+      type="submit"
+      :disabled="isRequestProcessing"
+    />
     <div class="sign-in-option">
       have an account?
       <router-link :to="{ name: 'signIn' }">
@@ -181,8 +163,16 @@ export default {
 
 <style lang="scss">
   .registration-form {
-    margin: 0 auto;
     width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .info-container,
+    .error-container {
+      width: 100%;
+    }
 
     .info-container {
       text-align: center;
@@ -193,22 +183,11 @@ export default {
       margin-bottom: 10px;
     }
 
-    .resend-code-button {
-      font-size: 12px;
-      color: map-get($colors, 'gray-light');
-    }
-
-    .single-button-container {
-      display: flex;
-      justify-content: center;
-    }
-
     .validation-code {
       padding-top: 10px;
     }
 
     .sign-in-option {
-      text-align: center;
       padding-top: 50px;
       font-size: 13px;
       color: map-get($colors, 'gray-dark');

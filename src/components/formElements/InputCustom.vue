@@ -22,9 +22,9 @@ export default {
       type: String,
       default: '',
     },
-    icon: {
-      type: String,
-      default: '',
+    withIcon: {
+      type: Boolean,
+      default: false,
     },
     isFocus: {
       type: Boolean,
@@ -57,7 +57,7 @@ export default {
     class="input-custom"
     :class="[
       `${globalTheme}-theme`,
-      { disabled },
+      { disabled, 'with-icon': withIcon },
     ]"
   >
     <div class="label">
@@ -66,7 +66,6 @@ export default {
     <input
       ref="input"
       class="input"
-      :class="{ 'with-icon' : icon }"
       :type="type"
       :value="modelValue"
       :disabled="disabled"
@@ -74,17 +73,6 @@ export default {
       :placeholder="placeholder"
       @input="input($event.target.value)"
     >
-    <div 
-      v-if="icon"
-      class="icon-wrapper"
-    >
-      <img 
-        class="icon"
-        alt="icon" 
-        :width="15"
-        :src="icon" 
-      >
-    </div>
   </label>
 </template>
 
@@ -102,6 +90,12 @@ export default {
       }
     }
 
+    &.with-icon {
+      .input {
+        padding-right: 30px;
+      }
+    }
+
     .label {
       font-size: 12px;
       color: map-get($colors, 'gray-dark');
@@ -112,10 +106,6 @@ export default {
       padding: 9px 3px 4px;
       border-bottom: 1px solid map-get($colors, 'gray-light');
       transition: border-color 0.3s;
-
-      &.with-icon {
-        padding-right: 20px;
-      }
 
       &:focus {
         border-color: map-get($colors, 'black');
