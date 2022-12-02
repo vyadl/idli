@@ -4,6 +4,7 @@ import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
+import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
@@ -15,6 +16,7 @@ export default {
     ConfirmationModal,
     ListModal,
     ItemModal,
+    PasswordChangeModal,
     AppNotification,
   },
   computed: {
@@ -33,6 +35,9 @@ export default {
       'modalNameToShow',
       'explicitRequestsNumber',
     ]),
+    isSidebarActive() {
+      return ['home', 'list', 'item'].includes(this.$route.name);
+    },
   },
   watch: {
     modalNameToShow() {
@@ -53,10 +58,8 @@ export default {
     const queryOptions = {
       sidebar: {
         callback: sidebar => {
-          if (this.currentSidebarView !== 'authPageView') {
-            this.openSidebar();
-            this.changeSidebarMode(sidebar);
-          }
+          this.openSidebar();
+          this.changeSidebarMode(sidebar);
         },
       },
       view: {
@@ -113,19 +116,55 @@ export default {
         class="preloader"
       />
     </transition>
-    <router-view />
-    <SidebarPage />
+    <router-view class="view main-content" />
+    <router-view 
+      v-slot="{ Component, route }"
+      class="view logo" 
+      name="logo"
+    >
+      <transition 
+        name="slide-fade-delayed"
+        mode="out-in"
+      >
+        <component
+          :is="Component" 
+          :key="route.path"
+        />
+      </transition>
+    </router-view>
+    <router-view 
+      v-slot="{ Component, route }"
+      class="view form" 
+      name="form"
+    >
+      <transition 
+        name="slide-fade"
+        mode="out-in"
+      >
+        <component
+          :is="Component"
+          :key="route.path"
+        />
+      </transition>
+    </router-view>
+    <SidebarPage v-if="isSidebarActive" />
     <ListModal />
     <ItemModal />
     <ConfirmationModal />
+    <PasswordChangeModal />
     <AppNotification v-if="notification" />
   </div>
 </template>
 
 <style lang="scss">
   .app {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     min-height: 100vh;
+    overflow-x: hidden;
 
     .preloader {
       position: fixed;
@@ -155,6 +194,38 @@ export default {
         &::before {
           background-color: map-get($colors, 'white');
         }
+      }
+    }
+
+    .slide-fade {
+      &-enter-active {
+        transition: all 0.2s ease-out 0.1s;
+      }
+
+      &-leave-active {
+        transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+      }
+
+      &-enter-from,
+      &-leave-to {
+        transform: translateX(20px);
+        opacity: 0;
+      }
+    }
+
+    .slide-fade-delayed {
+      &-enter-active {
+        transition: all 0.2s ease-out 0.2s;
+      }
+
+      &-leave-active {
+        transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+      }
+
+      &-enter-from,
+      &-leave-to {
+        transform: translateX(20px);
+        opacity: 0;
       }
     }
   }

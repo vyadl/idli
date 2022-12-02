@@ -4,13 +4,11 @@ import SidebarVisualization from '@/components/sidebarContent/visualization/Side
 import SidebarLists from '@/components/sidebarContent/lists/SidebarLists.vue';
 import SidebarBin from '@/components/sidebarContent/bin/SidebarBin.vue';
 import SidebarSettings from '@/components/sidebarContent/settings/SidebarSettings.vue';
-import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
-import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
 import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { sidebarModesForViews } from '@/store/config';
-import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -18,8 +16,6 @@ export default {
     SidebarFilters,
     SidebarLists,
     SidebarSettings,
-    RegistrationForm,
-    AuthForm,
     SidebarBin,
     SidebarItem,
     ButtonText,
@@ -62,9 +58,6 @@ export default {
     });
   },
   methods: {
-    ...mapMutations([
-      'setModalNameToShow',
-    ]),
     ...mapActions('lists', [
       '_setCurrentListView',
     ]),
@@ -76,7 +69,7 @@ export default {
       '_closeSidebar',
     ]),
     openItemModal() {
-      this.setModalNameToShow('itemModal');
+      this.$vfm.show('itemModal');
     },
     exitPublicView() {
       this._setCurrentListView('owner');
@@ -84,8 +77,7 @@ export default {
     changeSidebarState() {
       this.isSidebarOpen
         ? this._closeSidebar()
-        : this._openSidebar(this.isLoggedIn 
-          ? this.sidebarMode : sidebarModesForViews.authPageView.default);
+        : this._openSidebar(this.sidebarMode);
     },
     createNewItem() {
       this._addNewItemPlaceholder();
@@ -139,14 +131,14 @@ export default {
       class="auth-buttons"
     >
       <router-link
-        :to="{ name: 'auth', query: { sidebar: 'sign up' }}"
+        :to="{ name: 'signUp' }"
         target="_blank"
       >
         sign up
       </router-link>
       or
       <router-link
-        :to="{ name: 'auth', query: { sidebar: 'sign in' }}"
+        :to="{ name: 'signIn' }"
         target="_blank"
       >
         sign in
@@ -183,8 +175,6 @@ export default {
       <SidebarFilters v-if="sidebarMode === 'filters'" />
       <SidebarLists v-if="sidebarMode === 'lists'" />
       <SidebarSettings v-if="sidebarMode === 'settings'" />
-      <RegistrationForm v-if="sidebarMode === 'sign up'" />
-      <AuthForm v-if="sidebarMode === 'sign in'" />
       <SidebarBin v-if="sidebarMode === 'bin'" />
       <SidebarItem
         v-if="sidebarMode === 'item'"

@@ -7,10 +7,6 @@ export default {
   loggedInView: (state, getters, rootState, rootGetters) => rootGetters['auth/isLoggedIn']
     && !rootGetters['lists/isPublicView'],
 
-  authPageView: (state, getters, rootState, rootGetters) => !rootGetters['auth/isLoggedIn']
-    && !rootGetters['items/currentItemObj']
-    && !rootGetters.currentListItems?.length,
-
   itemPublicView: (state, getters, rootState, rootGetters) => !rootGetters['auth/isLoggedIn']
     && !!rootGetters['items/currentItemObj']
     && router.currentRoute._value.name === 'item',
@@ -28,7 +24,6 @@ export default {
   currentSidebarView: (state, getters) => {
     const sidebarPossibleViews = {
       loggedInView: getters.loggedInView,
-      authPageView: getters.authPageView,
       itemPublicView: getters.itemPublicView,
       listPublicView: getters.listPublicView,
     };

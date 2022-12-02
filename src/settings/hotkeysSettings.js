@@ -102,9 +102,7 @@ function switchSidebarMode() {
   if (store.getters['auth/isLoggedIn']) {
     mode = store.getters['sidebar/sidebarMode'] || sidebarModesForViews.loggedInView.default;
   } else {
-    mode = sidebarModesForViews[
-      router.currentRoute._value.name === 'auth' ? 'authPageView' : 'listPublicView'
-    ].default;
+    mode = sidebarModesForViews.listPublicView.default;
   }
  
   store.getters['sidebar/isSidebarOpen']

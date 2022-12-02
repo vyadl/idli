@@ -18,8 +18,8 @@ export default {
 
     return this.$config.axios
       .get(`${this.$config.apiBasePath}lists`)
-      .then(({ data: responseLists }) => {
-        commit('setLists', responseLists);
+      .then(({ data: responseList }) => {
+        commit('setLists', responseList);
 
         const routerValues = router.currentRoute._value;
 
