@@ -1,29 +1,7 @@
 import axios from 'axios';
 import getBrowserFingerprint from 'get-browser-fingerprint';
+import { LOGOUT_TRIGGER_ERROR_CODES, REFRESH_TRIGGER_ERROR_CODE } from '@/settings/serverErrors';
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
-
-const REFRESH_TRIGGER_ERROR_CODE = 'ACCESS_TOKEN_INVALID_ERROR';
-const LOGOUT_TRIGGER_ERROR_CODES = new Set([
-  'ACCESS_TOKEN_ABSENT_ERROR',
-  'REFRESH_TOKEN_WRONG_ERROR',
-  'REFRESH_TOKEN_EXPIRED_ERROR',
-]);
-
-const SIGNIN_ERROR_MESSAGE = 'Invalid username and/or password';
-const WRONG_CODE_ERROR_MESSAGE = 'Validation code is invalid';
-const EXPIRED_CODE_ERROR_MESSAGE = 'Validation code is expired. Please resend it.';
-
-const ERROR_CODES_AND_MESSAGES_ACCORDANCE = {
-  CREDENTIALS_ERROR: SIGNIN_ERROR_MESSAGE,
-  NOT_FOUND_USER_ERROR: SIGNIN_ERROR_MESSAGE,
-  DELETED_USER_ERROR: SIGNIN_ERROR_MESSAGE,
-
-  SIGNUP_WRONG_CODE_ERROR: WRONG_CODE_ERROR_MESSAGE,
-  SIGNUP_EXPIRED_CODE_ERROR: EXPIRED_CODE_ERROR_MESSAGE,
-
-  RESET_PASSWORD_WRONG_CODE_ERROR: WRONG_CODE_ERROR_MESSAGE,
-  RESET_PASSWORD_EXPIRED_CODE_ERROR: EXPIRED_CODE_ERROR_MESSAGE,
-};
 
 export function initAxios(store) {
   const apiBasePath = import.meta.env.VITE_API_BASE_PATH;
@@ -82,14 +60,6 @@ export function initAxios(store) {
     axios,
     apiBasePath,
   };
-}
-
-export function getErrorMessage(errorData) {
-  const { code, message } = errorData;
-
-  return ERROR_CODES_AND_MESSAGES_ACCORDANCE[code]
-    || message
-    || 'Something went wrong';
 }
 
 export function setAccessToken(token) {

@@ -5,8 +5,8 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
 import { mapGetters, mapActions } from 'vuex';
-// eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
+import { handleErrorAndRequestStatus } from '@/utils/misc';
 
 export default {
   components: {
@@ -24,8 +24,10 @@ export default {
       validationCode: '',
     },
     passwordToCheck: '',
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   computed: {
     ...mapGetters('auth', [
@@ -58,35 +60,29 @@ export default {
       '_signUp',
     ]),
     clearMessage() {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
     requestRegistration() {
       this.clearMessage();
-      this.isRequestProcessing = true;
-      this._requestRegistration({
+      this.requestHandling.isRequestProcessing = true;
+      
+      const request = this._requestRegistration({
         email: this.user.email,
         username: this.user.username,
-      })
-        .catch(errorMessage => {
-          this.errorMessage = errorMessage;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+      });
+
+      handleErrorAndRequestStatus(request, this.requestHandling);
     },
     signUp() {
       if (this.user.password === this.passwordToCheck) {
         this.clearMessage();
-        this.isRequestProcessing = true;
-        this._signUp(this.user)
-          .catch(errorMessage => {
-            this.errorMessage = errorMessage;
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
-          });
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._signUp(this.user);
+
+        handleErrorAndRequestStatus(request, this.requestHandling);
       } else {
-        this.errorMessage = 'passwords don\'t match';
+        this.requestHandling.errorMessage = 'passwords don\'t match';
       }
     },
   },
@@ -96,7 +92,7 @@ export default {
 <template>
   <form
     class="registration-form"
-    @submit.prevent="signUp()"
+    @submit.prevent="signUp"
   >
     <InputCustom
       v-model="user.email"
@@ -110,7 +106,7 @@ export default {
       v-model="user.username"
       label="username"
       required
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       @input="clearMessage"
     />
     <PasswordField
@@ -142,15 +138,15 @@ export default {
     />
     <div class="error-container">
       <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
+        v-if="requestHandling.errorMessage"
+        :message="requestHandling.errorMessage"
       />
     </div>
     <ButtonText
       text="sign up"
       style-type="bordered"
       type="submit"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
     />
     <div class="sign-in-option">
       have an account?

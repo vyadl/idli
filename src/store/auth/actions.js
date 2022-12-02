@@ -1,9 +1,6 @@
 import getBrowserFingerprint from 'get-browser-fingerprint';
-import {
-  setAccessToken, 
-  deleteAccessToken, 
-  getErrorMessage,
-} from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
+import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
+import { getErrorMessage } from '@/settings/serverErrors'; // eslint-disable-line import/no-cycle
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { commitFromRoot, dispatchFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
@@ -50,7 +47,7 @@ export default {
         router.push({ name: 'signIn' });
       })
       .catch(error => {
-        throw error;
+        throw getErrorMessage(error.response.data);;
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -184,13 +181,17 @@ export default {
       .then(() => {
         if (mode !== 'allExceptCurrent') {
           commit('logOut');
+
           localStorage.removeItem('user');
           localStorage.removeItem('currentListId');
-          deleteAccessToken();
+
           commitFromRoot('sidebar/closeSidebar');
           commitFromRoot('filters/resetFilters');
           commitFromRoot('setCurrentListItems', []);
           dispatchFromRoot('visualization/_resetVisualizationToDefault');
+
+          deleteAccessToken();
+
           router.push({ name: 'auth' });
         } else {
           commitFromRoot('setNotification', { text: 'All other sessions were terminated' });

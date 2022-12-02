@@ -36,9 +36,7 @@ export default {
       'explicitRequestsNumber',
     ]),
     isSidebarActive() {
-      return this.$route.name === 'home'
-        || this.$route.name === 'list'
-        || this.$route.name === 'item';
+      return ['home', 'list', 'item'].includes(this.$route.name);
     },
   },
   watch: {
@@ -125,7 +123,7 @@ export default {
       name="logo"
     >
       <transition 
-        :name="'slide-fade-delayed'"
+        name="slide-fade-delayed"
         mode="out-in"
       >
         <component

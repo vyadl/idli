@@ -46,3 +46,18 @@ export const publicListsForAuthScreen = [
     id: '636ce55edd4921ae75617aab',
   },
 ];
+
+export const logoutOptions = [
+  {
+    title: 'log out',
+    mode: 'current',
+  },
+  {
+    title: 'finish all sessions',
+    mode: 'all',
+  },
+  {
+    title: 'finish all sessions except current',
+    mode: 'allExceptCurrent',
+  },
+];

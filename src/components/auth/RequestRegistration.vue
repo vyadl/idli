@@ -3,6 +3,7 @@ import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { mapActions } from 'vuex';
+import { handleErrorAndRequestStatus } from '@/utils/misc';
 
 export default {
   components: {
@@ -13,29 +14,28 @@ export default {
   data: () => ({
     email: '',
     username: '',
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   methods: {
     ...mapActions('auth', [
       '_requestRegistration',
     ]),
     clearMessage() {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
     requestRegistration() {
       this.clearMessage();
-      this.isRequestProcessing = true;
-      this._requestRegistration({
+      this.requestHandling.isRequestProcessing = true;
+
+      const request = this._requestRegistration({
         email: this.email,
         username: this.username,
-      })
-        .catch(errorMessage => {
-          this.errorMessage = errorMessage;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+      });
+
+      handleErrorAndRequestStatus(request, this.requestHandling);
     },
   },
 };
@@ -44,34 +44,34 @@ export default {
 <template>
   <form
     class="request-registration"
-    @submit.prevent="requestRegistration()"
+    @submit.prevent="requestRegistration"
   >
     <InputCustom
       v-model="email"
       label="e-mail"
       type="email"
       required
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       @input="clearMessage"
     />
     <InputCustom
       v-model="username"
       label="username"
       required
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       @input="clearMessage"
     />
     <div class="error-container">
       <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
+        v-if="requestHandling.errorMessage"
+        :message="requestHandling.errorMessage"
       />
     </div>
     <ButtonText
       text="send validation code"
       type="submit"
       style-type="bordered"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
     />
     <div class="sign-in-option">
       have an account?

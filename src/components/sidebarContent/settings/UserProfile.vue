@@ -2,6 +2,7 @@
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import { mapGetters, mapActions } from 'vuex';
+import { logoutOptions } from '@/store/config';
 
 export default {
   components: {
@@ -13,6 +14,9 @@ export default {
       'user',
       'isLoggedIn',
     ]),
+    logoutOptions() {
+      return logoutOptions;
+    },
   },
   methods: {
     ...mapActions('auth', [
@@ -51,25 +55,13 @@ export default {
         >
           <div class="logout-options">
             <ButtonText
+              v-for="option in logoutOptions"
+              :key="option.mode"
+              :text="option.title"
               class="profile-button"
-              text="log out"
               style-type="underline"
               size="smallest"
-              @click="logOut('current')"
-            />
-            <ButtonText
-              class="profile-button"
-              text="finish all sessions"
-              style-type="underline"
-              size="smallest"
-              @click="logOut('all')"
-            />
-            <ButtonText
-              class="profile-button"
-              text="finish all sessions except current"
-              style-type="underline"
-              size="smallest"
-              @click="logOut('allExceptCurrent')"
+              @click="logOut(option.mode)"
             />
           </div>
         </SectionCard>

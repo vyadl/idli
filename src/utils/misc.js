@@ -34,3 +34,13 @@ export function getFormattedDate(val) {
 
   return new Intl.DateTimeFormat('en', options).format(new Date(val));
 }
+
+export function handleErrorAndRequestStatus(request, values) {
+  return request
+    .catch(errorMessage => {
+      values.errorMessage = errorMessage;
+    })
+    .finally(() => {
+      values.isRequestProcessing = false;
+    });
+}

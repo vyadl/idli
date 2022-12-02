@@ -4,6 +4,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import { mapActions } from 'vuex';
+import { handleErrorAndRequestStatus } from '@/utils/misc';
 
 export default {
   components: {
@@ -16,24 +17,18 @@ export default {
     currentPassword: '',
     newPassword: '',
     passwordToCheck: '',
-    isRequestProcessing: false,
-    errorMessage: '',
     logoutFromAllDevices: false,
-  }),
-  computed: {
-    isChangeButtonActive() {
-      return this.currentPassword
-        && this.newPassword
-        && this.passwordToCheck 
-        && !this.isRequestProcessing;
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
     },
-  },
+  }),
   methods: {
     ...mapActions('auth', [
       '_changePassword',
     ]),
     clearMessage() {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
     closePasswordChangeModal() {
       this.$vfm.hide('passwordChangeModal');
@@ -41,23 +36,20 @@ export default {
     changePassword() {
       if (this.newPassword === this.passwordToCheck) {
         this.clearMessage();
-        this.isRequestProcessing = true;
-        this._changePassword({
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._changePassword({
           currentPassword: this.currentPassword,
           newPassword: this.newPassword,
           isLogoutFromAllDevices: this.logoutFromAllDevices,
-        })
+        });
+
+        handleErrorAndRequestStatus(request, this.requestHandling)
           .then(() => {
             this.closePasswordChangeModal();
-          })
-          .catch(errorMessage => {
-            this.errorMessage = errorMessage;
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
           });
       } else {
-        this.errorMessage = 'passwords don\'t match';
+        this.requestHandling.errorMessage = 'passwords don\'t match';
       }
     },
   },
@@ -95,15 +87,15 @@ export default {
     </div>
     <div class="error-container">
       <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
+        v-if="requestHandling.errorMessage"
+        :message="requestHandling.errorMessage"
       />
     </div>
     <ButtonText
       text="change password"
       style-type="bordered"
       type="submit"
-      :disabled="!isChangeButtonActive"
+      :disabled="requestHandling.isRequestProcessing"
     />
   </form>
 </template>

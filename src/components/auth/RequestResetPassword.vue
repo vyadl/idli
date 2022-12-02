@@ -3,7 +3,8 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
+import { handleErrorAndRequestStatus } from '@/utils/misc';
 
 export default {
   components: {
@@ -14,26 +15,25 @@ export default {
   },
   data: () => ({
     email: '',
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   methods: {
     ...mapActions('auth', [
       '_requestResetPassword',
     ]),
     clearMessage() {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
     requestResetPassword() {
-      this.isRequestProcessing = true;
+      this.requestHandling.isRequestProcessing = true;
       this.clearMessage();
-      this._requestResetPassword(this.email)
-        .catch(errorMessage => {
-          this.errorMessage = errorMessage;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+
+      const request = this._requestResetPassword(this.email);
+
+      handleErrorAndRequestStatus(request, this.requestHandling);
     },
   },
 };
@@ -41,39 +41,37 @@ export default {
 
 <template>
   <form
-    class="request-password-reset"
-    @submit.prevent="requestResetPassword()"
+    class="request-reset-password"
+    @submit.prevent="requestResetPassword"
   >
     <div class="info-container">
-      <InfoMessage
-        message="Enter email used for registration"
-      />
+      <InfoMessage message="Enter email used for registration" />
     </div>
     <InputCustom
       v-model="email"
       label="e-mail"
       type="email"
       required
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       @input="clearMessage"
     />
     <div class="error-container">
       <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
+        v-if="requestHandling.errorMessage"
+        :message="requestHandling.errorMessage"
       />
     </div>
     <ButtonText
       text="send validation code"
       style-type="bordered"
       type="submit"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
     />
   </form>
 </template>
 
 <style lang="scss">
-.request-password-reset {
+.request-reset-password {
   display: flex;
   flex-direction: column;
   justify-content: center;

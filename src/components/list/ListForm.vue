@@ -154,7 +154,7 @@ export default {
 <template>
   <form
     class="list-form"
-    @submit.prevent="edittingListObj ? updateList() : addList()"
+    @submit.prevent="edittingListObj ? updateList : addList"
   >
     <InputCustom
       v-model="list.title"

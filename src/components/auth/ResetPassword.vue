@@ -5,8 +5,8 @@ import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
 import { mapGetters, mapActions } from 'vuex';
-// eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
+import { handleErrorAndRequestStatus } from '@/utils/misc';
 
 export default {
   components: {
@@ -21,8 +21,10 @@ export default {
     validationCode: '',
     newPassword: '',
     passwordToCheck: '',
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   computed: {
     ...mapGetters('auth', [
@@ -50,36 +52,30 @@ export default {
       '_resetPassword',
     ]),
     clearMessage() {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
     requestResetPassword() {
-      this.isRequestProcessing = true;
+      this.requestHandling.isRequestProcessing = true;
       this.clearMessage();
-      this._requestResetPassword(this.email)
-        .catch(errorMessage => {
-          this.errorMessage = errorMessage;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+
+      const request = this._requestResetPassword(this.email);
+      
+      handleErrorAndRequestStatus(request, this.requestHandling);
     },
     resetPassword() {
       if (this.newPassword === this.passwordToCheck) {
-        this.isRequestProcessing = true;
+        this.requestHandling.isRequestProcessing = true;
         this.clearMessage();
-        this._resetPassword({
+
+        const request = this._resetPassword({
           email: this.email,
           code: this.validationCode,
           password: this.newPassword,
-        })
-          .catch(errorMessage => {
-            this.errorMessage = errorMessage;
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
-          });
+        });
+
+        handleErrorAndRequestStatus(request, this.requestHandling);
       } else {
-        this.errorMessage = 'passwords don\'t match';
+        this.requestHandling.errorMessage = 'passwords don\'t match';
       }
     },
   },
@@ -89,7 +85,7 @@ export default {
 <template>
   <form
     class="password-reset"
-    @submit.prevent="resetPassword()"
+    @submit.prevent="resetPassword"
   >
     <InputCustom
       v-model="email"
@@ -129,15 +125,15 @@ export default {
     />
     <div class="error-container">
       <ErrorMessage
-        v-if="errorMessage"
-        :message="errorMessage"
+        v-if="requestHandling.errorMessage"
+        :message="requestHandling.errorMessage"
       />
     </div>
     <ButtonText
       text="reset password"
       style-type="bordered"
       type="submit"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
     />
   </form>
 </template>
