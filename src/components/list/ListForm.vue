@@ -6,11 +6,13 @@ import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 import { validateFiltersTitles } from '@/store/utils';
 import { getFormattedDate } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -21,11 +23,14 @@ export default {
     ErrorMessage,
     PopupBox,
     TogglingBlock,
+    CustomLink,
   },
   data: () => ({
     list: null,
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   computed: {
     ...mapGetters('lists', [
@@ -63,7 +68,7 @@ export default {
     resetData() {
       this._setListForEditting(null);
       this.list = new List();
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
     deleteFilter(filtersType, index) {
       this.list[filtersType].splice(index, 1);
@@ -85,41 +90,44 @@ export default {
           && storeList.id !== this.list.id;
       });
 
-      this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
+      this.requestHandling.errorMessage = isListTitleUnique 
+        ? ''
+        : 'you already have a list with this title';
 
       return isListTitleUnique;
     },
     addList() {
       const areFiltersTitlesValid = validateFiltersTitles(this.list);
 
-      this.errorMessage = areFiltersTitlesValid ? '' : 'you have filters with same titles';
+      this.requestHandling.errorMessage = areFiltersTitlesValid
+        ? ''
+        : 'you have filters with same titles';
 
       if (this.validateListTitle() && areFiltersTitlesValid) {
-        this.isRequestProcessing = true;
-        this._addList(this.list)
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._addList(this.list);
+
+        handleRequestStatuses(request, this.requestHandling)
           .then(() => {
             this.closeListModal();
-          })
-          .catch(error => {
-            this.errorMessage = error.response.data.message;
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
           });
       }
     },
     updateList() {
       const areFiltersTitlesValid = validateFiltersTitles(this.list);
 
-      this.errorMessage = areFiltersTitlesValid ? '' : 'you have filters with same titles';
+      this.requestHandling.errorMessage = areFiltersTitlesValid
+        ? ''
+        : 'you have filters with same titles';
 
       if (this.validateListTitle() && areFiltersTitlesValid) {
         this.closeListModal();
-        this.isRequestProcessing = true;
-        this._updateList(this.list)
-          .finally(() => {
-            this.isRequestProcessing = false;
-          });
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._updateList(this.list);
+
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
       }
     },
     async deleteList() {
@@ -132,16 +140,13 @@ export default {
         return false;
       }
 
-      this.isRequestProcessing = true;
-      this._deleteList(this.list.id)
+      this.requestHandling.isRequestProcessing = true;
+
+      const request = this._deleteList(this.list.id);
+
+      handleRequestStatuses(request, this.requestHandling)
         .then(() => {
           this.closeListModal();
-        })
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
         });
     },
     getFormattedDate(val) {
@@ -154,13 +159,13 @@ export default {
 <template>
   <form
     class="list-form"
-    @submit.prevent="edittingListObj ? updateList : addList"
+    @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <InputCustom
       v-model="list.title"
       label="title"
       :is-focus="!edittingListObj"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       required
     />
     <div class="private-option">
@@ -168,9 +173,9 @@ export default {
         v-model="list.isPrivate"
         label="private"
         style-type="initial"
-        :disabled="isRequestProcessing"
+        :disabled="requestHandling.isRequestProcessing"
       />
-      <router-link
+      <CustomLink
         v-if="isPublicViewLinkShown"
         class="publick-view-link"
         :to="{ 
@@ -178,10 +183,9 @@ export default {
           params: { id: list.id },
           query: { view: 'public' }
         }"
+        title="check how others will see your list"
         target="_blank"
-      >
-        check how others will see your list
-      </router-link>
+      />
     </div>
     <div class="filters-container">
       <div class="tags">
@@ -197,20 +201,20 @@ export default {
             ref="tagsInput"
             v-model="tag.title"
             required
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
           />
           <ButtonSign
             class="delete-filter-button"
             style-type="cross"
             title="delete tag"
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
             @click="deleteFilter('tags', index)"
           />
         </div>
         <ButtonSign
           style-type="plus"
           title="add tag"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @click="addFilter('tags')"
         />
       </div>
@@ -227,43 +231,38 @@ export default {
             ref="categoriesInput"
             v-model="category.title"
             required
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
           />
           <ButtonSign
             class="delete-filter-button"
             style-type="cross"
             title="delete category"
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
             @click="deleteFilter('categories', index)"
           />
         </div>
         <ButtonSign
           style-type="plus"
           title="add category"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @click="addFilter('categories')"
         />
       </div>
     </div>
-    <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
-    />
     <TogglingBlock
       v-if="edittingListObj?.referringItems?.length"
       title="referring items"
     >
       <div class="referring-units-container">
-        <router-link
+        <CustomLink
           v-for="item in edittingListObj.referringItems"
           :key="item.id"
           :to="{ name: 'item', params: { id: item.id || item } }"
+          :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"
           target="_blank"
-        >
-          {{ item.title || 'untitled' }}
-        </router-link> 
+        />
       </div>
     </TogglingBlock>
     <div 
@@ -285,17 +284,22 @@ export default {
         </div>
       </PopupBox>
     </div>
+    <div class="error-container">
+      <ErrorMessage
+        :message="requestHandling.errorMessage"
+      />
+    </div>
     <footer class="footer">
       <div>
         <ButtonText
           class="modal-button"
           :text="edittingListObj ? 'save' : 'add'"
           type="submit"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
         />
         <ButtonText
           text="cancel"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @click="closeListModal"
         />
       </div>
@@ -303,7 +307,7 @@ export default {
         v-if="edittingListObj"
         text="delete list"
         style-type="underline"
-        :disabled="isRequestProcessing"
+        :disabled="requestHandling.isRequestProcessing"
         @click="deleteList"
       />
     </footer>
@@ -367,11 +371,16 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
+    .error-container {
+      height: 40px;
+      padding-top: 10px;
+    }
+
     .footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding-top: 30px;
+      padding-top: 10px;
     }
 
     .modal-button {

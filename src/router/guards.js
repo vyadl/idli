@@ -10,7 +10,7 @@ export function beforeEach(router) {
       return { name: 'auth' };
     }
 
-    const isRedirectFromAuthNeeded = to.meta.isAuthPage
+    const isRedirectFromAuthNeeded = to.meta.layout === 'auth-page'
       && store.getters['auth/isLoggedIn'];
 
     if (isRedirectFromAuthNeeded) {

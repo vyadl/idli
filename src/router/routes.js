@@ -4,7 +4,6 @@ import RegistrationForm from '@/components/auth/RegistrationForm.vue';
 import AuthForm from '@/components/auth/AuthForm.vue';
 import RequestResetPassword from '@/components/auth/RequestResetPassword.vue';
 import ResetPassword from '@/components/auth/ResetPassword.vue';
-import AppLogo from '@/components/auth/AppLogo.vue';
 import MainList from '@/components/list/MainList.vue';
 import SingleItem from '@/components/item/SingleItem.vue';
 
@@ -15,80 +14,68 @@ export const routes = [
     component: MainList,
     meta: {
       isLoginRequired: true,
-      isAuthPage: false,
+      layout: 'with-sidebar',
     },
   },
   {
     path: '/auth',
     name: 'auth',
-    components: {
-      logo: AppLogo,
-      form: EnterScreen,
-    },
+    component: EnterScreen,
     meta: {
       isLoginRequired: false,
-      isAuthPage: true,
+      layout: 'auth-page',
+      transition: 'slide-fade',
     },
   },
   {
     path: '/auth/sign-up/request-registration',
     name: 'requestRegistration',
-    components: {
-      logo: AppLogo,
-      form: RequestRegistration,
-    },
+    component: RequestRegistration,
     meta: {
       isLoginRequired: false,
-      isAuthPage: true,
+      layout: 'auth-page',
+      transition: 'slide-fade',
     },
   },
   {
     path: '/auth/sign-up',
     name: 'signUp',
     props: true,
-    components: {
-      logo: AppLogo,
-      form: RegistrationForm,
-    },
+    component: RegistrationForm,
     meta: {
       isLoginRequired: false,
-      isAuthPage: true,
+      layout: 'auth-page',
+      transition: 'slide-fade',
     },
   },
   {
     path: '/auth/sign-in',
     name: 'signIn',
-    components: {
-      logo: AppLogo,
-      form: AuthForm,
-    },
+    component: AuthForm,
     meta: {
       isLoginRequired: false,
-      isAuthPage: true,
-    },
-  },
-  {
-    path: '/auth/reset-password',
-    name: 'resetPassword',
-    components: {
-      logo: AppLogo,
-      form: ResetPassword,
-    },
-    meta: {
-      isLoginRequired: false,
-      isAuthPage: true,
+      layout: 'auth-page',
+      transition: 'slide-fade',
     },
   },
   {
     path: '/auth/request-reset-password',
     name: 'requestResetPassword',
-    components: {
-      logo: AppLogo,
-      form: RequestResetPassword,
-    },
+    component: RequestResetPassword,
     meta: {
       isLoginRequired: false,
-      isAuthPage: true,
+      layout: 'auth-page',
+      transition: 'slide-fade',
+    },
+  },
+  {
+    path: '/auth/reset-password',
+    name: 'resetPassword',
+    component: ResetPassword,
+    meta: {
+      isLoginRequired: false,
+      layout: 'auth-page',
+      transition: 'slide-fade',
     },
   },
   {
@@ -97,7 +84,7 @@ export const routes = [
     component: MainList,
     meta: {
       isLoginRequired: false,
-      isAuthPage: false,
+      layout: 'with-sidebar',
     },
   },
   { 
@@ -106,7 +93,7 @@ export const routes = [
     component: SingleItem,
     meta: {
       isLoginRequired: false,
-      isAuthPage: false,
+      layout: 'with-sidebar',
     },
   },
 ];

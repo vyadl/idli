@@ -3,11 +3,13 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import { mapGetters, mapActions } from 'vuex';
 import { logoutOptions } from '@/store/config';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 
 export default {
   components: {
     ButtonText,
     SectionCard,
+    CustomLink,
   },
   computed: {
     ...mapGetters('auth', [
@@ -73,19 +75,17 @@ export default {
     >
       <span>you are not authorized.</span>
       <div>
-        <router-link
-          :to="{ name: 'signUp' }"
+        <CustomLink
+          :to="{ name: 'requestRegistration' }"
+          title="sign up"
           target="_blank"
-        >
-          sign up
-        </router-link>
+        />
         or
-        <router-link
+        <CustomLink
           :to="{ name: 'signIn' }"
+          title="sign in"
           target="_blank"
-        >
-          sign in
-        </router-link>
+        />
       </div>
     </div>
   </div>

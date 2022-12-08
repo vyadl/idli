@@ -1,6 +1,5 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-import SidebarPage from '@/components/mainPages/SidebarPage.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
@@ -12,7 +11,6 @@ import { handleQueryOnLoad } from '@/router/utils';
 
 export default {
   components: {
-    SidebarPage,
     ConfirmationModal,
     ListModal,
     ItemModal,
@@ -35,8 +33,8 @@ export default {
       'modalNameToShow',
       'explicitRequestsNumber',
     ]),
-    isSidebarActive() {
-      return ['home', 'list', 'item'].includes(this.$route.name);
+    layout() {
+      return `${this.$route.meta.layout}-layout`;
     },
   },
   watch: {
@@ -116,38 +114,16 @@ export default {
         class="preloader"
       />
     </transition>
-    <router-view class="view main-content" />
-    <router-view 
-      v-slot="{ Component, route }"
-      class="view logo" 
-      name="logo"
-    >
-      <transition 
-        name="slide-fade-delayed"
-        mode="out-in"
-      >
-        <component
-          :is="Component" 
-          :key="route.path"
-        />
-      </transition>
-    </router-view>
-    <router-view 
-      v-slot="{ Component, route }"
-      class="view form" 
-      name="form"
-    >
-      <transition 
-        name="slide-fade"
-        mode="out-in"
-      >
-        <component
-          :is="Component"
-          :key="route.path"
-        />
-      </transition>
-    </router-view>
-    <SidebarPage v-if="isSidebarActive" />
+    <component :is="layout">
+      <router-view v-slot="{ Component }">
+        <transition
+          :name="$route.meta.transition"
+          mode="out-in"
+        >
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </component>
     <ListModal />
     <ItemModal />
     <ConfirmationModal />
@@ -194,38 +170,6 @@ export default {
         &::before {
           background-color: map-get($colors, 'white');
         }
-      }
-    }
-
-    .slide-fade {
-      &-enter-active {
-        transition: all 0.2s ease-out 0.1s;
-      }
-
-      &-leave-active {
-        transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
-      }
-
-      &-enter-from,
-      &-leave-to {
-        transform: translateX(20px);
-        opacity: 0;
-      }
-    }
-
-    .slide-fade-delayed {
-      &-enter-active {
-        transition: all 0.2s ease-out 0.2s;
-      }
-
-      &-leave-active {
-        transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
-      }
-
-      &-enter-from,
-      &-leave-to {
-        transform: translateX(20px);
-        opacity: 0;
       }
     }
   }

@@ -21,7 +21,7 @@ export function initAxios(store) {
 
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
-      } 
+      }
 
       if (LOGOUT_TRIGGER_ERROR_CODES.has(code)) {
         store.dispatch('auth/_logOut', { mode: 'current' });

@@ -1,11 +1,11 @@
 import getBrowserFingerprint from 'get-browser-fingerprint';
 import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
-import { getErrorMessage } from '@/settings/serverErrors'; // eslint-disable-line import/no-cycle
+import { getErrorMessage } from '@/settings/serverErrors';
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { commitFromRoot, dispatchFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
 export default {
-  _requestRegistration({ commit }, { email, username }) {
+  _requestRegistration({ dispatch }, { email, username }) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     return this.$config.axios.post(
@@ -24,7 +24,7 @@ export default {
           },
         });
         
-        commit('setCodeLifetimeInMinutes', response.data.codeLifetimeInMinutes);
+        dispatch('_setCodeLifetimeInMinutes', response.data.codeLifetimeInMinutes);
         commitFromRoot('setNotification', { text: 'Email with validation code has been sent' });
       })
       .catch(error => {
@@ -82,7 +82,7 @@ export default {
       });
   },
 
-  _requestResetPassword({ commit }, email) {
+  _requestResetPassword({ dispatch }, email) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     return this.$config.axios.post(
@@ -95,7 +95,7 @@ export default {
           query: { email },
         });
 
-        commit('setCodeLifetimeInMinutes', response.data.codeLifetimeInMinutes);
+        dispatch('_setCodeLifetimeInMinutes', response.data.codeLifetimeInMinutes);
         commitFromRoot('setNotification', { text: 'Email with validation code has been sent' });
       })
       .catch(error => {
@@ -168,15 +168,19 @@ export default {
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
+    const options = {
+      mode,
+      fingerprint,
+      accessToken: user.accessToken,
+      refreshToken: user.refreshToken,
+      userId: user.id,
+    };
+
+    console.log(options);
+
     return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/logout`,
-      {
-        mode,
-        fingerprint,
-        accessToken: user.accessToken,
-        refreshToken: user.refreshToken,
-        userId: user.id,
-      },
+      options,
     )
       .then(() => {
         if (mode !== 'allExceptCurrent') {
@@ -211,5 +215,11 @@ export default {
     if (user) {
       commit('signIn', JSON.parse(user));
     }
+  },
+
+  _setCodeLifetimeInMinutes({ commit }, minutes) {
+    commit('setCodeLifetimeInMinutes', minutes);
+
+    sessionStorage.setItem('codeLifetimeInMinutes', minutes);
   },
 };

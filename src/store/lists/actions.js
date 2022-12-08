@@ -2,6 +2,7 @@ import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { pushRouteKeepQuery, changeQueryRespectingDefault } from '@/router/utils'; // eslint-disable-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
 import { notifyAboutError, commitFromRoot } from '@/store/utils';
+import { getErrorMessage } from '@/settings/serverErrors';
 
 export default {
   _setListIdFromLocalStorage({ commit, dispatch }) {
@@ -114,6 +115,9 @@ export default {
         dispatch('_setCurrentListId', responseList.id);
         commit('setCurrentListObj', responseList);
       })
+      .catch(error => {
+        throw getErrorMessage(error.response.data);
+      })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
@@ -152,9 +156,10 @@ export default {
         return responseList;
       })
       .catch(error => {
-        console.log(error);
         notifyAboutError(error);
         dispatch('_fetchListsForUser');
+
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -299,9 +304,9 @@ export default {
       commit('addItemsFromTestList', responseItems);
       commitFromRoot('setCurrentListItems', responseItems);
       commit('setCurrentListObj', responseList);
-      commitFromRoot('decreaseExplicitRequestsNumber');
     } catch (error) {
-      notifyAboutError(error);
+      throw getErrorMessage(error.response.data);
+    } finally {
       commitFromRoot('decreaseExplicitRequestsNumber');
     }
   },

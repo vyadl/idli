@@ -18,6 +18,8 @@ export default {
       )
       .then(({ data }) => {
         commit('setCurrentItemObj', data);
+        
+        return data;
       })
       .catch(error => {
         if (!cancelToken) {
@@ -100,8 +102,9 @@ export default {
 
   _updateItemOnServer({ dispatch }, { item, cancelToken }) {
     let { title } = item;
+    const { details } = item;
 
-    if (item.details) {
+    if (!title && details) {
       title = generateTitleFromDetails(item.details);
     }
 
@@ -109,12 +112,12 @@ export default {
       .patch(
         `${this.$config.apiBasePath}item/update/${item.listId}/${item.id}`,
         {
-          details: item.details,
+          title,
+          details,
           tags: item.tags,
           category: item.category,
           relatedLists: item.relatedLists,
           relatedItems: item.relatedItems,
-          title,
         },
         { cancelToken },
       )

@@ -4,8 +4,12 @@ import {
   mapGetters,
   mapMutations,
 } from 'vuex';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 
 export default {
+  components: {
+    CustomLink,
+  },
   data() {
     return {
       item: null,
@@ -30,7 +34,11 @@ export default {
   },
   async created() {
     try {
-      await this._fetchItemById({
+      if (this.isLoggedIn) {
+        await this._fetchListsForUser();
+      }
+      
+      this.item = await this._fetchItemById({
         id: this.$route.params.id,
         cancelToken: null,
       });
@@ -56,10 +64,6 @@ export default {
       console.log(error);
 
       this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
-    }
-
-    if (this.isLoggedIn) {
-      this._fetchListsForUser();
     }
   },
   unmounted() {
@@ -110,13 +114,12 @@ export default {
     ]"
     @click="_closeSidebar"
   >
-    <router-link
-      class="router-link"
+    <CustomLink
       :to="{ name: 'list', params: { id: item.listId } }"
-    >
-      Go to the list the item is from
-    </router-link>
-    <div 
+      title="Go to the list the item is from"
+      class="link-to-parent-list"
+    />
+    <div
       class="item-container"
       :class="{
         'move-to-left': !isListUnderSidebar && isSidebarOpen,
@@ -146,7 +149,8 @@ export default {
     cursor: pointer;
     transition: transform 0.2s;
 
-    .router-link {
+    .link-to-parent-list {
+      top: 20px;
       padding: 20px;
       font-size: 12px;
     }
@@ -155,7 +159,7 @@ export default {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      padding: 50px 0;
+      padding: 60px 0;
       text-align: center;
 
       &.move-to-left {

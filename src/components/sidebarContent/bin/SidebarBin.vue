@@ -5,6 +5,7 @@ import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -14,7 +15,9 @@ export default {
     InfoMessage,
   },
   data: () => ({
-    isRequestProcessing: false,
+    requestHandling: {
+      isRequestProcessing: false,
+    },
   }),
   computed: {
     ...mapGetters('bin', [
@@ -41,19 +44,20 @@ export default {
       '_restoreAllLists',
     ]),
     resolveAction(action, payload) {
-      this.isRequestProcessing = true;
+      this.requestHandling.isRequestProcessing = true;
 
-      this[action](payload).then(res => {
-        if (res?.data?.isListDeleted) {
-          this.setNotification({
-            text: `To see the restored item you need to restore this list - 
-              "${res?.data?.listTitle}"`,
-            time: 15000,
-          });
-        }
-      }).finally(() => {
-        this.isRequestProcessing = false;
-      });
+      const request = this[action](payload);
+      
+      handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
+        .then(res => {
+          if (res?.data?.isListDeleted) {
+            this.setNotification({
+              text: `To see the restored item you need to restore this list - 
+                "${res?.data?.listTitle}"`,
+              time: 15000,
+            });
+          }
+        });
     },
     async resolveAllAction(action) {
       if (['_hardDeleteAllLists', '_hardDeleteAllItems'].includes(action)) {
@@ -64,18 +68,20 @@ export default {
         }
       }
 
-      this.isRequestProcessing = true;
-      this[action]().then(res => {
-        if (res?.data?.listsTitlesArray?.length) {
-          this.setNotification({
-            text: `To see the restored items you need to restore these lists
-              - "${res.data.listsTitlesArray.join(', ')}"`,
-            time: 20000,
-          });
-        }
-      }).finally(() => {
-        this.isRequestProcessing = false;
-      });
+      this.requestHandling.isRequestProcessing = true;
+
+      const request = this[action]();
+      
+      handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
+        .then(res => {
+          if (res?.data?.listsTitlesArray?.length) {
+            this.setNotification({
+              text: `To see the restored items you need to restore these lists
+                - "${res.data.listsTitlesArray.join(', ')}"`,
+              time: 20000,
+            });
+          }
+        });
     },
   },
 };
@@ -92,14 +98,14 @@ export default {
           <ButtonText
             text="restore all lists"
             size="small"
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
             @click="resolveAllAction('_restoreAllLists')"
           />
           <ButtonText
             text="delete all lists"
             style-type="underline"
             size="small"
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
             @click="resolveAllAction('_hardDeleteAllLists')"
           />
         </div>
@@ -108,7 +114,7 @@ export default {
           :key="item.id"
           :item="item"
           type="list"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @delete="resolveAction('_hardDeleteList', item.id)"
           @restore="resolveAction('_restoreList', item.id)"
         />
@@ -122,14 +128,14 @@ export default {
           <ButtonText
             text="restore all items"
             size="small"
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
             @click="resolveAllAction('_restoreAllItems')"
           />
           <ButtonText
             text="delete all items"
             style-type="underline"
             size="small"
-            :disabled="isRequestProcessing"
+            :disabled="requestHandling.isRequestProcessing"
             @click="resolveAllAction('_hardDeleteAllItems')"
           />
         </div>
@@ -138,7 +144,7 @@ export default {
           :key="item.id"
           :item="item"
           type="list"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @delete="resolveAction('_hardDeleteItem', { itemId: item.id, listId: item.listId })"
           @restore="resolveAction('_restoreItem',{ itemId: item.id, listId: item.listId })"
         />

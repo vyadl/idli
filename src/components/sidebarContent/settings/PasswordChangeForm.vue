@@ -4,7 +4,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import { mapActions } from 'vuex';
-import { handleErrorAndRequestStatus } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -44,7 +44,7 @@ export default {
           isLogoutFromAllDevices: this.logoutFromAllDevices,
         });
 
-        handleErrorAndRequestStatus(request, this.requestHandling)
+        handleRequestStatuses(request, this.requestHandling)
           .then(() => {
             this.closePasswordChangeModal();
           });

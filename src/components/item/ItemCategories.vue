@@ -7,6 +7,7 @@ import {
   mapMutations,
 } from 'vuex';
 import { generateTitleFromDetails } from '@/store/utils';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -15,8 +16,10 @@ export default {
   },
   data() {
     return {
-      isRequestProcessing: false,
-      errorMessage: '',
+      requestHandling: {
+        isRequestProcessing: false,
+        errorMessage: '',
+      },
     };
   },
   computed: {
@@ -57,7 +60,7 @@ export default {
       '_updateList',
     ]),
     changeCategory(categoryTitle) {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
 
       const newCategoryObj = this.currentListCategories.find(
         category => category.title === categoryTitle,
@@ -74,19 +77,19 @@ export default {
         || this.currentListCategories?.some(category => category.title === categoryTitle);
 
       if (isFilterAlreadyExist) {
-        this.errorMessage = 'filter with this name already exists';
+        this.requestHandling.errorMessage = 'filter with this name already exists';
       } else {
         const { listId } = this.edittingItemObj;
         const listObj = this.lists.find(list => list.id === listId);
 
         this.addCategoryToListLocally({ listId, categoryTitle });
-        this.isRequestProcessing = true;
-        this._updateList(listObj)
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._updateList(listObj);
+
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
           .then(() => {
             this.changeCategory(categoryTitle);
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
           });
       }
     },
@@ -121,13 +124,13 @@ export default {
       placeholder="choose category"
       no-options-text="no categories - start typing to add new"
       :options="currentListCategoriesTitles"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       @select="category => changeCategory(category)"
       @clear="removeCategory()"
     />
     <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
+      v-if="requestHandling.errorMessage"
+      :message="requestHandling.errorMessage"
     />
   </div>
 </template>

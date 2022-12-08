@@ -6,5 +6,5 @@ export default {
     roles: [],
     accessToken: null,
   },
-  codeLifetimeInMinutes: null,
+  codeLifetimeInMinutes: 0,
 };

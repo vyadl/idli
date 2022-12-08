@@ -7,6 +7,7 @@ import {
   mapMutations,
 } from 'vuex';
 import { generateTitleFromDetails } from '@/store/utils';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -15,8 +16,10 @@ export default {
   },
   data() {
     return {
-      isRequestProcessing: false,
-      errorMessage: '',
+      requestHandling: {
+        isRequestProcessing: false,
+        errorMessage: '',
+      },
     };
   },
   computed: {
@@ -52,7 +55,7 @@ export default {
       '_updateList',
     ]),
     addTag(tagTitle) {
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
 
       const newTagObj = this.currentListTags?.find(tag => tag.title === tagTitle);
 
@@ -67,19 +70,19 @@ export default {
         || this.currentListCategories?.some(category => category.title === tagTitle);
 
       if (isFilterAlreadyExist) {
-        this.errorMessage = 'filter with this name already exists';
+        this.requestHandling.errorMessage = 'filter with this name already exists';
       } else {
         const { listId } = this.edittingItemObj;
         const listObj = this.lists.find(list => list.id === listId);
 
         this.addTagToListLocally({ listId, tagTitle });
-        this.isRequestProcessing = true;
-        this._updateList(listObj)
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._updateList(listObj);
+
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
           .then(() => {
             this.addTag(tagTitle);
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
           });
       }
     },
@@ -127,13 +130,13 @@ export default {
       no-options-text="no tags - start typing to add new"
       :options="currentListTagsTitles"
       :can-clear="false"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       @select="tag => addTag(tag)"
       @deselect="tag => deleteTag(tag)"
     />
     <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
+      v-if="requestHandling.errorMessage"
+      :message="requestHandling.errorMessage"
     />
   </div>
 </template>
