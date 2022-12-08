@@ -7,3 +7,4 @@ dist
 .env
 .htaccess
 app.js
+.vscode
