@@ -132,7 +132,7 @@ export default {
       });
   },
 
-  async _deleteItemOnServer(state, { itemId, listId }) {
+  _deleteItemOnServer(state, { itemId, listId }) {
     commitFromRoot('deleteItem', itemId);
     
     this.$config.axios
@@ -140,7 +140,7 @@ export default {
       .then(() => {
         dispatchFromRoot('bin/_fetchDeletedItems');
       })
-      .catch(async error => {
+      .catch(error => {
         notifyAboutError(error);
         dispatchFromRoot('lists/_fetchListById', { id: listId, cancelToken: null });
       });

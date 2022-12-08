@@ -32,7 +32,7 @@ export default {
   emits: ['scrollSidebarToTop'],
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
-  RELATED_UNITS_HINT_TEXT: `Сonnect item with another item or list
+  RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
     directly, not by grouping (like tags or category)`,
   setup() {
     const store = useStore();

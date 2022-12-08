@@ -2,7 +2,7 @@ import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { pushRouteKeepQuery, changeQueryRespectingDefault } from '@/router/utils'; // eslint-disable-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
 import { notifyAboutError, commitFromRoot } from '@/store/utils';
-import { getErrorMessage } from '@/settings/serverErrors';
+import { getErrorMessage } from '@/backendInteraction/serverErrors';
 
 export default {
   _setListIdFromLocalStorage({ commit, dispatch }) {
@@ -151,7 +151,6 @@ export default {
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
-        commit('setCurrentListObj', responseList);
 
         return responseList;
       })

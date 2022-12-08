@@ -49,7 +49,7 @@ export default {
     @submit.prevent="requestRegistration"
   >
     <InputCustom
-      v-model="email.trim"
+      v-model.trim="email"
       label="e-mail"
       type="email"
       required
@@ -57,7 +57,7 @@ export default {
       @input="clearMessage"
     />
     <InputCustom
-      v-model="username.trim"
+      v-model.trim="username"
       label="username"
       required
       :disabled="requestHandling.isRequestProcessing"

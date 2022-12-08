@@ -24,28 +24,32 @@ export function generateTitleFromDetails(details) {
     : details.slice(0, GENERATED_ITEM_TITLE_MAX_LENGTH).concat('...');
 }
 
-function checkFiltersTitlesIntersections(listObj, filtersType, filtersTitles) {
-  return listObj[filtersType]
-    .some(filter => {
-      const isSameTitleFilter = filtersTitles.has(filter.title);
+function checkGroupingFieldsTitlesIntersections(listObj, groupingFieldType, groupingFieldsTitles) {
+  return listObj[groupingFieldType]
+    .some(groupingField => {
+      const isSameTitleGroupingField = groupingFieldsTitles.has(groupingField.title);
 
-      if (!isSameTitleFilter) {
-        filtersTitles.add(filter.title);
+      if (!isSameTitleGroupingField) {
+        groupingFieldsTitles.add(groupingField.title);
       }
 
-      return isSameTitleFilter;
+      return isSameTitleGroupingField;
     });
 }
 
-export function validateFiltersTitles(listObj) {
+export function validateGroupingFieldsTitles(listObj) {
   let isValid = true;
-  const filtersTitles = new Set();
+  const groupingFieldsTitles = new Set();
 
-  isValid = !checkFiltersTitlesIntersections(listObj, 'tags', filtersTitles);
+  isValid = !checkGroupingFieldsTitlesIntersections(listObj, 'tags', groupingFieldsTitles);
 
   if (isValid) {
-    isValid = !checkFiltersTitlesIntersections(listObj, 'categories', filtersTitles);
+    isValid = !checkGroupingFieldsTitlesIntersections(listObj, 'categories', groupingFieldsTitles);
   }
 
   return isValid;
+}
+
+export function getParsedValue(value) {
+  return typeof value === 'string' ? JSON.parse(value) : value;
 }

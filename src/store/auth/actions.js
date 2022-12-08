@@ -1,6 +1,6 @@
 import getBrowserFingerprint from 'get-browser-fingerprint';
-import { setAccessToken, deleteAccessToken } from '@/settings/axiosSettings'; // eslint-disable-line import/no-cycle
-import { getErrorMessage } from '@/settings/serverErrors';
+import { setAccessToken, deleteAccessToken } from '@/backendInteraction/axiosSettings'; // eslint-disable-line import/no-cycle
+import { getErrorMessage } from '@/backendInteraction/serverErrors';
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { commitFromRoot, dispatchFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
@@ -168,19 +168,15 @@ export default {
 
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    const options = {
-      mode,
-      fingerprint,
-      accessToken: user.accessToken,
-      refreshToken: user.refreshToken,
-      userId: user.id,
-    };
-
-    console.log(options);
-
     return this.$config.axios.post(
       `${this.$config.apiBasePath}auth/logout`,
-      options,
+      {
+        mode,
+        fingerprint,
+        accessToken: user.accessToken,
+        refreshToken: user.refreshToken,
+        userId: user.id,
+      },
     )
       .then(() => {
         if (mode !== 'allExceptCurrent') {
