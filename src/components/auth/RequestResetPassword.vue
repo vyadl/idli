@@ -4,7 +4,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import { mapActions } from 'vuex';
-import { handleErrorAndRequestStatus } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -33,7 +33,7 @@ export default {
 
       const request = this._requestResetPassword(this.email);
 
-      handleErrorAndRequestStatus(request, this.requestHandling);
+      handleRequestStatuses(request, this.requestHandling);
     },
   },
 };

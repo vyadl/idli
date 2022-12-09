@@ -3,8 +3,9 @@ import { mapActions } from 'vuex';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
-import { handleErrorAndRequestStatus } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -12,6 +13,7 @@ export default {
     PasswordField,
     ButtonText,
     ErrorMessage,
+    CustomLink,
   },
   data: () => ({
     user: '',
@@ -39,7 +41,7 @@ export default {
 
       const request = this._signIn(credentials);
 
-      handleErrorAndRequestStatus(request, this.requestHandling);
+      handleRequestStatuses(request, this.requestHandling);
     },
   },
 };
@@ -51,8 +53,8 @@ export default {
     @submit.prevent="signIn"
   >
     <InputCustom
-      v-model="user"
-      label="username or email"
+      v-model.trim="user"
+      label="username or e-mail"
       required
       @input="clearMessage"
     />
@@ -73,15 +75,17 @@ export default {
       :disabled="requestHandling.isRequestProcessing"
     />
     <div class="reset-password-link">
-      <router-link :to="{ name: 'requestResetPassword' }">
-        Forgot password?
-      </router-link>
+      <CustomLink
+        :to="{ name: 'requestResetPassword' }"
+        title="Forgot password?"
+      />
     </div>
     <div class="sign-up-option">
       new to IDLI?
-      <router-link :to="{ name: 'requestRegistration' }">
-        sign up
-      </router-link>
+      <CustomLink
+        :to="{ name: 'requestRegistration' }"
+        title="sign up"
+      />
     </div>
   </form>
 </template>

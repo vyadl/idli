@@ -35,7 +35,13 @@ export function getFormattedDate(val) {
   return new Intl.DateTimeFormat('en', options).format(new Date(val));
 }
 
-export function handleErrorAndRequestStatus(request, componentRequestFields) {
+export function handleRequestStatuses(request, componentRequestFields, options) {
+  if (options?.onlyFinally) {
+    return request.finally(() => {
+      componentRequestFields.isRequestProcessing = false;
+    });
+  }
+
   return request
     .catch(errorMessage => {
       componentRequestFields.errorMessage = errorMessage;

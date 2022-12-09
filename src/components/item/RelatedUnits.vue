@@ -5,6 +5,7 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { 
   mapGetters,
   mapActions,
@@ -19,6 +20,7 @@ export default {
     ButtonSign,
     SectionCard,
     TogglingBlock,
+    CustomLink,
   },
   LISTS_DEFAULT_OPTION: '- choose list -',
   ITEMS_DEFAULT_OPTION: '- choose item -',
@@ -247,14 +249,13 @@ export default {
             title="delete"
             @click="deleteRelatedItem(item.id)"
           />
-          <router-link
+          <CustomLink
             :to="{ name: 'item', params: { id: item.id || item } }"
+            :title="item.title || 'untitled'"
             class="related-unit"
             :class="{ 'untitled-item': !item.title }"
             target="_blank"
-          >
-            {{ item.title || 'untitled' }}
-          </router-link>
+          />
         </div>
       </SectionCard>
       <SectionCard
@@ -276,13 +277,12 @@ export default {
             title="delete"
             @click="deleteRelatedList(list.id)"
           />
-          <router-link
+          <CustomLink
             :to="{ name: 'list', params: { id: list.id || list } }"
+            :title="list.title"
             class="related-unit"
             target="_blank"
-          >
-            {{ list.title }}
-          </router-link>
+          />
         </div>
       </SectionCard>
     </div>
@@ -382,16 +382,15 @@ export default {
       :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
     >
       <div class="referring-units-container">
-        <router-link
+        <CustomLink
           v-for="item in currentItemObj?.referringItems"
           :key="item.id"
           :to="{ name: 'item', params: { id: item.id || item } }"
+          :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"
           target="_blank"
-        >
-          {{ item.title || 'untitled' }}
-        </router-link> 
+        />
       </div>
     </TogglingBlock>
   </div>

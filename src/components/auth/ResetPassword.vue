@@ -4,9 +4,9 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { handleQueryOnLoad } from '@/router/utils';
-import { handleErrorAndRequestStatus } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -45,8 +45,17 @@ export default {
     };
     
     handleQueryOnLoad(queryOptions, this.$route.query);
+
+    if (!this.codeLifetimeInMinutes) {
+      const minutes = sessionStorage.getItem('codeLifetimeInMinutes');
+
+      this.setCodeLifetimeInMinutes(minutes);
+    }
   },
   methods: {
+    ...mapMutations('auth', [
+      'setCodeLifetimeInMinutes',
+    ]),
     ...mapActions('auth', [
       '_requestResetPassword',
       '_resetPassword',
@@ -60,7 +69,7 @@ export default {
 
       const request = this._requestResetPassword(this.email);
       
-      handleErrorAndRequestStatus(request, this.requestHandling);
+      handleRequestStatuses(request, this.requestHandling);
     },
     resetPassword() {
       if (this.newPassword === this.passwordToCheck) {
@@ -73,7 +82,7 @@ export default {
           password: this.newPassword,
         });
 
-        handleErrorAndRequestStatus(request, this.requestHandling);
+        handleRequestStatuses(request, this.requestHandling);
       } else {
         this.requestHandling.errorMessage = 'passwords don\'t match';
       }

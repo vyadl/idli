@@ -2,14 +2,16 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { mapActions } from 'vuex';
-import { handleErrorAndRequestStatus } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
     InputCustom,
     ButtonText,
     ErrorMessage,
+    CustomLink,
   },
   data: () => ({
     email: '',
@@ -35,7 +37,7 @@ export default {
         username: this.username,
       });
 
-      handleErrorAndRequestStatus(request, this.requestHandling);
+      handleRequestStatuses(request, this.requestHandling);
     },
   },
 };
@@ -47,7 +49,7 @@ export default {
     @submit.prevent="requestRegistration"
   >
     <InputCustom
-      v-model="email"
+      v-model.trim="email"
       label="e-mail"
       type="email"
       required
@@ -55,7 +57,7 @@ export default {
       @input="clearMessage"
     />
     <InputCustom
-      v-model="username"
+      v-model.trim="username"
       label="username"
       required
       :disabled="requestHandling.isRequestProcessing"
@@ -75,9 +77,10 @@ export default {
     />
     <div class="sign-in-option">
       have an account?
-      <router-link :to="{ name: 'signIn' }">
-        sign in
-      </router-link>
+      <CustomLink
+        :to="{ name: 'signIn' }"
+        title="sign in"
+      />
     </div>
   </form>
 </template>

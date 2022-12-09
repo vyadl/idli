@@ -4,9 +4,10 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
-import { mapGetters, mapActions } from 'vuex';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { handleQueryOnLoad } from '@/router/utils';
-import { handleErrorAndRequestStatus } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -15,6 +16,7 @@ export default {
     ErrorMessage,
     InfoMessage,
     PasswordField,
+    CustomLink,
   },
   data: () => ({
     user: {
@@ -53,8 +55,17 @@ export default {
     };
     
     handleQueryOnLoad(queryOptions, this.$route.query);
+
+    if (!this.codeLifetimeInMinutes) {
+      const minutes = sessionStorage.getItem('codeLifetimeInMinutes');
+
+      this.setCodeLifetimeInMinutes(minutes);
+    }
   },
   methods: {
+    ...mapMutations('auth', [
+      'setCodeLifetimeInMinutes',
+    ]),
     ...mapActions('auth', [
       '_requestRegistration',
       '_signUp',
@@ -71,7 +82,7 @@ export default {
         username: this.user.username,
       });
 
-      handleErrorAndRequestStatus(request, this.requestHandling);
+      handleRequestStatuses(request, this.requestHandling);
     },
     signUp() {
       if (this.user.password === this.passwordToCheck) {
@@ -80,7 +91,7 @@ export default {
 
         const request = this._signUp(this.user);
 
-        handleErrorAndRequestStatus(request, this.requestHandling);
+        handleRequestStatuses(request, this.requestHandling);
       } else {
         this.requestHandling.errorMessage = 'passwords don\'t match';
       }
@@ -95,7 +106,7 @@ export default {
     @submit.prevent="signUp"
   >
     <InputCustom
-      v-model="user.email"
+      v-model.trim="user.email"
       label="e-mail"
       type="email"
       required
@@ -103,7 +114,7 @@ export default {
       @input="clearMessage"
     />
     <InputCustom
-      v-model="user.username"
+      v-model.trim="user.username"
       label="username"
       required
       :disabled="requestHandling.isRequestProcessing"
@@ -150,9 +161,10 @@ export default {
     />
     <div class="sign-in-option">
       have an account?
-      <router-link :to="{ name: 'signIn' }">
-        sign in
-      </router-link>
+      <CustomLink
+        :to="{ name: 'signIn' }"
+        title="sign in"
+      />
     </div>
   </form>
 </template>

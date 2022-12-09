@@ -4,6 +4,7 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { mapGetters, mapActions } from 'vuex';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -14,8 +15,10 @@ export default {
   },
   data: () => ({
     areTestListsShown: false,
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   computed: {
     ...mapGetters('lists', [
@@ -31,15 +34,12 @@ export default {
       '_copyTestListToUserLists',
     ]),
     addTestList(list) {
-      this.isRequestProcessing = true;
-      this.errorMessage = '';
-      this._copyTestListToUserLists(list)
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
-        });
+      this.requestHandling.isRequestProcessing = true;
+      this.requestHandling.errorMessage = '';
+
+      const request = this._copyTestListToUserLists(list);
+
+      handleRequestStatuses(request, this.requestHandling);
     },
   },
 };
@@ -53,8 +53,8 @@ export default {
       @click="areTestListsShown = !areTestListsShown"
     />
     <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
+      v-if="requestHandling.errorMessage"
+      :message="requestHandling.errorMessage"
     />
     <div v-if="areTestListsShown">
       <InfoMessage
@@ -68,7 +68,7 @@ export default {
           class="list-title"
           :text="list.title"
           style-type="line"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @click="addTestList(list)"
         />
       </div>

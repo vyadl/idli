@@ -28,6 +28,8 @@ export default {
 
 <style lang="scss">
 .custom-link {
+  position: relative;
+  
   .arrow {
     position: relative;
     display: inline;

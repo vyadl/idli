@@ -7,6 +7,7 @@ import SidebarSettings from '@/components/sidebarContent/settings/SidebarSetting
 import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -20,6 +21,7 @@ export default {
     SidebarItem,
     ButtonText,
     ButtonSign,
+    CustomLink,
   },
   computed: {
     ...mapGetters('auth', [
@@ -130,19 +132,17 @@ export default {
       v-if="!isLoggedIn && $route.name !== 'auth'"
       class="auth-buttons"
     >
-      <router-link
-        :to="{ name: 'signUp' }"
+      <CustomLink
+        :to="{ name: 'requestRegistration' }"
         target="_blank"
-      >
-        sign up
-      </router-link>
+        title="sign up"
+      />
       or
-      <router-link
+      <CustomLink
         :to="{ name: 'signIn' }"
         target="_blank"
-      >
-        sign in
-      </router-link>
+        title="sign in"
+      />
     </div>
     <div class="sidebar-buttons">
       <div class="mode-buttons">
@@ -187,6 +187,7 @@ export default {
 <style lang="scss">
   .sidebar {
     position: fixed;
+    z-index: 10;
     top: 0;
     right: 0;
     width: 300px;

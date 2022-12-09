@@ -1,6 +1,6 @@
 import axios from 'axios';
 import getBrowserFingerprint from 'get-browser-fingerprint';
-import { LOGOUT_TRIGGER_ERROR_CODES, REFRESH_TRIGGER_ERROR_CODE } from '@/settings/serverErrors';
+import { LOGOUT_TRIGGER_ERROR_CODES, REFRESH_TRIGGER_ERROR_CODE } from '@/backendInteraction/serverErrors';
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 
 export function initAxios(store) {
@@ -21,7 +21,7 @@ export function initAxios(store) {
 
       if (axios.isCancel(error)) {
         throw new Error('The request is canceled');
-      } 
+      }
 
       if (LOGOUT_TRIGGER_ERROR_CODES.has(code)) {
         store.dispatch('auth/_logOut', { mode: 'current' });

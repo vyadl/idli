@@ -6,11 +6,14 @@ import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
-import { validateFiltersTitles } from '@/store/utils';
+import { validateGroupingFieldsTitles } from '@/store/utils';
 import { getFormattedDate } from '@/utils/misc';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -21,11 +24,17 @@ export default {
     ErrorMessage,
     PopupBox,
     TogglingBlock,
+    SectionCard,
+    CustomLink,
   },
+  GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
+  LIST_TITLE_ERROR: 'you already have a list with this title',
   data: () => ({
     list: null,
-    isRequestProcessing: false,
-    errorMessage: '',
+    requestHandling: {
+      isRequestProcessing: false,
+      errorMessage: '',
+    },
   }),
   computed: {
     ...mapGetters('lists', [
@@ -63,63 +72,74 @@ export default {
     resetData() {
       this._setListForEditting(null);
       this.list = new List();
-      this.errorMessage = '';
+      this.requestHandling.errorMessage = '';
     },
-    deleteFilter(filtersType, index) {
-      this.list[filtersType].splice(index, 1);
+    composeErrorMessage({ isListTitleUnique, areGroupingFieldsTitlesValid }) {
+      if (!isListTitleUnique && !areGroupingFieldsTitlesValid) {
+        return `${this.$options.GROUPING_FIELD_TITLE_ERROR}; also, 
+        ${this.$options.LIST_TITLE_ERROR}`;
+      }
+
+      return !isListTitleUnique
+        ? this.$options.LIST_TITLE_ERROR
+        : this.$options.GROUPING_FIELD_TITLE_ERROR;
     },
-    addFilter(filtersType) {
-      this.list[filtersType].push({
+    deleteGroupingField(groupingFieldType, index) {
+      this.list[groupingFieldType].splice(index, 1);
+    },
+    addGroupingField(groupingFieldType) {
+      this.list[groupingFieldType].push({
         title: null,
         id: null,
       });
       this.$nextTick(() => {
-        const filterInputsRefs = this.$refs[`${filtersType}Input`];
+        const groupingFieldsRefs = this.$refs[`${groupingFieldType}Input`];
 
-        filterInputsRefs[filterInputsRefs.length - 1].focus();
+        groupingFieldsRefs[groupingFieldsRefs.length - 1].focus();
       });
     },
     validateListTitle() {
-      const isListTitleUnique = !this.lists.some(storeList => {
+      return !this.lists.some(storeList => {
         return storeList.title === this.list.title
           && storeList.id !== this.list.id;
       });
-
-      this.errorMessage = isListTitleUnique ? '' : 'you already have a list with this title';
-
-      return isListTitleUnique;
     },
     addList() {
-      const areFiltersTitlesValid = validateFiltersTitles(this.list);
+      const areGroupingFieldsTitlesValid = validateGroupingFieldsTitles(this.list);
+      const isListTitleUnique = this.validateListTitle();
 
-      this.errorMessage = areFiltersTitlesValid ? '' : 'you have filters with same titles';
+      if (isListTitleUnique && areGroupingFieldsTitlesValid) {
+        this.requestHandling.isRequestProcessing = true;
 
-      if (this.validateListTitle() && areFiltersTitlesValid) {
-        this.isRequestProcessing = true;
-        this._addList(this.list)
+        const request = this._addList(this.list);
+
+        handleRequestStatuses(request, this.requestHandling)
           .then(() => {
             this.closeListModal();
-          })
-          .catch(error => {
-            this.errorMessage = error.response.data.message;
-          })
-          .finally(() => {
-            this.isRequestProcessing = false;
           });
-      }
+      } else {
+        this.requestHandling.errorMessage = this.composeErrorMessage({ 
+          isListTitleUnique,
+          areGroupingFieldsTitlesValid,
+        });
+      } 
     },
     updateList() {
-      const areFiltersTitlesValid = validateFiltersTitles(this.list);
-
-      this.errorMessage = areFiltersTitlesValid ? '' : 'you have filters with same titles';
-
-      if (this.validateListTitle() && areFiltersTitlesValid) {
+      const areGroupingFieldsTitlesValid = validateGroupingFieldsTitles(this.list);
+      const isListTitleUnique = this.validateListTitle();
+      
+      if (isListTitleUnique && areGroupingFieldsTitlesValid) {
         this.closeListModal();
-        this.isRequestProcessing = true;
-        this._updateList(this.list)
-          .finally(() => {
-            this.isRequestProcessing = false;
-          });
+        this.requestHandling.isRequestProcessing = true;
+
+        const request = this._updateList(this.list);
+
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
+      } else {
+        this.requestHandling.errorMessage = this.composeErrorMessage({ 
+          isListTitleUnique,
+          areGroupingFieldsTitlesValid,
+        });
       }
     },
     async deleteList() {
@@ -132,16 +152,13 @@ export default {
         return false;
       }
 
-      this.isRequestProcessing = true;
-      this._deleteList(this.list.id)
+      this.requestHandling.isRequestProcessing = true;
+
+      const request = this._deleteList(this.list.id);
+
+      handleRequestStatuses(request, this.requestHandling)
         .then(() => {
           this.closeListModal();
-        })
-        .catch(error => {
-          this.errorMessage = error.response.data.message;
-        })
-        .finally(() => {
-          this.isRequestProcessing = false;
         });
     },
     getFormattedDate(val) {
@@ -154,13 +171,13 @@ export default {
 <template>
   <form
     class="list-form"
-    @submit.prevent="edittingListObj ? updateList : addList"
+    @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <InputCustom
       v-model="list.title"
       label="title"
       :is-focus="!edittingListObj"
-      :disabled="isRequestProcessing"
+      :disabled="requestHandling.isRequestProcessing"
       required
     />
     <div class="private-option">
@@ -168,102 +185,94 @@ export default {
         v-model="list.isPrivate"
         label="private"
         style-type="initial"
-        :disabled="isRequestProcessing"
+        :disabled="requestHandling.isRequestProcessing"
       />
-      <router-link
+      <CustomLink
         v-if="isPublicViewLinkShown"
-        class="publick-view-link"
+        class="public-view-link"
         :to="{ 
           name: 'list',
           params: { id: list.id },
           query: { view: 'public' }
         }"
+        title="check how others will see your list"
         target="_blank"
-      >
-        check how others will see your list
-      </router-link>
+      />
     </div>
-    <div class="filters-container">
+    <div class="grouping-fields-container">
       <div class="tags">
-        <h1 class="filters-header">
-          tags
-        </h1>
-        <div
-          v-for="(tag, index) in list.tags"
-          :key="index"
-          class="filter"
-        >
-          <InputCustom
-            ref="tagsInput"
-            v-model="tag.title"
-            required
-            :disabled="isRequestProcessing"
-          />
+        <SectionCard title="tags">
+          <div
+            v-for="(tag, index) in list.tags"
+            :key="index"
+            class="grouping-field"
+          >
+            <InputCustom
+              ref="tagsInput"
+              v-model="tag.title"
+              required
+              :disabled="requestHandling.isRequestProcessing"
+            />
+            <ButtonSign
+              class="delete-grouping-field-button"
+              style-type="cross"
+              title="delete tag"
+              :disabled="requestHandling.isRequestProcessing"
+              @click="deleteGroupingField('tags', index)"
+            />
+          </div>
           <ButtonSign
-            class="delete-filter-button"
-            style-type="cross"
-            title="delete tag"
-            :disabled="isRequestProcessing"
-            @click="deleteFilter('tags', index)"
+            style-type="plus"
+            title="add tag"
+            :disabled="requestHandling.isRequestProcessing"
+            @click="addGroupingField('tags')"
           />
-        </div>
-        <ButtonSign
-          style-type="plus"
-          title="add tag"
-          :disabled="isRequestProcessing"
-          @click="addFilter('tags')"
-        />
+        </SectionCard>
       </div>
       <div class="categories">
-        <h1 class="filters-header">
-          categories
-        </h1>
-        <div
-          v-for="(category, index) in list.categories"
-          :key="index"
-          class="filter"
-        >
-          <InputCustom
-            ref="categoriesInput"
-            v-model="category.title"
-            required
-            :disabled="isRequestProcessing"
-          />
+        <SectionCard title="categories">
+          <div
+            v-for="(category, index) in list.categories"
+            :key="index"
+            class="grouping-field"
+          >
+            <InputCustom
+              ref="categoriesInput"
+              v-model="category.title"
+              required
+              :disabled="requestHandling.isRequestProcessing"
+            />
+            <ButtonSign
+              class="delete-grouping-field-button"
+              style-type="cross"
+              title="delete category"
+              :disabled="requestHandling.isRequestProcessing"
+              @click="deleteGroupingField('categories', index)"
+            />
+          </div>
           <ButtonSign
-            class="delete-filter-button"
-            style-type="cross"
-            title="delete category"
-            :disabled="isRequestProcessing"
-            @click="deleteFilter('categories', index)"
+            style-type="plus"
+            title="add category"
+            :disabled="requestHandling.isRequestProcessing"
+            @click="addGroupingField('categories')"
           />
-        </div>
-        <ButtonSign
-          style-type="plus"
-          title="add category"
-          :disabled="isRequestProcessing"
-          @click="addFilter('categories')"
-        />
+        </SectionCard>
       </div>
     </div>
-    <ErrorMessage
-      v-if="errorMessage"
-      :message="errorMessage"
-    />
     <TogglingBlock
       v-if="edittingListObj?.referringItems?.length"
       title="referring items"
     >
       <div class="referring-units-container">
-        <router-link
+        <CustomLink
           v-for="item in edittingListObj.referringItems"
           :key="item.id"
           :to="{ name: 'item', params: { id: item.id || item } }"
+          :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"
           target="_blank"
-        >
-          {{ item.title || 'untitled' }}
-        </router-link> 
+        />
       </div>
     </TogglingBlock>
     <div 
@@ -285,17 +294,20 @@ export default {
         </div>
       </PopupBox>
     </div>
+    <div class="error-container">
+      <ErrorMessage :message="requestHandling.errorMessage" />
+    </div>
     <footer class="footer">
       <div>
         <ButtonText
           class="modal-button"
           :text="edittingListObj ? 'save' : 'add'"
           type="submit"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
         />
         <ButtonText
           text="cancel"
-          :disabled="isRequestProcessing"
+          :disabled="requestHandling.isRequestProcessing"
           @click="closeListModal"
         />
       </div>
@@ -303,7 +315,7 @@ export default {
         v-if="edittingListObj"
         text="delete list"
         style-type="underline"
-        :disabled="isRequestProcessing"
+        :disabled="requestHandling.isRequestProcessing"
         @click="deleteList"
       />
     </footer>
@@ -316,12 +328,12 @@ export default {
       padding: 8px 0 15px;
     }
 
-    .publick-view-link {
+    .public-view-link {
       font-size: 13px;
       color: map-get($colors, 'gray-dark');
     }
 
-    .filters-container {
+    .grouping-fields-container {
       display: flex;
       justify-content: space-between;
       gap: 10px;
@@ -337,17 +349,12 @@ export default {
       border: 1px solid map-get($colors, 'gray-light');
     }
 
-    .filters-header {
-      margin-bottom: 8px;
-      text-align: center;
-    }
-
-    .filter {
+    .grouping-field {
       display: flex;
       align-items: center;
     }
 
-    .delete-filter-button {
+    .delete-grouping-field-button {
       margin-left: 10px;
     }
 
@@ -367,11 +374,16 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
+    .error-container {
+      height: 50px;
+      padding-top: 10px;
+    }
+
     .footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding-top: 30px;
+      padding-top: 10px;
     }
 
     .modal-button {

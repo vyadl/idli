@@ -150,7 +150,7 @@ export default {
       });
   },
 
-  async _fetchingAfterBinActions({ dispatch }, isItem) {
+  _fetchingAfterBinActions({ dispatch }, isItem) {
     if (isItem) {
       dispatchFromRoot('lists/_fetchCurrentListItems');
       dispatch('_fetchDeletedItems');

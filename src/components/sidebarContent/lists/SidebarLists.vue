@@ -5,6 +5,7 @@ import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { sortByDate } from '@/utils/sorting';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -14,7 +15,9 @@ export default {
     ButtonText,
   },
   data: () => ({
-    isRequestProcessing: false,
+    requestHandling: {
+      isRequestProcessing: false,
+    },
     listRequests: [],
   }),
   computed: {
@@ -46,7 +49,7 @@ export default {
       this.openListModal();
     },
     fetchListById(id) {
-      this.isRequestProcessing = true;
+      this.requestHandling.isRequestProcessing = true;
 
       if (this.listRequests.length) {
         this.listRequests.forEach(request => {
@@ -62,12 +65,13 @@ export default {
 
       this.listRequests.push(source);
 
-      this._fetchListById({ id, cancelToken: source.token })
+      const request = this._fetchListById({ id, cancelToken: source.token });
+
+      handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
         .finally(() => {
-          const index = this.listRequests.findIndex(request => request === source);
+          const index = this.listRequests.findIndex(listRequest => listRequest === source);
 
           this.listRequests.splice(index, 1);
-          this.isRequestProcessing = false;
           this._resetCustomView();
         });
     },
@@ -104,7 +108,7 @@ export default {
       <ButtonSign
         style-type="plus"
         title="new list"
-        :disabled="isRequestProcessing"
+        :disabled="requestHandling.isRequestProcessing"
         @click="openListModal"
       />
     </div>

@@ -3,7 +3,7 @@ import { createApp } from 'vue';
 import { vfmPlugin } from 'vue-final-modal';
 import MasonryWall from '@yeger/vue-masonry-wall';
 import store from '@/store/index';
-import { initAxios } from '@/settings/axiosSettings';
+import { initAxios } from '@/backendInteraction/axiosSettings';
 import themes from '@/mixins/themes';
 import App from '@/components/App.vue';
 import { router } from '@/router';
