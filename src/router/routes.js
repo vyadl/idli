@@ -14,7 +14,7 @@ export const routes = [
     component: MainList,
     meta: {
       isLoginRequired: true,
-      layout: 'WithSidebar',
+      layout: 'WithSidebarLayout',
     },
   },
   {
@@ -23,7 +23,7 @@ export const routes = [
     component: EnterScreen,
     meta: {
       isLoginRequired: false,
-      layout: 'AuthPage',
+      layout: 'AuthPageLayout',
       transition: 'slide-fade',
     },
   },
@@ -33,7 +33,7 @@ export const routes = [
     component: RequestRegistration,
     meta: {
       isLoginRequired: false,
-      layout: 'AuthPage',
+      layout: 'AuthPageLayout',
       transition: 'slide-fade',
     },
   },
@@ -44,7 +44,7 @@ export const routes = [
     component: RegistrationForm,
     meta: {
       isLoginRequired: false,
-      layout: 'AuthPage',
+      layout: 'AuthPageLayout',
       transition: 'slide-fade',
     },
   },
@@ -54,7 +54,7 @@ export const routes = [
     component: AuthForm,
     meta: {
       isLoginRequired: false,
-      layout: 'AuthPage',
+      layout: 'AuthPageLayout',
       transition: 'slide-fade',
     },
   },
@@ -64,7 +64,7 @@ export const routes = [
     component: RequestResetPassword,
     meta: {
       isLoginRequired: false,
-      layout: 'AuthPage',
+      layout: 'AuthPageLayout',
       transition: 'slide-fade',
     },
   },
@@ -74,7 +74,7 @@ export const routes = [
     component: ResetPassword,
     meta: {
       isLoginRequired: false,
-      layout: 'AuthPage',
+      layout: 'AuthPageLayout',
       transition: 'slide-fade',
     },
   },
@@ -84,7 +84,7 @@ export const routes = [
     component: MainList,
     meta: {
       isLoginRequired: false,
-      layout: 'WithSidebar',
+      layout: 'WithSidebarLayout',
     },
   },
   { 
@@ -93,7 +93,7 @@ export const routes = [
     component: SingleItem,
     meta: {
       isLoginRequired: false,
-      layout: 'WithSidebar',
+      layout: 'WithSidebarLayout',
     },
   },
 ];

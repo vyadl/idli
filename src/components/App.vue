@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-import AuthPage from '@/components/layouts/AuthPage.vue';
-import WithSidebar from '@/components/layouts/WithSidebar.vue';
+import AuthPageLayout from '@/components/layouts/AuthPageLayout.vue';
+import WithSidebarLayout from '@/components/layouts/WithSidebarLayout.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
@@ -13,8 +13,8 @@ import { handleQueryOnLoad } from '@/router/utils';
 
 export default {
   components: {
-    AuthPage,
-    WithSidebar,
+    AuthPageLayout,
+    WithSidebarLayout,
     ConfirmationModal,
     ListModal,
     ItemModal,
