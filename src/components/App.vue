@@ -1,5 +1,7 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
+import AuthPage from '@/components/layouts/AuthPage.vue';
+import WithSidebar from '@/components/layouts/WithSidebar.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
@@ -11,6 +13,8 @@ import { handleQueryOnLoad } from '@/router/utils';
 
 export default {
   components: {
+    AuthPage,
+    WithSidebar,
     ConfirmationModal,
     ListModal,
     ItemModal,
@@ -34,7 +38,7 @@ export default {
       'explicitRequestsNumber',
     ]),
     layout() {
-      return `${this.$route.meta.layout}-layout`;
+      return `${this.$route.meta.layout}`;
     },
   },
   watch: {

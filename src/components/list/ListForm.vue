@@ -295,9 +295,7 @@ export default {
       </PopupBox>
     </div>
     <div class="error-container">
-      <ErrorMessage
-        :message="requestHandling.errorMessage"
-      />
+      <ErrorMessage :message="requestHandling.errorMessage" />
     </div>
     <footer class="footer">
       <div>

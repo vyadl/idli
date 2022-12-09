@@ -7,8 +7,6 @@ import { initAxios } from '@/backendInteraction/axiosSettings';
 import themes from '@/mixins/themes';
 import App from '@/components/App.vue';
 import { router } from '@/router';
-import AuthPage from '@/components/layouts/AuthPage.vue';
-import WithSidebar from '@/components/layouts/WithSidebar.vue';
 
 const app = createApp(App);
 
@@ -22,9 +20,6 @@ app.config.globalProperties.$config = {
   axios,
   apiBasePath,
 };
-
-app.component('auth-page-layout', AuthPage);
-app.component('with-sidebar-layout', WithSidebar);
 
 app.use(router);
 app.use(store);
