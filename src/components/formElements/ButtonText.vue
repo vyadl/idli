@@ -13,7 +13,7 @@ export default {
       type: String,
       default: 'bordered',
       validator(value) {
-        return value ? ['bordered', 'line', 'underline'].includes(value) : true;
+        return value ? ['bordered', 'line', 'underline', 'brick'].includes(value) : true;
       },
     },
     active: {
@@ -87,6 +87,7 @@ export default {
     &.bordered {
       border: 2px solid map-get($colors, 'black');
       border-radius: 3px;
+      color: map-get($colors, 'black');
       background-color: map-get($colors, 'white');
       transition:
         background-color 0.3s 0.05s,
@@ -156,6 +157,31 @@ export default {
       }
     }
 
+    &.brick {
+      line-height: 1.3;
+      padding: 7px 12px;
+      color: map-get($colors, 'gray-dark');
+      transition:
+        color 0.2s,
+        background-color 0.2s;
+
+      &.small {
+        padding: 5px 10px;
+        font-size: 13px;
+      }
+
+      &.active,
+      &.active:hover {
+        color: map-get($colors, 'gray-very-light');
+        background-color: map-get($colors, 'black');
+      }
+
+      &:hover {
+        color: map-get($colors, 'black');
+        background-color: map-get($colors, 'gray-very-light');
+      }
+    }
+
     &.inverted-theme {
       &:disabled {
         color: map-get($colors, 'gray-dark');
@@ -196,6 +222,21 @@ export default {
         &.active,
         &:hover {
           color: map-get($colors, 'white');
+        }
+      }
+
+      &.brick {
+        color: map-get($colors, 'gray-light');
+
+        &.active,
+        &.active:hover {
+          color: map-get($colors, 'black');
+          background-color: map-get($colors, 'white');
+        }
+
+        &:hover {
+          color: map-get($colors, 'gray-very-light');
+          background-color: map-get($colors, 'gray-dark');
         }
       }
     }

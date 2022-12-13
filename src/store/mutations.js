@@ -22,6 +22,10 @@ export default {
     state.explicitRequestsNumber--;
   },
 
+  setIsMobileScreen(state, value) {
+    state.isMobileScreen = value;
+  },
+
   // items
 
   setCurrentListItems(state, items) {

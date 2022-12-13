@@ -4,4 +4,5 @@ export default {
   modalNameToShow: state => state.modalNameToShow,
   confirmationModalTitle: state => state.confirmationModalTitle,
   explicitRequestsNumber: state => state.explicitRequestsNumber,
+  isMobileScreen: state => state.isMobileScreen,
 };

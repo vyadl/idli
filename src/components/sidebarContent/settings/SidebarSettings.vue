@@ -98,6 +98,7 @@ export default {
         @change="_toggleItemFormLocation"
       />
       <CheckboxCustom
+        class="full-screen-option"
         label="focus on list"
         style-type="initial"
         :value="false"
@@ -106,6 +107,7 @@ export default {
         @change="_toggleFocusMode"
       />
       <CheckboxCustom
+        class="full-screen-option"
         label="sidebar overlaps the list"
         style-type="initial"
         :value="true"
@@ -114,6 +116,7 @@ export default {
         @change="_toggleSidebarAndListIntersection"
       />
       <CheckboxCustom
+        class="full-screen-option"
         label="using hotkeys"
         style-type="initial"
         :value="true"
@@ -121,7 +124,7 @@ export default {
         name="isUsingHotkeys"
         @change="_toggleUsingHotkeys"
       />
-      <div class="hotkeys-desc">
+      <div class="hotkeys-desc full-screen-option">
         ESC - exit focus mode/hide modal <br>
         <template v-if="isUsingHotkeys">
           <div 
@@ -186,6 +189,14 @@ export default {
       padding-left: 30px;
       font-size: 12px;
       color: map-get($colors, 'gray-dark');
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .sidebar-settings {
+      .full-screen-option {
+        display: none;
+      }
     }
   }
 </style>

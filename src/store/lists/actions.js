@@ -1,7 +1,7 @@
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { pushRouteKeepQuery, changeQueryRespectingDefault } from '@/router/utils'; // eslint-disable-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
-import { notifyAboutError, commitFromRoot } from '@/store/utils';
+import { notifyAboutError, commitFromRoot, dispatchFromRoot } from '@/store/utils';
 import { getErrorMessage } from '@/backendInteraction/serverErrors';
 
 export default {
@@ -182,8 +182,8 @@ export default {
         router.push({ name: 'home', query: { sidebar: 'lists' } });
       }
 
-      dispatch('visualization/_resetVisualizationToDefault');
-      commit('filters/resetFilters');
+      dispatchFromRoot('visualization/_resetVisualizationToDefault');
+      commitFromRoot('filters/resetFilters');
     }
 
     commit('deleteList', id);

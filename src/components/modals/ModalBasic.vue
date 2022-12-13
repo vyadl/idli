@@ -43,7 +43,7 @@ export default {
 </script>
 
 <template>
-  <div 
+  <div
     :class="`modal-basic ${globalTheme}-theme`"
     :style="`
         --modalWidth: ${width}px;
@@ -131,6 +131,14 @@ export default {
         background-color: map-get($colors, 'black');
         box-shadow: none;
         color: map-get($colors, 'white');
+      }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .modal-basic {
+      .vfm__content {
+        width: 300px;
       }
     }
   }

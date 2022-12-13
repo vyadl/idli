@@ -488,4 +488,27 @@ export default {
     }
   }
 }
+
+@media #{breakpoints.$s-media} {
+  .related-units {
+    .referring-units-container {
+      grid-template-columns: 1fr;
+    }
+
+    .add-related-form {
+      flex-flow: column wrap;
+    }
+
+    .new-related-unit-type {
+      flex-direction: row;
+      padding-bottom: 20px;
+    }
+
+    .select-units {
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 10px;
+    }
+  }
+}
 </style>

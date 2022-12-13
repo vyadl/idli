@@ -1,5 +1,11 @@
+import { debounce } from 'throttle-debounce';
+import { sMedia } from '@/scss/style.module.scss';
 import store from '@/store/index'; // eslint-disable-line import/no-cycle
-import { GENERATED_ITEM_TITLE_MAX_LENGTH } from '@/store/config';
+import {
+  GENERATED_ITEM_TITLE_MAX_LENGTH,
+  SCREEN_SIZE_CHECK_DELAY,
+  settingsValuesForMobileScreen,
+} from '@/store/config';
 
 export function commitFromRoot(mutationName, payload = null) {
   store.commit(mutationName, payload, { root: true });
@@ -52,4 +58,23 @@ export function validateGroupingFieldsTitles(listObj) {
 
 export function getParsedValue(value) {
   return typeof value === 'string' ? JSON.parse(value) : value;
+}
+
+export function checkAndSetIsMobileScreen() {
+  const isMatchMedia = window.matchMedia(JSON.parse(sMedia)).matches;
+  
+  if (isMatchMedia !== store.getters.isMobileScreen) {
+    store.commit('setIsMobileScreen', isMatchMedia);
+  }
+}
+
+export const debouncedCheckAndSetIsMobileScreen = debounce(
+  SCREEN_SIZE_CHECK_DELAY,
+  checkAndSetIsMobileScreen,
+);
+
+export function getSettingValueForScreenSize(settingName) {
+  return store.getters.isMobileScreen
+    ? settingsValuesForMobileScreen[settingName]
+    : store.state.settings.settings[settingName];
 }

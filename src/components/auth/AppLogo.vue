@@ -3,10 +3,13 @@ export default {
   computed: {
     logoSrc() {
       return this.globalTheme === 'default' 
-        ? '/images/black-logo.svg' : '/images/white-logo.svg';
+        ? '/images/black-logo.svg'
+        : '/images/white-logo.svg';
     },
-    width() {
-      return this.$route.name === 'auth' ? '400px' : '150px';
+    logoSize() {
+      return this.$route.name === 'auth'
+        ? 'big'
+        : 'small';
     },
   },
   methods: {
@@ -21,9 +24,9 @@ export default {
   <div class="app-logo">
     <img
       class="logo"
+      :class="logoSize"
       alt="logo"
       :src="logoSrc"
-      :style="{ width }"
       @click="openEnterScreen"
     >
   </div>
@@ -35,6 +38,24 @@ export default {
     display: block;
     margin: 0 auto 50px;
     cursor: pointer;
+
+    &.big {
+      width: 400px;
+    }
+    
+    &.small {
+      width: 150px;
+    }
+  }
+}
+
+@media #{breakpoints.$s-media} {
+  .app-logo {
+    .logo {
+      &.big {
+        width: 250px;
+      }
+    }
   }
 }
 </style>

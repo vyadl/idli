@@ -37,6 +37,9 @@ export default {
     },
   }),
   computed: {
+    ...mapGetters([
+      'isMobileScreen',
+    ]),
     ...mapGetters('lists', [
       'lists',
       'edittingListObj',
@@ -303,10 +306,12 @@ export default {
           class="modal-button"
           :text="edittingListObj ? 'save' : 'add'"
           type="submit"
+          :size="isMobileScreen ? 'small' : ''"
           :disabled="requestHandling.isRequestProcessing"
         />
         <ButtonText
           text="cancel"
+          :size="isMobileScreen ? 'small' : ''"
           :disabled="requestHandling.isRequestProcessing"
           @click="closeListModal"
         />
@@ -315,6 +320,7 @@ export default {
         v-if="edittingListObj"
         text="delete list"
         style-type="underline"
+        :size="isMobileScreen ? 'small' : ''"
         :disabled="requestHandling.isRequestProcessing"
         @click="deleteList"
       />
@@ -398,6 +404,24 @@ export default {
       font-size: 13px;
       line-height: 1.7;
       color: map-get($colors, 'gray-light');
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .list-form {
+      .grouping-field {
+        font-size: 12px;
+      }
+
+      .tags,
+      .categories {
+        border: none;
+        padding: 10px;
+      }
+
+      .referring-units-container {
+        grid-template-columns: 1fr;
+      }
     }
   }
 </style>
