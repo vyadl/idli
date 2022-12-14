@@ -1,15 +1,19 @@
 <script>
 export default {
+  props: {
+    logoSize: {
+      type: String,
+      default: 'medium',
+      validator(value) {
+        return value ? ['big', 'small'].includes(value) : true;
+      },
+    },
+  },
   computed: {
     logoSrc() {
       return this.globalTheme === 'default' 
         ? '/images/black-logo.svg'
         : '/images/white-logo.svg';
-    },
-    logoSize() {
-      return this.$route.name === 'auth'
-        ? 'big'
-        : 'small';
     },
   },
   methods: {
@@ -23,9 +27,9 @@ export default {
 <template>
   <div class="app-logo">
     <img
+      alt="logo"
       class="logo"
       :class="logoSize"
-      alt="logo"
       :src="logoSrc"
       @click="openEnterScreen"
     >

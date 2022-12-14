@@ -24,7 +24,7 @@ export default {
     CustomLink,
   },
   computed: {
-    ...mapGetters([
+    ...mapGetters('appearance', [
       'isMobileScreen',
     ]),
     ...mapGetters('auth', [

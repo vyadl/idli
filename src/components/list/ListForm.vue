@@ -11,7 +11,6 @@ import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
-import { validateGroupingFieldsTitles } from '@/store/utils';
 import { getFormattedDate } from '@/utils/misc';
 import { handleRequestStatuses } from '@/utils/misc';
 
@@ -37,7 +36,7 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('appearance', [
       'isMobileScreen',
     ]),
     ...mapGetters('lists', [
@@ -107,8 +106,38 @@ export default {
           && storeList.id !== this.list.id;
       });
     },
+    checkGroupingFieldsTitlesIntersections(groupingFieldType, groupingFieldsTitles) {
+      return this.list[groupingFieldType]
+        .some(groupingField => {
+          const isSameTitleGroupingField = groupingFieldsTitles.has(groupingField.title);
+
+          if (!isSameTitleGroupingField) {
+            groupingFieldsTitles.add(groupingField.title);
+          }
+
+          return isSameTitleGroupingField;
+        });
+    },
+    validateGroupingFieldsTitles() {
+      let isValid = true;
+      const groupingFieldsTitles = new Set();
+
+      isValid = !this.checkGroupingFieldsTitlesIntersections(
+        'tags',
+        groupingFieldsTitles,
+      );
+
+      if (isValid) {
+        isValid = !this.checkGroupingFieldsTitlesIntersections(
+          'categories',
+          groupingFieldsTitles,
+        );
+      }
+
+      return isValid;
+    },
     addList() {
-      const areGroupingFieldsTitlesValid = validateGroupingFieldsTitles(this.list);
+      const areGroupingFieldsTitlesValid = this.validateGroupingFieldsTitles();
       const isListTitleUnique = this.validateListTitle();
 
       if (isListTitleUnique && areGroupingFieldsTitlesValid) {
@@ -128,7 +157,7 @@ export default {
       } 
     },
     updateList() {
-      const areGroupingFieldsTitlesValid = validateGroupingFieldsTitles(this.list);
+      const areGroupingFieldsTitlesValid = this.validateGroupingFieldsTitles();
       const isListTitleUnique = this.validateListTitle();
       
       if (isListTitleUnique && areGroupingFieldsTitlesValid) {
@@ -204,7 +233,10 @@ export default {
     </div>
     <div class="grouping-fields-container">
       <div class="tags">
-        <SectionCard title="tags">
+        <SectionCard
+          title="tags"
+          :size="isMobileScreen ? 'small' : ''"
+        >
           <div
             v-for="(tag, index) in list.tags"
             :key="index"
@@ -233,7 +265,10 @@ export default {
         </SectionCard>
       </div>
       <div class="categories">
-        <SectionCard title="categories">
+        <SectionCard
+          title="categories"
+          :size="isMobileScreen ? 'small' : ''"
+        >
           <div
             v-for="(category, index) in list.categories"
             :key="index"
@@ -421,6 +456,10 @@ export default {
 
       .referring-units-container {
         grid-template-columns: 1fr;
+      }
+
+      .error-container {
+        height: 60px;
       }
     }
   }

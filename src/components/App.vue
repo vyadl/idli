@@ -10,7 +10,6 @@ import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
 import { handleQueryOnLoad } from '@/router/utils';
-import { checkAndSetIsMobileScreen, debouncedCheckAndSetIsMobileScreen } from '@/store/utils';
 
 export default {
   components: {
@@ -50,8 +49,12 @@ export default {
     },
   },
   created() {
-    window.addEventListener('resize', debouncedCheckAndSetIsMobileScreen);
-    checkAndSetIsMobileScreen();
+    this._checkAndSetIsMobileScreen();
+    window.addEventListener(
+      'resize',
+      this._debouncedCheckAndSetIsMobileScreen,
+    );
+
     checkAppVersion();
 
     this._setUserFromLocalStorage();
@@ -101,6 +104,10 @@ export default {
     ...mapActions('sidebar', [
       '_closeSidebar',
       '_openSidebar',
+    ]),
+    ...mapActions('appearance', [
+      '_checkAndSetIsMobileScreen',
+      '_debouncedCheckAndSetIsMobileScreen',
     ]),
     ...mapActions([
       '_setUnitsFromLocalStorage',

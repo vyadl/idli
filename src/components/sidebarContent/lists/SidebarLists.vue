@@ -21,7 +21,7 @@ export default {
     listRequests: [],
   }),
   computed: {
-    ...mapGetters([
+    ...mapGetters('appearance', [
       'isMobileScreen',
     ]),
     ...mapGetters('lists', [

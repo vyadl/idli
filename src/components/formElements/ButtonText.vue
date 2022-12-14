@@ -170,10 +170,12 @@ export default {
         font-size: 13px;
       }
 
-      &.active,
-      &.active:hover {
-        color: map-get($colors, 'gray-very-light');
-        background-color: map-get($colors, 'black');
+      &.active {
+        &,
+        &:hover {
+          color: map-get($colors, 'gray-very-light');
+          background-color: map-get($colors, 'black');
+        }
       }
 
       &:hover {
@@ -228,10 +230,12 @@ export default {
       &.brick {
         color: map-get($colors, 'gray-light');
 
-        &.active,
-        &.active:hover {
-          color: map-get($colors, 'black');
-          background-color: map-get($colors, 'white');
+        &.active {
+          &,
+          &:hover {
+            color: map-get($colors, 'black');
+            background-color: map-get($colors, 'white');
+          }
         }
 
         &:hover {

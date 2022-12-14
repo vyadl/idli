@@ -4,6 +4,7 @@ import state from './state';
 import mutations from './mutations';
 import actions from './actions'; // eslint-disable-line import/no-cycle
 import getters from './getters';
+import appearance from './appearance';
 import auth from './auth'; // eslint-disable-line import/no-cycle
 import bin from './bin';
 import filters from './filters';
@@ -19,6 +20,7 @@ const store = createStore({
   actions,
   getters,
   modules: {
+    appearance,
     auth,
     bin,
     filters,
