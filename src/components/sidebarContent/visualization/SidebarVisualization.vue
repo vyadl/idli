@@ -88,6 +88,11 @@ export default {
       '_toggleItemsOrder',
       '_resetVisualizationToDefault',
     ]),
+    openDraggebleList() {
+      // this.setIsDraggableMode(true);
+      this.$router.push({ name: 'draggableList' });
+      // this._setSorting('custom');
+    },
   },
 };
 </script>
@@ -99,6 +104,11 @@ export default {
       class="main-sorting"
     >
       <div class="buttons-container">
+        <ButtonText
+          text="change custom order manually"
+          style-type="underline"
+          @click="openDraggebleList"
+        />
         <RadioCustom
           v-for="sortingOption in mainSortingOptions"
           :key="sortingOption.title"

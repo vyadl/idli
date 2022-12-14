@@ -1,4 +1,5 @@
-export default {  
+export default {
+  isDraggableMode: false,
   currentListItems: [],
   notification: {
     time: null,

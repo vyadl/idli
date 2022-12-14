@@ -351,6 +351,11 @@ export default {
             @click="fetchItemById"
           />
         </template>
+        <!-- <template v-else>
+          <DraggableList>
+            <ListItem />
+          </DraggableList>
+        </template> -->
       </div>
     </div>
     <div

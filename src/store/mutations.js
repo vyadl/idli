@@ -24,6 +24,10 @@ export default {
 
   // items
 
+  setIsDraggableMode(state, value) {
+    state.isDraggableMode = value;
+  },
+
   setCurrentListItems(state, items) {
     state.currentListItems = items;
   },
