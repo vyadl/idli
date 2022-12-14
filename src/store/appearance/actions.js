@@ -4,10 +4,10 @@ import { SCREEN_SIZE_CHECK_DELAY } from '@/store/config';
 
 export default {
   _checkAndSetIsMobileScreen({ getters, commit }) {
-    const isMatchMedia = window.matchMedia(JSON.parse(sMedia)).matches;
+    const isMediaMatch = window.matchMedia(JSON.parse(sMedia)).matches;
   
-    if (isMatchMedia !== getters.isMobileScreen) {
-      commit('setIsMobileScreen', isMatchMedia);
+    if (isMediaMatch !== getters.isMobileScreen) {
+      commit('setIsMobileScreen', isMediaMatch);
     }
   },
 
