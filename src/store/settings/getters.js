@@ -1,8 +1,10 @@
+import { getSettingValueForScreenSize } from '@/store/utils';
+
 export default {
   settings: state => state.settings,
   isItemFormInSidebar: state => state.settings.isItemFormInSidebar,
-  isFocusOnList: state => state.settings.isFocusOnList,
-  isListUnderSidebar: state => state.settings.isListUnderSidebar,
-  isUsingHotkeys: state => state.settings.isUsingHotkeys,
+  isFocusOnList: () => getSettingValueForScreenSize('isFocusOnList'),
+  isListUnderSidebar: () => getSettingValueForScreenSize('isListUnderSidebar'),
+  isUsingHotkeys: () => getSettingValueForScreenSize('isUsingHotkeys'),
   theme: state => state.settings.theme,
 };

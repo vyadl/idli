@@ -64,7 +64,8 @@ export default {
 
 <style lang="scss">
   .app-notification {
-    position: absolute;
+    position: fixed;
+    z-index: 15;
     left: 15px;
     bottom: 15px;
     display: flex;
@@ -102,6 +103,13 @@ export default {
       .text {
         color: map-get($colors, 'black');
       }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .app-notification {
+      top: 15px;
+      bottom: unset;
     }
   }
 </style>

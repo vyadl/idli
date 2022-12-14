@@ -47,7 +47,7 @@ export default {
         router.push({ name: 'signIn' });
       })
       .catch(error => {
-        throw getErrorMessage(error.response.data);;
+        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -192,7 +192,7 @@ export default {
 
           deleteAccessToken();
 
-          router.push({ name: 'auth' });
+          router.push({ name: 'signIn' });
         } else {
           commitFromRoot('setNotification', { text: 'All other sessions were terminated' });
         }

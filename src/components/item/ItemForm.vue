@@ -120,16 +120,18 @@ export default {
     },
   },
   unmounted() {
-    const { title, details } = this.edittingItemObj;
+    if (this.edittingItemObj) {
+      const { title, details } = this.edittingItemObj;
 
-    if (!title && details) {
-      this.updateItemFieldLocally({
-        field: 'title',
-        value: generateTitleFromDetails(details),
-      });
+      if (!title && details) {
+        this.updateItemFieldLocally({
+          field: 'title',
+          value: generateTitleFromDetails(details),
+        });
+      }
+
+      this._saveItemOnServer();
     }
-
-    this._saveItemOnServer();
 
     this.currentListItems.forEach(item => {
       if (!item.title && !item.details) {
@@ -243,32 +245,6 @@ export default {
     class="item-form"
     :class="`${globalTheme}-theme`"
   >
-    <!-- for future use
-    <header 
-      v-if="edittingItemObj.id"
-      class="header"
-    >
-      <PopupBox
-        button-style-type="dots"
-        stop-propagation
-        position="lower-left"
-        class="additional-options-button"
-      >
-        <ButtonText
-          class="additional-option"
-          text="move to another list"
-          style-type="line"
-          size="small"
-        />
-        <ButtonText
-          class="additional-option"
-          text="move to bin 🗑"
-          style-type="line"
-          size="small"
-          @click="removeItem(edittingItemObj)"
-        />
-      </PopupBox>
-    </header> -->
     <div class="text-fields">
       <InputCustom
         class="title-input"
@@ -347,7 +323,7 @@ export default {
       <ButtonText
         text="delete"
         style-type="underline"
-        @click="removeItem(edittingItmeObj)"
+        @click="removeItem(edittingItemObj)"
       />
     </footer>
   </div>
@@ -355,32 +331,6 @@ export default {
 
 <style lang="scss" scoped>
   .item-form {
-    // for future use
-    // 
-    // .header {
-    //   position: relative;
-    //   display: flex;
-    //   justify-content: flex-end;
-    //   align-items: flex-end;
-    //   margin-bottom: 0;
-    // }
-
-    // .additional-options-button {
-    //   position: absolute;
-    //   right: -20px;
-    // }
-
-    // .additional-option {
-    //   display: block;
-    //   padding: 10px 15px;
-    //   width: 100%;
-    //   transition: background-color 0.3s;
-
-    //   &:hover {
-    //     background-color: map-get($colors, 'gray-very-light');
-    //   }
-    // }
-    
     .title-input {
       padding-bottom: 10px;
     }

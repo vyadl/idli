@@ -17,8 +17,15 @@ export default defineConfig({
     emptyOutDir: false,
   },
   css: {
+    modules: {
+      scopeBehaviour: 'global',
+    },
     preprocessorOptions: {
-      scss: { additionalData: '@import "@/scss/variables";' },
+      scss: { 
+        additionalData: 
+          `@use '@/scss/breakpoints';
+          @import "@/scss/variables";`,
+      },
     },
   },
 });

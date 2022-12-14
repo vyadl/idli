@@ -21,6 +21,9 @@ export default {
     listRequests: [],
   }),
   computed: {
+    ...mapGetters('appearance', [
+      'isMobileScreen',
+    ]),
     ...mapGetters('lists', [
       'lists',
       'currentListId',
@@ -93,7 +96,7 @@ export default {
       >
         <ButtonSign
           class="edit-button"
-          :class="{ active: list.id === currentListId }"
+          :class="{ active: isMobileScreen || list.id === currentListId }"
           style-type="dots"
           @click="setListForEditting(list)"
         />

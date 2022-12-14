@@ -39,13 +39,13 @@ export default {
         @click="openForm('signIn')"
       />
     </div>
-    <div class="conjunction">
+    <span class="conjunction">
       — or —
-    </div>
+    </span>
     <div class="public-lists-container">
-      <div class="public-lists-title">
+      <span class="public-lists-title">
         check some public lists:
-      </div>
+      </span>
       <div>
         <div 
           v-for="list in publicListsForAuthScreen"
@@ -81,7 +81,10 @@ export default {
       gap: 10px;
     }
 
-    .conjunction {
+    .conjunction,
+    .public-lists-title {
+      width: 100%;
+      text-align: center;
       font-variant-caps: all-small-caps;
     }
 
@@ -93,10 +96,6 @@ export default {
       color: map-get($colors, 'gray-dark');
     }
 
-    .public-lists-title {
-      font-variant-caps: all-small-caps;
-    }
-    
     .public-list {
       margin-bottom: 5px;
       text-align: left;

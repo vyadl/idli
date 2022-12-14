@@ -49,6 +49,12 @@ export default {
     },
   },
   created() {
+    this._checkAndSetIsMobileScreen();
+    window.addEventListener(
+      'resize',
+      this._debouncedCheckAndSetIsMobileScreen,
+    );
+
     checkAppVersion();
 
     this._setUserFromLocalStorage();
@@ -60,8 +66,7 @@ export default {
     const queryOptions = {
       sidebar: {
         callback: sidebar => {
-          this.openSidebar();
-          this.changeSidebarMode(sidebar);
+          this._openSidebar(sidebar);
         },
       },
       view: {
@@ -85,7 +90,6 @@ export default {
   },
   methods: {
     ...mapMutations('sidebar', [
-      'openSidebar',
       'changeSidebarMode',
     ]),
     ...mapMutations('lists', [
@@ -99,16 +103,33 @@ export default {
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',
+      '_openSidebar',
+    ]),
+    ...mapActions('appearance', [
+      '_checkAndSetIsMobileScreen',
+      '_debouncedCheckAndSetIsMobileScreen',
     ]),
     ...mapActions([
       '_setUnitsFromLocalStorage',
     ]),
+    openSidebarInLayout() {
+      if (this.layout === 'WithSidebarLayout') {
+        this._openSidebar(this.sidebarMode);
+      }      
+    },
+    closeSidebarInLayout() {
+      if (this.layout === 'WithSidebarLayout') {
+        this._closeSidebar();
+      }   
+    },
   },
 };
 </script>
 
 <template>
   <div
+    v-touch:swipe.left="openSidebarInLayout"
+    v-touch:swipe.right="closeSidebarInLayout"
     class="app"
     :class="`${globalTheme}-theme`"
   >

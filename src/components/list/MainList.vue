@@ -59,6 +59,7 @@ export default {
     ]),
     ...mapGetters('sidebar', [
       'isSidebarOpen',
+      'sidebarMode',
     ]),
     styles() {
       let styles = {};

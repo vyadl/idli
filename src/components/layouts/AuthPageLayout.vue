@@ -5,6 +5,13 @@ export default {
   components: {
     AppLogo,
   },
+  computed: {
+    logoSize() {
+      return this.$route.name === 'auth'
+        ? 'big'
+        : 'small';
+    },
+  },
 };
 </script>
 
@@ -14,7 +21,10 @@ export default {
       name="slide-fade-delayed"
       mode="out-in"
     >
-      <AppLogo :key="$route.path" /> 
+      <AppLogo
+        :key="$route.path"
+        :logo-size="logoSize"
+      /> 
     </transition>
     <slot />
   </div>

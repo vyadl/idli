@@ -24,6 +24,9 @@ export default {
     CustomLink,
   },
   computed: {
+    ...mapGetters('appearance', [
+      'isMobileScreen',
+    ]),
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
@@ -70,6 +73,13 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
+    defineButtonStyleType(mode) {
+      if (mode === 'bin' && !this.isMobileScreen) {
+        return 'underline';
+      }
+
+      return this.isMobileScreen ? 'brick' : 'bordered';
+    },
     openItemModal() {
       this.$vfm.show('itemModal');
     },
@@ -97,7 +107,7 @@ export default {
 
 <template>
   <div
-    class="sidebar"
+    class="sidebar-page"
     :class="[
       { shown: isSidebarOpen },
       `${globalTheme}-theme`,
@@ -149,23 +159,23 @@ export default {
         <ButtonText
           v-for="mode in sidebarModes"
           :key="mode"
-          class="mode-button"
+          :class="{'mode-button' : !isMobileScreen}"
           :text="mode"
-          :style-type="mode === 'bin' ? 'underline' : 'bordered'"
-          :size="mode === 'bin' ? 'small' : ''"
+          :style-type="defineButtonStyleType(mode)"
+          :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
       </div>
-      <div
-        v-if="!isFocusOnList"
-        class="state-button"
-      >
-        <ButtonSign
-          style-type="arrow"
-          @click="changeSidebarState"
-        />
-      </div>
+    </div>
+    <div
+      v-if="!isFocusOnList"
+      class="state-button"
+    >
+      <ButtonSign
+        style-type="arrow"
+        @click="changeSidebarState"
+      />
     </div>
     <div
       ref="sidebarContent"
@@ -185,7 +195,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .sidebar {
+  .sidebar-page {
     position: fixed;
     z-index: 10;
     top: 0;
@@ -195,7 +205,7 @@ export default {
     background-color: map-get($colors, 'white');
     transform: translateX(300px);
     transition:
-      transform 0.5s,
+      transform 0.3s,
       box-shadow 0.7s;
 
     &.shown {
@@ -238,7 +248,7 @@ export default {
 
     .sidebar-buttons {
       position: fixed;
-      bottom: 40px;
+      bottom: 85px;
     }
 
     .mode-buttons {
@@ -266,6 +276,8 @@ export default {
     }
 
     .state-button {
+      position: fixed;
+      bottom: 40px;
       width: fit-content;
       transition: transform 0.4s;
       transform: translateX(-100%);
@@ -280,13 +292,13 @@ export default {
     &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
+      border-left: 1px solid map-get($colors, 'gray-light');
 
       &.shown {
         box-shadow: none;
       }
 
       .sidebar-content {
-        border-left: 1px solid map-get($colors, 'gray-light');
         background-color: map-get($colors, 'black');
       }
 
@@ -294,6 +306,57 @@ export default {
         &::before {
           box-shadow: -5px 0 12px 12px map-get($colors, 'black');
         }
+      }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .sidebar-page {
+      &.shown {
+        .mode-buttons {
+          transform: none;
+        }
+
+        .exit-public-view-button,
+        .auth-buttons {
+          display: none;
+        }
+      }
+
+      .add-item-button {
+        top: 30px;
+      }
+
+      .sidebar-buttons {
+        position: fixed;
+        z-index: 9;
+        top: 0;
+        bottom: unset;
+        padding-bottom: 30px;
+      }
+
+      .mode-buttons {
+        flex-flow: row wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2px;
+        padding: 10px 20px;
+        background-color: map-get($colors, 'white');
+      }
+
+      .sidebar-content {
+        padding-top: 80px;
+        padding-bottom: 100px;
+      }
+
+      .state-button {
+        bottom: 120px;
+      }
+    }
+
+    .inverted-theme {
+      .mode-buttons {
+        background-color: map-get($colors, 'black');
       }
     }
   }

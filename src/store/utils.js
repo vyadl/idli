@@ -1,5 +1,8 @@
 import store from '@/store/index'; // eslint-disable-line import/no-cycle
-import { GENERATED_ITEM_TITLE_MAX_LENGTH } from '@/store/config';
+import {
+  GENERATED_ITEM_TITLE_MAX_LENGTH,
+  settingsValuesForMobileScreen,
+} from '@/store/config';
 
 export function commitFromRoot(mutationName, payload = null) {
   store.commit(mutationName, payload, { root: true });
@@ -24,32 +27,12 @@ export function generateTitleFromDetails(details) {
     : details.slice(0, GENERATED_ITEM_TITLE_MAX_LENGTH).concat('...');
 }
 
-function checkGroupingFieldsTitlesIntersections(listObj, groupingFieldType, groupingFieldsTitles) {
-  return listObj[groupingFieldType]
-    .some(groupingField => {
-      const isSameTitleGroupingField = groupingFieldsTitles.has(groupingField.title);
-
-      if (!isSameTitleGroupingField) {
-        groupingFieldsTitles.add(groupingField.title);
-      }
-
-      return isSameTitleGroupingField;
-    });
-}
-
-export function validateGroupingFieldsTitles(listObj) {
-  let isValid = true;
-  const groupingFieldsTitles = new Set();
-
-  isValid = !checkGroupingFieldsTitlesIntersections(listObj, 'tags', groupingFieldsTitles);
-
-  if (isValid) {
-    isValid = !checkGroupingFieldsTitlesIntersections(listObj, 'categories', groupingFieldsTitles);
-  }
-
-  return isValid;
-}
-
 export function getParsedValue(value) {
   return typeof value === 'string' ? JSON.parse(value) : value;
+}
+
+export function getSettingValueForScreenSize(settingName) {
+  return store.getters['appearance/isMobileScreen']
+    ? settingsValuesForMobileScreen[settingName]
+    : store.state.settings.settings[settingName];
 }

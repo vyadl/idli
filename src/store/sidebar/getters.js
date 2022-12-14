@@ -13,7 +13,6 @@ export default {
 
   listPublicView: (state, getters, rootState, rootGetters) => (
     !rootGetters['auth/isLoggedIn'] 
-    && !!rootGetters.currentListItems?.length
     && router.currentRoute._value.name === 'list'
   ) || (
     rootGetters['auth/isLoggedIn'] 
