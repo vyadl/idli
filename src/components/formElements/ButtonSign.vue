@@ -265,6 +265,15 @@ export default {
           background-color: map-get($colors, 'gray-dark');
         }
       }
+
+      &.info,
+      &.hint {
+        border: 1px solid map-get($colors, 'gray-light');
+        
+        &::before {
+          color: map-get($colors, 'gray-light');
+        }
+      }
     }
   }
 </style>

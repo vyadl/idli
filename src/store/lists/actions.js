@@ -165,6 +165,36 @@ export default {
       });
   },
 
+  _updateListItemsOrder({
+    commit,
+    dispatch,
+    getters,
+    rootGetters,
+  }) {
+    const itemIds = [];
+    
+    rootGetters.currentListItems.forEach(item => {
+      itemIds.push(item.id);
+    });
+
+    return this.$config.axios
+      .patch(
+        `${this.$config.apiBasePath}list/set-order/${getters.currentListId}`,
+        { itemIds },
+      )
+      .then(({ data: responseList }) => {
+        commit('updateList', responseList);
+
+        return responseList;
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatch('_fetchListsForUser');
+
+        throw getErrorMessage(error.response.data);
+      });
+  },
+
   async _deleteList({ commit, dispatch, getters }, id) {
     commitFromRoot('increaseExplicitRequestsNumber');
 

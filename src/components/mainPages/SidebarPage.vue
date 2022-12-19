@@ -58,7 +58,9 @@ export default {
   mounted() {
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
       if (!this.isSidebarOpen) {
-        this._openSidebar(sidebarModesForViews[this.currentSidebarView]?.default);
+        this._openSidebar(
+          this.sidebarMode || sidebarModesForViews[this.currentSidebarView]?.default,
+        );
       }
     });
   },
@@ -324,7 +326,7 @@ export default {
       }
 
       .add-item-button {
-        top: 30px;
+        top: 70px;
       }
 
       .sidebar-buttons {

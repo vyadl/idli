@@ -8,7 +8,7 @@ export const defaultQueryValues = {
     queryName: 'categories',
   },
   sorting: {
-    default: 'dateCreated',
+    default: 'custom',
     queryName: 'sorting',
   },
   mode: {

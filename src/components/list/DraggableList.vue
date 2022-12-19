@@ -1,16 +1,16 @@
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import draggable from 'vuedraggable';
 import ListItem from '@/components/item/ListItem.vue';
 
 export default {
   components: {
-    draggable,
     ListItem,
+    draggable,
   },
   data() {
     return {
-      drag: false,
+      isDragging: false,
     };
   },
   computed: {
@@ -23,94 +23,84 @@ export default {
     ...mapGetters('sidebar', [
       'isSidebarOpen',
     ]),
-    dragOptions() {
-      return {
-        animation: 200,
-        disabled: false,
-        ghostClass: 'ghost',
-      };
-    },
-    myList: {
-      get() {
-        return this.$store.getters.currentListItems;
-      },
-      set(itemsArray) {
-        this.$store.commit('setCurrentListItems', itemsArray);
-      },
-    },
   },
   methods: {
+    ...mapMutations([
+      'setCurrentListItems',
+    ]),
+    ...mapActions('lists', [
+      '_updateListItemsOrder',
+    ]),
     startDrag() {
-      this.drag = true;
+      this.isDragging = true;
     },
-    endDrag(value) {
-      console.log(value);
-      this.drag = false;
+    endDrag() {
+      this.isDragging = false;
     },
     updateList(value) {
-      this.$store.commit('setCurrentListItems', value);
-      // dispatch list update on server
+      this.setCurrentListItems(value);
+      this._updateListItemsOrder();
     },
   },
 };
 </script>
 
 <template>
-  <div
+  <draggable
     v-if="currentListItems"
     class="draggable-list"
+    :class="`${globalTheme}-theme`"
+    ghost-class="ghost"
+    item-key="id"
+    :model-value="currentListItems"
+    @update:model-value="updateList"
+    @start="startDrag" 
+    @end="endDrag" 
   >
-    <draggable
-      :model-value="currentListItems"
-      v-bind="dragOptions"
-      item-key="id"
-      class="list-items"
-      :class="{
-        'move-to-left': !isListUnderSidebar && isSidebarOpen,
-        parallax: isSidebarOpen,
-      }"
-      @update:model-value="value => updateList(value)"
-      @start="startDrag" 
-      @end="value => endDrag(value)" 
-    >
-      <template #item="{ element }">
-        <ListItem
-          :key="element.id"
-          :item="element"
-          class="list-item"
-        />
-      </template>
-    </draggable>
-  </div>
+    <template #item="{ element }">
+      <ListItem
+        :key="element.id"
+        :item="element"
+        class="list-item"
+        bordered
+      />
+    </template>
+  </draggable>
 </template>
 
 <style lang="scss">
 .draggable-list {
   width: 100%;
-  padding: 50px;
-  
-  .list-items {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
 
-    &.move-to-left {
-      margin-right: 280px;
-    }
+  .list-item {
+    background-color: map-get($colors, 'white');
+    cursor: grab;
 
-    &.parallax {
-      transform: translateX(-20px);
+    &:active {
+      cursor: grabbing;
     }
   }
 
-  .list-item {
-    cursor: move;
+  .flip-list-move {
+    transition: transform 0.5s;
   }
 
   .ghost {
     opacity: 0.3;
-    background-color: map-get($colors, 'gray-very-light');
+    background-color: map-get($colors, 'gray-light');
+  }
+
+  &.inverted-theme {
+    .list-item {
+      background-color: map-get($colors, 'black');
+    }
+
+    .ghost {
+      color: map-get($colors, 'black');
+      background-color: map-get($colors, 'white');
+    }
   }
 }
 </style>

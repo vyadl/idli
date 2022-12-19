@@ -9,7 +9,7 @@ export const settingsValuesForMobileScreen = {
 };
 
 export const defaultVisualization = {
-  sorting: 'dateCreated',
+  sorting: 'custom',
   mode: 'list',
   listAlign: 'center',
   areItemDetailsShown: false,

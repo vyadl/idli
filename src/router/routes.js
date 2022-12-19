@@ -4,7 +4,6 @@ import RegistrationForm from '@/components/auth/RegistrationForm.vue';
 import AuthForm from '@/components/auth/AuthForm.vue';
 import RequestResetPassword from '@/components/auth/RequestResetPassword.vue';
 import ResetPassword from '@/components/auth/ResetPassword.vue';
-import DraggableList from '@/components/list/DraggableList.vue';
 import MainList from '@/components/list/MainList.vue';
 import SingleItem from '@/components/item/SingleItem.vue';
 
@@ -86,16 +85,6 @@ export const routes = [
     meta: {
       isLoginRequired: false,
       layout: 'WithSidebarLayout',
-    },
-  },
-  {
-    path: '/list/:id',
-    name: 'draggableList',
-    component: DraggableList,
-    meta: {
-      isLoginRequired: false,
-      layout: 'WithSidebarLayout',
-      transition: 'slide-fade',
     },
   },
   { 

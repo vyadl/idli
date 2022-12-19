@@ -2,7 +2,9 @@
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import ToggleSwitch from '@/components/formElements/ToggleSwitch.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { defaultVisualization } from '@/store/config';
 
@@ -11,7 +13,9 @@ export default {
     SectionCard,
     RadioCustom,
     CheckboxCustom,
+    ToggleSwitch,
     ButtonText,
+    PopupBox,
   },
   data: () => ({
     mainSortingOptions: {
@@ -43,6 +47,9 @@ export default {
     unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
+    ...mapGetters([
+      'isDraggableMode',
+    ]),
     ...mapGetters('visualization', [
       ...Object.keys(defaultVisualization),
     ]),
@@ -64,6 +71,14 @@ export default {
       if (this.unstructuredModes.includes(this.mode) && newSorting === 'custom') {
         this._setMode('list');
       }
+
+      if (newSorting !== 'custom') {
+        this._exitDraggableMode();
+      }
+
+      if (newSorting === 'shuffle') {
+        this.toggleShuffleTrigger();
+      }
     },
     mode: function modeHandler(newMode, oldMode) {
       if (this.unstructuredModes.includes(oldMode) && this.structuredModes.includes(newMode)) {
@@ -74,11 +89,19 @@ export default {
         && ['random', 'edges'].includes(this.listAlign)) {
         this._setListAlign('center');
       }
+
+      if (newMode !== 'list') {
+        this._exitDraggableMode();
+      }
     },
   },
   methods: {
     ...mapMutations('visualization', [
       'toggleShuffleTrigger',
+    ]),
+    ...mapActions([
+      '_exitDraggableMode',
+      '_toggleDraggableMode',
     ]),
     ...mapActions('visualization', [
       '_setSorting',
@@ -88,11 +111,6 @@ export default {
       '_toggleItemsOrder',
       '_resetVisualizationToDefault',
     ]),
-    openDraggebleList() {
-      // this.setIsDraggableMode(true);
-      this.$router.push({ name: 'draggableList' });
-      // this._setSorting('custom');
-    },
   },
 };
 </script>
@@ -104,35 +122,6 @@ export default {
       class="main-sorting"
     >
       <div class="buttons-container">
-        <ButtonText
-          text="change custom order manually"
-          style-type="underline"
-          @click="openDraggebleList"
-        />
-        <RadioCustom
-          v-for="sortingOption in mainSortingOptions"
-          :key="sortingOption.title"
-          :label="sortingOption.title"
-          :value="sortingOption.type"
-          :model-value="sorting"
-          name="sorting"
-          @change="_setSorting(sortingOption.type)"
-        />
-        <ButtonText
-          v-if="sorting === 'shuffled'"
-          class="randomize"
-          text="randomize!"
-          style-type="underline"
-          @click="toggleShuffleTrigger"
-        />
-      </div>
-    </SectionCard>
-    <hr
-      v-if="sorting !== 'shuffled'"
-      class="break-line"
-    >
-    <SectionCard v-if="sorting !== 'shuffled'">
-      <div class="buttons-container">
         <RadioCustom
           v-for="sortingOption in secondarySortingOptions"
           :key="sortingOption.title"
@@ -142,6 +131,51 @@ export default {
           name="sorting"
           @change="_setSorting(sortingOption.type)"
         />
+      </div>
+      <div class="buttons-container paired">
+        <RadioCustom
+          :label="mainSortingOptions.custom.title"
+          :value="mainSortingOptions.custom.type"
+          :model-value="sorting"
+          name="sorting"
+          @change="_setSorting(mainSortingOptions.custom.type)"
+        />
+        <div class="draggable-mode-section">
+          <ToggleSwitch
+            :is-checked="isDraggableMode"
+            title="reorder mode"
+            @change="_toggleDraggableMode"
+          />
+          <PopupBox
+            button-style-type="hint"
+            stop-propagation
+            position="lower-left"
+          >
+            <span>
+              Entering this mode, you will be able to sort your list manually by 
+              dragging and dropping items in the order you like. 
+              Note: all your filters and visualization will be reset.
+            </span>
+          </PopupBox>
+        </div>
+      </div>
+      <div class="buttons-container paired">
+        <RadioCustom
+          :label="mainSortingOptions.shuffled.title"
+          :value="mainSortingOptions.shuffled.type"
+          :model-value="sorting"
+          name="sorting"
+          @change="_setSorting(mainSortingOptions.shuffled.type)"
+        />
+        <div class="randomize-button-container">
+          <ButtonText
+            v-if="sorting === 'shuffled'"
+            text="randomize!"
+            style-type="underline"
+            size="small"
+            @click="toggleShuffleTrigger"
+          />
+        </div>
       </div>
       <CheckboxCustom
         label="reverse order"
@@ -203,25 +237,31 @@ export default {
     .main-sorting {
       margin-bottom: 0;
     }
+
     .buttons-container {
       position: relative;
       display: flex;
       flex-wrap: wrap;
       width: 100%;
       padding-top: 15px;
+
+      &.paired {
+        gap: 10px;
+        align-items: flex-start;
+        padding-top: 3px;
+      }
     }
-    .break-line {
-      margin: 0;
-      border: none;
-      border-bottom: 1px solid map-get($colors, 'black');
-      width: 50%;
+
+    .draggable-mode-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .randomize {
-      position: absolute;
-      right: 0;
-      bottom: 100%;
-      font-size: 11px;
+
+    .randomize-button-container {
+      height: 40px;
     }
+
     .footer {
       display: flex;
       justify-content: flex-end;

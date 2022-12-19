@@ -1,7 +1,10 @@
 <script>
+import DraggableList from '@/components/list/DraggableList.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
+import ToggleSwitch from '@/components/formElements/ToggleSwitch.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -14,9 +17,12 @@ import {
 
 export default {
   components: {
+    DraggableList,
     ListItem,
     ButtonText,
     InfoMessage,
+    ToggleSwitch,
+    PopupBox,
   },
   data() {
     return {
@@ -29,6 +35,7 @@ export default {
   computed: {
     ...mapGetters([
       'currentListItems',
+      'isDraggableMode',
     ]),
     ...mapGetters('auth', [
       'isLoggedIn',
@@ -96,6 +103,9 @@ export default {
       }
 
       return styles;
+    },
+    isDraggableModeSectionShown() {
+      return this.sorting === 'custom' && this.mode === 'list';
     },
   },
   watch: {
@@ -220,6 +230,7 @@ export default {
     ]),
     ...mapActions([
       '_setUnitsFromLocalStorage',
+      '_toggleDraggableMode',
     ]),
     ...mapActions('lists', [
       '_fetchListsForUser',
@@ -309,6 +320,28 @@ export default {
           {{ currentListObj.title }}
         </div>
         <div class="button-container">
+          <div
+            v-if="isDraggableModeSectionShown"
+            class="draggable-mode-section"
+          >
+            <ToggleSwitch
+              :is-checked="isDraggableMode"
+              title="reorder"
+              stop-propagation
+              @change="_toggleDraggableMode"
+            />
+            <PopupBox
+              button-style-type="hint"
+              stop-propagation
+              position="lower-center"
+            >
+              <span>
+                Entering this mode, you will be able to sort your list manually by 
+                dragging and dropping items in the order you like. 
+                Note: all your filters and visualization will be reset.
+              </span>
+            </PopupBox>
+          </div>
           <ButtonText
             v-if="sorting === 'shuffled'"
             text="randomize!"
@@ -328,34 +361,34 @@ export default {
         ]"
         :style="styles"
       >
-        <template v-if="mode === 'cards'">
-          <masonry-wall
-            :items="finalList"
-            :column-width="200"
-            :gap="20"
-          >
-            <template #default="{ item }">
-              <ListItem
-                :key="item?.id"
-                :item="item"
-                @click="fetchItemById"
-              />
-            </template>
-          </masonry-wall>
+        <template v-if="isDraggableMode">
+          <DraggableList :style="styles" />
         </template>
         <template v-else>
-          <ListItem
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-            @click="fetchItemById"
-          />
+          <template v-if="mode === 'cards'">
+            <masonry-wall
+              :items="finalList"
+              :column-width="200"
+              :gap="20"
+            >
+              <template #default="{ item }">
+                <ListItem
+                  :key="item?.id"
+                  :item="item"
+                  @click="fetchItemById"
+                />
+              </template>
+            </masonry-wall>
+          </template>
+          <template v-else>
+            <ListItem
+              v-for="item in finalList"
+              :key="item.id"
+              :item="item"
+              @click="fetchItemById"
+            />
+          </template>
         </template>
-        <!-- <template v-else>
-          <DraggableList>
-            <ListItem />
-          </DraggableList>
-        </template> -->
       </div>
     </div>
     <div
@@ -391,6 +424,13 @@ export default {
     .button-container {
       height: 30px;
       width: 100px;
+    }
+
+    .draggable-mode-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px 0 0;
     }
 
     .items-container {
@@ -439,6 +479,14 @@ export default {
     .message {
       padding-top: 50px;
       text-align: center;
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .main-list {
+      .items-container {
+        padding-top: 50px;
+      }
     }
   }
 </style>

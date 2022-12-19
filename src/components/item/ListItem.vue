@@ -4,6 +4,10 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   props: {
     item: Object,
+    bordered: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['click'],
   computed: {
@@ -106,7 +110,7 @@ export default {
   >
     <div 
       class="item-title"
-      :class="{ untitled: isUntitled }"
+      :class="{ untitled: isUntitled, bordered }"
     >
       {{ itemName }}
     </div>
@@ -138,6 +142,12 @@ export default {
 
       &.untitled{
         opacity: 0.5;
+      }
+
+      &.bordered {
+        padding: 10px 25px;
+        border: 1px solid map-get($colors, 'black');
+        font-size: 15px;
       }
     }
 
@@ -240,6 +250,12 @@ export default {
     }
 
     &.inverted-theme {
+      .item-title {
+        &.bordered {
+          border: 1px solid map-get($colors, 'white');
+        }
+      }
+
       .item-details {
         color: map-get($colors, 'gray-light');
       }
