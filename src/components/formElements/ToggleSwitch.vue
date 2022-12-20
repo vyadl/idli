@@ -31,7 +31,9 @@ export default {
       :stop-propagation="stopPropagation"
       :checked="isChecked"
     >
-    <span class="status" />
+    <div class="status">
+      {{ isChecked ? 'on' : 'off' }}
+    </div>
   </label>
 </template>
 
@@ -45,7 +47,9 @@ export default {
   border: 1px solid map-get($colors, 'gray-light');
   border-radius: 5px;
   cursor: pointer;
-  transition: 0.3s;
+  transition:
+    background-color 0.3s,
+    border 0.3s;
 
   &:hover {
     background-color: map-get($colors, 'white');
@@ -60,20 +64,16 @@ export default {
   }
 
   .status {
-    &:before {
-      content: "off";
-      display: block;
-      position: absolute;
-      bottom: 2px;
-      right: 0;
-      padding-right: 5px;
-      font-variant: small-caps;
-      font-weight: bold;
-      color: map-get($colors, 'gray-dark');
-      transition:
-        color 0.3s,
-        content 0.3s;
-    }
+    position: absolute;
+    bottom: 2px;
+    right: 0;
+    padding-right: 5px;
+    font-variant: small-caps;
+    font-weight: bold;
+    color: map-get($colors, 'gray-dark');
+    transition:
+      color 0.3s,
+      content 0.3s;
   }
 
   .input {
@@ -88,8 +88,7 @@ export default {
     background-color: map-get($colors, 'black');
     border: 1px solid map-get($colors, 'black');
 
-    .status:before {
-      content: "on";
+    .status {
       padding-right: 7px;
       color: map-get($colors, 'white');
     }
@@ -109,7 +108,7 @@ export default {
       border: 1px solid map-get($colors, 'gray-light');
     }
 
-    .status:before {
+    .status {
       color: map-get($colors, 'white');
     }
 
@@ -121,7 +120,7 @@ export default {
       background-color: map-get($colors, 'white');
       border: 1px solid map-get($colors, 'white');
 
-      .status:before {
+      .status {
         color: map-get($colors, 'black');
       }
 

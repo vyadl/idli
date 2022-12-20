@@ -1,12 +1,12 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import draggable from 'vuedraggable';
+import DraggableExternal from 'vuedraggable';
 import ListItem from '@/components/item/ListItem.vue';
 
 export default {
   components: {
     ListItem,
-    draggable,
+    DraggableExternal,
   },
   data() {
     return {
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <template>
-  <draggable
+  <DraggableExternal
     v-if="currentListItems"
     class="draggable-list"
     :class="`${globalTheme}-theme`"
@@ -65,7 +65,7 @@ export default {
         bordered
       />
     </template>
-  </draggable>
+  </DraggableExternal>
 </template>
 
 <style lang="scss">

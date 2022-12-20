@@ -171,11 +171,7 @@ export default {
     getters,
     rootGetters,
   }) {
-    const itemIds = [];
-    
-    rootGetters.currentListItems.forEach(item => {
-      itemIds.push(item.id);
-    });
+    const itemIds = rootGetters.currentListItems.map(item => item.id);
 
     return this.$config.axios
       .patch(

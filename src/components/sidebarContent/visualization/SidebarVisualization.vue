@@ -2,9 +2,8 @@
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
-import ToggleSwitch from '@/components/formElements/ToggleSwitch.vue';
+import DraggableSwitch from '@/components/list/DraggableSwitch.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { defaultVisualization } from '@/store/config';
 
@@ -13,9 +12,8 @@ export default {
     SectionCard,
     RadioCustom,
     CheckboxCustom,
-    ToggleSwitch,
+    DraggableSwitch,
     ButtonText,
-    PopupBox,
   },
   data: () => ({
     mainSortingOptions: {
@@ -101,7 +99,6 @@ export default {
     ]),
     ...mapActions([
       '_exitDraggableMode',
-      '_toggleDraggableMode',
     ]),
     ...mapActions('visualization', [
       '_setSorting',
@@ -117,10 +114,7 @@ export default {
 
 <template>
   <div class="sidebar-visualization">
-    <SectionCard 
-      title="sorting"
-      class="main-sorting"
-    >
+    <SectionCard title="sorting">
       <div class="buttons-container">
         <RadioCustom
           v-for="sortingOption in secondarySortingOptions"
@@ -140,24 +134,11 @@ export default {
           name="sorting"
           @change="_setSorting(mainSortingOptions.custom.type)"
         />
-        <div class="draggable-mode-section">
-          <ToggleSwitch
-            :is-checked="isDraggableMode"
-            title="reorder mode"
-            @change="_toggleDraggableMode"
-          />
-          <PopupBox
-            button-style-type="hint"
-            stop-propagation
-            position="lower-left"
-          >
-            <span>
-              Entering this mode, you will be able to sort your list manually by 
-              dragging and dropping items in the order you like. 
-              Note: all your filters and visualization will be reset.
-            </span>
-          </PopupBox>
-        </div>
+        <DraggableSwitch
+          title="reorder mode"
+          hint-position="lower-left"
+          stop-propagation
+        />
       </div>
       <div class="buttons-container paired">
         <RadioCustom
@@ -234,10 +215,6 @@ export default {
 
 <style lang="scss">
   .sidebar-visualization {
-    .main-sorting {
-      margin-bottom: 0;
-    }
-
     .buttons-container {
       position: relative;
       display: flex;
@@ -250,12 +227,6 @@ export default {
         align-items: flex-start;
         padding-top: 3px;
       }
-    }
-
-    .draggable-mode-section {
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
 
     .randomize-button-container {
