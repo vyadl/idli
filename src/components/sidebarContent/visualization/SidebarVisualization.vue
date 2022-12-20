@@ -2,6 +2,7 @@
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
+import DraggableSwitch from '@/components/list/DraggableSwitch.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { defaultVisualization } from '@/store/config';
@@ -11,6 +12,7 @@ export default {
     SectionCard,
     RadioCustom,
     CheckboxCustom,
+    DraggableSwitch,
     ButtonText,
   },
   data: () => ({
@@ -43,6 +45,9 @@ export default {
     unstructuredModes: ['cloud', 'stars'],
   }),
   computed: {
+    ...mapGetters([
+      'isDraggableMode',
+    ]),
     ...mapGetters('visualization', [
       ...Object.keys(defaultVisualization),
     ]),
@@ -64,6 +69,14 @@ export default {
       if (this.unstructuredModes.includes(this.mode) && newSorting === 'custom') {
         this._setMode('list');
       }
+
+      if (newSorting !== 'custom') {
+        this._exitDraggableMode();
+      }
+
+      if (newSorting === 'shuffle') {
+        this.toggleShuffleTrigger();
+      }
     },
     mode: function modeHandler(newMode, oldMode) {
       if (this.unstructuredModes.includes(oldMode) && this.structuredModes.includes(newMode)) {
@@ -74,11 +87,18 @@ export default {
         && ['random', 'edges'].includes(this.listAlign)) {
         this._setListAlign('center');
       }
+
+      if (newMode !== 'list') {
+        this._exitDraggableMode();
+      }
     },
   },
   methods: {
     ...mapMutations('visualization', [
       'toggleShuffleTrigger',
+    ]),
+    ...mapActions([
+      '_exitDraggableMode',
     ]),
     ...mapActions('visualization', [
       '_setSorting',
@@ -94,34 +114,7 @@ export default {
 
 <template>
   <div class="sidebar-visualization">
-    <SectionCard 
-      title="sorting"
-      class="main-sorting"
-    >
-      <div class="buttons-container">
-        <RadioCustom
-          v-for="sortingOption in mainSortingOptions"
-          :key="sortingOption.title"
-          :label="sortingOption.title"
-          :value="sortingOption.type"
-          :model-value="sorting"
-          name="sorting"
-          @change="_setSorting(sortingOption.type)"
-        />
-        <ButtonText
-          v-if="sorting === 'shuffled'"
-          class="randomize"
-          text="randomize!"
-          style-type="underline"
-          @click="toggleShuffleTrigger"
-        />
-      </div>
-    </SectionCard>
-    <hr
-      v-if="sorting !== 'shuffled'"
-      class="break-line"
-    >
-    <SectionCard v-if="sorting !== 'shuffled'">
+    <SectionCard title="sorting">
       <div class="buttons-container">
         <RadioCustom
           v-for="sortingOption in secondarySortingOptions"
@@ -132,6 +125,38 @@ export default {
           name="sorting"
           @change="_setSorting(sortingOption.type)"
         />
+      </div>
+      <div class="buttons-container paired">
+        <RadioCustom
+          :label="mainSortingOptions.custom.title"
+          :value="mainSortingOptions.custom.type"
+          :model-value="sorting"
+          name="sorting"
+          @change="_setSorting(mainSortingOptions.custom.type)"
+        />
+        <DraggableSwitch
+          title="reorder mode"
+          hint-position="lower-left"
+          stop-propagation
+        />
+      </div>
+      <div class="buttons-container paired">
+        <RadioCustom
+          :label="mainSortingOptions.shuffled.title"
+          :value="mainSortingOptions.shuffled.type"
+          :model-value="sorting"
+          name="sorting"
+          @change="_setSorting(mainSortingOptions.shuffled.type)"
+        />
+        <div class="randomize-button-container">
+          <ButtonText
+            v-if="sorting === 'shuffled'"
+            text="randomize!"
+            style-type="underline"
+            size="small"
+            @click="toggleShuffleTrigger"
+          />
+        </div>
       </div>
       <CheckboxCustom
         label="reverse order"
@@ -190,28 +215,24 @@ export default {
 
 <style lang="scss">
   .sidebar-visualization {
-    .main-sorting {
-      margin-bottom: 0;
-    }
     .buttons-container {
       position: relative;
       display: flex;
       flex-wrap: wrap;
       width: 100%;
       padding-top: 15px;
+
+      &.paired {
+        gap: 10px;
+        align-items: flex-start;
+        padding-top: 3px;
+      }
     }
-    .break-line {
-      margin: 0;
-      border: none;
-      border-bottom: 1px solid map-get($colors, 'black');
-      width: 50%;
+
+    .randomize-button-container {
+      height: 40px;
     }
-    .randomize {
-      position: absolute;
-      right: 0;
-      bottom: 100%;
-      font-size: 11px;
-    }
+
     .footer {
       display: flex;
       justify-content: flex-end;

@@ -1,6 +1,6 @@
 export default {
   visualization: {
-    sorting: 'dateCreated',
+    sorting: 'custom',
     mode: 'list',
     shuffleTrigger: false,
     listAlign: 'center',

@@ -1,4 +1,6 @@
 <script>
+import DraggableList from '@/components/list/DraggableList.vue';
+import DraggableSwitch from '@/components/list/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -14,6 +16,8 @@ import {
 
 export default {
   components: {
+    DraggableList,
+    DraggableSwitch,
     ListItem,
     ButtonText,
     InfoMessage,
@@ -29,6 +33,7 @@ export default {
   computed: {
     ...mapGetters([
       'currentListItems',
+      'isDraggableMode',
     ]),
     ...mapGetters('auth', [
       'isLoggedIn',
@@ -96,6 +101,9 @@ export default {
       }
 
       return styles;
+    },
+    isDraggableSwitchShown() {
+      return this.sorting === 'custom' && this.mode === 'list';
     },
   },
   watch: {
@@ -309,6 +317,12 @@ export default {
           {{ currentListObj.title }}
         </div>
         <div class="button-container">
+          <DraggableSwitch
+            v-if="isDraggableSwitchShown"
+            title="reorder"
+            hint-position="lower-center"
+            stop-propagation
+          />
           <ButtonText
             v-if="sorting === 'shuffled'"
             text="randomize!"
@@ -328,28 +342,33 @@ export default {
         ]"
         :style="styles"
       >
-        <template v-if="mode === 'cards'">
-          <masonry-wall
-            :items="finalList"
-            :column-width="200"
-            :gap="20"
-          >
-            <template #default="{ item }">
-              <ListItem
-                :key="item?.id"
-                :item="item"
-                @click="fetchItemById"
-              />
-            </template>
-          </masonry-wall>
+        <template v-if="isDraggableMode">
+          <DraggableList :style="styles" />
         </template>
         <template v-else>
-          <ListItem
-            v-for="item in finalList"
-            :key="item.id"
-            :item="item"
-            @click="fetchItemById"
-          />
+          <template v-if="mode === 'cards'">
+            <masonry-wall
+              :items="finalList"
+              :column-width="200"
+              :gap="20"
+            >
+              <template #default="{ item }">
+                <ListItem
+                  :key="item?.id"
+                  :item="item"
+                  @click="fetchItemById"
+                />
+              </template>
+            </masonry-wall>
+          </template>
+          <template v-else>
+            <ListItem
+              v-for="item in finalList"
+              :key="item.id"
+              :item="item"
+              @click="fetchItemById"
+            />
+          </template>
         </template>
       </div>
     </div>
@@ -384,8 +403,9 @@ export default {
     }
 
     .button-container {
+      display: flex;
+      align-items: flex-end;
       height: 30px;
-      width: 100px;
     }
 
     .items-container {
@@ -434,6 +454,14 @@ export default {
     .message {
       padding-top: 50px;
       text-align: center;
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .main-list {
+      .items-container {
+        padding-top: 50px;
+      }
     }
   }
 </style>

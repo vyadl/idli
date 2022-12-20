@@ -29,7 +29,7 @@ export default {
       default: 'right',
       validator(value) {
         return value
-          ? ['right', 'lower-left', 'upper-right', 'upper-center'].includes(value)
+          ? ['right', 'lower-left', 'upper-right', 'upper-center', 'lower-center'].includes(value)
           : true;
       },
     },
@@ -108,6 +108,11 @@ export default {
     &.lower-left {
       top: 25px;
       right: 0;
+    }
+
+    &.lower-center {
+      right: -100px;
+      top: 25px;
     }
 
     &.upper-right {

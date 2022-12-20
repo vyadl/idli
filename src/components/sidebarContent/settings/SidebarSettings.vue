@@ -86,6 +86,7 @@ export default {
 <template>
   <SectionCard
     class="sidebar-settings"
+    :class="`${globalTheme}-theme`"
     title="settings"
   >
     <div class="options-container">
@@ -175,20 +176,29 @@ export default {
     .options-container {
       margin-bottom: 20px;
     }
+
     .buttons-container {
       display: flex;
       justify-content: center;
       margin-bottom: 20px;
     }
+
     .about {
       padding-top: 50px;
       text-align: center;
     }
+    
     .hotkeys-desc {
       font-family: 'Courier';
       padding-left: 30px;
       font-size: 12px;
       color: map-get($colors, 'gray-dark');
+    }
+
+    &.inverted-theme {
+      .hotkeys-desc {
+        color: map-get($colors, 'gray-light');
+      }
     }
   }
 

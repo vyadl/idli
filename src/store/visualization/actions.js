@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { deleteFromQuery, changeQueryRespectingDefault } from '@/router/utils';
 import { defaultVisualization } from '@/store/config';
+import { dispatchFromRoot } from '@/store/utils';
 
 export default {
   _setSorting({ state, commit, dispatch }, sorting) {
@@ -22,6 +23,7 @@ export default {
     changeQueryRespectingDefault('align', align);
   },
   _toggleItemsOrder({ getters, commit }) {
+    dispatchFromRoot('_exitDraggableMode');
     commit('toggleItemsOrder');
     changeQueryRespectingDefault('isItemsOrderReversed', getters.isItemsOrderReversed);
   },

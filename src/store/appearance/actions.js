@@ -14,9 +14,7 @@ export default {
   _debouncedCheckAndSetIsMobileScreen({ dispatch }) {
     return debounce(
       SCREEN_SIZE_CHECK_DELAY,
-      async () => {
-        await dispatch('_checkAndSetIsMobileScreen');
-      },
+      dispatch('_checkAndSetIsMobileScreen'),
     );
   },
 };

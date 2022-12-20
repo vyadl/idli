@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-cycle
-import { deleteFromQuery } from '@/router/utils';
+import { deleteFromQuery, changeQuery } from '@/router/utils';
 
 const UNITS_AND_STORE_NAMES_ACCORDANCE = {
   settings: {
@@ -28,6 +28,23 @@ export default {
         commit(UNITS_AND_STORE_NAMES_ACCORDANCE[unit].mutation, JSON.parse(value));
       }
     });
+  },
+
+  // draggable view
+
+  _enterDraggableMode({ commit, dispatch }) {
+    commit('setIsDraggableMode', true);
+    dispatch('_resetCustomView');
+  },
+
+  _exitDraggableMode({ commit }) {
+    commit('setIsDraggableMode', false);
+  },
+
+  _toggleDraggableMode({ getters, dispatch }) {
+    dispatch(getters.isDraggableMode
+      ? '_exitDraggableMode'
+      : '_enterDraggableMode');
   },
 
   // reset views
