@@ -14,7 +14,7 @@ export default {
       type: String,
       default: 'bordered',
       validator(value) {
-        return value ? ['bordered', 'light'].includes(value) : true;
+        return value ? ['bordered'].includes(value) : true;
       },
     },
     buttonStyleType: {
@@ -111,11 +111,7 @@ export default {
     border: 1px solid map-get($colors, 'gray-light');
 
     &.bordered {
-      padding: 7px 12px;
-    }
-
-    &.light {
-      padding: 7px;
+      padding: 7px 10px;
     }
 
     &.right {

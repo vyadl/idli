@@ -213,7 +213,7 @@ export default {
     .exit-public-view-button,
     .auth-buttons {
       position: fixed;
-      top: 10px;
+      top: 35px;
       transform: translateX(-100%) translateX(-20px);
     }
 

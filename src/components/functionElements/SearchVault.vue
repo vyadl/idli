@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      '_searchVault',
+      '_searchInVault',
     ]),
     redirectToSearchResults() {
       this.$router.push({
@@ -44,7 +44,6 @@ export default {
     class="search-vault"
   >
     <PopupBox
-      popup-style-type="light"
       button-style-type="loupe"
       position="left"
       stop-propagation

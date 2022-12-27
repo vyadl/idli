@@ -51,7 +51,7 @@ export default {
 
   // search vault
 
-  _searchVault({ commit, dispatch }, value) {   
+  _searchInVault({ commit, dispatch }, value) {   
     commit('lists/setCurrentListId', null);
     commit('increaseExplicitRequestsNumber');
 

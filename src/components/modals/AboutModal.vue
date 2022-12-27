@@ -14,7 +14,7 @@ export default {
     :class="`${globalTheme}-theme`"
     name="aboutModal"
     title="about idli"
-    width="350"
+    :width="350"
   >
     <div>
       <div class="project-descr">

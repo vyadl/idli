@@ -202,15 +202,8 @@ export default {
     };
 
     try {
-      if (this.isLoggedIn) {
-        this._fetchListsForUser()
-          .then(() => {
-            if (this.$route.params.id) {
-              this._fetchListById({ id: this.$route.params.id, cancelToken: null });
-            }
-          });
-      } else if (this.$route.params.id) {
-        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+      if (this.$route.params.id) {
+        this._fetchListById({ id: this.$route.params.id, cancelToken: null });
       }
 
       handleQueryOnLoad(queryOptions, this.$route.query);

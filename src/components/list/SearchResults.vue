@@ -33,17 +33,13 @@ export default {
   watch: {
     searchValue() {
       this.setSearchResults(null);
-      this.searchVaultAndFindTextOnPage();
+      this.searchInVaultAndFindTextOnPage();
     },
   },
   created() {
-    if (!this.lists?.length) {
-      this._fetchListsForUser();
-    }
-
     const queryOptions = {
       searchValue: {
-        callback: this.searchVaultAndFindTextOnPage,
+        callback: this.searchInVaultAndFindTextOnPage,
       },
     };
 
@@ -59,14 +55,14 @@ export default {
       'setSearchResults',
     ]),
     ...mapActions([
-      '_searchVault',
+      '_searchInVault',
     ]),
     ...mapActions('lists', [
       '_fetchListsForUser',
       '_setListIdFromLocalStorage',
     ]),
-    searchVaultAndFindTextOnPage() {
-      this._searchVault(this.searchValue)
+    searchInVaultAndFindTextOnPage() {
+      this._searchInVault(this.searchValue)
         .then(() => {
           this.highlightResultText();
         });
@@ -75,46 +71,47 @@ export default {
       const resultUnits = document.querySelectorAll('.result-unit');
       const searchValueLowerCased = this.searchValue.toLowerCase();
       const searchValueLength = this.searchValue.length;
-      const searchValueRegex = new RegExp(`${this.searchValue}`, 'ig');
+      const newHTMLTagWrappers = ['<mark>', '</mark>'];
+      const newHTMLTagWrappersLength = newHTMLTagWrappers.join('').length;
 
       resultUnits.forEach(unit => {
         if (unit.innerText.toLowerCase().includes(searchValueLowerCased)) {
           const initialHTML = unit.innerHTML;
-          const initialHTMLLowerCased = unit.innerHTML.toLowerCase();
+          const initialHTMLLowerCased = initialHTML.toLowerCase();
 
-          const processedChunks = [];
+          let processedChunksString = '';
+          let extraSymbolsCount = 0;
 
-          let firstIndex = initialHTMLLowerCased.indexOf(searchValueLowerCased);
-          let lastIndex = firstIndex + searchValueLength;
-          let currentChunk = initialHTML.slice(0, lastIndex);
+          let startIndex = initialHTMLLowerCased.indexOf(searchValueLowerCased);
+          let endIndex = startIndex + searchValueLength;
+          let currentChunk = initialHTML.slice(0, endIndex);
 
           while (currentChunk.length >= searchValueLength) {
-            const originalCasedText = currentChunk.slice(firstIndex, lastIndex);
-            const newHTMLPiece = `<mark>${originalCasedText}</mark>`;
-            
-            const replacedChunk = currentChunk.replace(searchValueRegex, newHTMLPiece);
+            const originalCasedFoundText = currentChunk.slice(startIndex, endIndex);
+            const newHTMLPiece = newHTMLTagWrappers[0]
+              + originalCasedFoundText 
+              + newHTMLTagWrappers[1];
 
-            processedChunks.push(replacedChunk);
+            const replacedChunk = currentChunk.slice(0, startIndex) + newHTMLPiece;
 
-            const extraSymbolsCount = (newHTMLPiece.length - originalCasedText.length)
-              * processedChunks.length;
-            const processedChunksLength = processedChunks.join('').length;
-            const newBeginningIndex = processedChunksLength - extraSymbolsCount;
+            processedChunksString += replacedChunk;
+            extraSymbolsCount += newHTMLTagWrappersLength;
 
-            const remainingPart = initialHTMLLowerCased.slice(newBeginningIndex);
+            const newBeginningIndex = processedChunksString.length - extraSymbolsCount;
+            const remainingPartLowerCased = initialHTMLLowerCased.slice(newBeginningIndex);
 
-            firstIndex = remainingPart.indexOf(searchValueLowerCased);
-            lastIndex = firstIndex + searchValueLength;
+            startIndex = remainingPartLowerCased.indexOf(searchValueLowerCased);
 
-            currentChunk = initialHTML.slice(newBeginningIndex, newBeginningIndex + lastIndex);
-
-            if (firstIndex === -1) {
-              processedChunks.push(remainingPart);
-              currentChunk = '';
+            if (startIndex === -1) {
+              processedChunksString += remainingPartLowerCased;
+              break;
             }
+
+            endIndex = startIndex + searchValueLength;
+            currentChunk = initialHTML.slice(newBeginningIndex, newBeginningIndex + endIndex);
           }
 
-          unit.innerHTML = processedChunks.join('');
+          unit.innerHTML = processedChunksString;
         }
       });
     },
@@ -204,7 +201,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 30px;
-    padding: 10px 70px 50px;
+    padding: 10px 50px 50px;
     color: map-get($colors, 'black');
     font-size: 18px;
   }

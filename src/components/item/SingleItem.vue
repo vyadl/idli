@@ -34,10 +34,6 @@ export default {
   },
   async created() {
     try {
-      if (this.isLoggedIn) {
-        await this._fetchListsForUser();
-      }
-      
       this.item = await this._fetchItemById({
         id: this.$route.params.id,
         cancelToken: null,
