@@ -4,12 +4,12 @@ import { sidebarModesForViews } from '@/store/config';
 
 export default {
   _openSidebar({ getters, commit }, mode) {
-    const { 
-      sidebarModes: allowedModesForCurrentView,
+    const {
+      allowedSidebarModes,
       default: defaultModeForCurrentView,
     } = sidebarModesForViews[getters.currentSidebarView];
 
-    const isModeAllowed = allowedModesForCurrentView.includes(mode);
+    const isModeAllowed = allowedSidebarModes.includes(mode);
     
     commit('openSidebar');
     commit('changeSidebarMode', isModeAllowed ? mode : defaultModeForCurrentView);

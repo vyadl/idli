@@ -112,20 +112,13 @@ export default {
       `${globalTheme}-theme`,
       { active: edittingItemObj?.id === item.id },
     ]"
-    @click="_closeSidebar"
   >
     <CustomLink
       :to="{ name: 'list', params: { id: item.listId } }"
       title="Go to the list the item is from"
       class="link-to-parent-list"
     />
-    <div
-      class="item-container"
-      :class="{
-        'move-to-left': !isListUnderSidebar && isSidebarOpen,
-        parallax: isSidebarOpen,
-      }"
-    >
+    <div class="item-container">
       <div 
         class="item-title"
         @click.stop="setItemForEditting"
@@ -161,14 +154,6 @@ export default {
       gap: 20px;
       padding: 60px 0;
       text-align: center;
-
-      &.move-to-left {
-        margin-right: 280px;
-      }
-
-      &.parallax {
-        transform: translateX(-20px);
-      }
     }
 
     .item-title {

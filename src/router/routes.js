@@ -6,6 +6,7 @@ import RequestResetPassword from '@/components/auth/RequestResetPassword.vue';
 import ResetPassword from '@/components/auth/ResetPassword.vue';
 import MainList from '@/components/list/MainList.vue';
 import SingleItem from '@/components/item/SingleItem.vue';
+import SearchResults from '@/components/list/SearchResults.vue';
 
 export const routes = [
   { 
@@ -94,6 +95,16 @@ export const routes = [
     meta: {
       isLoginRequired: false,
       layout: 'WithSidebarLayout',
+    },
+  },
+  { 
+    path: '/search',
+    name: 'search',
+    component: SearchResults,
+    meta: {
+      isLoginRequired: true,
+      layout: 'WithSidebarLayout',
+      transition: 'slide-fade',
     },
   },
 ];

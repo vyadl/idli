@@ -2,8 +2,9 @@
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
-import DraggableSwitch from '@/components/list/DraggableSwitch.vue';
+import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { defaultVisualization } from '@/store/config';
 
@@ -14,6 +15,7 @@ export default {
     CheckboxCustom,
     DraggableSwitch,
     ButtonText,
+    InfoMessage,
   },
   data: () => ({
     mainSortingOptions: {
@@ -47,6 +49,9 @@ export default {
   computed: {
     ...mapGetters([
       'isDraggableMode',
+    ]),
+    ...mapGetters('lists', [
+      'currentListObj',
     ]),
     ...mapGetters('visualization', [
       ...Object.keys(defaultVisualization),
@@ -114,102 +119,107 @@ export default {
 
 <template>
   <div class="sidebar-visualization">
-    <SectionCard title="sorting">
-      <div class="buttons-container">
-        <RadioCustom
-          v-for="sortingOption in secondarySortingOptions"
-          :key="sortingOption.title"
-          :label="sortingOption.title"
-          :value="sortingOption.type"
-          :model-value="sorting"
-          name="sorting"
-          @change="_setSorting(sortingOption.type)"
-        />
-      </div>
-      <div class="buttons-container paired">
-        <RadioCustom
-          :label="mainSortingOptions.custom.title"
-          :value="mainSortingOptions.custom.type"
-          :model-value="sorting"
-          name="sorting"
-          @change="_setSorting(mainSortingOptions.custom.type)"
-        />
-        <DraggableSwitch
-          title="reorder mode"
-          hint-position="lower-left"
-          stop-propagation
-        />
-      </div>
-      <div class="buttons-container paired">
-        <RadioCustom
-          :label="mainSortingOptions.shuffled.title"
-          :value="mainSortingOptions.shuffled.type"
-          :model-value="sorting"
-          name="sorting"
-          @change="_setSorting(mainSortingOptions.shuffled.type)"
-        />
-        <div class="randomize-button-container">
-          <ButtonText
-            v-if="sorting === 'shuffled'"
-            text="randomize!"
-            style-type="underline"
-            size="small"
-            @click="toggleShuffleTrigger"
+    <div v-if="currentListObj">
+      <SectionCard title="sorting">
+        <div class="buttons-container">
+          <RadioCustom
+            v-for="sortingOption in secondarySortingOptions"
+            :key="sortingOption.title"
+            :label="sortingOption.title"
+            :value="sortingOption.type"
+            :model-value="sorting"
+            name="sorting"
+            @change="_setSorting(sortingOption.type)"
           />
         </div>
-      </div>
-      <CheckboxCustom
-        label="reverse order"
-        style-type="initial"
-        :value="false"
-        :model-value="isItemsOrderReversed"
-        @update:model-value="_toggleItemsOrder"
-      />
-    </SectionCard>
-    <SectionCard title="mode">
-      <div class="buttons-container">
-        <RadioCustom
-          v-for="title in modeTitles"
-          :key="title"
-          :label="title"
-          :value="title"
-          :model-value="mode"
-          name="mode"
-          @change="_setMode(title)"
+        <div class="buttons-container paired">
+          <RadioCustom
+            :label="mainSortingOptions.custom.title"
+            :value="mainSortingOptions.custom.type"
+            :model-value="sorting"
+            name="sorting"
+            @change="_setSorting(mainSortingOptions.custom.type)"
+          />
+          <DraggableSwitch
+            title="reorder mode"
+            hint-position="lower-left"
+            stop-propagation
+          />
+        </div>
+        <div class="buttons-container paired">
+          <RadioCustom
+            :label="mainSortingOptions.shuffled.title"
+            :value="mainSortingOptions.shuffled.type"
+            :model-value="sorting"
+            name="sorting"
+            @change="_setSorting(mainSortingOptions.shuffled.type)"
+          />
+          <div class="randomize-button-container">
+            <ButtonText
+              v-if="sorting === 'shuffled'"
+              text="randomize!"
+              style-type="underline"
+              size="small"
+              @click="toggleShuffleTrigger"
+            />
+          </div>
+        </div>
+        <CheckboxCustom
+          label="reverse order"
+          style-type="initial"
+          :value="false"
+          :model-value="isItemsOrderReversed"
+          @update:model-value="_toggleItemsOrder"
         />
-      </div>
-      <div
-        v-if="listAlignTitles.length"
-        class="buttons-container"
-      >
-        <RadioCustom
-          v-for="title in listAlignTitles"
-          :key="title"
-          :label="title"
-          small
-          :value="title"
-          :model-value="listAlign"
-          name="listAlign"
-          @change="_setListAlign(title)"
+      </SectionCard>
+      <SectionCard title="mode">
+        <div class="buttons-container">
+          <RadioCustom
+            v-for="title in modeTitles"
+            :key="title"
+            :label="title"
+            :value="title"
+            :model-value="mode"
+            name="mode"
+            @change="_setMode(title)"
+          />
+        </div>
+        <div
+          v-if="listAlignTitles.length"
+          class="buttons-container"
+        >
+          <RadioCustom
+            v-for="title in listAlignTitles"
+            :key="title"
+            :label="title"
+            small
+            :value="title"
+            :model-value="listAlign"
+            name="listAlign"
+            @change="_setListAlign(title)"
+          />
+        </div>
+        <CheckboxCustom
+          v-if="['list', 'cards'].includes(mode)"
+          label="show items' details"
+          style-type="initial"
+          :value="false"
+          :model-value="areItemDetailsShown"
+          @update:model-value="_toggleItemDetailsShowingMode"
         />
-      </div>
-      <CheckboxCustom
-        v-if="['list', 'cards'].includes(mode)"
-        label="show items' details"
-        style-type="initial"
-        :value="false"
-        :model-value="areItemDetailsShown"
-        @update:model-value="_toggleItemDetailsShowingMode"
-      />
-    </SectionCard>
-    <footer class="footer">
-      <ButtonText
-        v-if="isResetButtonActive"
-        text="reset all to default"
-        style-type="underline"
-        @click="_resetVisualizationToDefault"
-      />
-    </footer>
+      </SectionCard>
+      <footer class="footer">
+        <ButtonText
+          v-if="isResetButtonActive"
+          text="reset all to default"
+          style-type="underline"
+          @click="_resetVisualizationToDefault"
+        />
+      </footer>
+    </div>
+    <div v-else>
+      <InfoMessage message="to manage visualization you should choose or create list" />
+    </div>
   </div>
 </template>
 

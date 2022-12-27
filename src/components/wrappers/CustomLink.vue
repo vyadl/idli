@@ -9,7 +9,7 @@ export default {
 };
 </script>
 
-<template lang="">
+<template>
   <span class="custom-link">
     <router-link
       :to="to"

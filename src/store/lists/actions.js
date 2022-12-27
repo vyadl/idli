@@ -24,7 +24,7 @@ export default {
 
         const routerValues = router.currentRoute._value;
 
-        if (routerValues.name !== 'item' && !routerValues.params.id) {
+        if (routerValues.name === 'list' && !routerValues.params.id) {
           dispatch('_setListIdFromLocalStorage');
         }
       })
@@ -151,14 +151,14 @@ export default {
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
+        commit('setCurrentListObj', responseList);
+        commitFromRoot('setCurrentListItems', responseList.items);
 
         return responseList;
       })
       .catch(error => {
         notifyAboutError(error);
         dispatch('_fetchListsForUser');
-
-        throw getErrorMessage(error.response.data);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -186,8 +186,6 @@ export default {
       .catch(error => {
         notifyAboutError(error);
         dispatch('_fetchListsForUser');
-
-        throw getErrorMessage(error.response.data);
       });
   },
 
@@ -279,8 +277,36 @@ export default {
         if (!cancelToken) {
           notifyAboutError(error);
         }
+      });
+  },
 
-        throw error;
+  _addTagForListAndItem({ dispatch, getters, rootGetters }, { listObj, tagTitle }) {
+    return dispatch('_updateList', listObj)
+      .then(() => {
+        const newTagObj = getters.currentListTags?.find(tag => tag.title === tagTitle);
+
+        commitFromRoot('updateItemFieldLocally', {
+          field: 'tags',
+          value: [...rootGetters['items/edittingItemObj'].tags, newTagObj.id],
+        });
+
+        dispatchFromRoot('items/_saveItemOnServer');
+      });
+  },
+
+  _addCategoryForListAndItem({ dispatch, getters }, { listObj, categoryTitle }) {
+    return dispatch('_updateList', listObj)
+      .then(() => {
+        const newCategoryObj = getters.currentListCategories?.find(
+          category => category.title === categoryTitle,
+        );
+
+        commitFromRoot('updateItemFieldLocally', {
+          field: 'category',
+          value: newCategoryObj.id,
+        });
+
+        dispatchFromRoot('items/_saveItemOnServer');
       });
   },
 

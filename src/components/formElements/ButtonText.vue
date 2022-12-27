@@ -124,7 +124,7 @@ export default {
 
       &.smallest {
         padding: 3px 0;
-        font-size: 12px;
+        font-size: 11px;
         color: map-get($colors, 'gray-light');
 
         &:hover {
@@ -149,6 +149,10 @@ export default {
 
       &.small {
         font-size: 13px;
+      }
+
+      &.smallest {
+        font-size: 11px;
       }
 
       &.active,

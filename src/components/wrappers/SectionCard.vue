@@ -11,7 +11,7 @@ export default {
     size: {
       type: String,
       validator(value) {
-        return value ? ['small'].includes(value) : true;
+        return value ? ['small', 'big'].includes(value) : true;
       },
     },
     position: {
@@ -50,12 +50,20 @@ export default {
       width: fit-content;
       padding: 10px 0;
       font-size: map-get($text, 'big-title-font-size');
+
       &.centered {
         margin: 0 auto 10px;
       }
+
       &.small {
         font-size: map-get($text, 'small-title-font-size');
       }
+
+      &.big {
+        font-size: 24px;
+        line-height: 1.6;
+      }
+
       &.caps {
         font-variant-caps: all-small-caps;
         letter-spacing: 1.8px;

@@ -1,4 +1,5 @@
 import store from '@/store/index'; // eslint-disable-line import/no-cycle
+import { getErrorMessage } from '@/backendInteraction/serverErrors';
 import {
   GENERATED_ITEM_TITLE_MAX_LENGTH,
   settingsValuesForMobileScreen,
@@ -13,12 +14,11 @@ export function dispatchFromRoot(actionName, payload = null) {
 }
 
 export function notifyAboutError(error) {
-  const isResponseMessage = error.response?.data?.message && error.response.status !== 500;
+  const errorMessage = error.response.status === 500 
+    ? 'Something went wrong'
+    : getErrorMessage(error.response?.data);
 
-  store.commit('setNotification', { 
-    text: isResponseMessage
-      ? error.response.data.message : 'Something went wrong',
-  });
+  store.commit('setNotification', { text: errorMessage });
 }
 
 export function generateTitleFromDetails(details) {

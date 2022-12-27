@@ -33,6 +33,9 @@ export default {
     ...mapGetters('items', [
       'edittingItemObj',
     ]),
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+    ]),
     currentListCategoriesTitles() {
       return this.currentListCategories.map(category => category.title);
     },
@@ -57,7 +60,7 @@ export default {
       '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
-      '_updateList',
+      '_addCategoryForListAndItem',
     ]),
     changeCategory(categoryTitle) {
       this.requestHandling.errorMessage = '';
@@ -80,34 +83,21 @@ export default {
         this.requestHandling.errorMessage = 'filter with this name already exists';
       } else {
         const { listId } = this.edittingItemObj;
-        const listObj = this.lists.find(list => list.id === listId);
 
         this.addCategoryToListLocally({ listId, categoryTitle });
         this.requestHandling.isRequestProcessing = true;
 
-        const request = this._updateList(listObj);
+        const listObj = this.lists.find(list => list.id === listId);
+        const request = this._addCategoryForListAndItem({ listObj, categoryTitle });
 
-        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
-          .then(() => {
-            this.changeCategory(categoryTitle);
-          });
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
       }
     },
     removeCategory() {
       this.updateItemCategory(null);
     },
     updateItemCategory(value) {
-      const { title, details } = this.edittingItemObj;
-
       this.updateItemFieldLocally({ field: 'category', value });
-
-      if (!title && details) {
-        this.updateItemFieldLocally({
-          field: 'title',
-          value: generateTitleFromDetails(details),
-        });
-      }
-
       this._saveItemOnServer();
     },
   },
@@ -123,6 +113,7 @@ export default {
       :value="currentItemCategoryTitle"
       placeholder="choose category"
       no-options-text="no categories - start typing to add new"
+      :small-text="isItemFormInSidebar"
       :options="currentListCategoriesTitles"
       :disabled="requestHandling.isRequestProcessing"
       @select="category => changeCategory(category)"

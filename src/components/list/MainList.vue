@@ -1,6 +1,6 @@
 <script>
 import DraggableList from '@/components/list/DraggableList.vue';
-import DraggableSwitch from '@/components/list/DraggableSwitch.vue';
+import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -34,6 +34,7 @@ export default {
     ...mapGetters([
       'currentListItems',
       'isDraggableMode',
+      'searchResults',
     ]),
     ...mapGetters('auth', [
       'isLoggedIn',
@@ -306,7 +307,6 @@ export default {
   <div
     class="main-list"
     :class="`${globalTheme}-theme`"
-    @click="_closeSidebar"
   >
     <div v-if="currentListObj">
       <header
@@ -333,13 +333,7 @@ export default {
       </header>
       <div
         class="items-container"
-        :class="[
-          `${mode}-mode`,
-          {
-            'move-to-left': !isListUnderSidebar && isSidebarOpen,
-            parallax: isSidebarOpen,
-          },
-        ]"
+        :class="[`${mode}-mode`]"
         :style="styles"
       >
         <template v-if="isDraggableMode">
@@ -410,9 +404,6 @@ export default {
 
     .items-container {
       padding: 30px 50px 50px;
-      transition:
-        margin 0.5s,
-        transform 0.5s;
 
       &.list-mode {
         display: flex;
@@ -434,14 +425,6 @@ export default {
         width: 100%;
         min-height: 100vh;
         padding: 0;
-      }
-
-      &.move-to-left {
-        margin-right: 280px;
-      }
-
-      &.parallax {
-        transform: translateX(-20px);
       }
     }
 

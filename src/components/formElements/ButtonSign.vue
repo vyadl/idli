@@ -5,7 +5,7 @@ export default {
       type: String,
       validator(value) {
         return value 
-          ? ['hint', 'info', 'dots', 'cross', 'arrow', 'plus'].includes(value)
+          ? ['hint', 'info', 'dots', 'cross', 'arrow', 'plus', 'loupe'].includes(value)
           : true;
       },
     },
@@ -216,6 +216,13 @@ export default {
         content: '?';
         font-size: 9px;
       }
+    }
+
+    &.loupe {
+      background-image: url('/icons/search.svg');
+      background-size: contain;
+      width: 30px;
+      height: 30px;
     }
 
     &.inverted-theme {

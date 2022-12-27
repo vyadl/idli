@@ -10,6 +10,7 @@ export default {
       default: 'text',
     },
     modelValue: String,
+    icon: String,
     disabled: {
       type: Boolean,
       default: false,
@@ -22,7 +23,7 @@ export default {
       type: String,
       default: '',
     },
-    withIcon: {
+    withAdditionalElement: {
       type: Boolean,
       default: false,
     },
@@ -57,7 +58,7 @@ export default {
     class="input-custom"
     :class="[
       `${globalTheme}-theme`,
-      { disabled, 'with-icon': withIcon },
+      { disabled, 'with-additional-element': withAdditionalElement },
     ]"
   >
     <div class="label">
@@ -73,6 +74,16 @@ export default {
       :placeholder="placeholder"
       @input="input($event.target.value)"
     >
+    <div
+      v-if="icon"
+      class="icon-wrapper"
+    >
+      <img 
+        :src="icon"
+        alt="icon"
+        class="icon"
+      >
+    </div>
   </label>
 </template>
 
@@ -90,7 +101,7 @@ export default {
       }
     }
 
-    &.with-icon {
+    &.with-additional-element {
       .input {
         padding-right: 30px;
       }
@@ -120,6 +131,7 @@ export default {
     .icon {
       display: block;
       position: absolute;
+      width: 15px;
       top: 50%;
       transform: translate(-20%, -140%);
       right: 0;

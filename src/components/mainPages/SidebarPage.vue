@@ -8,6 +8,7 @@ import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
+import SearchVault from '@/components/functionElements/SearchVault.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -22,6 +23,7 @@ export default {
     ButtonText,
     ButtonSign,
     CustomLink,
+    SearchVault,
   },
   computed: {
     ...mapGetters('appearance', [
@@ -52,7 +54,8 @@ export default {
       return this.isLoggedIn 
         && this.currentListObj 
         && !this.isFocusOnList 
-        && this.isOwnerView;
+        && this.isOwnerView
+        && this.$route.name === 'list';
     },
   },
   mounted() {
@@ -129,6 +132,9 @@ export default {
         title="new item"
         @click="createNewItem"
       />
+    </div>
+    <div class="search-button">
+      <SearchVault />
     </div>
     <div
       v-if="isPublicView && isLoggedIn"
@@ -291,6 +297,12 @@ export default {
       transform: translateX(-100%) translateX(-5px);
     }
 
+    .search-button {
+      position: fixed;
+      top: 55px;
+      transform: translateX(-100%) translateX(-10px);
+    }
+
     &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
@@ -327,6 +339,10 @@ export default {
 
       .add-item-button {
         top: 70px;
+      }
+
+      .search-button {
+        top: 120px;
       }
 
       .sidebar-buttons {
