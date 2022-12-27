@@ -3,6 +3,7 @@ import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
@@ -20,6 +21,7 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
+    ButtonSign,
     InfoMessage,
   },
   data() {
@@ -42,6 +44,7 @@ export default {
     ...mapGetters('lists', [
       'lists',
       'currentListObj',
+      'isOwnerView',
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
@@ -67,6 +70,11 @@ export default {
       'isSidebarOpen',
       'sidebarMode',
     ]),
+    isAddItemPossible() {
+      return this.currentListObj 
+        && !this.isFocusOnList 
+        && this.isOwnerView;
+    },
     styles() {
       let styles = {};
 
@@ -104,7 +112,9 @@ export default {
       return styles;
     },
     isDraggableSwitchShown() {
-      return this.sorting === 'custom' && this.mode === 'list';
+      return this.sorting === 'custom'
+        && this.mode === 'list'
+        && this.isOwnerView;
     },
   },
   watch: {
@@ -236,6 +246,7 @@ export default {
     ]),
     ...mapActions('items', [
       '_fetchItemById',
+      '_addNewItemPlaceholder',
     ]),
     ...mapActions('filters', [
       '_filterList',
@@ -330,6 +341,17 @@ export default {
             @click="toggleShuffleTrigger"
           />
         </div>
+        <div
+          v-if="isAddItemPossible"
+          class="add-item-button"
+        >
+          <ButtonSign
+            style-type="plus"
+            title="new item"
+            stop-propagation
+            @click="_addNewItemPlaceholder"
+          />
+        </div>
       </header>
       <div
         class="items-container"
@@ -402,8 +424,12 @@ export default {
       height: 30px;
     }
 
+    .add-item-button {
+      padding: 15px 15px 15px 0;
+    }
+
     .items-container {
-      padding: 30px 50px 50px;
+      padding: 10px 50px 50px;
 
       &.list-mode {
         display: flex;
@@ -437,14 +463,6 @@ export default {
     .message {
       padding-top: 50px;
       text-align: center;
-    }
-  }
-
-  @media #{breakpoints.$s-media} {
-    .main-list {
-      .items-container {
-        padding-top: 50px;
-      }
     }
   }
 </style>

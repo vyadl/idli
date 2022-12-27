@@ -99,13 +99,32 @@ export default {
         font-size: 13px;
       }
 
-      &.active,
-      &:hover {
+      &.smallest {
+        padding: 0 5px;
+        font-size: 11px;
+        border-width: 1px;
+      }
+
+      &.active {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
+        border-color: map-get($colors, 'black');
+
+        &:hover {
+          background-color: map-get($colors, 'gray-dark');
+          border-color: map-get($colors, 'gray-dark');
+          color: map-get($colors, 'white');
+        }
+      }
+
+      &:hover {
+        background-color: map-get($colors, 'white');
+        border-color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'gray-light');
       }
 
       &:disabled {
+        color: map-get($colors, 'gray-light');
         border-color: map-get($colors, 'gray-light');
       }
     }
@@ -198,10 +217,22 @@ export default {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
 
-        &.active,
-        &:hover {
+        &.active {
           background-color: map-get($colors, 'white');
           color: map-get($colors, 'black');
+          border-color: map-get($colors, 'white');
+
+          &:hover {
+            background-color: map-get($colors, 'gray-light');
+            border-color: map-get($colors, 'gray-light');
+            color: map-get($colors, 'black');
+          }
+        }
+
+        &:hover {
+          background-color: map-get($colors, 'black');
+          border-color: map-get($colors, 'gray-dark');
+          color: map-get($colors, 'gray-dark');
         }
 
         &:disabled {

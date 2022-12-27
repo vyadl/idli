@@ -78,7 +78,12 @@ export default {
   }
 
   &-placeholder {
+    font-size: 14px;
     color: map-get($colors, 'gray-light');
+  }
+
+  &-search {
+    font-size: 14px;
   }
 
   &-tags {
@@ -111,6 +116,8 @@ export default {
   }
 
   &-option {
+    font-size: 14px;
+
     &.is-selected {
       background: map-get($colors, 'black');
 

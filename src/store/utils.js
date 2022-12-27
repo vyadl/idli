@@ -14,7 +14,7 @@ export function dispatchFromRoot(actionName, payload = null) {
 }
 
 export function notifyAboutError(error) {
-  const errorMessage = error.response.status === 500 
+  const errorMessage = error.response?.status === 500 
     ? 'Something went wrong'
     : getErrorMessage(error.response?.data);
 

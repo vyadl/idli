@@ -9,6 +9,14 @@ export default {
       type: String,
       default: 'text',
     },
+    styleType: {
+      type: String,
+      validator(value) {
+        return value 
+          ? ['unbordered'].includes(value)
+          : true;
+      },
+    },
     modelValue: String,
     icon: String,
     disabled: {
@@ -59,6 +67,7 @@ export default {
     :class="[
       `${globalTheme}-theme`,
       { disabled, 'with-additional-element': withAdditionalElement },
+      styleType,
     ]"
   >
     <div class="label">
@@ -101,9 +110,18 @@ export default {
       }
     }
 
+    &.unbordered {
+      margin-bottom: 0;
+
+      .input {
+        padding: 0;
+        border: none;
+      }
+    }
+
     &.with-additional-element {
       .input {
-        padding-right: 30px;
+        padding-right: 45px;
       }
     }
 
@@ -155,6 +173,10 @@ export default {
         &:focus {
           border-color: map-get($colors, 'white');
         }
+      }
+
+      .icon {
+        filter: invert(100%);
       }
     }
   }

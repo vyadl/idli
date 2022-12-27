@@ -62,7 +62,7 @@ export default {
               :text="option.title"
               class="profile-button"
               style-type="underline"
-              size="smallest"
+              :size="option.mode === 'current' ? 'medium' : 'smallest'"
               @click="logOut(option.mode)"
             />
           </div>

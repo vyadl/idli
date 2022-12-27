@@ -56,10 +56,6 @@ export function initHotkeys() {
 function createNewItem() {
   if (store.getters['lists/isUserOwnsCurrentList']) {
     store.dispatch('items/_addNewItemPlaceholder');
-
-    store.getters['settings/isItemFormInSidebar']
-      ? store.dispatch('sidebar/_openSidebar', 'item')
-      : store.commit('setModalNameToShow', 'itemModal');
   }
 }
 

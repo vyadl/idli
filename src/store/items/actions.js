@@ -66,6 +66,10 @@ export default {
 
     commitFromRoot('addItem', itemWithTemporaryId);
     dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+
+    rootGetters['settings/isItemFormInSidebar']
+      ? dispatchFromRoot('sidebar/_openSidebar', 'item')
+      : commitFromRoot('setModalNameToShow', 'itemModal');
   },
 
   _saveItemOnServer({ dispatch, getters }) {

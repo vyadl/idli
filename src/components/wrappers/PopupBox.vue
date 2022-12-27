@@ -107,17 +107,15 @@ export default {
     position: absolute;
     z-index: 100;
     width: 200px;
+    background-color: map-get($colors, 'white');
+    border: 1px solid map-get($colors, 'gray-light');
 
     &.bordered {
       padding: 7px 12px;
-      background-color: map-get($colors, 'white');
-      border: 1px solid map-get($colors, 'gray-light');
     }
 
     &.light {
-      padding: 0 5px;
-      background-color: map-get($colors, 'white');
-      box-shadow: 0 0 2px 2px map-get($colors, 'white');
+      padding: 7px;
     }
 
     &.right {
@@ -126,7 +124,7 @@ export default {
     }
 
     &.left {
-      bottom: -15px;
+      bottom: -5px;
       right: 130%;
     }
 
@@ -151,7 +149,6 @@ export default {
     }
 
     &.informational {
-      line-height: 1.7;
       overflow-wrap: break-word;
       color: map-get($colors, 'gray-dark');
       font-size: 12px;

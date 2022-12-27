@@ -69,11 +69,11 @@ export const logoutOptions = [
     mode: 'current',
   },
   {
-    title: 'finish all sessions',
+    title: 'log out from all devices',
     mode: 'all',
   },
   {
-    title: 'finish all sessions except current',
+    title: 'log out from all devices except this one',
     mode: 'allExceptCurrent',
   },
 ];

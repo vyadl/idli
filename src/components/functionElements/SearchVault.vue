@@ -52,15 +52,16 @@ export default {
       <form @submit.prevent="redirectToSearchResults">
         <InputCustom
           v-model="searchValue"
+          style-type="unbordered"
           with-additional-element
-          placeholder="enter full word(s)"
+          placeholder="search in all your lists"
         />
         <ButtonText
           class="find-button"
           text="find"
-          style-type="line"
           size="smallest"
           type="submit"
+          :disabled="!searchValue"
         />
       </form>
     </PopupBox>
@@ -73,8 +74,8 @@ export default {
 
   .find-button {
     position: absolute;
-    right: 7px;
-    bottom: 17px;
+    right: 5px;
+    bottom: 5px;
   }
 }
 </style>

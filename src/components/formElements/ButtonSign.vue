@@ -199,6 +199,10 @@ export default {
         color: map-get($colors, 'gray-dark');
         transform: translate(-50%, -50%);
       }
+
+      &:hover {
+        filter: invert(50%);
+      }
     }
 
     &.info {
@@ -210,19 +214,24 @@ export default {
     }
 
     &.hint {
-      width: 12px;
-      height: 12px;
+      width: 15px;
+      height: 15px;
       &::before {
         content: '?';
-        font-size: 9px;
+        font-size: 10px;
       }
     }
 
     &.loupe {
-      background-image: url('/icons/search.svg');
+      background-image: url('/icons/loupe.svg');
       background-size: contain;
-      width: 30px;
-      height: 30px;
+      width: 20px;
+      height: 20px;
+      transition: filter 0.2s;
+
+      &:hover {
+        filter: invert(40%);
+      }
     }
 
     &.inverted-theme {
@@ -279,6 +288,14 @@ export default {
         
         &::before {
           color: map-get($colors, 'gray-light');
+        }
+      }
+
+      &.loupe {
+        filter: invert(100%);
+
+        &:hover {
+          filter: invert(60%);
         }
       }
     }

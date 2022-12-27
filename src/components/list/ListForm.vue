@@ -203,6 +203,7 @@ export default {
 <template>
   <form
     class="list-form"
+    :class="`${globalTheme}-theme`"
     @submit.prevent="edittingListObj ? updateList() : addList()"
   >
     <InputCustom
@@ -439,6 +440,23 @@ export default {
       font-size: 13px;
       line-height: 1.7;
       color: map-get($colors, 'gray-light');
+    }
+
+    &.inverted-theme {
+      .referring-unit,
+      .public-view-link {
+        color: map-get($colors, 'gray-light');
+      }
+
+      .untitled-item,
+      .stats  {
+        color: map-get($colors, 'gray-dark');
+      }
+
+      .tags,
+      .categories {
+        border-color: map-get($colors, 'gray-dark');
+      }
     }
   }
 

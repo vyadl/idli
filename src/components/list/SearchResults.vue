@@ -193,7 +193,6 @@ export default {
 
   .results-columns {
     display: grid;
-    text-align: center;
 
     &.two-columns {
       grid-template-columns: repeat(2, 1fr);
@@ -204,14 +203,16 @@ export default {
   .result-items {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: 10px 10px 50px;
+    gap: 30px;
+    padding: 10px 70px 50px;
     color: map-get($colors, 'black');
+    font-size: 18px;
   }
 
   .item-details {
     padding: 10px 0;
     color: map-get($colors, 'gray-dark');
+    font-size: 14px;
   }
 
   .message {

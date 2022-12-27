@@ -28,14 +28,24 @@ export default {
       'lists',
       'currentListId',
       'edittingListObj',
+      'currentListObj',
+      'isOwnerView',
     ]),
     sortedLists() {
       return sortByDate(this.lists, 'updatedAt'); 
+    },
+    isAddItemPossible() {
+      return this.currentListObj 
+        && this.isOwnerView
+        && this.$route.name === 'list';
     },
   },
   methods: {
     ...mapMutations([
       'decreaseExplicitRequestsNumber',
+    ]),
+    ...mapActions('items', [
+      '_addNewItemPlaceholder',
     ]),
     ...mapActions('lists', [
       '_fetchListById',
@@ -108,12 +118,21 @@ export default {
           @click="fetchListById(list.id)"
         />
       </div>
-      <ButtonSign
-        style-type="plus"
-        title="new list"
-        :disabled="requestHandling.isRequestProcessing"
-        @click="openListModal"
-      />
+      <div class="buttons-container">
+        <ButtonText
+          text="add list"
+          size="small"
+          :disabled="requestHandling.isRequestProcessing"
+          @click="openListModal"
+        />
+        <ButtonText
+          v-if="isAddItemPossible"
+          text="add item"
+          size="small"
+          :disabled="requestHandling.isRequestProcessing"
+          @click="_addNewItemPlaceholder"
+        />
+      </div>
     </div>
     <TestData />
   </SectionCard>
@@ -159,6 +178,12 @@ export default {
       &.active {
         border-color: map-get($colors, 'black');
       }
+    }
+
+    .buttons-container {
+      display: flex;
+      gap: 10px;
+      padding-top: 30px;
     }
 
     &.inverted-theme {
