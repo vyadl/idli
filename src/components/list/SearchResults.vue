@@ -88,8 +88,8 @@ export default {
 
           while (currentChunk.length >= searchValueLength) {
             const originalCasedFoundText = currentChunk.slice(startIndex, endIndex);
-            const newHTMLPiece = htmlWrappers[0] + originalCasedFoundText + htmlWrappers[1];
-            const replacedChunk = currentChunk.slice(0, startIndex) + newHTMLPiece;
+            const newHtmlPiece = htmlWrappers[0] + originalCasedFoundText + htmlWrappers[1];
+            const replacedChunk = currentChunk.slice(0, startIndex) + newHtmlPiece;
 
             processedChunksString += replacedChunk;
             extraSymbolsCount += htmlWrappersLength;
