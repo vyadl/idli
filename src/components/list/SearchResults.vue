@@ -71,34 +71,31 @@ export default {
       const resultUnits = document.querySelectorAll('.result-unit');
       const searchValueLowerCased = this.searchValue.toLowerCase();
       const searchValueLength = this.searchValue.length;
-      const newHTMLTagWrappers = ['<mark>', '</mark>'];
-      const newHTMLTagWrappersLength = newHTMLTagWrappers.join('').length;
+      const htmlWrappers = ['<mark>', '</mark>'];
+      const htmlWrappersLength = htmlWrappers.join('').length;
 
       resultUnits.forEach(unit => {
         if (unit.innerText.toLowerCase().includes(searchValueLowerCased)) {
-          const initialHTML = unit.innerHTML;
-          const initialHTMLLowerCased = initialHTML.toLowerCase();
+          const initialHtml = unit.innerHTML;
+          const initialHtmlLowerCased = initialHtml.toLowerCase();
 
           let processedChunksString = '';
           let extraSymbolsCount = 0;
 
-          let startIndex = initialHTMLLowerCased.indexOf(searchValueLowerCased);
+          let startIndex = initialHtmlLowerCased.indexOf(searchValueLowerCased);
           let endIndex = startIndex + searchValueLength;
-          let currentChunk = initialHTML.slice(0, endIndex);
+          let currentChunk = initialHtml.slice(0, endIndex);
 
           while (currentChunk.length >= searchValueLength) {
             const originalCasedFoundText = currentChunk.slice(startIndex, endIndex);
-            const newHTMLPiece = newHTMLTagWrappers[0]
-              + originalCasedFoundText 
-              + newHTMLTagWrappers[1];
-
+            const newHTMLPiece = htmlWrappers[0] + originalCasedFoundText + htmlWrappers[1];
             const replacedChunk = currentChunk.slice(0, startIndex) + newHTMLPiece;
 
             processedChunksString += replacedChunk;
-            extraSymbolsCount += newHTMLTagWrappersLength;
+            extraSymbolsCount += htmlWrappersLength;
 
             const newBeginningIndex = processedChunksString.length - extraSymbolsCount;
-            const remainingPartLowerCased = initialHTMLLowerCased.slice(newBeginningIndex);
+            const remainingPartLowerCased = initialHtmlLowerCased.slice(newBeginningIndex);
 
             startIndex = remainingPartLowerCased.indexOf(searchValueLowerCased);
 
@@ -108,7 +105,7 @@ export default {
             }
 
             endIndex = startIndex + searchValueLength;
-            currentChunk = initialHTML.slice(newBeginningIndex, newBeginningIndex + endIndex);
+            currentChunk = initialHtml.slice(newBeginningIndex, newBeginningIndex + endIndex);
           }
 
           unit.innerHTML = processedChunksString;
