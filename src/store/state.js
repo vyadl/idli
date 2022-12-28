@@ -5,6 +5,7 @@ export default {
     time: null,
     text: '',
   },
+  searchResults: null,
   modalNameToShow: '',
   confirmationModalTitle: '',
   explicitRequestsNumber: 0,

@@ -70,6 +70,14 @@ export function handleQueryOnLoad(queryOptions, currentQuery) {
   });
 }
 
+export function deleteExtraQuery(queryOptions, currentQuery) {
+  const availableQuery = new Set(Object.keys(queryOptions));
+
+  const queryToDelete = Object.keys(currentQuery).filter(key => !availableQuery.has(key));
+
+  deleteFromQuery(queryToDelete);
+}
+
 function getDefaultValue(optionsObj, option) {
   return optionsObj[option].default;
 }

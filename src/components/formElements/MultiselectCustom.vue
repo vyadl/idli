@@ -1,9 +1,9 @@
 <script>
-import Multiselect from '@vueform/multiselect';
+import MultiselectExternal from '@vueform/multiselect';
 
 export default {
   components: {
-    Multiselect,
+    MultiselectExternal,
   },
   props: {
     value: [Array, String],
@@ -11,6 +11,7 @@ export default {
     placeholder: String,
     noOptionsText: String,
     disabled: Boolean,
+    smallText: Boolean,
     mode: {
       type: String,
       default: 'single',
@@ -48,8 +49,11 @@ export default {
 </script>
 
 <template>
-  <Multiselect
-    :class="`${globalTheme}-theme`"
+  <MultiselectExternal
+    :class="[
+      `${globalTheme}-theme`,
+      { 'small-text': smallText },
+    ]"
     :value="value"
     :mode="mode"
     :placeholder="placeholder"
@@ -74,7 +78,12 @@ export default {
   }
 
   &-placeholder {
+    font-size: 14px;
     color: map-get($colors, 'gray-light');
+  }
+
+  &-search {
+    font-size: 14px;
   }
 
   &-tags {
@@ -87,6 +96,9 @@ export default {
     color: map-get($colors, 'white');
     font-size: 13px;
     font-weight: normal;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
 
     &.is-disabled {
       background: map-get($colors, 'gray-light');
@@ -99,13 +111,29 @@ export default {
     }
   }
 
+  &-tags-search-wrapper {
+    padding-top: 15px;
+  }
+
   &-option {
+    font-size: 14px;
+
     &.is-selected {
       background: map-get($colors, 'black');
 
       &.is-pointed,
       &.is-disabled {
         background: map-get($colors, 'gray-dark');
+      }
+    }
+  }
+
+  &.small-text {
+    font-size: 12px;
+
+    .multiselect {
+      &-option {
+        font-size: 12px;
       }
     }
   }

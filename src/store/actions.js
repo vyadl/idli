@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-cycle
-import { deleteFromQuery, changeQuery } from '@/router/utils';
+import { deleteFromQuery } from '@/router/utils';
+import { notifyAboutError } from '@/store/utils';
+import { getErrorMessage } from '@/backendInteraction/serverErrors';
 
 const UNITS_AND_STORE_NAMES_ACCORDANCE = {
   settings: {
@@ -45,6 +47,32 @@ export default {
     dispatch(getters.isDraggableMode
       ? '_exitDraggableMode'
       : '_enterDraggableMode');
+  },
+
+  // search vault
+
+  _searchInVault({ commit, dispatch }, value) {   
+    commit('lists/setCurrentListId', null);
+    commit('increaseExplicitRequestsNumber');
+
+    return this.$config.axios
+      .get(
+        `${this.$config.apiBasePath}search/${value}`,
+      )
+      .then(({ data: responseList }) => {
+        commit('setSearchResults', responseList);
+
+        return responseList;
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatch('_fetchListsForUser');
+
+        throw getErrorMessage(error.response.data);
+      })
+      .finally(() => {
+        commit('decreaseExplicitRequestsNumber');
+      });
   },
 
   // reset views

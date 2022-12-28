@@ -8,7 +8,6 @@ export default {
     && !rootGetters['lists/isPublicView'],
 
   itemPublicView: (state, getters, rootState, rootGetters) => !rootGetters['auth/isLoggedIn']
-    && !!rootGetters['items/currentItemObj']
     && router.currentRoute._value.name === 'item',
 
   listPublicView: (state, getters, rootState, rootGetters) => (

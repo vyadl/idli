@@ -10,11 +10,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    popupStyleType: {
+      type: String,
+      default: 'bordered',
+      validator(value) {
+        return value ? ['bordered'].includes(value) : true;
+      },
+    },
     buttonStyleType: {
       type: String,
       default: 'hint',
       validator(value) {
-        return value ? ['hint', 'info', 'dots'].includes(value) : true;
+        return value ? ['hint', 'info', 'dots', 'loupe'].includes(value) : true;
       },
     },
     contentType: {
@@ -29,7 +36,8 @@ export default {
       default: 'right',
       validator(value) {
         return value
-          ? ['right', 'lower-left', 'upper-right', 'upper-center', 'lower-center'].includes(value)
+          ? ['right', 'left', 'lower-left', 'upper-right', 'upper-center', 'lower-center']
+            .includes(value)
           : true;
       },
     },
@@ -78,7 +86,12 @@ export default {
       <div
         v-if="isShown"
         class="popup-content"
-        :class="[ contentType, position, `${globalTheme}-theme` ]"
+        :class="[
+          popupStyleType,
+          contentType,
+          position,
+          `${globalTheme}-theme`,
+        ]"
       >
         <slot />
       </div>
@@ -93,16 +106,22 @@ export default {
   .popup-content {
     position: absolute;
     z-index: 100;
-    padding: 7px 12px;
     width: 200px;
     background-color: map-get($colors, 'white');
     border: 1px solid map-get($colors, 'gray-light');
-    line-height: 1.7;
-    overflow-wrap: break-word;
+
+    &.bordered {
+      padding: 7px 10px;
+    }
 
     &.right {
       top: 0;
       left: 25px;
+    }
+
+    &.left {
+      bottom: -5px;
+      right: 130%;
     }
 
     &.lower-left {
@@ -126,6 +145,7 @@ export default {
     }
 
     &.informational {
+      overflow-wrap: break-word;
       color: map-get($colors, 'gray-dark');
       font-size: 12px;
     }

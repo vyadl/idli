@@ -59,9 +59,13 @@ export default {
 
     this._setUserFromLocalStorage();
     this._setUnitsFromLocalStorage(['settings']);
-    this._fetchTestLists();
 
     initHotkeys();
+
+    if (this.isLoggedIn) {
+      this._fetchTestLists();
+      this._fetchListsForUser();
+    }
 
     const queryOptions = {
       sidebar: {
@@ -100,6 +104,7 @@ export default {
     ]),
     ...mapActions('lists', [
       '_fetchTestLists',
+      '_fetchListsForUser',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',

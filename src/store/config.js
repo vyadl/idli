@@ -16,17 +16,26 @@ export const defaultVisualization = {
   isItemsOrderReversed: false,
 };
 
+const sidebarButtonsForViews = {
+  loggedInView: ['filters', 'visualization', 'lists', 'settings', 'bin'],
+  itemPublicView: ['settings'],
+  listPublicView: ['filters', 'visualization', 'settings'],
+};
+
 export const sidebarModesForViews = {
   loggedInView: {
-    sidebarModes: ['filters', 'visualization', 'lists', 'settings', 'bin'],
+    sidebarModes: sidebarButtonsForViews.loggedInView,
+    allowedSidebarModes: ['item', ...sidebarButtonsForViews.loggedInView],
     default: 'lists',
   },
   itemPublicView: {
-    sidebarModes: ['settings'],
+    sidebarModes: sidebarButtonsForViews.itemPublicView,
+    allowedSidebarModes: ['item', ...sidebarButtonsForViews.itemPublicView],
     default: 'settings',
   },
   listPublicView: {
-    sidebarModes: ['filters', 'visualization', 'settings'],
+    sidebarModes: sidebarButtonsForViews.listPublicView,
+    allowedSidebarModes: ['item', ...sidebarButtonsForViews.listPublicView],
     default: 'settings',
   },
 };
@@ -60,11 +69,11 @@ export const logoutOptions = [
     mode: 'current',
   },
   {
-    title: 'finish all sessions',
+    title: 'log out from all devices',
     mode: 'all',
   },
   {
-    title: 'finish all sessions except current',
+    title: 'log out from all devices except this one',
     mode: 'allExceptCurrent',
   },
 ];

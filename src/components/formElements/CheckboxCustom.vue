@@ -121,29 +121,35 @@ export default {
         background-color: map-get($colors, 'white');
         font-size: 14px;
         transition:
-          background-color 0.3s 0.05s,
-          color 0.2s 0.05s;
+          background-color 0.2s,
+          color 0.2s,
+          border-color 0.2s;
 
         &.disabled {
-          &.checked {
-            background-color: map-get($colors, 'gray-light');
-          }
-
           border-color: map-get($colors, 'gray-light');
           background-color: map-get($colors, 'transparent');
           color: map-get($colors, 'gray-light');
+
+          &.checked {
+            background-color: map-get($colors, 'gray-light');
+          }
         }
 
         &.checked {
           background-color: map-get($colors, 'black');
+          border-color: map-get($colors, 'black');
           color: map-get($colors, 'white');
+
           &:hover {
-            background-color: map-get($colors, 'gray-dark');
+            background-color: map-get($colors, 'gray-light');
+            border-color: map-get($colors, 'gray-light');
+            color: map-get($colors, 'white');
           }
         }
+
         &:hover {
-          background-color: map-get($colors, 'gray-light');
-          color: map-get($colors, 'white');
+          border-color: map-get($colors, 'gray-light');
+          color: map-get($colors, 'gray-light');
         }
       }
     }
@@ -209,19 +215,29 @@ export default {
           color: map-get($colors, 'white');
 
           &.disabled {
-            &.checked {
-              background-color: map-get($colors, 'gray-dark');
-            }
-
             border-color: map-get($colors, 'gray-dark');
             background-color: map-get($colors, 'transparent');
             color: map-get($colors, 'gray-dark');
+
+            &.checked {
+              background-color: map-get($colors, 'gray-dark');
+            }
           }
 
-          &.checked,
-          &:hover {
+          &.checked {
             background-color: map-get($colors, 'white');
             color: map-get($colors, 'black');
+
+            &:hover {
+              background-color: map-get($colors, 'gray-dark');
+              border-color: map-get($colors, 'gray-dark');
+              color: map-get($colors, 'black');
+            }
+          }
+
+          &:hover {
+            border-color: map-get($colors, 'gray-dark');
+            color: map-get($colors, 'gray-dark');
           }
         }
       }

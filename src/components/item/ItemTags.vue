@@ -26,11 +26,15 @@ export default {
     ...mapGetters('lists', [
       'lists',
       'currentListTags',
+      'currentListObj',
       'currentListCategories',
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
       'currentItemTags',
+    ]),
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
     ]),
     currentListTagsTitles() {
       return this.currentListTags.map(tag => tag.title);
@@ -52,7 +56,7 @@ export default {
       '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
-      '_updateList',
+      '_addTagForListAndItem',
     ]),
     addTag(tagTitle) {
       this.requestHandling.errorMessage = '';
@@ -73,17 +77,14 @@ export default {
         this.requestHandling.errorMessage = 'filter with this name already exists';
       } else {
         const { listId } = this.edittingItemObj;
-        const listObj = this.lists.find(list => list.id === listId);
 
         this.addTagToListLocally({ listId, tagTitle });
         this.requestHandling.isRequestProcessing = true;
 
-        const request = this._updateList(listObj);
+        const listObj = this.lists.find(list => list.id === listId);
+        const request = this._addTagForListAndItem({ listObj, tagTitle });
 
-        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
-          .then(() => {
-            this.addTag(tagTitle);
-          });
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
       }
     },
     deleteTag(tagTitle) {
@@ -101,17 +102,7 @@ export default {
       this.updateItemTags(tagsArrayCopy);
     },
     updateItemTags(value) {
-      const { title, details } = this.edittingItemObj;
-
       this.updateItemFieldLocally({ field: 'tags', value });
-
-      if (!title && details) {
-        this.updateItemFieldLocally({
-          field: 'title',
-          value: generateTitleFromDetails(details),
-        });
-      }
-
       this._saveItemOnServer();
     },
   },
@@ -128,6 +119,7 @@ export default {
       mode="tags"
       placeholder="add tags"
       no-options-text="no tags - start typing to add new"
+      :small-text="isItemFormInSidebar"
       :options="currentListTagsTitles"
       :can-clear="false"
       :disabled="requestHandling.isRequestProcessing"

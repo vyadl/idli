@@ -8,6 +8,7 @@ import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
+import SearchVault from '@/components/functionElements/SearchVault.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -22,6 +23,7 @@ export default {
     ButtonText,
     ButtonSign,
     CustomLink,
+    SearchVault,
   },
   computed: {
     ...mapGetters('appearance', [
@@ -32,9 +34,7 @@ export default {
     ]),
     ...mapGetters('lists', [
       'isUserOwnsCurrentList',
-      'currentListObj',
       'isPublicView',
-      'isOwnerView',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -47,12 +47,6 @@ export default {
     ]),
     sidebarModes() {
       return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
-    },
-    isAddItemPossible() {
-      return this.isLoggedIn 
-        && this.currentListObj 
-        && !this.isFocusOnList 
-        && this.isOwnerView;
     },
   },
   mounted() {
@@ -68,9 +62,6 @@ export default {
     ...mapActions('lists', [
       '_setCurrentListView',
     ]),
-    ...mapActions('items', [
-      '_addNewItemPlaceholder',
-    ]),
     ...mapActions('sidebar', [
       '_openSidebar',
       '_closeSidebar',
@@ -82,9 +73,6 @@ export default {
 
       return this.isMobileScreen ? 'brick' : 'bordered';
     },
-    openItemModal() {
-      this.$vfm.show('itemModal');
-    },
     exitPublicView() {
       this._setCurrentListView('owner');
     },
@@ -92,10 +80,6 @@ export default {
       this.isSidebarOpen
         ? this._closeSidebar()
         : this._openSidebar(this.sidebarMode);
-    },
-    createNewItem() {
-      this._addNewItemPlaceholder();
-      this.isItemFormInSidebar ? this._openSidebar('item') : this.openItemModal();
     },
     scrollSidebarToTop() {
       this.$refs.sidebarContent.scroll({
@@ -120,15 +104,10 @@ export default {
       class="edge-move-catcher"
     />
     <div
-      v-if="isAddItemPossible"
-      class="add-item-button"
+      v-if="!isPublicView"
+      class="search-button"
     >
-      <ButtonSign
-        style-type="plus"
-        size="big"
-        title="new item"
-        @click="createNewItem"
-      />
+      <SearchVault />
     </div>
     <div
       v-if="isPublicView && isLoggedIn"
@@ -234,7 +213,7 @@ export default {
     .exit-public-view-button,
     .auth-buttons {
       position: fixed;
-      top: 10px;
+      top: 35px;
       transform: translateX(-100%) translateX(-20px);
     }
 
@@ -285,10 +264,10 @@ export default {
       transform: translateX(-100%);
     }
 
-    .add-item-button {
+    .search-button {
       position: fixed;
-      top: 5px;
-      transform: translateX(-100%) translateX(-5px);
+      top: 50px;
+      transform: translateX(-100%) translateX(-10px);
     }
 
     &.inverted-theme {
@@ -325,8 +304,8 @@ export default {
         }
       }
 
-      .add-item-button {
-        top: 70px;
+      .search-button {
+        top: 80px;
       }
 
       .sidebar-buttons {

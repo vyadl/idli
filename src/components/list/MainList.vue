@@ -1,8 +1,9 @@
 <script>
 import DraggableList from '@/components/list/DraggableList.vue';
-import DraggableSwitch from '@/components/list/DraggableSwitch.vue';
+import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
@@ -20,6 +21,7 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
+    ButtonSign,
     InfoMessage,
   },
   data() {
@@ -34,6 +36,7 @@ export default {
     ...mapGetters([
       'currentListItems',
       'isDraggableMode',
+      'searchResults',
     ]),
     ...mapGetters('auth', [
       'isLoggedIn',
@@ -41,6 +44,7 @@ export default {
     ...mapGetters('lists', [
       'lists',
       'currentListObj',
+      'isOwnerView',
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
@@ -66,6 +70,11 @@ export default {
       'isSidebarOpen',
       'sidebarMode',
     ]),
+    isAddItemPossible() {
+      return this.currentListObj 
+        && !this.isFocusOnList 
+        && this.isOwnerView;
+    },
     styles() {
       let styles = {};
 
@@ -103,7 +112,9 @@ export default {
       return styles;
     },
     isDraggableSwitchShown() {
-      return this.sorting === 'custom' && this.mode === 'list';
+      return this.sorting === 'custom'
+        && this.mode === 'list'
+        && this.isOwnerView;
     },
   },
   watch: {
@@ -191,15 +202,8 @@ export default {
     };
 
     try {
-      if (this.isLoggedIn) {
-        this._fetchListsForUser()
-          .then(() => {
-            if (this.$route.params.id) {
-              this._fetchListById({ id: this.$route.params.id, cancelToken: null });
-            }
-          });
-      } else if (this.$route.params.id) {
-        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+      if (this.$route.params.id) {
+        this._fetchListById({ id: this.$route.params.id, cancelToken: null });
       }
 
       handleQueryOnLoad(queryOptions, this.$route.query);
@@ -235,6 +239,7 @@ export default {
     ]),
     ...mapActions('items', [
       '_fetchItemById',
+      '_addNewItemPlaceholder',
     ]),
     ...mapActions('filters', [
       '_filterList',
@@ -306,7 +311,6 @@ export default {
   <div
     class="main-list"
     :class="`${globalTheme}-theme`"
-    @click="_closeSidebar"
   >
     <div v-if="currentListObj">
       <header
@@ -330,16 +334,21 @@ export default {
             @click="toggleShuffleTrigger"
           />
         </div>
+        <div
+          v-if="isAddItemPossible"
+          class="add-item-button"
+        >
+          <ButtonSign
+            style-type="plus"
+            title="new item"
+            stop-propagation
+            @click="_addNewItemPlaceholder"
+          />
+        </div>
       </header>
       <div
         class="items-container"
-        :class="[
-          `${mode}-mode`,
-          {
-            'move-to-left': !isListUnderSidebar && isSidebarOpen,
-            parallax: isSidebarOpen,
-          },
-        ]"
+        :class="[`${mode}-mode`]"
         :style="styles"
       >
         <template v-if="isDraggableMode">
@@ -408,11 +417,12 @@ export default {
       height: 30px;
     }
 
+    .add-item-button {
+      padding: 15px 15px 15px 0;
+    }
+
     .items-container {
-      padding: 30px 50px 50px;
-      transition:
-        margin 0.5s,
-        transform 0.5s;
+      padding: 10px 50px 50px;
 
       &.list-mode {
         display: flex;
@@ -435,14 +445,6 @@ export default {
         min-height: 100vh;
         padding: 0;
       }
-
-      &.move-to-left {
-        margin-right: 280px;
-      }
-
-      &.parallax {
-        transform: translateX(-20px);
-      }
     }
 
     &.inverted-theme {
@@ -454,14 +456,6 @@ export default {
     .message {
       padding-top: 50px;
       text-align: center;
-    }
-  }
-
-  @media #{breakpoints.$s-media} {
-    .main-list {
-      .items-container {
-        padding-top: 50px;
-      }
     }
   }
 </style>

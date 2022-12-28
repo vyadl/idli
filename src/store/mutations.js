@@ -67,4 +67,10 @@ export default {
     state.currentListItems = state.currentListItems
       .filter(item => item.temporaryId !== temporaryId);
   },
+
+  // search
+  
+  setSearchResults(state, results) {
+    state.searchResults = results;
+  },
 };

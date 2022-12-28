@@ -44,7 +44,7 @@ export default {
       :type="inputType"
       :model-value="modelValue"
       required
-      with-icon
+      with-additional-element
       @input="input"
     />
     <div class="eye-button">

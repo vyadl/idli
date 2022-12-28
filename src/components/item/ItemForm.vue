@@ -146,7 +146,6 @@ export default {
       }
     });
 
-    this.setEdittingItemIndex(null);
     this.setCurrentItemObj(null);
   },
   methods: {
@@ -164,6 +163,7 @@ export default {
     ]),
     ...mapActions('lists', [
       '_fetchListById',
+      '_setListIdFromLocalStorage',
     ]),
     ...mapActions('items', [
       '_saveItemOnServer',
@@ -203,7 +203,10 @@ export default {
 
       let newIndex = null;
 
-      if (this.isItemFormInSidebar && item.temporaryId) {
+      if (this.$route.name === 'item') {
+        this._closeSidebar();
+        this.$router.push({ name: 'list', params: { id: item.listId } });
+      } else if (this.isItemFormInSidebar && item.temporaryId) {
         this._closeSidebar();
       } else if (this.isItemFormInSidebar) {
         this.$emit('scrollSidebarToTop');

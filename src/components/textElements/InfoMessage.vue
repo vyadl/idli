@@ -25,6 +25,7 @@ export default {
     padding: 5px 0;
     font-size: 12px;
     color: map-get($colors, 'gray-light');
+    
     &.big {
       font-size: 18px;
     }

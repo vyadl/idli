@@ -66,9 +66,22 @@ export default {
 
     commitFromRoot('addItem', itemWithTemporaryId);
     dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+
+    rootGetters['settings/isItemFormInSidebar']
+      ? dispatchFromRoot('sidebar/_openSidebar', 'item')
+      : commitFromRoot('setModalNameToShow', 'itemModal');
   },
 
   _saveItemOnServer({ dispatch, getters }) {
+    const { title, details } = getters.edittingItemObj;
+
+    if (!title && details) {
+      commitFromRoot('updateItemFieldLocally', {
+        field: 'title',
+        value: generateTitleFromDetails(details),
+      });
+    }
+
     dispatch(
       getters.edittingItemObj.temporaryId
         ? '_addItemOnServer'
@@ -80,6 +93,8 @@ export default {
   _addItemOnServer({ rootGetters, commit, dispatch }, { item, cancelToken }) {
     const listId = rootGetters['lists/currentListObj'].id;
     const title = item.title || generateTitleFromDetails(item.details);
+
+    commitFromRoot('updateItemFieldLocally', { field: 'title', title });
 
     this.$config.axios
       .post(
@@ -106,6 +121,7 @@ export default {
 
     if (!title && details) {
       title = generateTitleFromDetails(item.details);
+      commitFromRoot('updateItemFieldLocally', { field: 'title', title });
     }
 
     this.$config.axios
