@@ -151,8 +151,6 @@ export default {
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
-        commit('setCurrentListObj', responseList);
-        commitFromRoot('setCurrentListItems', responseList.items);
 
         return responseList;
       })
@@ -239,7 +237,7 @@ export default {
   _setListForEditting({ commit, dispatch }, list) {
     commit('setListForEditting', list);
 
-    if (list) {
+    if (list?.id) {
       dispatch('_refreshListForEdittingForm', { id: list.id, cancelToken: null });
     }
   },

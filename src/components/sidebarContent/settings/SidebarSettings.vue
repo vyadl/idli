@@ -60,10 +60,11 @@ export default {
         },
         R: {
           desription: 'R — randomize list',
-          notAvailable: this.itemPublicView,
+          notAvailable: this.itemPublicView || this.$route.name === 'search',
         },
         F: {
           desription: 'F — switch focus mode',
+          notAvailable: this.$route.name === 'search',
         },
         S: {
           desription: 'S — show/hide sidebar',

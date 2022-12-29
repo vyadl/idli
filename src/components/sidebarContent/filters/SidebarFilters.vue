@@ -44,15 +44,15 @@ export default {
 </script>
 
 <template>
-  <div class="sidebar-filters">
+  <div
+    class="sidebar-filters"
+    :class="`${globalTheme}-theme`"
+  >
     <div v-if="currentListObj">
       <SectionCard title="search in list">
         <SearchField />
       </SectionCard>
-      <SectionCard
-        :class="`${globalTheme}-theme`"
-        title="filters"
-      >
+      <SectionCard title="filters">
         <SectionCard
           class="filters-title"
           title="tags"

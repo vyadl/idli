@@ -82,7 +82,7 @@ export default {
       <CheckboxCustom
         v-model="logoutFromAllDevices"
         style-type="initial"
-        label="Log out from all devices"
+        label="log out from all devices except this one"
       />
     </div>
     <div class="error-container">

@@ -2,11 +2,13 @@
 import { mapGetters, mapActions } from 'vuex';
 import ToggleSwitch from '@/components/formElements/ToggleSwitch.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
+import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 
 export default {
   components: {
     ToggleSwitch,
     PopupBox,
+    CheckboxCustom,
   },
   props: {
     hintPosition: {
@@ -15,6 +17,14 @@ export default {
       validator(value) {
         return value
           ? ['right', 'lower-left', 'upper-right', 'upper-center', 'lower-center'].includes(value)
+          : true;
+      },
+    },
+    styleType: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['checkbox'].includes(value)
           : true;
       },
     },
@@ -38,8 +48,20 @@ export default {
 </script>
 
 <template>
-  <div class="draggable-switch">
+  <div
+    class="draggable-switch"
+    :class="styleType"
+  >
+    <CheckboxCustom
+      v-if="styleType === 'checkbox'"
+      :label="title"
+      style-type="initial"
+      size="small"
+      :model-value="isDraggableMode"
+      @update:model-value="_toggleDraggableMode"
+    />
     <ToggleSwitch
+      v-else
       :is-checked="isDraggableMode"
       :title="title"
       :stop-propagation="stopPropagation"
@@ -64,5 +86,10 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+
+  &.checkbox {
+    align-items: flex-start;
+    padding-top: 2px;
+  }
 }
 </style>

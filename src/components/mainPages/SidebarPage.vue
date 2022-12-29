@@ -266,8 +266,8 @@ export default {
 
     .search-button {
       position: fixed;
-      top: 50px;
-      transform: translateX(-100%) translateX(-10px);
+      top: 15px;
+      transform: translateX(-100%) translateX(-15px);
     }
 
     &.inverted-theme {

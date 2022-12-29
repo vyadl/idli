@@ -6,7 +6,6 @@ import {
   mapActions,
   mapMutations,
 } from 'vuex';
-import { generateTitleFromDetails } from '@/store/utils';
 import { handleRequestStatuses } from '@/utils/misc';
 
 export default {

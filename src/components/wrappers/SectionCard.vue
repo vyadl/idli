@@ -18,7 +18,7 @@ export default {
       type: String,
       default: 'centered',
       validator(value) {
-        return value ? ['centered'].includes(value) : true;
+        return value ? ['centered', 'left'].includes(value) : true;
       },
     },
   },
@@ -53,6 +53,10 @@ export default {
 
       &.centered {
         margin: 0 auto 10px;
+      }
+
+      &.left {
+        text-align: left;
       }
 
       &.small {

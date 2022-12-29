@@ -136,6 +136,14 @@ export default {
       color: map-get($colors, 'gray-dark');
       transition: color 0.2s;
 
+      &:hover {
+        color: map-get($colors, 'gray-light');
+      }
+
+      &.big {
+        font-size: 15px;
+      }
+
       &.small {
         padding: 3px 0;
         font-size: 11px;
@@ -149,14 +157,6 @@ export default {
         &:hover {
           color: map-get($colors, 'gray-dark');
         }
-      }
-
-      &.big {
-        font-size: 15px;
-      }
-
-      &:hover {
-        color: map-get($colors, 'gray-light');
       }
     }
 
@@ -244,12 +244,16 @@ export default {
       &.underline {
         color: map-get($colors, 'gray-light');
 
-        &.smallest {
+        &:hover {
           color: map-get($colors, 'gray-dark');
         }
 
-        &:hover {
+        &.smallest {
           color: map-get($colors, 'gray-dark');
+
+          &:hover {
+            color: map-get($colors, 'gray-light');
+          }
         }
       }
 

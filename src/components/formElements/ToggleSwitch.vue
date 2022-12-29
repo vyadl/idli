@@ -1,4 +1,10 @@
 <script>
+//    TODO:
+    
+//    1)  redesign component
+//        to make it more 
+//        ✨ beautiful ✨
+
 export default {
   props: {
     isChecked: {

@@ -3,8 +3,8 @@ import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -21,8 +21,8 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
-    ButtonSign,
     InfoMessage,
+    PopupBox,
   },
   data() {
     return {
@@ -70,7 +70,7 @@ export default {
       'isSidebarOpen',
       'sidebarMode',
     ]),
-    isAddItemPossible() {
+    isAddUnitPossible() {
       return this.currentListObj 
         && !this.isFocusOnList 
         && this.isOwnerView;
@@ -247,6 +247,9 @@ export default {
     ...mapActions('sidebar', [
       '_closeSidebar',
     ]),
+    openListModal() {
+      this.$vfm.show('listModal');
+    },
     fetchItemById(id) {
       this.resetRelatedUnitsLocally();
 
@@ -320,30 +323,42 @@ export default {
         <div class="list-title">
           {{ currentListObj.title }}
         </div>
-        <div class="button-container">
-          <DraggableSwitch
-            v-if="isDraggableSwitchShown"
-            title="reorder"
-            hint-position="lower-center"
+        <div class="buttons-container">
+          <div class="single-button-container">
+            <DraggableSwitch
+              v-if="isDraggableSwitchShown"
+              title="reorder"
+              hint-position="lower-center"
+              stop-propagation
+            />
+            <ButtonText
+              v-if="sorting === 'shuffled'"
+              text="randomize!"
+              style-type="underline"
+              @click="toggleShuffleTrigger"
+            />
+          </div>
+          <PopupBox
+            v-if="isAddUnitPossible"
+            class="add-button"
+            button-style-type="plus"
+            position="lower-right"
             stop-propagation
-          />
-          <ButtonText
-            v-if="sorting === 'shuffled'"
-            text="randomize!"
-            style-type="underline"
-            @click="toggleShuffleTrigger"
-          />
-        </div>
-        <div
-          v-if="isAddItemPossible"
-          class="add-item-button"
-        >
-          <ButtonSign
-            style-type="plus"
-            title="new item"
-            stop-propagation
-            @click="_addNewItemPlaceholder"
-          />
+            content-type="functional"
+          >
+            <ButtonText
+              text="new list"
+              style-type="brick"
+              size="small"
+              @click="openListModal"
+            />
+            <ButtonText
+              text="new item"
+              style-type="brick"
+              size="small"
+              @click="_addNewItemPlaceholder"
+            />
+          </PopupBox>
         </div>
       </header>
       <div
@@ -411,14 +426,22 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
-    .button-container {
+    .buttons-container {
       display: flex;
-      align-items: flex-end;
-      height: 30px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      height: 75px;
+      padding-top: 10px;
     }
 
-    .add-item-button {
-      padding: 15px 15px 15px 0;
+    .single-button-container {
+      display: grid;
+      height: 35px;
+    }
+
+    .add-button {
+      padding: 10px 0 0 0;
     }
 
     .items-container {

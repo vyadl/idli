@@ -2,15 +2,16 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
+import ListTags from '@/components/list/ListTags.vue';
+import ListCategories from '@/components/list/ListCategories.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
-import { mapActions, mapGetters } from 'vuex';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
 import { getFormattedDate } from '@/utils/misc';
 import { handleRequestStatuses } from '@/utils/misc';
 
@@ -19,12 +20,13 @@ export default {
     InputCustom,
     CheckboxCustom,
     ButtonText,
-    ButtonSign,
     ErrorMessage,
     PopupBox,
     TogglingBlock,
     SectionCard,
     CustomLink,
+    ListTags,
+    ListCategories,
   },
   GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
   LIST_TITLE_ERROR: 'you already have a list with this title',
@@ -45,23 +47,21 @@ export default {
       'isUserOwnsCurrentList',
     ]),
     isPublicViewLinkShown() {
-      return this.list && !this.list.isPrivate && this.edittingListObj;
+      return this.edittingListObj && !this.edittingListObj.isPrivate;
     },
   },
-  watch: {
-    edittingListObj: {
-      handler: function edittingItemObjHandler() {
-        this.list = this.edittingListObj
-          ? JSON.parse(JSON.stringify(this.edittingListObj))
-          : new List();
-      },
-      immediate: true,
-    },
+  created() {
+    if (!this.edittingListObj) {
+      this._setListForEditting(new List());
+    }
   },
   unmounted() {
     this.resetData();
   },
   methods: {
+    ...mapMutations('lists', [
+      'updateListFieldLocally',
+    ]),
     ...mapActions('lists', [
       '_addList',
       '_updateList',
@@ -73,7 +73,6 @@ export default {
     },
     resetData() {
       this._setListForEditting(null);
-      this.list = new List();
       this.requestHandling.errorMessage = '';
     },
     composeErrorMessage({ isListTitleUnique, areGroupingFieldsTitlesValid }) {
@@ -86,28 +85,14 @@ export default {
         ? this.$options.LIST_TITLE_ERROR
         : this.$options.GROUPING_FIELD_TITLE_ERROR;
     },
-    deleteGroupingField(groupingFieldType, index) {
-      this.list[groupingFieldType].splice(index, 1);
-    },
-    addGroupingField(groupingFieldType) {
-      this.list[groupingFieldType].push({
-        title: null,
-        id: null,
-      });
-      this.$nextTick(() => {
-        const groupingFieldsRefs = this.$refs[`${groupingFieldType}Input`];
-
-        groupingFieldsRefs[groupingFieldsRefs.length - 1].focus();
-      });
-    },
     validateListTitle() {
       return !this.lists.some(storeList => {
-        return storeList.title === this.list.title
-          && storeList.id !== this.list.id;
+        return storeList.title === this.edittingListObj.title
+          && storeList.id !== this.edittingListObj.id;
       });
     },
     checkGroupingFieldsTitlesIntersections(groupingFieldType, groupingFieldsTitles) {
-      return this.list[groupingFieldType]
+      return this.edittingListObj[groupingFieldType]
         .some(groupingField => {
           const isSameTitleGroupingField = groupingFieldsTitles.has(groupingField.title);
 
@@ -136,6 +121,9 @@ export default {
 
       return isValid;
     },
+    updateListField(field, value) {
+      this.updateListFieldLocally({ field, value });
+    },
     addList() {
       const areGroupingFieldsTitlesValid = this.validateGroupingFieldsTitles();
       const isListTitleUnique = this.validateListTitle();
@@ -143,7 +131,7 @@ export default {
       if (isListTitleUnique && areGroupingFieldsTitlesValid) {
         this.requestHandling.isRequestProcessing = true;
 
-        const request = this._addList(this.list);
+        const request = this._addList(this.edittingListObj);
 
         handleRequestStatuses(request, this.requestHandling)
           .then(() => {
@@ -164,7 +152,7 @@ export default {
         this.closeListModal();
         this.requestHandling.isRequestProcessing = true;
 
-        const request = this._updateList(this.list);
+        const request = this._updateList(this.edittingListObj);
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
       } else {
@@ -186,7 +174,7 @@ export default {
 
       this.requestHandling.isRequestProcessing = true;
 
-      const request = this._deleteList(this.list.id);
+      const request = this._deleteList(this.edittingListObj.id);
 
       handleRequestStatuses(request, this.requestHandling)
         .then(() => {
@@ -204,100 +192,52 @@ export default {
   <form
     class="list-form"
     :class="`${globalTheme}-theme`"
-    @submit.prevent="edittingListObj ? updateList() : addList()"
+    @submit.prevent="edittingListObj.id ? updateList() : addList()"
   >
     <InputCustom
-      v-model="list.title"
+      :model-value="edittingListObj.title"
       label="title"
-      :is-focus="!edittingListObj"
+      :is-focus="true"
       :disabled="requestHandling.isRequestProcessing"
       required
+      @update:model-value="value => updateListField('title', value)"
     />
     <div class="private-option">
       <CheckboxCustom
-        v-model="list.isPrivate"
+        :model-value="edittingListObj.isPrivate"
         label="private"
         style-type="initial"
         :disabled="requestHandling.isRequestProcessing"
+        @update:model-value="value => updateListField('isPrivate', value)"
       />
       <CustomLink
         v-if="isPublicViewLinkShown"
         class="public-view-link"
         :to="{ 
           name: 'list',
-          params: { id: list.id },
+          params: { id: edittingListObj.id },
           query: { view: 'public' }
         }"
         title="check how others will see your list"
         target="_blank"
       />
     </div>
-    <div class="grouping-fields-container">
-      <div class="tags">
-        <SectionCard
-          title="tags"
-          :size="isMobileScreen ? 'small' : ''"
-        >
-          <div
-            v-for="(tag, index) in list.tags"
-            :key="index"
-            class="grouping-field"
-          >
-            <InputCustom
-              ref="tagsInput"
-              v-model="tag.title"
-              required
-              :disabled="requestHandling.isRequestProcessing"
-            />
-            <ButtonSign
-              class="delete-grouping-field-button"
-              style-type="cross"
-              title="delete tag"
-              :disabled="requestHandling.isRequestProcessing"
-              @click="deleteGroupingField('tags', index)"
-            />
-          </div>
-          <ButtonSign
-            style-type="plus"
-            title="add tag"
-            :disabled="requestHandling.isRequestProcessing"
-            @click="addGroupingField('tags')"
-          />
-        </SectionCard>
-      </div>
-      <div class="categories">
-        <SectionCard
-          title="categories"
-          :size="isMobileScreen ? 'small' : ''"
-        >
-          <div
-            v-for="(category, index) in list.categories"
-            :key="index"
-            class="grouping-field"
-          >
-            <InputCustom
-              ref="categoriesInput"
-              v-model="category.title"
-              required
-              :disabled="requestHandling.isRequestProcessing"
-            />
-            <ButtonSign
-              class="delete-grouping-field-button"
-              style-type="cross"
-              title="delete category"
-              :disabled="requestHandling.isRequestProcessing"
-              @click="deleteGroupingField('categories', index)"
-            />
-          </div>
-          <ButtonSign
-            style-type="plus"
-            title="add category"
-            :disabled="requestHandling.isRequestProcessing"
-            @click="addGroupingField('categories')"
-          />
-        </SectionCard>
-      </div>
-    </div>
+    <SectionCard
+      title="tags"
+      position="left"
+      text-style="caps"
+      size="small"
+    >
+      <ListTags :disabled="requestHandling.isRequestProcessing" />
+    </SectionCard>
+    <SectionCard
+      title="categories"
+      position="left"
+      text-style="caps"
+      size="small"
+    >
+      <ListCategories :disabled="requestHandling.isRequestProcessing" />
+    </SectionCard>
     <TogglingBlock
       v-if="edittingListObj?.referringItems?.length"
       title="referring items"
@@ -315,11 +255,11 @@ export default {
       </div>
     </TogglingBlock>
     <div 
-      v-if="list?.createdAt"
+      v-if="edittingListObj?.createdAt"
       class="stats"
     >
       <div>
-        total items: {{ list.items.length }}
+        total items: {{ edittingListObj.items.length }}
       </div>
       <PopupBox
         button-style-type="info"
@@ -370,46 +310,20 @@ export default {
       padding: 8px 0 15px;
     }
 
-    .public-view-link {
-      font-size: 13px;
-      color: map-get($colors, 'gray-dark');
-    }
-
-    .grouping-fields-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 15px;
-      padding-top: 10px;
-    }
-
-    .tags,
-    .categories {
-      flex: 1 1 0px;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid map-get($colors, 'gray-light');
-    }
-
-    .grouping-field {
-      display: flex;
-      align-items: center;
-    }
-
-    .delete-grouping-field-button {
-      margin-left: 10px;
-    }
-
     .referring-units-container {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 5px;
     }
 
-    .referring-unit {
-      padding: 5px 10px 0 0;
+    .referring-unit,
+    .public-view-link  {
       font-size: 13px;
       color: map-get($colors, 'gray-dark');
+    }
+
+    .public-view-link  {
+      padding: 5px 10px 0 0;
     }
 
     .untitled-item {
@@ -449,29 +363,14 @@ export default {
       }
 
       .untitled-item,
-      .stats  {
+      .stats {
         color: map-get($colors, 'gray-dark');
-      }
-
-      .tags,
-      .categories {
-        border-color: map-get($colors, 'gray-dark');
       }
     }
   }
 
   @media #{breakpoints.$s-media} {
     .list-form {
-      .grouping-field {
-        font-size: 12px;
-      }
-
-      .tags,
-      .categories {
-        border: none;
-        padding: 10px;
-      }
-
       .referring-units-container {
         grid-template-columns: 1fr;
       }

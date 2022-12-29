@@ -5,6 +5,15 @@ export default {
     styleType: {
       type: String,
       default: 'custom',
+      validator(value) {
+        return value ? ['custom', 'initial'].includes(value) : true;
+      },
+    },
+    size: {
+      type: String,
+      validator(value) {
+        return value ? ['small'].includes(value) : true;
+      },
     },
     title: {
       type: String,
@@ -63,6 +72,7 @@ export default {
     :class="[
       styleType,
       disabled,
+      size,
       `${globalTheme}-theme`,
     ]"
   >
@@ -93,6 +103,7 @@ export default {
     width: fit-content;
     margin-bottom: 10px;
     margin-right: 7px;
+    overflow-wrap: anywhere;
     cursor: pointer;
 
     &.disabled {
@@ -203,6 +214,25 @@ export default {
           transform-origin: center center;
           transform: translateY(-50%) translate(-1px, -1px) rotate(-45deg);
           transition: opacity 0.2s;
+        }
+      }
+
+      &.small {
+        .label {
+          font-size: 13px;
+          margin-left: 30px;
+
+          &::before {
+            left: -21px;
+            width: 16px;
+            height: 16px;
+          }
+
+          &::after {
+            left: -16px;
+            width: 8px;
+            height: 5px;
+          }
         }
       }
     }

@@ -10,6 +10,7 @@ export default {
     options: Array,
     placeholder: String,
     noOptionsText: String,
+    showOptions: Boolean,
     disabled: Boolean,
     smallText: Boolean,
     mode: {
@@ -33,6 +34,7 @@ export default {
     'select',
     'deselect',
     'clear',
+    'tag',
   ],
   methods: {
     select(tag) {
@@ -43,6 +45,9 @@ export default {
     },
     clear() {
       this.$emit('clear');
+    },
+    tag(query) {
+      this.$emit('tag', query);
     },
   },
 };
@@ -59,6 +64,7 @@ export default {
     :placeholder="placeholder"
     :no-options-text="noOptionsText"
     :options="options"
+    :show-options="showOptions"
     :searchable="searchable"
     :create-tag="createTag"
     :can-clear="canClear"
@@ -66,6 +72,7 @@ export default {
     @select="tag => select(tag)"
     @deselect="tag => deselect(tag)"
     @clear="clear"
+    @tag="tag"
   />
 </template>
 
@@ -73,8 +80,11 @@ export default {
 @import "../../../node_modules/@vueform/multiselect/themes/default.css";
 
 .multiselect {
+  border-color: map-get($colors, 'gray-light');
+
   &.is-active {
-    box-shadow: 0 0 3px 2px map-get($colors, 'gray-light');
+    box-shadow: none;
+    border-color: map-get($colors, 'gray-dark');
   }
 
   &-placeholder {
@@ -82,16 +92,12 @@ export default {
     color: map-get($colors, 'gray-light');
   }
 
-  &-search {
+  &-single-label {
     font-size: 14px;
   }
 
-  &-tags {
-    padding: 5px;
-  }
-
   &-tag {
-    padding: 4px 2px 4px 6px;
+    padding: 2px 2px 2px 6px;
     background: map-get($colors, 'gray-dark');
     color: map-get($colors, 'white');
     font-size: 13px;
@@ -112,7 +118,7 @@ export default {
   }
 
   &-tags-search-wrapper {
-    padding-top: 15px;
+    padding-top: 10px;
   }
 
   &-option {
@@ -142,6 +148,14 @@ export default {
     background: map-get($colors, 'black');
     color: map-get($colors, 'white');
 
+    &.multiselect {
+      border-color: map-get($colors, 'gray-dark');
+
+      &.is-active {
+        border-color: map-get($colors, 'gray-light');
+      }
+    }
+
     .multiselect {
       &-tag {
         background: map-get($colors, 'gray-very-light');
@@ -157,7 +171,13 @@ export default {
 
       &-tag-remove {
         &:hover {
-          background: map-get($colors, 'gray-dark'); 
+          background: map-get($colors, 'gray-light'); 
+        }
+      }
+
+      &-clear-icon {
+        &:hover {
+          background: map-get($colors, 'white');
         }
       }
 

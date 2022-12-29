@@ -143,6 +143,7 @@ export default {
           <DraggableSwitch
             title="reorder mode"
             hint-position="lower-left"
+            style-type="checkbox"
             stop-propagation
           />
         </div>

@@ -50,6 +50,10 @@ export default {
       id: null,
     });
   },
+
+  updateListFieldLocally(state, { field, value }) {
+    state.edittingListObj[field] = value;
+  },
   
   deleteList(state, id) {
     state.lists = state.lists.filter(list => list.id !== id);

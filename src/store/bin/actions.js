@@ -20,7 +20,7 @@ export default {
   _fetchBin({ dispatch }) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
-    Promise
+    return Promise
       .all([
         dispatch('_fetchDeletedLists'),
         dispatch('_fetchDeletedItems'),

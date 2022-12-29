@@ -21,14 +21,14 @@ export default {
       type: String,
       default: 'hint',
       validator(value) {
-        return value ? ['hint', 'info', 'dots', 'loupe'].includes(value) : true;
+        return value ? ['hint', 'info', 'plus', 'loupe'].includes(value) : true;
       },
     },
     contentType: {
       type: String,
       default: 'informational',
       validator(value) {
-        return value ? ['informational'].includes(value) : true;
+        return value ? ['informational', 'functional'].includes(value) : true;
       },
     },
     position: {
@@ -36,7 +36,13 @@ export default {
       default: 'right',
       validator(value) {
         return value
-          ? ['right', 'left', 'lower-left', 'upper-right', 'upper-center', 'lower-center']
+          ? ['right',
+            'lower-right',
+            'left',
+            'lower-left',
+            'upper-right',
+            'upper-center',
+            'lower-center']
             .includes(value)
           : true;
       },
@@ -55,7 +61,10 @@ export default {
     validatePopUpClosing(event) {
       const target = document.querySelector('.popup-content');
 
-      if (event.target !== target && !target.contains(event.target)) {
+      if (
+        (event.target !== target && !target.contains(event.target))
+        || this.contentType === 'functional'
+      ) {
         this.closePopUp();
       }
     },
@@ -119,6 +128,11 @@ export default {
       left: 25px;
     }
 
+    &.lower-right {
+      top: 10px;
+      left: 30px;
+    }
+
     &.left {
       bottom: -5px;
       right: 130%;
@@ -148,6 +162,13 @@ export default {
       overflow-wrap: break-word;
       color: map-get($colors, 'gray-dark');
       font-size: 12px;
+    }
+
+    &.functional {
+      display: flex;
+      flex-direction: column;
+      width: fit-content;
+      white-space: nowrap;
     }
 
     &.inverted-theme {

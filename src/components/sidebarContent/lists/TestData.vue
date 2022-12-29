@@ -61,7 +61,7 @@ export default {
         class="info-message"
         message="choosing test list will copy it to your lists"
       />
-      <div class="buttons-container">
+      <div class="lists-container">
         <ButtonText
           v-for="list in testLists"
           :key="list.title"
@@ -76,9 +76,9 @@ export default {
   </SectionCard>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .test-data {
-    .buttons-container {
+    .lists-container {
       display: flex;
       flex-direction: column;
     }
