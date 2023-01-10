@@ -14,21 +14,27 @@ export default {
       type: String,
       default: 'bordered',
       validator(value) {
-        return value ? ['bordered'].includes(value) : true;
+        return value
+          ? ['bordered'].includes(value)
+          : true;
       },
     },
     buttonStyleType: {
       type: String,
       default: 'hint',
       validator(value) {
-        return value ? ['hint', 'info', 'dots', 'loupe'].includes(value) : true;
+        return value
+          ? ['hint', 'info', 'plus', 'loupe'].includes(value)
+          : true;
       },
     },
     contentType: {
       type: String,
       default: 'informational',
       validator(value) {
-        return value ? ['informational'].includes(value) : true;
+        return value
+          ? ['informational', 'functional'].includes(value)
+          : true;
       },
     },
     position: {
@@ -36,7 +42,12 @@ export default {
       default: 'right',
       validator(value) {
         return value
-          ? ['right', 'left', 'lower-left', 'upper-right', 'upper-center', 'lower-center']
+          ? ['right',
+            'left',
+            'lower-left',
+            'upper-right',
+            'upper-center',
+            'lower-center']
             .includes(value)
           : true;
       },
@@ -55,7 +66,10 @@ export default {
     validatePopUpClosing(event) {
       const target = document.querySelector('.popup-content');
 
-      if (event.target !== target && !target.contains(event.target)) {
+      if (
+        (event.target !== target && !target.contains(event.target))
+        || this.contentType === 'functional'
+      ) {
         this.closePopUp();
       }
     },
@@ -79,6 +93,7 @@ export default {
     <ButtonSign
       class="toggling-button"
       :style-type="buttonStyleType"
+      :active="isShown"
       :stop-propagation="stopPropagation"
       @click="togglePopUp"
     />
@@ -116,11 +131,11 @@ export default {
 
     &.right {
       top: 0;
-      left: 25px;
+      left: 30px;
     }
 
     &.left {
-      bottom: -5px;
+      bottom: -2px;
       right: 130%;
     }
 
@@ -148,6 +163,13 @@ export default {
       overflow-wrap: break-word;
       color: map-get($colors, 'gray-dark');
       font-size: 12px;
+    }
+
+    &.functional {
+      display: flex;
+      flex-direction: column;
+      width: fit-content;
+      white-space: nowrap;
     }
 
     &.inverted-theme {

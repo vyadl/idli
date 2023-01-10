@@ -30,6 +30,9 @@ export default {
     this.areTestListsShown = !this.lists.length;
   },
   methods: {
+    ...mapActions([
+      '_resetCustomView',
+    ]),
     ...mapActions('lists', [
       '_copyTestListToUserLists',
     ]),
@@ -40,6 +43,7 @@ export default {
       const request = this._copyTestListToUserLists(list);
 
       handleRequestStatuses(request, this.requestHandling);
+      this._resetCustomView();
     },
   },
 };
@@ -61,7 +65,7 @@ export default {
         class="info-message"
         message="choosing test list will copy it to your lists"
       />
-      <div class="buttons-container">
+      <div class="lists-container">
         <ButtonText
           v-for="list in testLists"
           :key="list.title"
@@ -76,9 +80,9 @@ export default {
   </SectionCard>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .test-data {
-    .buttons-container {
+    .lists-container {
       display: flex;
       flex-direction: column;
     }

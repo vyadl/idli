@@ -229,13 +229,12 @@ export default {
     class="related-units"
     :class="`${globalTheme}-theme`"
   >
-    <div class="already-related">
+    <div>
       <SectionCard
         v-if="currentItemObj?.relatedItems?.length"
         title="related items"
         size="small"
         text-style="caps"
-        class="already-related-block"
       >
         <div 
           v-for="item in currentItemObj?.relatedItems"
@@ -263,7 +262,6 @@ export default {
         title="related lists"
         size="small"
         text-style="caps"
-        class="already-related-block"
       >
         <div 
           v-for="list in currentItemObj?.relatedLists"
@@ -289,7 +287,6 @@ export default {
     <TogglingBlock
       v-if="isOwnerView"
       title="add related list/item"
-      :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
     >
       <div
         class="add-related-form"
@@ -379,7 +376,6 @@ export default {
     <TogglingBlock
       v-if="currentItemObj?.referringItems?.length"
       title="referring items"
-      :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
     >
       <div class="referring-units-container">
         <CustomLink
@@ -400,10 +396,6 @@ export default {
 .related-units {
   display: flex;
   flex-direction: column;
-
-  .already-related {
-    padding-bottom: 15px;
-  }
 
   .related-unit,
   .referring-unit {

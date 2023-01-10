@@ -3,6 +3,7 @@ import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
+import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
@@ -24,6 +25,7 @@ export default {
     TextareaCustom,
     ButtonText,
     TogglingBlock,
+    SectionCard,
     PopupBox,
     RelatedUnits,
     ItemTags,
@@ -72,7 +74,6 @@ export default {
     return {
       showingStatuses: {
         detailsTextarea: false,
-        addons: false,
       },
     };
   },
@@ -271,41 +272,35 @@ export default {
       />
     </div>
     <div>
-      <div
-        v-if="areAddonsShown"
-        class="extra-content"
+      <TogglingBlock
+        title="category, tags & related"
+        :force-show="areAddonsShown"
       >
-        <TogglingBlock 
+        <SectionCard
           title="category"
-          :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
-          :force-show="typeof edittingItemObj.category === 'number'"
+          position="left"
+          text-style="caps"
+          size="small"
         >
           <ItemCategories />
-        </TogglingBlock>
-        <TogglingBlock
+        </SectionCard>
+        <SectionCard
           title="tags"
-          :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
-          :force-show="!!edittingItemObj.tags.length"
+          position="left"
+          text-style="caps"
+          size="small"
         >
           <ItemTags />
-        </TogglingBlock>
+        </SectionCard>
         <TogglingBlock
           title="related entities"
-          :block-style="isItemFormInSidebar ? 'underline' : 'bordered'"
           :hint-text="$options.RELATED_UNITS_HINT_TEXT"
           :force-show="!!edittingItemObj.relatedItems?.length
             || !!edittingItemObj.relatedLists?.length"
         >
           <RelatedUnits />
         </TogglingBlock>
-      </div>
-      <ButtonText
-        v-else
-        text="tags, categories, related items & lists"
-        style-type="underline"
-        size="big"
-        @click="toggleShowingStatus('addons')"
-      />
+      </TogglingBlock>
     </div>
     <footer
       v-if="edittingItemObj?.id"

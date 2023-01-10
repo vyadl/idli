@@ -43,6 +43,7 @@ export default {
   emits: [
     'input',
     'update:modelValue',
+    'blur',
   ],
   mounted() {
     if (this.isFocus) {
@@ -82,6 +83,7 @@ export default {
       :required="required"
       :placeholder="placeholder"
       @input="input($event.target.value)"
+      @blur="$emit('blur')"
     >
     <div
       v-if="icon"
@@ -149,7 +151,7 @@ export default {
     .icon {
       display: block;
       position: absolute;
-      width: 15px;
+      width: 17px;
       top: 50%;
       transform: translate(-20%, -140%);
       right: 0;

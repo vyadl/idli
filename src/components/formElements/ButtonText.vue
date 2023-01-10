@@ -6,14 +6,18 @@ export default {
       type: String,
       default: 'medium',
       validator(value) {
-        return value ? ['big', 'medium', 'small', 'smallest'].includes(value) : true;
+        return value
+          ? ['big', 'medium', 'small', 'smallest'].includes(value)
+          : true;
       },
     },
     styleType: {
       type: String,
       default: 'bordered',
       validator(value) {
-        return value ? ['bordered', 'line', 'underline', 'brick'].includes(value) : true;
+        return value
+          ? ['bordered', 'line', 'underline', 'brick'].includes(value)
+          : true;
       },
     },
     active: {
@@ -28,7 +32,9 @@ export default {
       type: String,
       default: 'button',
       validator(value) {
-        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+        return value
+          ? ['button', 'reset', 'submit'].includes(value)
+          : true;
       },
     },
     disabled: {
@@ -130,14 +136,22 @@ export default {
     }
 
     &.underline {
-      padding: 5px 0;
+      padding: 5px 2px;
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
       transition: color 0.2s;
 
+      &:hover {
+        color: map-get($colors, 'gray-light');
+      }
+
+      &.big {
+        font-size: 15px;
+      }
+
       &.small {
-        padding: 3px 0;
+        padding: 3px 2px;
         font-size: 11px;
       }
 
@@ -149,14 +163,6 @@ export default {
         &:hover {
           color: map-get($colors, 'gray-dark');
         }
-      }
-
-      &.big {
-        font-size: 15px;
-      }
-
-      &:hover {
-        color: map-get($colors, 'gray-light');
       }
     }
 
@@ -244,12 +250,16 @@ export default {
       &.underline {
         color: map-get($colors, 'gray-light');
 
-        &.smallest {
+        &:hover {
           color: map-get($colors, 'gray-dark');
         }
 
-        &:hover {
+        &.smallest {
           color: map-get($colors, 'gray-dark');
+
+          &:hover {
+            color: map-get($colors, 'gray-light');
+          }
         }
       }
 

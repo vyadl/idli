@@ -23,14 +23,9 @@ export default {
       type: String,
       default: 'caps',
       validator(value) {
-        return value ? ['caps'].includes(value) : true;
-      },
-    },
-    blockStyle: {
-      type: String,
-      default: 'bordered',
-      validator(value) {
-        return value ? ['bordered', 'underline'].includes(value) : true;
+        return value
+          ? ['caps'].includes(value)
+          : true;
       },
     },
   },
@@ -58,10 +53,7 @@ export default {
 </script>
 
 <template>
-  <div
-    class="toggling-block"
-    :class="[ blockStyle ]"
-  >
+  <div class="toggling-block">
     <div
       class="button-area"
       :class="{ opened: isOpened }"
@@ -106,22 +98,7 @@ export default {
     position: relative;
     width: 100%;
     margin-bottom: 7px;
-    padding: 5px;
-
-    &.underline {
-      box-shadow: 0 3px 3px -3px map-get($colors, 'gray-light');
-    }
-
-    &.bordered {
-      padding: 5px 12px;
-      box-shadow: 0 0 5px map-get($colors, 'gray-light');
-      border-radius: 5px;
-      transition: box-shadow 0.2s 0.2s;
-
-      &:hover {
-        box-shadow: 0 0 10px map-get($colors, 'gray-light');
-      }
-    }
+    padding-top: 15px;
 
     .button-area {
       display: flex;
@@ -179,8 +156,7 @@ export default {
     }
 
     .block-content {
-      margin: 5px;
-      padding: 20px 0 10px;
+      padding: 20px 10px 10px;
     }
   }
 </style>

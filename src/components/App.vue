@@ -42,10 +42,19 @@ export default {
     },
   },
   watch: {
-    modalNameToShow() {
-      if (this.modalNameToShow) {
-        this.$vfm.show(this.modalNameToShow);
+    modalNameToShow(value) {
+      if (value) {
+        this.$vfm.show(value);
       }
+    },
+    isLoggedIn: {
+      handler(value) {
+        if (value) {
+          this._fetchTestLists();
+          this._fetchListsForUser();
+        }
+      },
+      immediate: true,
     },
   },
   created() {
@@ -61,11 +70,6 @@ export default {
     this._setUnitsFromLocalStorage(['settings']);
 
     initHotkeys();
-
-    if (this.isLoggedIn) {
-      this._fetchTestLists();
-      this._fetchListsForUser();
-    }
 
     const queryOptions = {
       sidebar: {

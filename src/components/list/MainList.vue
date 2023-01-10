@@ -3,8 +3,8 @@ import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -21,8 +21,8 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
-    ButtonSign,
     InfoMessage,
+    PopupBox,
   },
   data() {
     return {
@@ -70,7 +70,7 @@ export default {
       'isSidebarOpen',
       'sidebarMode',
     ]),
-    isAddItemPossible() {
+    isAddUnitPossible() {
       return this.currentListObj 
         && !this.isFocusOnList 
         && this.isOwnerView;
@@ -203,7 +203,7 @@ export default {
 
     try {
       if (this.$route.params.id) {
-        this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
       }
 
       handleQueryOnLoad(queryOptions, this.$route.query);
@@ -247,6 +247,9 @@ export default {
     ...mapActions('sidebar', [
       '_closeSidebar',
     ]),
+    openListModal() {
+      this.$vfm.show('listModal');
+    },
     fetchItemById(id) {
       this.resetRelatedUnitsLocally();
 
@@ -320,30 +323,41 @@ export default {
         <div class="list-title">
           {{ currentListObj.title }}
         </div>
-        <div class="button-container">
+        <div class="buttons-container">
           <DraggableSwitch
             v-if="isDraggableSwitchShown"
             title="reorder"
             hint-position="lower-center"
+            style-type="checkbox"
+            size="small"
             stop-propagation
           />
           <ButtonText
             v-if="sorting === 'shuffled'"
             text="randomize!"
             style-type="underline"
+            size="small"
             @click="toggleShuffleTrigger"
           />
-        </div>
-        <div
-          v-if="isAddItemPossible"
-          class="add-item-button"
-        >
-          <ButtonSign
-            style-type="plus"
-            title="new item"
+          <PopupBox
+            v-if="isAddUnitPossible"
+            button-style-type="plus"
             stop-propagation
-            @click="_addNewItemPlaceholder"
-          />
+            content-type="functional"
+          >
+            <ButtonText
+              text="new list"
+              style-type="brick"
+              size="small"
+              @click="openListModal"
+            />
+            <ButtonText
+              text="new item"
+              style-type="brick"
+              size="small"
+              @click="_addNewItemPlaceholder"
+            />
+          </PopupBox>
         </div>
       </header>
       <div
@@ -399,7 +413,11 @@ export default {
     min-height: 100vh;
 
     .header {
+      position: fixed;
+      z-index: 1;
+      width: 100%;
       padding: 10px 10px 0;
+      background-color: map-get($colors, 'white');
 
       &.hidden {
         opacity: 0;
@@ -411,18 +429,16 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
-    .button-container {
-      display: flex;
-      align-items: flex-end;
-      height: 30px;
-    }
-
-    .add-item-button {
-      padding: 15px 15px 15px 0;
+    .buttons-container {
+      display: grid;
+      grid-template-rows: repeat(2, 20px);
+      align-items: start;
+      gap: 10px;
+      padding-top: 10px;
     }
 
     .items-container {
-      padding: 10px 50px 50px;
+      padding: 120px 50px 200px;
 
       &.list-mode {
         display: flex;
@@ -448,6 +464,10 @@ export default {
     }
 
     &.inverted-theme {
+      .header {
+        background-color: map-get($colors, 'black');
+      }
+
       .list-title {
         color: map-get($colors, 'gray-dark');
       }

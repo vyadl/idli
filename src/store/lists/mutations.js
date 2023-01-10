@@ -23,7 +23,7 @@ export default {
     state.lists.push(list);
   },
 
-  setListForEditting(state, list) {
+  setEdittingListObj(state, list) {
     state.edittingListObj = list;
   },
 

@@ -37,7 +37,7 @@ export default {
     let itemIndex = null;
 
     function compareItemsById(item1, item2) {
-      return item1.temporaryId 
+      return item1.temporaryId
         ? item1.temporaryId === item2.temporaryId
         : item1.id === item2.id;
     }
@@ -137,8 +137,8 @@ export default {
         },
         { cancelToken },
       )
-      .then(({ data: responseList }) => {
-        commitFromRoot('updateItemFieldsByServerResponse', responseList);
+      .then(({ data: responseItem }) => {
+        commitFromRoot('updateItemFieldsByServerResponse', responseItem);
       })
       .catch(error => {
         if (!cancelToken) {

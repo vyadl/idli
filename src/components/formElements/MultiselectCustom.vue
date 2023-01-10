@@ -10,6 +10,11 @@ export default {
     options: Array,
     placeholder: String,
     noOptionsText: String,
+    noResultsText: String,
+    showOptions: {
+      type: Boolean,
+      default: true,
+    },
     disabled: Boolean,
     smallText: Boolean,
     mode: {
@@ -20,7 +25,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    createTag: {
+    createOption: {
       type: Boolean,
       default: true,
     },
@@ -33,6 +38,7 @@ export default {
     'select',
     'deselect',
     'clear',
+    'search-change',
   ],
   methods: {
     select(tag) {
@@ -44,6 +50,9 @@ export default {
     clear() {
       this.$emit('clear');
     },
+    searchChange() {
+      this.$emit('search-change');
+    },
   },
 };
 </script>
@@ -53,28 +62,40 @@ export default {
     :class="[
       `${globalTheme}-theme`,
       { 'small-text': smallText },
+      { 'with-hint': !noResultsText }
     ]"
     :value="value"
     :mode="mode"
     :placeholder="placeholder"
     :no-options-text="noOptionsText"
+    :no-results-text="noResultsText"
     :options="options"
+    :show-options="showOptions"
     :searchable="searchable"
-    :create-tag="createTag"
+    :create-option="createOption"
     :can-clear="canClear"
     :disabled="disabled"
+    :clear-on-blur="false"
     @select="tag => select(tag)"
     @deselect="tag => deselect(tag)"
     @clear="clear"
-  />
+    @search-change="searchChange"
+  >
+    <template #beforelist>
+      <slot name="beforelist" />
+    </template>
+  </MultiselectExternal>
 </template>
 
 <style lang="scss">
 @import "../../../node_modules/@vueform/multiselect/themes/default.css";
 
 .multiselect {
+  border-color: map-get($colors, 'gray-light');
+
   &.is-active {
-    box-shadow: 0 0 3px 2px map-get($colors, 'gray-light');
+    box-shadow: none;
+    border-color: map-get($colors, 'gray-dark');
   }
 
   &-placeholder {
@@ -82,16 +103,12 @@ export default {
     color: map-get($colors, 'gray-light');
   }
 
-  &-search {
+  &-single-label {
     font-size: 14px;
   }
 
-  &-tags {
-    padding: 5px;
-  }
-
   &-tag {
-    padding: 4px 2px 4px 6px;
+    padding: 2px 2px 2px 6px;
     background: map-get($colors, 'gray-dark');
     color: map-get($colors, 'white');
     font-size: 13px;
@@ -112,7 +129,7 @@ export default {
   }
 
   &-tags-search-wrapper {
-    padding-top: 15px;
+    padding-top: 10px;
   }
 
   &-option {
@@ -124,6 +141,20 @@ export default {
       &.is-pointed,
       &.is-disabled {
         background: map-get($colors, 'gray-dark');
+      }
+    }
+  }
+
+  &-no-results,
+  &-no-options {
+    font-size: 12px;
+  }
+
+  &.with-hint {
+    .multiselect {
+      &-no-results,
+      &-no-options {
+        display: none;
       }
     }
   }
@@ -142,6 +173,14 @@ export default {
     background: map-get($colors, 'black');
     color: map-get($colors, 'white');
 
+    &.multiselect {
+      border-color: map-get($colors, 'gray-dark');
+
+      &.is-active {
+        border-color: map-get($colors, 'gray-light');
+      }
+    }
+
     .multiselect {
       &-tag {
         background: map-get($colors, 'gray-very-light');
@@ -157,7 +196,13 @@ export default {
 
       &-tag-remove {
         &:hover {
-          background: map-get($colors, 'gray-dark'); 
+          background: map-get($colors, 'gray-light'); 
+        }
+      }
+
+      &-clear-icon {
+        &:hover {
+          background: map-get($colors, 'white');
         }
       }
 

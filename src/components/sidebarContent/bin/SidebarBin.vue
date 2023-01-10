@@ -1,6 +1,7 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
+import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -10,6 +11,7 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     SectionCard,
+    TogglingBlock,
     BinUnit,
     ButtonText,
     InfoMessage,
@@ -18,15 +20,36 @@ export default {
     requestHandling: {
       isRequestProcessing: false,
     },
+    binMode: '',
   }),
   computed: {
     ...mapGetters('bin', [
       'deletedLists',
       'deletedItems',
     ]),
+    deletedUnitsTypes() {
+      const types = [];
+
+      if (this.deletedLists.length) {
+        types.push('lists');
+      } 
+      
+      if (this.deletedItems.length) {
+        types.push('items');
+      }
+
+      return types;
+    },
   },
   created() {
-    this._fetchBin();
+    this._fetchBin()
+      .then(() => {
+        if (this.deletedLists.length) {
+          this.binMode = 'lists';
+        } else if (this.deletedItems.length) {
+          this.binMode = 'items';
+        }
+      });
   },
   methods: {
     ...mapMutations([
@@ -43,6 +66,9 @@ export default {
       '_restoreAllItems',
       '_restoreAllLists',
     ]),
+    changeBinMode(mode) {
+      this.binMode = mode;
+    },
     resolveAction(action, payload) {
       this.requestHandling.isRequestProcessing = true;
 
@@ -90,10 +116,17 @@ export default {
 <template>
   <div class="sidebar-bin">
     <div v-if="deletedLists.length || deletedItems.length">
-      <SectionCard
-        v-show="deletedLists.length"
-        title="lists"
-      >
+      <div class="bin-mode-buttons">
+        <ButtonText
+          v-for="type in deletedUnitsTypes"
+          :key="type"
+          :text="type"
+          style-type="brick"
+          :active="binMode === type"
+          @click="changeBinMode(type)"
+        />
+      </div>
+      <SectionCard v-if="binMode === 'lists'">
         <div class="all-buttons">
           <ButtonText
             text="restore all lists"
@@ -109,21 +142,21 @@ export default {
             @click="resolveAllAction('_hardDeleteAllLists')"
           />
         </div>
-        <BinUnit
-          v-for="item in deletedLists"
-          :key="item.id"
-          :item="item"
-          type="list"
-          :disabled="requestHandling.isRequestProcessing"
-          @delete="resolveAction('_hardDeleteList', item.id)"
-          @restore="resolveAction('_restoreList', item.id)"
-        />
+        <TogglingBlock :title="`all deleted lists (${deletedLists.length})`">
+          <div class="deleted-lists">
+            <BinUnit
+              v-for="item in deletedLists"
+              :key="item.id"
+              :unit="item"
+              type="list"
+              :disabled="requestHandling.isRequestProcessing"
+              @delete="resolveAction('_hardDeleteList', item.id)"
+              @restore="resolveAction('_restoreList', item.id)"
+            />
+          </div>
+        </TogglingBlock>
       </SectionCard>
-      <SectionCard
-        v-show="deletedItems.length"
-        title="items"
-        class="items"
-      >
+      <SectionCard v-if="binMode === 'items'">
         <div class="all-buttons">
           <ButtonText
             text="restore all items"
@@ -139,15 +172,19 @@ export default {
             @click="resolveAllAction('_hardDeleteAllItems')"
           />
         </div>
-        <BinUnit
-          v-for="item in deletedItems"
-          :key="item.id"
-          :item="item"
-          type="list"
-          :disabled="requestHandling.isRequestProcessing"
-          @delete="resolveAction('_hardDeleteItem', { itemId: item.id, listId: item.listId })"
-          @restore="resolveAction('_restoreItem',{ itemId: item.id, listId: item.listId })"
-        />
+        <TogglingBlock :title="`all deleted items (${deletedItems.length})`">
+          <div class="deleted-items">
+            <BinUnit
+              v-for="item in deletedItems"
+              :key="item.id"
+              :unit="item"
+              type="list"
+              :disabled="requestHandling.isRequestProcessing"
+              @delete="resolveAction('_hardDeleteItem', { itemId: item.id, listId: item.listId })"
+              @restore="resolveAction('_restoreItem',{ itemId: item.id, listId: item.listId })"
+            />
+          </div>
+        </TogglingBlock>
       </SectionCard>
     </div>
     <div 
@@ -159,13 +196,27 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .sidebar-bin {
+    .bin-mode-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding-bottom: 10px;
+    }
+
     .all-buttons {
       display: flex;
-      gap: 30px;
-      margin-bottom: 15px;
+      justify-content: space-between;
+      padding-top: 10px;
     }
+
+    .deleted-items,
+    .deleted-lists {
+      display: flex;
+      flex-direction: column;
+    }
+
     .message {
       text-align: center;
     }

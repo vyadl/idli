@@ -11,7 +11,7 @@ export default {
       type: String,
       default: null,
     },
-    item: {
+    unit: {
       type: Object,
       default: null,
     },
@@ -24,6 +24,11 @@ export default {
     'restore',
     'delete',
   ],
+  computed: {
+    unitTitle() {
+      return this.unit.title || 'Untitled';
+    },
+  },
   methods: {
     restore() {
       this.$emit('restore');
@@ -39,12 +44,18 @@ export default {
 </script>
 
 <template>
-  <div class="common-deleted-item">
-    <div class="title">
-      {{ item.title }}
+  <div
+    class="bin-unit"
+    :class="`${globalTheme}-theme`"
+  >
+    <div
+      class="title"
+      :class="{ untitled: !unit.title }"
+    >
+      {{ unitTitle }}
     </div>
     <div class="deleted-at">
-      deleted at {{ getFormattedDate(item.deletedAt) }}
+      deleted at {{ getFormattedDate(unit.deletedAt) }}
     </div>
     <div class="buttons">
       <ButtonText
@@ -61,11 +72,12 @@ export default {
         @click="remove"
       />
     </div>
+    <br><hr>
   </div>
 </template>
 
 <style lang="scss">
-  .common-deleted-item {
+  .bin-unit {
     font-size: 12px;
     margin-bottom: 15px;
     opacity: 0.8;
@@ -80,6 +92,10 @@ export default {
       font-weight: bold;
     }
 
+    .untitled {
+      color: map-get($colors, 'gray-light');
+    }
+
     .deleted-at {
       margin-bottom: 10px;
     }
@@ -87,6 +103,12 @@ export default {
     .buttons {
       display: flex;
       justify-content: space-between;
+    }
+
+    &.inverted-theme {
+      .untitled {
+        color: map-get($colors, 'gray-dark');
+      }
     }
   }
 </style>

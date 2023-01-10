@@ -108,7 +108,7 @@ export default {
     :style="styles"
     @click.stop="setItemForEditting"
   >
-    <div 
+    <div
       class="item-title"
       :class="{ untitled: isUntitled, bordered }"
     >
@@ -130,7 +130,7 @@ export default {
     flex-direction: column;
     align-items: inherit;
     margin-bottom: 10px;
-    width: fit-content;
+    width: 100%;
     cursor: pointer;
     transition: transform 0.2s;
 

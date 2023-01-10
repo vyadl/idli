@@ -2,12 +2,12 @@
 import InputCustom from '@/components/formElements/InputCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
+import MultiselectCustom from '@/components/formElements/MultiselectCustom.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
@@ -19,17 +19,30 @@ export default {
     InputCustom,
     CheckboxCustom,
     ButtonText,
-    ButtonSign,
     ErrorMessage,
     PopupBox,
     TogglingBlock,
     SectionCard,
     CustomLink,
+    MultiselectCustom,
   },
-  GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
   LIST_TITLE_ERROR: 'you already have a list with this title',
+  GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
   data: () => ({
     list: null,
+    titleErrors: {
+      list: '',
+      tags: '',
+      categories: '',
+    },
+    newTitles: {
+      tags: '',
+      categories: '',
+    },
+    isCreatePossible: {
+      tags: true,
+      categories: true,
+    },
     requestHandling: {
       isRequestProcessing: false,
       errorMessage: '',
@@ -45,12 +58,18 @@ export default {
       'isUserOwnsCurrentList',
     ]),
     isPublicViewLinkShown() {
-      return this.list && !this.list.isPrivate && this.edittingListObj;
+      return this.list && !this.list.isPrivate;
+    },
+    tagsTitles() {
+      return this.list?.tags.map(tag => tag.title);
+    },
+    categoriesTitles() {
+      return this.list?.categories.map(category => category.title);
     },
   },
   watch: {
     edittingListObj: {
-      handler: function edittingItemObjHandler() {
+      handler() {
         this.list = this.edittingListObj
           ? JSON.parse(JSON.stringify(this.edittingListObj))
           : new List();
@@ -66,55 +85,67 @@ export default {
       '_addList',
       '_updateList',
       '_deleteList',
-      '_setListForEditting',
+      '_setEdittingListObj',
     ]),
     closeListModal() {
       this.$vfm.hide('listModal');
     },
     resetData() {
-      this._setListForEditting(null);
-      this.list = new List();
+      this._setEdittingListObj(null);
       this.requestHandling.errorMessage = '';
     },
-    composeErrorMessage({ isListTitleUnique, areGroupingFieldsTitlesValid }) {
-      if (!isListTitleUnique && !areGroupingFieldsTitlesValid) {
-        return `${this.$options.GROUPING_FIELD_TITLE_ERROR}; also, 
-        ${this.$options.LIST_TITLE_ERROR}`;
+    showErrors({ isListTitleUnique, areGroupingFieldsTitlesValid }) {
+      if (!isListTitleUnique) {
+        this.titleErrors.list = this.$options.LIST_TITLE_ERROR;
       }
 
-      return !isListTitleUnique
-        ? this.$options.LIST_TITLE_ERROR
-        : this.$options.GROUPING_FIELD_TITLE_ERROR;
+      if (!areGroupingFieldsTitlesValid) {
+        this.titleErrors.tags = this.$options.GROUPING_FIELD_TITLE_ERROR;
+        this.titleErrors.categories = this.$options.GROUPING_FIELD_TITLE_ERROR;
+      }
     },
-    deleteGroupingField(groupingFieldType, index) {
-      this.list[groupingFieldType].splice(index, 1);
-    },
-    addGroupingField(groupingFieldType) {
-      this.list[groupingFieldType].push({
-        title: null,
-        id: null,
-      });
-      this.$nextTick(() => {
-        const groupingFieldsRefs = this.$refs[`${groupingFieldType}Input`];
+    addGroupingField(groupingFieldType, title) {
+      const isGroupingFieldTitleUnique = this.checkGroupingFieldTitle(groupingFieldType, title);
 
-        groupingFieldsRefs[groupingFieldsRefs.length - 1].focus();
-      });
+      if (isGroupingFieldTitleUnique) {
+        this.list[groupingFieldType].push({
+          title,
+          id: null,
+        });
+      } else {
+        this.$refs[groupingFieldType].deselect(title);
+      }
     },
-    validateListTitle() {
-      return !this.lists.some(storeList => {
-        return storeList.title === this.list.title
-          && storeList.id !== this.list.id;
-      });
+    deleteGroupingField(groupingFieldType, title) {
+      this.list[groupingFieldType] = this.list[groupingFieldType].filter(
+        unit => unit.title !== title,
+      );
+    },
+    checkGroupingFieldTitle(groupingFieldType, title) {
+      this.isCreatePossible[groupingFieldType] = true;
+      this.titleErrors[groupingFieldType] = '';
+      this.newTitles[groupingFieldType] = title;
+
+      const isGroupingFieldTitleUnique = this.checkGroupingFieldTitleUniqueness(title);
+
+      if (!isGroupingFieldTitleUnique) {
+        this.titleErrors[groupingFieldType] = this.$options.GROUPING_FIELD_TITLE_ERROR;
+        this.isCreatePossible[groupingFieldType] = false;
+      }
+
+      return isGroupingFieldTitleUnique;
+    },
+    checkGroupingFieldTitleUniqueness(title) {
+      return !this.tagsTitles.includes(title)
+        && !this.categoriesTitles.includes(title);
     },
     checkGroupingFieldsTitlesIntersections(groupingFieldType, groupingFieldsTitles) {
       return this.list[groupingFieldType]
         .some(groupingField => {
           const isSameTitleGroupingField = groupingFieldsTitles.has(groupingField.title);
-
           if (!isSameTitleGroupingField) {
             groupingFieldsTitles.add(groupingField.title);
           }
-
           return isSameTitleGroupingField;
         });
     },
@@ -136,6 +167,20 @@ export default {
 
       return isValid;
     },
+    validateListTitle() {
+      this.titleErrors.list = '';
+
+      const isListTitleUnique = !this.lists.some(storeList => {
+        return storeList.title === this.list.title
+          && storeList.id !== this.list.id;
+      });
+
+      if (!isListTitleUnique) {
+        this.titleErrors.list = this.$options.LIST_TITLE_ERROR;
+      }
+
+      return isListTitleUnique;
+    },
     addList() {
       const areGroupingFieldsTitlesValid = this.validateGroupingFieldsTitles();
       const isListTitleUnique = this.validateListTitle();
@@ -149,17 +194,12 @@ export default {
           .then(() => {
             this.closeListModal();
           });
-      } else {
-        this.requestHandling.errorMessage = this.composeErrorMessage({ 
-          isListTitleUnique,
-          areGroupingFieldsTitlesValid,
-        });
-      } 
+      }
     },
     updateList() {
       const areGroupingFieldsTitlesValid = this.validateGroupingFieldsTitles();
       const isListTitleUnique = this.validateListTitle();
-      
+
       if (isListTitleUnique && areGroupingFieldsTitlesValid) {
         this.closeListModal();
         this.requestHandling.isRequestProcessing = true;
@@ -168,7 +208,7 @@ export default {
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
       } else {
-        this.requestHandling.errorMessage = this.composeErrorMessage({ 
+        this.requestHandling.errorMessage = this.showErrors({ 
           isListTitleUnique,
           areGroupingFieldsTitlesValid,
         });
@@ -176,7 +216,7 @@ export default {
     },
     async deleteList() {
       const confirmationModalTitle = `are you sure you want to delete list  
-        '${this.edittingListObj?.title}' ?`;
+        '${this.list.title}' ?`;
         
       const isRejected = !await isConfirmed(confirmationModalTitle);
 
@@ -204,15 +244,20 @@ export default {
   <form
     class="list-form"
     :class="`${globalTheme}-theme`"
-    @submit.prevent="edittingListObj ? updateList() : addList()"
+    @submit.prevent="list.id ? updateList() : addList()"
   >
     <InputCustom
       v-model="list.title"
       label="title"
-      :is-focus="!edittingListObj"
+      :is-focus="true"
       :disabled="requestHandling.isRequestProcessing"
       required
+      @blur="validateListTitle"
+      @input="titleErrors.list = ''"
     />
+    <div class="title-error-container">
+      <ErrorMessage :message="titleErrors.list" />
+    </div>
     <div class="private-option">
       <CheckboxCustom
         v-model="list.isPrivate"
@@ -232,79 +277,95 @@ export default {
         target="_blank"
       />
     </div>
-    <div class="grouping-fields-container">
-      <div class="tags">
-        <SectionCard
-          title="tags"
-          :size="isMobileScreen ? 'small' : ''"
-        >
+    <SectionCard
+      title="tags"
+      position="left"
+      text-style="caps"
+      size="small"
+    >
+      <MultiselectCustom
+        ref="tags"
+        :value="tagsTitles"
+        :options="tagsTitles"
+        mode="tags"
+        placeholder="start typing to add new tag"
+        :can-clear="false"
+        :create-option="!titleErrors.tags"
+        :show-options="!titleErrors.tags"
+        :disabled="requestHandling.isRequestProcessing"
+        no-options-text=""
+        no-results-text=""
+        @select="title => addGroupingField('tags', title)"
+        @deselect="title => deleteGroupingField('tags', title)"
+        @search-change="title => checkGroupingFieldTitle('tags', title)"
+      >
+        <template #beforelist>
           <div
-            v-for="(tag, index) in list.tags"
-            :key="index"
-            class="grouping-field"
+            v-if="newTitles.tags"
+            class="multiselect-hint"
           >
-            <InputCustom
-              ref="tagsInput"
-              v-model="tag.title"
-              required
-              :disabled="requestHandling.isRequestProcessing"
-            />
-            <ButtonSign
-              class="delete-grouping-field-button"
-              style-type="cross"
-              title="delete tag"
-              :disabled="requestHandling.isRequestProcessing"
-              @click="deleteGroupingField('tags', index)"
-            />
+            press the option below to add it
           </div>
-          <ButtonSign
-            style-type="plus"
-            title="add tag"
-            :disabled="requestHandling.isRequestProcessing"
-            @click="addGroupingField('tags')"
-          />
-        </SectionCard>
-      </div>
-      <div class="categories">
-        <SectionCard
-          title="categories"
-          :size="isMobileScreen ? 'small' : ''"
-        >
           <div
-            v-for="(category, index) in list.categories"
-            :key="index"
-            class="grouping-field"
+            v-else
+            class="multiselect-hint"
           >
-            <InputCustom
-              ref="categoriesInput"
-              v-model="category.title"
-              required
-              :disabled="requestHandling.isRequestProcessing"
-            />
-            <ButtonSign
-              class="delete-grouping-field-button"
-              style-type="cross"
-              title="delete category"
-              :disabled="requestHandling.isRequestProcessing"
-              @click="deleteGroupingField('categories', index)"
-            />
+            start typing
           </div>
-          <ButtonSign
-            style-type="plus"
-            title="add category"
-            :disabled="requestHandling.isRequestProcessing"
-            @click="addGroupingField('categories')"
-          />
-        </SectionCard>
+        </template>
+      </MultiselectCustom>
+      <div class="error-container">
+        <ErrorMessage :message="titleErrors.tags" />
       </div>
-    </div>
+    </SectionCard>
+    <SectionCard
+      title="categories"
+      position="left"
+      text-style="caps"
+      size="small"
+    >
+      <MultiselectCustom
+        ref="categories"
+        :value="categoriesTitles"
+        :options="categoriesTitles"
+        mode="tags"
+        placeholder="start typing to add new category"
+        :can-clear="false"
+        :create-option="!titleErrors.categories"
+        :show-options="!titleErrors.categories"
+        :disabled="requestHandling.isRequestProcessing"
+        no-options-text=""
+        no-results-text=""
+        @select="title => addGroupingField('categories', title)"
+        @deselect="title => deleteGroupingField('categories', title)"
+        @search-change="title => checkGroupingFieldTitle('categories', title)"
+      >
+        <template #beforelist>
+          <div
+            v-if="newTitles.categories"
+            class="multiselect-hint"
+          >
+            press the option below to add it
+          </div>
+          <div
+            v-else
+            class="multiselect-hint"
+          >
+            start typing
+          </div>
+        </template>
+      </MultiselectCustom>
+      <div class="error-container">
+        <ErrorMessage :message="titleErrors.categories" />
+      </div>
+    </SectionCard>
     <TogglingBlock
-      v-if="edittingListObj?.referringItems?.length"
+      v-if="list?.referringItems?.length"
       title="referring items"
     >
       <div class="referring-units-container">
         <CustomLink
-          v-for="item in edittingListObj.referringItems"
+          v-for="item in list.referringItems"
           :key="item.id"
           :to="{ name: 'item', params: { id: item.id || item } }"
           :title="item.title || 'untitled'"
@@ -326,10 +387,10 @@ export default {
         stop-propagation
       >
         <div>
-          created at: {{ getFormattedDate(edittingListObj.createdAt) }}
+          created at: {{ getFormattedDate(list.createdAt) }}
         </div>
         <div>
-          updated at: {{ getFormattedDate(edittingListObj.updatedAt) }}
+          updated at: {{ getFormattedDate(list.updatedAt) }}
         </div>
       </PopupBox>
     </div>
@@ -340,7 +401,7 @@ export default {
       <div>
         <ButtonText
           class="modal-button"
-          :text="edittingListObj ? 'save' : 'add'"
+          :text="list.id ? 'save' : 'add'"
           type="submit"
           :size="isMobileScreen ? 'small' : ''"
           :disabled="requestHandling.isRequestProcessing"
@@ -353,7 +414,7 @@ export default {
         />
       </div>
       <ButtonText
-        v-if="edittingListObj"
+        v-if="list.id"
         text="delete list"
         style-type="underline"
         :size="isMobileScreen ? 'small' : ''"
@@ -367,37 +428,7 @@ export default {
 <style lang="scss" scoped>
   .list-form {
     .private-option {
-      padding: 8px 0 15px;
-    }
-
-    .public-view-link {
-      font-size: 13px;
-      color: map-get($colors, 'gray-dark');
-    }
-
-    .grouping-fields-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 15px;
-      padding-top: 10px;
-    }
-
-    .tags,
-    .categories {
-      flex: 1 1 0px;
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid map-get($colors, 'gray-light');
-    }
-
-    .grouping-field {
-      display: flex;
-      align-items: center;
-    }
-
-    .delete-grouping-field-button {
-      margin-left: 10px;
+      padding: 8px 0 25px;
     }
 
     .referring-units-container {
@@ -406,9 +437,21 @@ export default {
       gap: 5px;
     }
 
-    .referring-unit {
-      padding: 5px 10px 0 0;
+    .referring-unit,
+    .public-view-link  {
       font-size: 13px;
+      color: map-get($colors, 'gray-dark');
+    }
+
+    .public-view-link  {
+      padding: 5px 10px 0 0;
+    }
+
+    .multiselect-hint {
+      padding: 12px;
+      font-size: 12px;
+      font-variant: small-caps;
+      letter-spacing: 0.9px;
       color: map-get($colors, 'gray-dark');
     }
 
@@ -416,8 +459,13 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
+    .title-error-container {
+      height: 30px;
+      padding-bottom: 10px;
+    }
+
     .error-container {
-      height: 50px;
+      height: 20px;
       padding-top: 10px;
     }
 
@@ -425,7 +473,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding-top: 10px;
+      padding-top: 30px;
     }
 
     .modal-button {
@@ -449,29 +497,14 @@ export default {
       }
 
       .untitled-item,
-      .stats  {
+      .stats {
         color: map-get($colors, 'gray-dark');
-      }
-
-      .tags,
-      .categories {
-        border-color: map-get($colors, 'gray-dark');
       }
     }
   }
 
   @media #{breakpoints.$s-media} {
     .list-form {
-      .grouping-field {
-        font-size: 12px;
-      }
-
-      .tags,
-      .categories {
-        border: none;
-        padding: 10px;
-      }
-
       .referring-units-container {
         grid-template-columns: 1fr;
       }

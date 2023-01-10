@@ -12,7 +12,9 @@ export default {
     size: {
       type: String,
       validator(value) {
-        return value ? ['big'].includes(value) : true;
+        return value
+          ? ['big'].includes(value)
+          : true;
       },
     },
     title: {
@@ -23,8 +25,14 @@ export default {
       type: String,
       default: 'button',
       validator(value) {
-        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+        return value
+          ? ['button', 'reset', 'submit'].includes(value)
+          : true;
       },
+    },
+    active: {
+      type: Boolean,
+      default: false,
     },
     disabled: {
       type: Boolean,
@@ -54,6 +62,7 @@ export default {
     :class="[
       styleType,
       size,
+      { active },
       `${globalTheme}-theme`,
     ]"
     :title="title"
@@ -112,47 +121,20 @@ export default {
     }
 
     &.plus {
-      width: 15px;
-      height: 15px;
+      background-image: url('/icons/plus.svg');
+      background-size: contain;
+      width: 25px;
+      height: 25px;
+      transition: filter 0.2s;
 
       &.big {
         width: 45px;
         height: 45px;
-
-        &::before,
-        &::after {
-          width: 2px;
-          height: 25px;
-        }
       }
 
       &:hover,
       &:disabled {
-        &::before,
-        &::after {
-          background-color: map-get($colors, 'gray-dark');
-        }
-      }
-
-      &::before,
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 2px;
-        height: 100%;
-        background-color: map-get($colors, 'black');
-        transform-origin: center center;
-        transition: color 0.2s;
-      }
-
-      &::before {
-        transform: translate(-50%, -50%) rotate(90deg);
-      }
-
-      &::after {
-        transform: translate(-50%, -50%);
+        filter: invert(40%);
       }
     }
 
@@ -225,12 +207,14 @@ export default {
     &.loupe {
       background-image: url('/icons/loupe.svg');
       background-size: contain;
-      width: 20px;
-      height: 20px;
+      width: 25px;
+      height: 25px;
+      filter: invert(40%);
       transition: filter 0.2s;
 
-      &:hover {
-        filter: invert(40%);
+      &:hover,
+      &.active {
+        filter: invert(0%);
       }
     }
 
@@ -254,12 +238,11 @@ export default {
       }
 
       &.plus {
+        filter: invert(100%);
+
         &:hover,
         &:disabled {
-          &::before,
-          &::after {
-            background-color: map-get($colors, 'gray-light');
-          }
+          filter: invert(60%);
         }
 
         &::before,
@@ -292,10 +275,11 @@ export default {
       }
 
       &.loupe {
-        filter: invert(100%);
+        filter: invert(60%);
 
-        &:hover {
-          filter: invert(60%);
+        &:hover,
+        &.active {
+          filter: invert(100%);
         }
       }
     }

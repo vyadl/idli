@@ -102,13 +102,13 @@ export default {
     .reset-password-link {
       width: 100%;
       height: 20px;
-      padding-bottom: 40px;
+      padding-bottom: 35px;
     }
 
     .reset-password-link {
       display: flex;
       justify-content: center;
-      padding-top: 20px;
+      padding-top: 40px;
     }
 
     .sign-up-option,

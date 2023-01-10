@@ -49,7 +49,7 @@ export default {
     ]),
     ...mapActions('lists', [
       '_fetchListById',
-      '_setListForEditting',
+      '_setEdittingListObj',
     ]),
     ...mapActions([
       '_resetCustomView',
@@ -57,8 +57,8 @@ export default {
     openListModal() {
       this.$vfm.show('listModal');
     },
-    setListForEditting(list) {
-      this._setListForEditting(list);
+    setEdittingListObj(list) {
+      this._setEdittingListObj(list);
       this.openListModal();
     },
     fetchListById(id) {
@@ -108,7 +108,7 @@ export default {
           class="edit-button"
           :class="{ active: isMobileScreen || list.id === currentListId }"
           style-type="dots"
-          @click="setListForEditting(list)"
+          @click="setEdittingListObj(list)"
         />
         <ButtonText
           class="list-title"
