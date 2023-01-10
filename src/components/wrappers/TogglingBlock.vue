@@ -23,7 +23,9 @@ export default {
       type: String,
       default: 'caps',
       validator(value) {
-        return value ? ['caps'].includes(value) : true;
+        return value
+          ? ['caps'].includes(value)
+          : true;
       },
     },
   },

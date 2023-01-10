@@ -12,7 +12,9 @@ export default {
     size: {
       type: String,
       validator(value) {
-        return value ? ['big'].includes(value) : true;
+        return value
+          ? ['big'].includes(value)
+          : true;
       },
     },
     title: {
@@ -23,7 +25,9 @@ export default {
       type: String,
       default: 'button',
       validator(value) {
-        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+        return value
+          ? ['button', 'reset', 'submit'].includes(value)
+          : true;
       },
     },
     active: {

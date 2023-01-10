@@ -27,6 +27,19 @@ export default {
       'deletedLists',
       'deletedItems',
     ]),
+    deletedUnitsTypes() {
+      const types = [];
+
+      if (this.deletedLists.length) {
+        types.push('lists');
+      } 
+      
+      if (this.deletedItems.length) {
+        types.push('items');
+      }
+
+      return types;
+    },
   },
   created() {
     this._fetchBin()
@@ -105,9 +118,8 @@ export default {
     <div v-if="deletedLists.length || deletedItems.length">
       <div class="bin-mode-buttons">
         <ButtonText
-          v-for="(type, index) in ['lists', 'items']"
-          v-show="[type === 'lists' ? 'deletedLists' : 'deletedItems'].length"
-          :key="index"
+          v-for="type in deletedUnitsTypes"
+          :key="type"
           :text="type"
           style-type="brick"
           :active="binMode === type"

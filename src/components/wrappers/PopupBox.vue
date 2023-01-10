@@ -14,21 +14,27 @@ export default {
       type: String,
       default: 'bordered',
       validator(value) {
-        return value ? ['bordered'].includes(value) : true;
+        return value
+          ? ['bordered'].includes(value)
+          : true;
       },
     },
     buttonStyleType: {
       type: String,
       default: 'hint',
       validator(value) {
-        return value ? ['hint', 'info', 'plus', 'loupe'].includes(value) : true;
+        return value
+          ? ['hint', 'info', 'plus', 'loupe'].includes(value)
+          : true;
       },
     },
     contentType: {
       type: String,
       default: 'informational',
       validator(value) {
-        return value ? ['informational', 'functional'].includes(value) : true;
+        return value
+          ? ['informational', 'functional'].includes(value)
+          : true;
       },
     },
     position: {

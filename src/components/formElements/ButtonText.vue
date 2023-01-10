@@ -6,14 +6,18 @@ export default {
       type: String,
       default: 'medium',
       validator(value) {
-        return value ? ['big', 'medium', 'small', 'smallest'].includes(value) : true;
+        return value
+          ? ['big', 'medium', 'small', 'smallest'].includes(value)
+          : true;
       },
     },
     styleType: {
       type: String,
       default: 'bordered',
       validator(value) {
-        return value ? ['bordered', 'line', 'underline', 'brick'].includes(value) : true;
+        return value
+          ? ['bordered', 'line', 'underline', 'brick'].includes(value)
+          : true;
       },
     },
     active: {
@@ -28,7 +32,9 @@ export default {
       type: String,
       default: 'button',
       validator(value) {
-        return value ? ['button', 'reset', 'submit'].includes(value) : true;
+        return value
+          ? ['button', 'reset', 'submit'].includes(value)
+          : true;
       },
     },
     disabled: {
@@ -130,7 +136,7 @@ export default {
     }
 
     &.underline {
-      padding: 5px 2px;;
+      padding: 5px 2px;
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');

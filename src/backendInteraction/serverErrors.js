@@ -19,9 +19,8 @@ const ERROR_CODES_AND_MESSAGES_ACCORDANCE = {
   WRONG_CURRENT_PASSWORD_ERROR: ERROR_MESSAGES.wrongCurrentPassword,
 };
 
-export function getErrorMessage(errorData) {
-  const message = errorData?.message;
-  const code = errorData?.code;
+export function getErrorMessage(errorData = {}) {
+  const { code, message } = errorData;
 
   return ERROR_CODES_AND_MESSAGES_ACCORDANCE[code]
     || message

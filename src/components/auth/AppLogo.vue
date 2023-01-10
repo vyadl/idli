@@ -5,7 +5,9 @@ export default {
       type: String,
       default: 'medium',
       validator(value) {
-        return value ? ['big', 'small'].includes(value) : true;
+        return value
+          ? ['big', 'small'].includes(value)
+          : true;
       },
     },
   },

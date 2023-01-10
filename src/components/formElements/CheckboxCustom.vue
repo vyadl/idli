@@ -6,13 +6,17 @@ export default {
       type: String,
       default: 'custom',
       validator(value) {
-        return value ? ['custom', 'initial'].includes(value) : true;
+        return value
+          ? ['custom', 'initial'].includes(value)
+          : true;
       },
     },
     size: {
       type: String,
       validator(value) {
-        return value ? ['small'].includes(value) : true;
+        return value
+          ? ['small'].includes(value)
+          : true;
       },
     },
     title: {

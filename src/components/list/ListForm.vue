@@ -196,7 +196,7 @@ export default {
           });
       }
     },
-    updateList() {      
+    updateList() {
       const areGroupingFieldsTitlesValid = this.validateGroupingFieldsTitles();
       const isListTitleUnique = this.validateListTitle();
 
@@ -288,7 +288,7 @@ export default {
         :value="tagsTitles"
         :options="tagsTitles"
         mode="tags"
-        placeholder="type and press Enter to add new tag"
+        placeholder="start typing to add new tag"
         :can-clear="false"
         :create-option="!titleErrors.tags"
         :show-options="!titleErrors.tags"
@@ -329,7 +329,7 @@ export default {
         :value="categoriesTitles"
         :options="categoriesTitles"
         mode="tags"
-        placeholder="type and press Enter to add new category"
+        placeholder="start typing to add new category"
         :can-clear="false"
         :create-option="!titleErrors.categories"
         :show-options="!titleErrors.categories"
