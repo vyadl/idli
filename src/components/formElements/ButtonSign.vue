@@ -26,6 +26,10 @@ export default {
         return value ? ['button', 'reset', 'submit'].includes(value) : true;
       },
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -54,6 +58,7 @@ export default {
     :class="[
       styleType,
       size,
+      { active },
       `${globalTheme}-theme`,
     ]"
     :title="title"
@@ -122,7 +127,7 @@ export default {
         width: 45px;
         height: 45px;
       }
-      
+
       &:hover,
       &:disabled {
         filter: invert(40%);
@@ -196,14 +201,15 @@ export default {
     }
 
     &.loupe {
-      background-image: url('/icons/loupe_new.svg');
+      background-image: url('/icons/loupe.svg');
       background-size: contain;
       width: 25px;
       height: 25px;
       filter: invert(40%);
       transition: filter 0.2s;
 
-      &:hover {
+      &:hover,
+      &.active {
         filter: invert(0%);
       }
     }
@@ -267,7 +273,8 @@ export default {
       &.loupe {
         filter: invert(60%);
 
-        &:hover {
+        &:hover,
+        &.active {
           filter: invert(100%);
         }
       }

@@ -108,7 +108,7 @@ export default {
     :style="styles"
     @click.stop="setItemForEditting"
   >
-    <div 
+    <div
       class="item-title"
       :class="{ untitled: isUntitled, bordered }"
     >

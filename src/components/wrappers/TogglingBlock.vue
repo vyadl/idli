@@ -154,7 +154,7 @@ export default {
     }
 
     .block-content {
-      padding: 20px 0 10px;
+      padding: 20px 10px 10px;
     }
   }
 </style>

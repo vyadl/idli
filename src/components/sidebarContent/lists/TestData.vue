@@ -30,6 +30,9 @@ export default {
     this.areTestListsShown = !this.lists.length;
   },
   methods: {
+    ...mapActions([
+      '_resetCustomView',
+    ]),
     ...mapActions('lists', [
       '_copyTestListToUserLists',
     ]),
@@ -40,6 +43,7 @@ export default {
       const request = this._copyTestListToUserLists(list);
 
       handleRequestStatuses(request, this.requestHandling);
+      this._resetCustomView();
     },
   },
 };

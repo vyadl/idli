@@ -70,7 +70,7 @@ function editCurrentList() {
   const isUserOwnsCurrentList = store.getters['lists/isUserOwnsCurrentList'];
 
   if (currentListObj && isUserOwnsCurrentList) {
-    store.dispatch('lists/_setListForEditting', currentListObj);
+    store.dispatch('lists/_setEdittingListObj', currentListObj);
     store.commit('setModalNameToShow', 'listModal');
   }
 }

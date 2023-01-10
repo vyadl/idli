@@ -43,7 +43,7 @@ export default {
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
-        commit('setListForEditting', responseList);
+        commit('setEdittingListObj', responseList);
 
         return responseList;
       })
@@ -234,8 +234,8 @@ export default {
     }
   },
 
-  _setListForEditting({ commit, dispatch }, list) {
-    commit('setListForEditting', list);
+  _setEdittingListObj({ commit, dispatch }, list) {
+    commit('setEdittingListObj', list);
 
     if (list?.id) {
       dispatch('_refreshListForEdittingForm', { id: list.id, cancelToken: null });
@@ -278,21 +278,37 @@ export default {
       });
   },
 
-  _addTagForListAndItem({ dispatch, getters, rootGetters }, { listObj, tagTitle }) {
-    return dispatch('_updateList', listObj)
-      .then(() => {
-        const newTagObj = getters.currentListTags?.find(tag => tag.title === tagTitle);
+  async _addTagForListAndItem({ commit, rootGetters }, { listObj, tagTitle }) {
+    return this.$config.axios
+      .patch(
+        `${this.$config.apiBasePath}list/update/${listObj.id}`,
+        {
+          title: listObj.title,
+          isPrivate: listObj.isPrivate,
+          tags: listObj.tags,
+          categories: listObj.categories,
+        },
+      )
+      .then(({ data: responseList }) => {
+        const newTagObj = responseList.tags.find(tag => tag.title === tagTitle);
 
+        commit('setCurrentListObj', responseList);
         commitFromRoot('updateItemFieldLocally', {
           field: 'tags',
           value: [...rootGetters['items/edittingItemObj'].tags, newTagObj.id],
         });
-
         dispatchFromRoot('items/_saveItemOnServer');
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatchFromRoot('items/_fetchItemById', {
+          id: rootGetters['items/edittingItemObj'],
+          cancelToken: null,
+        });
       });
   },
 
-  _addCategoryForListAndItem({ dispatch, getters }, { listObj, categoryTitle }) {
+  _addCategoryForListAndItem({ dispatch, getters, rootGetters }, { listObj, categoryTitle }) {
     return dispatch('_updateList', listObj)
       .then(() => {
         const newCategoryObj = getters.currentListCategories?.find(
@@ -305,6 +321,13 @@ export default {
         });
 
         dispatchFromRoot('items/_saveItemOnServer');
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatchFromRoot('items/_fetchItemById', {
+          id: rootGetters['items/edittingItemObj'],
+          cancelToken: null,
+        });
       });
   },
 

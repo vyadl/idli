@@ -203,7 +203,7 @@ export default {
 
     try {
       if (this.$route.params.id) {
-        this._fetchListById({ id: this.$route.params.id, cancelToken: null });
+        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
       }
 
       handleQueryOnLoad(queryOptions, this.$route.query);
@@ -324,25 +324,24 @@ export default {
           {{ currentListObj.title }}
         </div>
         <div class="buttons-container">
-          <div class="single-button-container">
-            <DraggableSwitch
-              v-if="isDraggableSwitchShown"
-              title="reorder"
-              hint-position="lower-center"
-              stop-propagation
-            />
-            <ButtonText
-              v-if="sorting === 'shuffled'"
-              text="randomize!"
-              style-type="underline"
-              @click="toggleShuffleTrigger"
-            />
-          </div>
+          <DraggableSwitch
+            v-if="isDraggableSwitchShown"
+            title="reorder"
+            hint-position="lower-center"
+            style-type="checkbox"
+            size="small"
+            stop-propagation
+          />
+          <ButtonText
+            v-if="sorting === 'shuffled'"
+            text="randomize!"
+            style-type="underline"
+            size="small"
+            @click="toggleShuffleTrigger"
+          />
           <PopupBox
             v-if="isAddUnitPossible"
-            class="add-button"
             button-style-type="plus"
-            position="lower-right"
             stop-propagation
             content-type="functional"
           >
@@ -414,7 +413,11 @@ export default {
     min-height: 100vh;
 
     .header {
+      position: fixed;
+      z-index: 1;
+      width: 100%;
       padding: 10px 10px 0;
+      background-color: map-get($colors, 'white');
 
       &.hidden {
         opacity: 0;
@@ -427,25 +430,15 @@ export default {
     }
 
     .buttons-container {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      height: 75px;
+      display: grid;
+      grid-template-rows: repeat(2, 20px);
+      align-items: start;
+      gap: 10px;
       padding-top: 10px;
     }
 
-    .single-button-container {
-      display: grid;
-      height: 35px;
-    }
-
-    .add-button {
-      padding: 10px 0 0 0;
-    }
-
     .items-container {
-      padding: 10px 50px 50px;
+      padding: 120px 50px 200px;
 
       &.list-mode {
         display: flex;
@@ -471,6 +464,10 @@ export default {
     }
 
     &.inverted-theme {
+      .header {
+        background-color: map-get($colors, 'black');
+      }
+
       .list-title {
         color: map-get($colors, 'gray-dark');
       }

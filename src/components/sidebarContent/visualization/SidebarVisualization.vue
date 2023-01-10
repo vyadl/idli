@@ -144,6 +144,7 @@ export default {
             title="reorder mode"
             hint-position="lower-left"
             style-type="checkbox"
+            size="small"
             stop-propagation
           />
         </div>

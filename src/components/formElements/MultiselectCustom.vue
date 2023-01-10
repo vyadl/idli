@@ -10,7 +10,11 @@ export default {
     options: Array,
     placeholder: String,
     noOptionsText: String,
-    showOptions: Boolean,
+    noResultsText: String,
+    showOptions: {
+      type: Boolean,
+      default: true,
+    },
     disabled: Boolean,
     smallText: Boolean,
     mode: {
@@ -21,7 +25,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    createTag: {
+    createOption: {
       type: Boolean,
       default: true,
     },
@@ -34,7 +38,7 @@ export default {
     'select',
     'deselect',
     'clear',
-    'tag',
+    'search-change',
   ],
   methods: {
     select(tag) {
@@ -46,8 +50,8 @@ export default {
     clear() {
       this.$emit('clear');
     },
-    tag(query) {
-      this.$emit('tag', query);
+    searchChange() {
+      this.$emit('search-change');
     },
   },
 };
@@ -58,22 +62,29 @@ export default {
     :class="[
       `${globalTheme}-theme`,
       { 'small-text': smallText },
+      { 'with-hint': !noResultsText }
     ]"
     :value="value"
     :mode="mode"
     :placeholder="placeholder"
     :no-options-text="noOptionsText"
+    :no-results-text="noResultsText"
     :options="options"
     :show-options="showOptions"
     :searchable="searchable"
-    :create-tag="createTag"
+    :create-option="createOption"
     :can-clear="canClear"
     :disabled="disabled"
+    :clear-on-blur="false"
     @select="tag => select(tag)"
     @deselect="tag => deselect(tag)"
     @clear="clear"
-    @tag="tag"
-  />
+    @search-change="searchChange"
+  >
+    <template #beforelist>
+      <slot name="beforelist" />
+    </template>
+  </MultiselectExternal>
 </template>
 
 <style lang="scss">
@@ -130,6 +141,20 @@ export default {
       &.is-pointed,
       &.is-disabled {
         background: map-get($colors, 'gray-dark');
+      }
+    }
+  }
+
+  &-no-results,
+  &-no-options {
+    font-size: 12px;
+  }
+
+  &.with-hint {
+    .multiselect {
+      &-no-results,
+      &-no-options {
+        display: none;
       }
     }
   }

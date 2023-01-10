@@ -112,6 +112,7 @@ export default {
       :value="currentItemCategoryTitle"
       placeholder="choose category"
       no-options-text="no categories - start typing to add new"
+      no-results-text="no categories found"
       :small-text="isItemFormInSidebar"
       :options="currentListCategoriesTitles"
       :disabled="requestHandling.isRequestProcessing"

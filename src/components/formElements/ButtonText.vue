@@ -130,7 +130,7 @@ export default {
     }
 
     &.underline {
-      padding: 5px 0;
+      padding: 5px 2px;;
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
@@ -145,7 +145,7 @@ export default {
       }
 
       &.small {
-        padding: 3px 0;
+        padding: 3px 2px;
         font-size: 11px;
       }
 

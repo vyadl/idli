@@ -118,6 +118,7 @@ export default {
       mode="tags"
       placeholder="add tags"
       no-options-text="no tags - start typing to add new"
+      no-results-text="no tags found"
       :small-text="isItemFormInSidebar"
       :options="currentListTagsTitles"
       :can-clear="false"

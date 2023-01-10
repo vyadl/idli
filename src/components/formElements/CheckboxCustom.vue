@@ -219,19 +219,21 @@ export default {
 
       &.small {
         .label {
-          font-size: 13px;
-          margin-left: 30px;
+          font-size: 11px;
+          margin-left: 25px;
 
           &::before {
+            border-width: 1px;
             left: -21px;
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
           }
 
           &::after {
-            left: -16px;
-            width: 8px;
-            height: 5px;
+            border-width: 1px;
+            left: -17px;
+            width: 6px;
+            height: 4px;
           }
         }
       }

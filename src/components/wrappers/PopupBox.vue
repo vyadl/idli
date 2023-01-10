@@ -37,7 +37,6 @@ export default {
       validator(value) {
         return value
           ? ['right',
-            'lower-right',
             'left',
             'lower-left',
             'upper-right',
@@ -88,6 +87,7 @@ export default {
     <ButtonSign
       class="toggling-button"
       :style-type="buttonStyleType"
+      :active="isShown"
       :stop-propagation="stopPropagation"
       @click="togglePopUp"
     />
@@ -125,16 +125,11 @@ export default {
 
     &.right {
       top: 0;
-      left: 25px;
-    }
-
-    &.lower-right {
-      top: 10px;
       left: 30px;
     }
 
     &.left {
-      bottom: -5px;
+      bottom: -2px;
       right: 130%;
     }
 

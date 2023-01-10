@@ -20,7 +20,8 @@ const ERROR_CODES_AND_MESSAGES_ACCORDANCE = {
 };
 
 export function getErrorMessage(errorData) {
-  const { code, message } = errorData;
+  const message = errorData?.message;
+  const code = errorData?.code;
 
   return ERROR_CODES_AND_MESSAGES_ACCORDANCE[code]
     || message

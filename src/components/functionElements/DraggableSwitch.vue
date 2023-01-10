@@ -28,6 +28,14 @@ export default {
           : true;
       },
     },
+    size: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['small'].includes(value)
+          : true;
+      },
+    },
     stopPropagation: {
       type: Boolean,
       default: false,
@@ -56,7 +64,7 @@ export default {
       v-if="styleType === 'checkbox'"
       :label="title"
       style-type="initial"
-      size="small"
+      :size="size"
       :model-value="isDraggableMode"
       @update:model-value="_toggleDraggableMode"
     />
@@ -89,7 +97,7 @@ export default {
 
   &.checkbox {
     align-items: flex-start;
-    padding-top: 2px;
+    padding-top: 5px;
   }
 }
 </style>

@@ -23,7 +23,7 @@ export default {
     state.lists.push(list);
   },
 
-  setListForEditting(state, list) {
+  setEdittingListObj(state, list) {
     state.edittingListObj = list;
   },
 
@@ -49,10 +49,6 @@ export default {
       title: categoryTitle,
       id: null,
     });
-  },
-
-  updateListFieldLocally(state, { field, value }) {
-    state.edittingListObj[field] = value;
   },
   
   deleteList(state, id) {

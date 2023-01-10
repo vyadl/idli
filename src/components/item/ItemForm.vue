@@ -274,6 +274,7 @@ export default {
     <div>
       <TogglingBlock
         title="category, tags & related"
+        :force-show="areAddonsShown"
       >
         <SectionCard
           title="category"

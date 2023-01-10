@@ -47,11 +47,14 @@ export default {
         this.$vfm.show(value);
       }
     },
-    isLoggedIn(value) {
-      if (value) {
-        this._fetchTestLists();
-        this._fetchListsForUser();
-      }
+    isLoggedIn: {
+      handler(value) {
+        if (value) {
+          this._fetchTestLists();
+          this._fetchListsForUser();
+        }
+      },
+      immediate: true,
     },
   },
   created() {
