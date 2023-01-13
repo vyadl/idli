@@ -140,7 +140,10 @@ export default {
         <ButtonText
           v-for="mode in sidebarModes"
           :key="mode"
-          :class="{'mode-button' : !isMobileScreen}"
+          :class="{
+            'mode-button' : !isMobileScreen && mode !== 'bin',
+            'bin-mode-button' : mode === 'bin',
+          }"
           :text="mode"
           :style-type="defineButtonStyleType(mode)"
           :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
@@ -252,8 +255,13 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        box-shadow: -5px 0 12px 12px map-get($colors, 'white');
+        box-shadow: -2px 2px 3px 3px rgb(0 0 0 / 25%);
       }
+    }
+
+    .bin-mode-button {
+      padding: 10px;
+      transform: translateX(5px);
     }
 
     .state-button {
@@ -285,7 +293,7 @@ export default {
 
       .mode-button {
         &::before {
-          box-shadow: -5px 0 12px 12px map-get($colors, 'black');
+          box-shadow: -2px 2px 2px 2px rgb(255 255 255 / 70%);
         }
       }
     }

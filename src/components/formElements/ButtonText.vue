@@ -140,6 +140,7 @@ export default {
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
+      background-color: map-get($colors, 'white');
       transition: color 0.2s;
 
       &:hover {
@@ -151,12 +152,10 @@ export default {
       }
 
       &.small {
-        padding: 3px 2px;
         font-size: 11px;
       }
 
       &.smallest {
-        padding: 3px 0;
         font-size: 11px;
         color: map-get($colors, 'gray-light');
 
@@ -249,6 +248,7 @@ export default {
 
       &.underline {
         color: map-get($colors, 'gray-light');
+        background-color: map-get($colors, 'black');
 
         &:hover {
           color: map-get($colors, 'gray-dark');

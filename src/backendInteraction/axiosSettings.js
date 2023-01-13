@@ -1,6 +1,9 @@
 import axios from 'axios';
 import getBrowserFingerprint from 'get-browser-fingerprint';
-import { LOGOUT_TRIGGER_ERROR_CODES, REFRESH_TRIGGER_ERROR_CODE } from '@/backendInteraction/serverErrors';
+import {
+  LOGOUT_TRIGGER_ERROR_CODES,
+  REFRESH_TRIGGER_ERROR_CODE,
+} from '@/backendInteraction/serverErrors';
 
 export function initAxios(store) {
   const apiBasePath = import.meta.env.VITE_API_BASE_PATH;
@@ -23,7 +26,7 @@ export function initAxios(store) {
       }
 
       if (LOGOUT_TRIGGER_ERROR_CODES.has(code)) {
-        store.dispatch('auth/_logOut', { mode: 'current' });
+        store.dispatch('auth/_logOutLocally');
       }
 
       if (code !== REFRESH_TRIGGER_ERROR_CODE || error.config.retry) {

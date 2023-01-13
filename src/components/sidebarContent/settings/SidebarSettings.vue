@@ -3,7 +3,6 @@ import SectionCard from '@/components/wrappers/SectionCard.vue';
 import UserProfile from '@/components/sidebarContent/settings/UserProfile.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import RadioCustom from '@/components/formElements/RadioCustom.vue';
-import AboutModal from '@/components/modals/AboutModal.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -13,7 +12,6 @@ export default {
     UserProfile,
     CheckboxCustom,
     RadioCustom,
-    AboutModal,
     ButtonText,
   },
   data() {
@@ -168,7 +166,6 @@ export default {
         @click="$vfm.show('aboutModal')"
       />
     </div>
-    <AboutModal />
   </SectionCard>
 </template>
 

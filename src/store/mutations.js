@@ -44,7 +44,7 @@ export default {
     const targetIndex = state.currentListItems
       .findIndex(localItem => localItem.id === item.id);
     const targetItem = state.currentListItems[targetIndex];
-    const fieldsToUpdate = ['updatedAt'];
+    const fieldsToUpdate = ['updatedAt', 'title'];
 
     fieldsToUpdate.forEach(field => {
       targetItem[field] = item[field];
@@ -58,6 +58,8 @@ export default {
     
     state.currentListItems.splice(index, 1, item);
   },
+
+  updateItemById() {},
 
   deleteItem(state, id) {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);

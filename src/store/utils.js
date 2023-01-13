@@ -1,5 +1,8 @@
 import store from '@/store/index'; // eslint-disable-line import/no-cycle
-import { getErrorMessage } from '@/backendInteraction/serverErrors';
+import {
+  LOGOUT_TRIGGER_ERROR_CODES,
+  getErrorMessage,
+} from '@/backendInteraction/serverErrors';
 import {
   GENERATED_ITEM_TITLE_MAX_LENGTH,
   settingsValuesForMobileScreen,
@@ -18,7 +21,9 @@ export function notifyAboutError(error) {
     ? 'Something went wrong'
     : getErrorMessage(error.response?.data);
 
-  store.commit('setNotification', { text: errorMessage });
+  if (!LOGOUT_TRIGGER_ERROR_CODES.has(error.response?.data?.code)) {
+    store.commit('setNotification', { text: errorMessage });
+  }
 }
 
 export function generateTitleFromDetails(details) {

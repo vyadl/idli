@@ -72,29 +72,40 @@ export default {
       : commitFromRoot('setModalNameToShow', 'itemModal');
   },
 
-  _saveItemOnServer({ dispatch, getters }) {
-    const { title, details } = getters.edittingItemObj;
+  _saveItemOnServer({ dispatch, getters }, item) {
+    const { details } = item;
+    let { title } = item;
 
     if (!title && details) {
-      commitFromRoot('updateItemFieldLocally', {
-        field: 'title',
-        value: generateTitleFromDetails(details),
-      });
+      title = generateTitleFromDetails(details);
+
+      if (getters.edittingItemObj) {
+        commitFromRoot('updateItemFieldLocally', {
+          field: 'title',
+          value: title,
+        });
+      }
     }
 
-    dispatch(
-      getters.edittingItemObj.temporaryId
-        ? '_addItemOnServer'
-        : '_updateItemOnServer',
-      { item: getters.edittingItemObj, cancelToken: null },
-    );
+    dispatch(item.temporaryId
+      ? '_addItemOnServer'
+      : '_updateItemOnServer', {
+      item: {
+        ...item,
+        title,
+      },
+      cancelToken: null,
+    });
   },
 
-  _addItemOnServer({ rootGetters, commit, dispatch }, { item, cancelToken }) {
+  _addItemOnServer({ rootGetters, getters, commit }, { item, cancelToken }) {
     const listId = rootGetters['lists/currentListObj'].id;
-    const title = item.title || generateTitleFromDetails(item.details);
+    const { details } = item;
+    let { title } = item;
 
-    commitFromRoot('updateItemFieldLocally', { field: 'title', title });
+    if (!title && details) {
+      title = generateTitleFromDetails(details);
+    }
 
     this.$config.axios
       .post(
@@ -107,11 +118,14 @@ export default {
       )
       .then(({ data: responseItem }) => {
         commitFromRoot('updateItemByTemporaryId', responseItem);
-        commit('setCurrentItemObj', responseItem);
+
+        if (getters.edittingItemObj) {
+          commit('setCurrentItemObj', responseItem);
+        }
       })
       .catch(error => {
         notifyAboutError(error);
-        dispatch('_fetchListById', { id: listId, cancelToken: null });
+        dispatchFromRoot('lists/_fetchListById', { id: listId, cancelToken: null });
       });
   },
 
@@ -120,20 +134,15 @@ export default {
     const { details } = item;
 
     if (!title && details) {
-      title = generateTitleFromDetails(item.details);
-      commitFromRoot('updateItemFieldLocally', { field: 'title', title });
+      title = generateTitleFromDetails(details);
     }
 
     this.$config.axios
       .patch(
         `${this.$config.apiBasePath}item/update/${item.listId}/${item.id}`,
         {
+          ...item,
           title,
-          details,
-          tags: item.tags,
-          category: item.category,
-          relatedLists: item.relatedLists,
-          relatedItems: item.relatedItems,
         },
         { cancelToken },
       )

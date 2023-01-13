@@ -11,6 +11,9 @@ export default {
   },
   emits: ['click'],
   computed: {
+    ...mapGetters([
+      'isDraggableMode',
+    ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
@@ -103,14 +106,18 @@ export default {
     :class="[
       `${mode}-mode`,
       `${globalTheme}-theme`,
-      { active: isItemActive }
+      {
+        active: isItemActive,
+        draggable: isDraggableMode,
+        bordered
+      },
     ]"
     :style="styles"
     @click.stop="setItemForEditting"
   >
     <div
       class="item-title"
-      :class="{ untitled: isUntitled, bordered }"
+      :class="{ untitled: isUntitled }"
     >
       {{ itemName }}
     </div>
@@ -134,6 +141,19 @@ export default {
     cursor: pointer;
     transition: transform 0.2s;
 
+    &.bordered {
+      padding: 5px 15px;
+      border: 1px solid map-get($colors, 'black');
+
+      .item-title {
+        font-size: 14px;
+      }
+
+      .item-details {
+        font-size: 12px;
+      }
+    }
+
     .item-title {
       display: inline-block;
       padding: 5px;
@@ -142,12 +162,6 @@ export default {
 
       &.untitled{
         opacity: 0.5;
-      }
-
-      &.bordered {
-        padding: 10px 25px;
-        border: 1px solid map-get($colors, 'black');
-        font-size: 15px;
       }
     }
 
@@ -166,7 +180,6 @@ export default {
     }
 
     &.cards-mode {
-      width: 100%;
       margin-bottom: 0;
       padding: 10px 10px;
       border: 2px solid map-get($colors, 'black');
@@ -184,6 +197,12 @@ export default {
       .item-title {
         text-shadow: none;
       }
+    }
+
+    &.page-mode,
+    &.cloud-mode,
+    &.draggable {
+      width: fit-content;
     }
 
     &.cloud-mode {

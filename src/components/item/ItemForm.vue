@@ -80,6 +80,7 @@ export default {
   computed: {
     ...mapGetters([
       'currentListItems',
+      'explicitRequestsNumber',
     ]),
     ...mapGetters('items', [
       'edittingItemIndex',
@@ -121,7 +122,11 @@ export default {
     },
   },
   unmounted() {
-    if (this.edittingItemObj) {
+    const isItemSaveNeeded = this.edittingItemObj?.tags
+      && this.edittingItemObj.category
+      && !this.explicitRequestsNumber;
+
+    if (isItemSaveNeeded) {
       const { title, details } = this.edittingItemObj;
 
       if (!title && details) {
@@ -131,23 +136,19 @@ export default {
         });
       }
 
-      this._saveItemOnServer();
+      this._saveItemOnServer(this.edittingItemObj);
     }
 
     this.currentListItems.forEach(item => {
       if (!item.title && !item.details) {
         if (item.temporaryId) {
           this.deleteItemByTemporaryId(item.temporaryId);
-        } else {
-          this._updateItemOnServer({
-            item, 
-            cancelToken: null,
-          });
         }
       }
     });
 
     this.setCurrentItemObj(null);
+    this.setEdittingItemIndex(null);
   },
   methods: {
     ...mapMutations([
@@ -172,6 +173,9 @@ export default {
       '_updateItemOnServer',
       '_deleteItemOnServer',
       '_fetchItemById',
+    ]),
+    ...mapActions('bin', [
+      '_fetchDeletedItems',
     ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
@@ -227,6 +231,8 @@ export default {
           cancelToken: null,
         });
       }
+
+      this._fetchDeletedItems();
     },
     disableCategory(id) {
       if (this.edittingItemObj.category === id) {
@@ -255,12 +261,14 @@ export default {
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!edittingItemObj.id"
+        :disabled="!!explicitRequestsNumber"
         @update:model-value="value => updateItemField('title', value)"    
       />
       <TextareaCustom
         v-if="isDetailsTextareaShown"
         label="details"
         :model-value="edittingItemObj.details"
+        :disabled="!!explicitRequestsNumber"
         @update:model-value="value => updateItemField('details', value)"
       />
       <ButtonText

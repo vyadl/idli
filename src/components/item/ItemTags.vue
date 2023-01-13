@@ -15,6 +15,8 @@ export default {
   },
   data() {
     return {
+      newTitle: '',
+      clearSearchTrigger: false,
       requestHandling: {
         isRequestProcessing: false,
         errorMessage: '',
@@ -22,6 +24,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'explicitRequestsNumber',
+    ]),
     ...mapGetters('lists', [
       'lists',
       'currentListTags',
@@ -38,6 +43,9 @@ export default {
     currentListTagsTitles() {
       return this.currentListTags.map(tag => tag.title);
     },
+    currentListCategoriesTitles() {
+      return this.currentListCategories.map(category => category.title);
+    },
     currentItemTagsTitles() {
       return this.currentItemTags.map(tag => tag.title);
     },
@@ -50,13 +58,25 @@ export default {
       'addTagToListLocally',
     ]),
     ...mapActions('items', [
-      '_addItemOnServer',
-      '_updateItemOnServer',
       '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
       '_addTagForListAndItem',
     ]),
+    checkTitleUniqueness(categoryTitle) {
+      const isTitleUnique = !this.currentListCategoriesTitles.includes(categoryTitle)
+        && !this.currentListTagsTitles.includes(categoryTitle);
+
+      this.requestHandling.errorMessage = isTitleUnique
+        ? ''
+        : 'filter with this name already exists';
+
+      this.newTitle = isTitleUnique
+        ? categoryTitle
+        : '';
+
+      return isTitleUnique;
+    },
     addTag(tagTitle) {
       this.requestHandling.errorMessage = '';
 
@@ -69,40 +89,47 @@ export default {
       }
     },
     createNewTag(tagTitle) {
-      const isFilterAlreadyExist = this.currentListTags?.some(tag => tag.title === tagTitle)
-        || this.currentListCategories?.some(category => category.title === tagTitle);
+      this.clearSearchTrigger = true;
 
-      if (isFilterAlreadyExist) {
-        this.requestHandling.errorMessage = 'filter with this name already exists';
-      } else {
+      const isTitleUnique = this.checkTitleUniqueness(tagTitle);
+
+      if (isTitleUnique) {
         const { listId } = this.edittingItemObj;
+        const itemObj = JSON.parse(JSON.stringify(this.edittingItemObj));
 
         this.addTagToListLocally({ listId, tagTitle });
         this.requestHandling.isRequestProcessing = true;
 
         const listObj = this.lists.find(list => list.id === listId);
-        const request = this._addTagForListAndItem({ listObj, tagTitle });
+        const request = this._addTagForListAndItem({ listObj, tagTitle, itemObj }); 
 
-        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true });
+        handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
+          .then(() => {
+            this.newTitle = '';
+            this.clearSearchTrigger = false;
+          });
       }
     },
     deleteTag(tagTitle) {
       const removedTagObj = this.currentListTags.find(
         tag => tag.title === tagTitle,
       );
-      const removedTagIndex = this.edittingItemObj.tags.findIndex(
-        tagId => tagId === removedTagObj.id,
-      );
-      
-      const tagsArrayCopy = [...this.edittingItemObj.tags];
 
-      tagsArrayCopy.splice(removedTagIndex, 1);
+      if (removedTagObj) {
+        const removedTagIndex = this.edittingItemObj.tags.findIndex(
+          tagId => tagId === removedTagObj.id,
+        );
+        
+        const tagsArrayCopy = [...this.edittingItemObj.tags];
 
-      this.updateItemTags(tagsArrayCopy);
+        tagsArrayCopy.splice(removedTagIndex, 1);
+
+        this.updateItemTags(tagsArrayCopy);
+      }
     },
     updateItemTags(value) {
       this.updateItemFieldLocally({ field: 'tags', value });
-      this._saveItemOnServer();
+      this._saveItemOnServer(this.edittingItemObj);
     },
   },
 };
@@ -118,17 +145,67 @@ export default {
       mode="tags"
       placeholder="add tags"
       no-options-text="no tags - start typing to add new"
-      no-results-text="no tags found"
+      no-results-text=""
       :small-text="isItemFormInSidebar"
       :options="currentListTagsTitles"
       :can-clear="false"
-      :disabled="requestHandling.isRequestProcessing"
+      :create-option="false"
+      :clear-search-trigger="clearSearchTrigger"
+      :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
+      :show-options="!requestHandling.errorMessage && !explicitRequestsNumber"
       @select="tag => addTag(tag)"
       @deselect="tag => deleteTag(tag)"
-    />
-    <ErrorMessage
-      v-if="requestHandling.errorMessage"
-      :message="requestHandling.errorMessage"
-    />
+      @search-change="checkTitleUniqueness"
+    >
+      <template #beforelist>
+        <div
+          v-if="newTitle"
+          class="create-option"
+          @click="createNewTag(newTitle)"
+        >
+          <div>
+            {{ newTitle }}
+          </div>
+          <div class="new-option-desc">
+            create new
+          </div>
+        </div>
+      </template>
+    </MultiselectCustom>
+    <div class="error-container">
+      <ErrorMessage
+        v-if="requestHandling.errorMessage"
+        :message="requestHandling.errorMessage"
+      />
+    </div>
   </div>
 </template>
+
+<style lang="scss">
+.item-tags {
+  .error-container {
+    height: 20px;
+    padding-top: 10px;
+  }
+
+  .create-option {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--ms-option-bg-pointed, #f3f4f6);
+    }
+  }
+
+  .new-option-desc {
+    font-size: 12px;
+    font-variant: small-caps;
+    color: map-get($colors, 'gray-dark');
+  }
+}
+</style>
