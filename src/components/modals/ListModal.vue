@@ -1,13 +1,3 @@
-<template>
-  <ModalBasic
-    class="list-modal"
-    name="listModal"
-    :title="edittingListObj ? 'edit list' : 'new list'"
-  >
-    <ListForm />
-  </ModalBasic>
-</template>
-
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ListForm from '@/components/list/ListForm.vue';
@@ -19,9 +9,19 @@ export default {
     ListForm,
   },
   computed: {
-    ...mapGetters({
-      edittingListObj: 'edittingListObj',
-    }),
+    ...mapGetters('lists', [
+      'edittingListObj',
+    ]),
   },
 };
 </script>
+
+<template>
+  <ModalBasic
+    class="list-modal"
+    name="listModal"
+    :title="edittingListObj ? 'edit list' : 'new list'"
+  >
+    <ListForm />
+  </ModalBasic>
+</template>

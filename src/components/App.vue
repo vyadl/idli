@@ -1,92 +1,187 @@
+<script>
+import { mapGetters, mapActions, mapMutations } from 'vuex';
+import AuthPageLayout from '@/components/layouts/AuthPageLayout.vue';
+import WithSidebarLayout from '@/components/layouts/WithSidebarLayout.vue';
+import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
+import ListModal from '@/components/modals/ListModal.vue';
+import ItemModal from '@/components/modals/ItemModal.vue';
+import AboutModal from '@/components/modals/AboutModal.vue';
+import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
+import AppNotification from '@/components/textElements/AppNotification.vue';
+import { initHotkeys } from '@/settings/hotkeysSettings';
+import checkAppVersion from '@/settings/appVersion';
+import { handleQueryOnLoad } from '@/router/utils';
+
+export default {
+  components: {
+    AuthPageLayout,
+    WithSidebarLayout,
+    ConfirmationModal,
+    ListModal,
+    ItemModal,
+    AboutModal,
+    PasswordChangeModal,
+    AppNotification,
+  },
+  computed: {
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
+    ...mapGetters('lists', [
+      'isPublicView',
+    ]),
+    ...mapGetters('sidebar', [
+      'sidebarMode',
+      'currentSidebarView',
+    ]),
+    ...mapGetters([
+      'notification',
+      'modalNameToShow',
+      'explicitRequestsNumber',
+    ]),
+    layout() {
+      return `${this.$route.meta.layout}`;
+    },
+  },
+  watch: {
+    modalNameToShow(value) {
+      if (value) {
+        this.$vfm.show(value);
+      }
+    },
+    isLoggedIn: {
+      handler(value) {
+        if (value) {
+          this._fetchTestLists();
+          this._fetchListsForUser();
+        }
+      },
+      immediate: true,
+    },
+  },
+  created() {
+    this._checkAndSetIsMobileScreen();
+    window.addEventListener(
+      'resize',
+      this._debouncedCheckAndSetIsMobileScreen,
+    );
+
+    checkAppVersion();
+
+    this._setUserFromLocalStorage();
+    this._setUnitsFromLocalStorage(['settings']);
+
+    initHotkeys();
+
+    const queryOptions = {
+      sidebar: {
+        callback: sidebar => {
+          this._openSidebar(sidebar);
+        },
+      },
+      view: {
+        callback: view => {
+          this.setCurrentListView(view);
+        },
+      },
+    };
+
+    this.$watch(
+      () => this.$route.query,
+      query => {
+        handleQueryOnLoad(queryOptions, query);
+
+        if (this.isPublicView && this.sidebarMode === 'lists') {
+          this.changeSidebarMode('filters');
+          this._closeSidebar();
+        }
+      },
+    );
+  },
+  methods: {
+    ...mapMutations('sidebar', [
+      'changeSidebarMode',
+    ]),
+    ...mapMutations('lists', [
+      'setCurrentListView',
+    ]),
+    ...mapActions('auth', [
+      '_setUserFromLocalStorage',
+    ]),
+    ...mapActions('lists', [
+      '_fetchTestLists',
+      '_fetchListsForUser',
+    ]),
+    ...mapActions('sidebar', [
+      '_closeSidebar',
+      '_openSidebar',
+    ]),
+    ...mapActions('appearance', [
+      '_checkAndSetIsMobileScreen',
+      '_debouncedCheckAndSetIsMobileScreen',
+    ]),
+    ...mapActions([
+      '_setUnitsFromLocalStorage',
+    ]),
+    openSidebarInLayout() {
+      if (this.layout === 'WithSidebarLayout') {
+        this._openSidebar(this.sidebarMode);
+      }      
+    },
+    closeSidebarInLayout() {
+      if (this.layout === 'WithSidebarLayout') {
+        this._closeSidebar();
+      }   
+    },
+  },
+};
+</script>
+
 <template>
   <div
+    v-touch:swipe.left="openSidebarInLayout"
+    v-touch:swipe.right="closeSidebarInLayout"
     class="app"
     :class="`${globalTheme}-theme`"
   >
     <transition name="fade">
       <div
+        v-if="explicitRequestsNumber"
         class="preloader"
-        v-if="requestsNumber"
-      ></div>
+      />
     </transition>
-    <EnterScreen v-if="!isLoggedIn"/>
-    <MainList v-else />
-    <SidebarPage />
+    <component :is="layout">
+      <router-view v-slot="{ Component }">
+        <transition
+          :name="$route.meta.transition"
+          mode="out-in"
+        >
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </component>
     <ListModal />
     <ItemModal />
+    <AboutModal />
+    <ConfirmationModal />
+    <PasswordChangeModal />
     <AppNotification v-if="notification" />
   </div>
 </template>
 
-<script>
-import EnterScreen from '@/components/mainPages/EnterScreen.vue';
-import MainList from '@/components/list/MainList.vue';
-import SidebarPage from '@/components/mainPages/SidebarPage.vue';
-import ListModal from '@/components/modals/ListModal.vue';
-import ItemModal from '@/components/modals/ItemModal.vue';
-import AppNotification from '@/components/textElements/AppNotification.vue';
-import { initAxios } from '@/settings/axiosSettings';
-import { initHotkeys } from '@/settings/hotkeysSettings';
-import checkAppVersion from '@/settings/appVersion';
-import { mapGetters, mapActions } from 'vuex';
-
-export default {
-  components: {
-    EnterScreen,
-    MainList,
-    SidebarPage,
-    ListModal,
-    ItemModal,
-    AppNotification,
-  },
-  computed: {
-    ...mapGetters({
-      notification: 'notification',
-      modalNameToShow: 'modalNameToShow',
-      requestsNumber: 'requestsNumber',
-      isLoggedIn: 'auth/isLoggedIn',
-    }),
-  },
-  created() {
-    checkAppVersion();
-    initAxios();
-
-    this._setUserFromLocalStorage();
-    this._setSettingsFromLocalStorage();
-    this._fetchTestLists();
-
-    initHotkeys();
-
-    if (this.isLoggedIn) {
-      setTimeout(this._fetchListsForUser, 500);
-    }
-  },
-  watch: {
-    modalNameToShow: function modalNameToShowHandler() {
-      if (this.modalNameToShow) {
-        this.$modal.show(this.modalNameToShow);
-      }
-    },
-  },
-  methods: {
-    ...mapActions({
-      _setSettingsFromLocalStorage: '_setSettingsFromLocalStorage',
-      _fetchListsForUser: '_fetchListsForUser',
-      _fetchTestLists: '_fetchTestLists',
-      _setUserFromLocalStorage: 'auth/_setUserFromLocalStorage',
-    }),
-  },
-};
-</script>
-
 <style lang="scss">
   .app {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     min-height: 100vh;
+    overflow-x: hidden;
 
     .preloader {
       position: fixed;
-      z-index: 100;
+      z-index: 1000;
       top: 0;
       left: 0;
       width: 100%;

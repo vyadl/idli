@@ -10,6 +10,7 @@ html {
 }
 
 body {
+  height: 100vh;
   font: 500 15px Montserrat, Verdana, sans-serif;
   color: map-get($colors, 'gray-text');
 }
@@ -26,17 +27,17 @@ a {
   display: inline-block;
   padding-bottom: 0;
   color: inherit;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 
   &:visited {
     color: inherit;
   }
 
   &:hover {
-    opacity: .8;
+    opacity: 0.8;
   }
 
   &:active {
-    opacity: .5;
+    opacity: 0.5;
   }
 }

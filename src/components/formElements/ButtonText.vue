@@ -1,29 +1,24 @@
-<template>
-  <button
-    class="button-text"
-    :class="[
-      styleType,
-      { small, active },
-      `${globalTheme}-theme`,
-    ]"
-    :title="title"
-    :type="type"
-    :disabled="disabled"
-    @click="click($event)"
-  >{{ text }}</button>
-</template>
-
 <script>
 export default {
   props: {
     text: String,
+    size: {
+      type: String,
+      default: 'medium',
+      validator(value) {
+        return value
+          ? ['big', 'medium', 'small', 'smallest'].includes(value)
+          : true;
+      },
+    },
     styleType: {
       type: String,
       default: 'bordered',
-    },
-    small: {
-      type: Boolean,
-      default: false,
+      validator(value) {
+        return value
+          ? ['bordered', 'line', 'underline', 'brick'].includes(value)
+          : true;
+      },
     },
     active: {
       type: Boolean,
@@ -36,6 +31,11 @@ export default {
     type: {
       type: String,
       default: 'button',
+      validator(value) {
+        return value
+          ? ['button', 'reset', 'submit'].includes(value)
+          : true;
+      },
     },
     disabled: {
       type: Boolean,
@@ -46,6 +46,7 @@ export default {
       default: false,
     },
   },
+  emits: ['click'],
   methods: {
     click(event) {
       if (this.stopPropagation) {
@@ -58,65 +59,109 @@ export default {
 };
 </script>
 
+<template>
+  <button
+    class="button-text"
+    :class="[
+      styleType,
+      [size, { active }],
+      `${globalTheme}-theme`,
+    ]"
+    :title="title"
+    :type="type"
+    :disabled="disabled"
+    @click="click($event)"
+  >
+    {{ text }}
+  </button>
+</template>
+
 <style lang="scss">
   .button-text {
     padding: 7px 14px;
     text-align: left;
     vertical-align: middle;
     line-height: 1.5;
-    letter-spacing: .3px;
+    letter-spacing: 0.3px;
     cursor: pointer;
+
+    &:disabled {
+      pointer-events: none;
+      color: map-get($colors, 'gray-light');
+    }
 
     &.bordered {
       border: 2px solid map-get($colors, 'black');
       border-radius: 3px;
+      color: map-get($colors, 'black');
       background-color: map-get($colors, 'white');
       transition:
-        background-color .3s .05s,
-        color .2s .05s,
-        border-color .2s .05s;
+        background-color 0.3s 0.05s,
+        color 0.2s 0.05s,
+        border-color 0.2s 0.05s;
 
       &.small {
         padding: 3px 10px 4px;
         font-size: 13px;
       }
 
-      &.active,
-      &:hover {
+      &.smallest {
+        padding: 0 5px;
+        font-size: 11px;
+        border-width: 1px;
+      }
+
+      &.active {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
+        border-color: map-get($colors, 'black');
+
+        &:hover {
+          background-color: map-get($colors, 'gray-dark');
+          border-color: map-get($colors, 'gray-dark');
+          color: map-get($colors, 'white');
+        }
+      }
+
+      &:hover {
+        background-color: map-get($colors, 'white');
+        border-color: map-get($colors, 'gray-light');
+        color: map-get($colors, 'gray-light');
       }
 
       &:disabled {
-        pointer-events: none;
-        border-color: map-get($colors, 'gray-light');
         color: map-get($colors, 'gray-light');
-
-        &:hover {
-          background-color: transparent;
-        }
+        border-color: map-get($colors, 'gray-light');
       }
     }
 
     &.underline {
-      padding: 5px 0;
+      padding: 5px 2px;
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
-      transition: color .2s;
+      background-color: map-get($colors, 'white');
+      transition: color 0.2s;
 
-      &.small {
-        padding: 3px 0;
-        font-size: 11px;
-      }
-
-      &:hover,
-      &:disabled {
+      &:hover {
         color: map-get($colors, 'gray-light');
       }
 
-      &:disabled {
-        pointer-events: none;
+      &.big {
+        font-size: 15px;
+      }
+
+      &.small {
+        font-size: 11px;
+      }
+
+      &.smallest {
+        font-size: 11px;
+        color: map-get($colors, 'gray-light');
+
+        &:hover {
+          color: map-get($colors, 'gray-dark');
+        }
       }
     }
 
@@ -124,7 +169,15 @@ export default {
       padding: 5px 0;
       line-height: 1.3;
       color: map-get($colors, 'gray-dark');
-      transition: color .2s;
+      transition: color 0.2s;
+
+      &.small {
+        font-size: 13px;
+      }
+
+      &.smallest {
+        font-size: 11px;
+      }
 
       &.active,
       &:hover {
@@ -132,20 +185,62 @@ export default {
       }
     }
 
+    &.brick {
+      line-height: 1.3;
+      padding: 7px 12px;
+      color: map-get($colors, 'gray-dark');
+      transition:
+        color 0.2s,
+        background-color 0.2s;
+
+      &.small {
+        padding: 5px 10px;
+        font-size: 13px;
+      }
+
+      &.active {
+        &,
+        &:hover {
+          color: map-get($colors, 'gray-very-light');
+          background-color: map-get($colors, 'black');
+        }
+      }
+
+      &:hover {
+        color: map-get($colors, 'black');
+        background-color: map-get($colors, 'gray-very-light');
+      }
+    }
+
     &.inverted-theme {
+      &:disabled {
+        color: map-get($colors, 'gray-dark');
+      }
+
       &.bordered {
         border-color: map-get($colors, 'white');
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
 
-        &.active,
-        &:hover {
+        &.active {
           background-color: map-get($colors, 'white');
           color: map-get($colors, 'black');
+          border-color: map-get($colors, 'white');
+
+          &:hover {
+            background-color: map-get($colors, 'gray-light');
+            border-color: map-get($colors, 'gray-light');
+            color: map-get($colors, 'black');
+          }
+        }
+
+        &:hover {
+          background-color: map-get($colors, 'black');
+          border-color: map-get($colors, 'gray-dark');
+          color: map-get($colors, 'gray-dark');
         }
 
         &:disabled {
-          pointer-events: none;
           border-color: map-get($colors, 'gray-dark');
           color: map-get($colors, 'gray-dark');
         }
@@ -153,14 +248,18 @@ export default {
 
       &.underline {
         color: map-get($colors, 'gray-light');
+        background-color: map-get($colors, 'black');
 
-        &:hover,
-        &:disabled {
+        &:hover {
           color: map-get($colors, 'gray-dark');
         }
 
-        &:disabled {
-          pointer-events: none;
+        &.smallest {
+          color: map-get($colors, 'gray-dark');
+
+          &:hover {
+            color: map-get($colors, 'gray-light');
+          }
         }
       }
 
@@ -170,6 +269,23 @@ export default {
         &.active,
         &:hover {
           color: map-get($colors, 'white');
+        }
+      }
+
+      &.brick {
+        color: map-get($colors, 'gray-light');
+
+        &.active {
+          &,
+          &:hover {
+            color: map-get($colors, 'black');
+            background-color: map-get($colors, 'white');
+          }
+        }
+
+        &:hover {
+          color: map-get($colors, 'gray-very-light');
+          background-color: map-get($colors, 'gray-dark');
         }
       }
     }

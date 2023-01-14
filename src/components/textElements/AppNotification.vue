@@ -1,22 +1,5 @@
-<template>
-  <div
-    class="app-notification"
-    :class="[{
-        shown: isNotificationShown,
-        hide: !isNotificationShown && !isIniting,
-        hidden: isIniting,
-      },
-      `${globalTheme}-theme`,
-    ]"
-  >
-    <div class="text">
-      {{ notification.text }}
-    </div>
-  </div>
-</template>
-
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 const RESET_NOTIFICATION_TIME = 4500;
 
@@ -26,9 +9,9 @@ export default {
     isNotificationShown: false,
   }),
   computed: {
-    ...mapGetters({
-      notification: 'notification',
-    }),
+    ...mapGetters([
+      'notification',
+    ]),
   },
   watch: {
     notification: {
@@ -44,7 +27,7 @@ export default {
           }, resetNotificationTime);
 
           setTimeout(() => {
-            this._setNotification({
+            this.setNotification({
               time: null,
               text: '',
             });
@@ -55,16 +38,34 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      _setNotification: '_setNotification',
-    }),
+    ...mapMutations([
+      'setNotification',
+    ]),
   },
 };
 </script>
 
+<template>
+  <div
+    class="app-notification"
+    :class="[{
+               shown: isNotificationShown,
+               hide: !isNotificationShown && !isIniting,
+               hidden: isIniting,
+             },
+             `${globalTheme}-theme`,
+    ]"
+  >
+    <div class="text">
+      {{ notification.text }}
+    </div>
+  </div>
+</template>
+
 <style lang="scss">
   .app-notification {
-    position: absolute;
+    position: fixed;
+    z-index: 15;
     left: 15px;
     bottom: 15px;
     display: flex;
@@ -102,6 +103,13 @@ export default {
       .text {
         color: map-get($colors, 'black');
       }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .app-notification {
+      top: 15px;
+      bottom: unset;
     }
   }
 </style>

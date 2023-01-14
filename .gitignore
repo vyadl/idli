@@ -1,5 +1,4 @@
 .DS_Store
-.github/
 .well-known
 tmp
 stderr.log
@@ -8,3 +7,4 @@ dist
 .env
 .htaccess
 app.js
+.vscode

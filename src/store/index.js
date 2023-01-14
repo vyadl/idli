@@ -1,21 +1,34 @@
-import Vue from 'vue';
-import Vuex, { Store } from 'vuex';
+import { createStore } from 'vuex';
 
 import state from './state';
 import mutations from './mutations';
-import actions from './actions';
+import actions from './actions'; // eslint-disable-line import/no-cycle
 import getters from './getters';
+import appearance from './appearance';
 import auth from './auth'; // eslint-disable-line import/no-cycle
+import bin from './bin';
+import filters from './filters';
+import lists from './lists';
+import items from './items';
+import settings from './settings';
+import sidebar from './sidebar';
+import visualization from './visualization';
 
-Vue.use(Vuex);
-
-const store = new Store({
+const store = createStore({
   state,
   mutations,
   actions,
   getters,
   modules: {
+    appearance,
     auth,
+    bin,
+    filters,
+    lists,
+    items,
+    settings,
+    sidebar,
+    visualization,
   },
 });
 

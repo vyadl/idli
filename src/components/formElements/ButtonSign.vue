@@ -1,25 +1,21 @@
-<template>
-  <button
-    class="button-sign"
-    :class="[
-      styleType,
-      { big },
-      `${globalTheme}-theme`,
-    ]"
-    :title="title"
-    :type="type"
-    :disabled="disabled"
-    @click="click($event)"
-  ></button>
-</template>
-
 <script>
 export default {
   props: {
-    styleType: String,
-    big: {
-      type: Boolean,
-      default: false,
+    styleType: {
+      type: String,
+      validator(value) {
+        return value 
+          ? ['hint', 'info', 'dots', 'cross', 'arrow', 'plus', 'loupe'].includes(value)
+          : true;
+      },
+    },
+    size: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['big'].includes(value)
+          : true;
+      },
     },
     title: {
       type: String,
@@ -28,6 +24,15 @@ export default {
     type: {
       type: String,
       default: 'button',
+      validator(value) {
+        return value
+          ? ['button', 'reset', 'submit'].includes(value)
+          : true;
+      },
+    },
+    active: {
+      type: Boolean,
+      default: false,
     },
     disabled: {
       type: Boolean,
@@ -38,6 +43,7 @@ export default {
       default: false,
     },
   },
+  emits: ['click'],
   methods: {
     click(event) {
       if (this.stopPropagation) {
@@ -50,12 +56,32 @@ export default {
 };
 </script>
 
+<template>
+  <button
+    class="button-sign"
+    :class="[
+      styleType,
+      size,
+      { active },
+      `${globalTheme}-theme`,
+    ]"
+    :title="title"
+    :type="type"
+    :disabled="disabled"
+    @click="click($event)"
+  />
+</template>
+
 <style lang="scss">
   .button-sign {
     position: relative;
     display: block;
     padding: 0;
     cursor: pointer;
+
+    &:disabled {
+      pointer-events: none;
+    }
 
     &.arrow {
       width: 45px;
@@ -90,58 +116,31 @@ export default {
         letter-spacing: 1px;
         color: map-get($colors, 'gray-dark');
         transform: translate(-5px, -9px) rotate(90deg);
-        transition: color .2s;
+        transition: color 0.2s;
       }
     }
 
     &.plus {
-      width: 15px;
-      height: 15px;
+      background-image: url('/icons/plus.svg');
+      background-size: contain;
+      width: 25px;
+      height: 25px;
+      transition: filter 0.2s;
 
       &.big {
         width: 45px;
         height: 45px;
-
-        &::before,
-        &::after {
-          width: 2px;
-          height: 25px;
-        }
       }
 
       &:hover,
       &:disabled {
-        &::before,
-        &::after {
-          background-color: map-get($colors, 'gray-dark');
-        }
-      }
-
-      &::before,
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 2px;
-        height: 100%;
-        background-color: map-get($colors, 'black');
-        transform-origin: center center;
-        transition: color .2s;
-      }
-
-      &::before {
-        transform: translate(-50%, -50%) rotate(90deg);
-      }
-
-      &::after {
-        transform: translate(-50%, -50%);
+        filter: invert(40%);
       }
     }
 
     &.cross {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
 
       &:hover {
         &::before,
@@ -158,9 +157,9 @@ export default {
         left: 50%;
         width: 1px;
         height: 100%;
-        background-color: map-get($colors, 'black');
+        background-color: map-get($colors, 'gray-light');
         transform-origin: center center;
-        transition: color .2s;
+        transition: color 0.2s;
       }
 
       &::before {
@@ -169,6 +168,53 @@ export default {
 
       &::after {
         transform: translateX(-50%) rotate(-45deg);
+      }
+    }
+
+    &.info,
+    &.hint {
+      position: relative;
+      border: 1px solid map-get($colors, 'gray-dark');
+      border-radius: 50%;
+      &::before {
+        position: absolute;
+        color: map-get($colors, 'gray-dark');
+        transform: translate(-50%, -50%);
+      }
+
+      &:hover {
+        filter: invert(50%);
+      }
+    }
+
+    &.info {
+      width: 20px;
+      height: 20px;
+      &::before {
+        content: 'i';
+      }
+    }
+
+    &.hint {
+      width: 15px;
+      height: 15px;
+      &::before {
+        content: '?';
+        font-size: 10px;
+      }
+    }
+
+    &.loupe {
+      background-image: url('/icons/loupe.svg');
+      background-size: contain;
+      width: 25px;
+      height: 25px;
+      filter: invert(40%);
+      transition: filter 0.2s;
+
+      &:hover,
+      &.active {
+        filter: invert(0%);
       }
     }
 
@@ -191,10 +237,22 @@ export default {
         }
       }
 
-      &.plus,
-      &.cross {
+      &.plus {
+        filter: invert(100%);
+
         &:hover,
         &:disabled {
+          filter: invert(60%);
+        }
+
+        &::before,
+        &::after {
+          background-color: map-get($colors, 'white');
+        }
+      }
+
+      &.cross {
+        &:hover {
           &::before,
           &::after {
             background-color: map-get($colors, 'gray-light');
@@ -203,7 +261,25 @@ export default {
 
         &::before,
         &::after {
-          background-color: map-get($colors, 'white');
+          background-color: map-get($colors, 'gray-dark');
+        }
+      }
+
+      &.info,
+      &.hint {
+        border: 1px solid map-get($colors, 'gray-light');
+        
+        &::before {
+          color: map-get($colors, 'gray-light');
+        }
+      }
+
+      &.loupe {
+        filter: invert(60%);
+
+        &:hover,
+        &.active {
+          filter: invert(100%);
         }
       }
     }

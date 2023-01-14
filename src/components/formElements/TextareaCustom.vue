@@ -1,37 +1,42 @@
+<script>
+export default {
+  props: {
+    label: String,
+    modelValue: String,
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['update:modelValue'],
+  methods: {
+    input(event) {
+      this.$emit('update:modelValue', event.target.value);
+    },
+  },
+};
+</script>
+
 <template>
   <label
     class="textarea-custom"
-    :class="`${globalTheme}-theme`"
+    :class="[
+      `${globalTheme}-theme`,
+      { disabled },
+    ]"
   >
     <div class="label">
       {{ label }}
     </div>
     <textarea
       class="textarea"
-      :value="value"
+      rows="4"
+      :value="modelValue"
       :disabled="disabled"
       @input="input($event)"
-    ></textarea>
+    />
   </label>
 </template>
-
-<script>
-export default {
-  props: {
-    label: String,
-    value: String,
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  methods: {
-    input(event) {
-      this.$emit('input', event.target.value);
-    },
-  },
-};
-</script>
 
 <style lang="scss">
   .textarea-custom {
@@ -48,7 +53,7 @@ export default {
       width: 100%;
       padding: 5px;
       border-bottom: 1px solid map-get($colors, 'gray-light');
-      transition: border-color .3s;
+      transition: border-color 0.3s;
 
       &:focus {
         border-color: map-get($colors, 'black');

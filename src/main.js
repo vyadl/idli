@@ -1,18 +1,38 @@
 import '@/scss/main.scss';
-import Vue from 'vue';
-import App from '@/components/App.vue';
+import { createApp } from 'vue';
+import { vfmPlugin } from 'vue-final-modal';
+import MasonryWall from '@yeger/vue-masonry-wall';
 import store from '@/store/index';
-import VModal from 'vue-js-modal';
-import VueMasonry from 'vue-masonry-css';
+import { initAxios } from '@/backendInteraction/axiosSettings';
 import themes from '@/mixins/themes';
+import App from '@/components/App.vue';
+import { router } from '@/router';
+import Vue3TouchEvents from 'vue3-touch-events';
 
-Vue.use(VModal);
-Vue.use(VueMasonry);
-Vue.mixin(themes);
+const app = createApp(App);
 
-new Vue({
-  store,
-  render: h => h(App),
-}).$mount('#app');
+const { axios, apiBasePath } = initAxios(store);
 
-Vue.config.devtools = true;
+store.$config = {
+  axios,
+  apiBasePath,
+};
+app.config.globalProperties.$config = {
+  axios,
+  apiBasePath,
+};
+
+app.use(Vue3TouchEvents);
+app.use(router);
+app.use(store);
+app.use(MasonryWall);
+app.use(
+  vfmPlugin({
+    key: '$vfm',
+    componentName: 'VueFinalModal',
+    dynamicContainerName: 'ModalsContainer',
+  }),
+);
+app.mixin(themes);
+
+app.mount('#app');

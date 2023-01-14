@@ -1,124 +1,187 @@
+<script>
+import SidebarFilters from '@/components/sidebarContent/filters/SidebarFilters.vue';
+import SidebarVisualization from '@/components/sidebarContent/visualization/SidebarVisualization.vue';
+import SidebarLists from '@/components/sidebarContent/lists/SidebarLists.vue';
+import SidebarBin from '@/components/sidebarContent/bin/SidebarBin.vue';
+import SidebarSettings from '@/components/sidebarContent/settings/SidebarSettings.vue';
+import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
+import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
+import SearchVault from '@/components/functionElements/SearchVault.vue';
+import { sidebarModesForViews } from '@/store/config';
+import { mapGetters, mapActions } from 'vuex';
+
+export default {
+  components: {
+    SidebarVisualization,
+    SidebarFilters,
+    SidebarLists,
+    SidebarSettings,
+    SidebarBin,
+    SidebarItem,
+    ButtonText,
+    ButtonSign,
+    CustomLink,
+    SearchVault,
+  },
+  computed: {
+    ...mapGetters('appearance', [
+      'isMobileScreen',
+    ]),
+    ...mapGetters('auth', [
+      'isLoggedIn',
+    ]),
+    ...mapGetters('lists', [
+      'isUserOwnsCurrentList',
+      'isPublicView',
+    ]),
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+      'isFocusOnList',
+    ]),
+    ...mapGetters('sidebar', [
+      'isSidebarOpen',
+      'sidebarMode',
+      'currentSidebarView',
+    ]),
+    sidebarModes() {
+      return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
+    },
+  },
+  mounted() {
+    this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
+      if (!this.isSidebarOpen) {
+        this._openSidebar(
+          this.sidebarMode || sidebarModesForViews[this.currentSidebarView]?.default,
+        );
+      }
+    });
+  },
+  methods: {
+    ...mapActions('lists', [
+      '_setCurrentListView',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
+      '_closeSidebar',
+    ]),
+    defineButtonStyleType(mode) {
+      if (mode === 'bin' && !this.isMobileScreen) {
+        return 'underline';
+      }
+
+      return this.isMobileScreen ? 'brick' : 'bordered';
+    },
+    exitPublicView() {
+      this._setCurrentListView('owner');
+    },
+    changeSidebarState() {
+      this.isSidebarOpen
+        ? this._closeSidebar()
+        : this._openSidebar(this.sidebarMode);
+    },
+    scrollSidebarToTop() {
+      this.$refs.sidebarContent.scroll({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
+  },
+};
+</script>
+
 <template>
   <div
-    class="sidebar"
+    class="sidebar-page"
     :class="[
       { shown: isSidebarOpen },
       `${globalTheme}-theme`,
     ]"
   >
     <div
-      class="add-item-button"
-      v-if="isLoggedIn && currentListObj && !isFocusOnList"
+      ref="edgeMoveCatcher"
+      class="edge-move-catcher"
+    />
+    <div
+      v-if="!isPublicView"
+      class="search-button"
     >
-      <ButtonSign
-        style-type="plus"
-        big
-        title="new item"
-        @click="isItemFormInSidebar ? createNewItem() : openItemModal()"
+      <SearchVault />
+    </div>
+    <div
+      v-if="isPublicView && isLoggedIn"
+      class="exit-public-view-button"
+    >
+      <ButtonText
+        text="back to profile"
+        style-type="underline"
+        @click="exitPublicView"
+      />
+    </div>
+    <div
+      v-if="!isLoggedIn && $route.name !== 'auth'"
+      class="auth-buttons"
+    >
+      <CustomLink
+        :to="{ name: 'requestRegistration' }"
+        target="_blank"
+        title="sign up"
+      />
+      or
+      <CustomLink
+        :to="{ name: 'signIn' }"
+        target="_blank"
+        title="sign in"
       />
     </div>
     <div class="sidebar-buttons">
       <div class="mode-buttons">
         <ButtonText
-          class="mode-button"
           v-for="mode in sidebarModes"
           :key="mode"
+          :class="{
+            'mode-button' : !isMobileScreen && mode !== 'bin',
+            'bin-mode-button' : mode === 'bin',
+          }"
           :text="mode"
-          :style-type="mode === 'bin' ? 'underline' : 'bordered'"
-          :small="mode === 'bin'"
+          :style-type="defineButtonStyleType(mode)"
+          :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
       </div>
-      <div
-        class="state-button"
-        v-if="!isFocusOnList"
-      >
-        <ButtonSign
-          style-type="arrow"
-          @click="changeSidebarState"
-        />
-      </div>
     </div>
-    <div class="sidebar-content">
-      <ListVisualization v-if="sidebarMode === 'visualization'" />
-      <FiltersList v-if="sidebarMode === 'filters'" />
-      <AppLists v-if="sidebarMode === 'lists'" />
-      <AppSettings v-if="sidebarMode === 'settings'"/>
-      <RegistrationForm v-if="sidebarMode === 'sign up'" />
-      <AuthForm v-if="sidebarMode === 'sign in'" />
-      <AppBin v-if="sidebarMode === 'bin'" />
-      <ItemSidebar v-if="sidebarMode === 'item'" />
+    <div
+      v-if="!isFocusOnList"
+      class="state-button"
+    >
+      <ButtonSign
+        style-type="arrow"
+        @click="changeSidebarState"
+      />
+    </div>
+    <div
+      ref="sidebarContent"
+      class="sidebar-content"
+    >
+      <SidebarVisualization v-if="sidebarMode === 'visualization'" />
+      <SidebarFilters v-if="sidebarMode === 'filters'" />
+      <SidebarLists v-if="sidebarMode === 'lists'" />
+      <SidebarSettings v-if="sidebarMode === 'settings'" />
+      <SidebarBin v-if="sidebarMode === 'bin'" />
+      <SidebarItem
+        v-if="sidebarMode === 'item'"
+        @scroll-sidebar-to-top="scrollSidebarToTop"
+      />
     </div>
   </div>
 </template>
 
-<script>
-import FiltersList from '@/components/sidebarContent/FiltersList.vue';
-import ListVisualization from '@/components/sidebarContent/ListVisualization.vue';
-import AppLists from '@/components/sidebarContent/AppLists.vue';
-import AppBin from '@/components/sidebarContent/bin/AppBin.vue';
-import AppSettings from '@/components/sidebarContent/AppSettings.vue';
-import RegistrationForm from '@/components/sidebarContent/auth/RegistrationForm.vue';
-import AuthForm from '@/components/sidebarContent/auth/AuthForm.vue';
-import ItemSidebar from '@/components/sidebarContent/ItemSidebar.vue';
-import ButtonText from '@/components/formElements/ButtonText.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
-import { mapGetters, mapActions } from 'vuex';
-
-export default {
-  components: {
-    ListVisualization,
-    FiltersList,
-    AppLists,
-    AppSettings,
-    RegistrationForm,
-    AuthForm,
-    AppBin,
-    ItemSidebar,
-    ButtonText,
-    ButtonSign,
-  },
-  computed: {
-    ...mapGetters({
-      currentListObj: 'currentListObj',
-      isItemFormInSidebar: 'isItemFormInSidebar',
-      isFocusOnList: 'isFocusOnList',
-      isSidebarOpen: 'isSidebarOpen',
-      sidebarMode: 'sidebarMode',
-      isLoggedIn: 'auth/isLoggedIn',
-    }),
-    sidebarModes() {
-      return this.isLoggedIn
-        ? ['filters', 'visualization', 'lists', 'settings', 'bin']
-        : ['sign up', 'sign in'];
-    },
-  },
-  methods: {
-    ...mapActions({
-      _setItemForEditting: '_setItemForEditting',
-      _openSidebar: '_openSidebar',
-      _closeSidebar: '_closeSidebar',
-    }),
-    openItemModal() {
-      this.$modal.show('itemModal');
-    },
-    changeSidebarState() {
-      this.isSidebarOpen
-        ? this._closeSidebar()
-        : this._openSidebar(this.isLoggedIn ? this.sidebarMode : 'sign up');
-    },
-    createNewItem() {
-      this._setItemForEditting(null);
-      this._openSidebar('item');
-    },
-  },
-};
-</script>
-
 <style lang="scss">
-  .sidebar {
+  .sidebar-page {
     position: fixed;
+    z-index: 10;
     top: 0;
     right: 0;
     width: 300px;
@@ -126,8 +189,8 @@ export default {
     background-color: map-get($colors, 'white');
     transform: translateX(300px);
     transition:
-      transform .5s,
-      box-shadow .7s;
+      transform 0.3s,
+      box-shadow 0.7s;
 
     &.shown {
       box-shadow: 15px 0 30px 0 map-get($colors, 'gray-light');
@@ -142,6 +205,21 @@ export default {
       }
     }
 
+    .edge-move-catcher {
+      position: absolute;
+      z-index: 20;
+      height: 100vh;
+      width: 1px;
+      left: -1px;
+    }
+
+    .exit-public-view-button,
+    .auth-buttons {
+      position: fixed;
+      top: 35px;
+      transform: translateX(-100%) translateX(-20px);
+    }
+
     .sidebar-content {
       position: relative;
       width: 100%;
@@ -154,7 +232,7 @@ export default {
 
     .sidebar-buttons {
       position: fixed;
-      bottom: 40px;
+      bottom: 85px;
     }
 
     .mode-buttons {
@@ -162,7 +240,7 @@ export default {
       flex-direction: column;
       align-items: flex-end;
       margin-bottom: 10px;
-      transition: transform .4s;
+      transition: transform 0.4s;
     }
 
     .mode-button {
@@ -171,45 +249,103 @@ export default {
 
       &::before {
         content: '';
-        z-index: -1;
         position: absolute;
+        z-index: -1;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        box-shadow: -5px 0 12px 12px map-get($colors, 'white');
+        box-shadow: -2px 2px 3px 3px rgb(0 0 0 / 25%);
       }
     }
 
+    .bin-mode-button {
+      padding: 10px;
+      transform: translateX(5px);
+    }
+
     .state-button {
+      position: fixed;
+      bottom: 40px;
       width: fit-content;
-      transition: transform .4s;
+      transition: transform 0.4s;
       transform: translateX(-100%);
     }
 
-    .add-item-button {
+    .search-button {
       position: fixed;
-      top: 5px;
-      transform: translateX(-100%) translateX(-5px);
+      top: 15px;
+      transform: translateX(-100%) translateX(-15px);
     }
 
     &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
+      border-left: 1px solid map-get($colors, 'gray-light');
 
       &.shown {
         box-shadow: none;
       }
 
       .sidebar-content {
-        border-left: 1px solid map-get($colors, 'gray-light');
         background-color: map-get($colors, 'black');
       }
 
       .mode-button {
         &::before {
-          box-shadow: -5px 0 12px 12px map-get($colors, 'black');
+          box-shadow: -2px 2px 2px 2px rgb(255 255 255 / 70%);
         }
+      }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .sidebar-page {
+      &.shown {
+        .mode-buttons {
+          transform: none;
+        }
+
+        .exit-public-view-button,
+        .auth-buttons {
+          display: none;
+        }
+      }
+
+      .search-button {
+        top: 80px;
+      }
+
+      .sidebar-buttons {
+        position: fixed;
+        z-index: 9;
+        top: 0;
+        bottom: unset;
+        padding-bottom: 30px;
+      }
+
+      .mode-buttons {
+        flex-flow: row wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2px;
+        padding: 10px 20px;
+        background-color: map-get($colors, 'white');
+      }
+
+      .sidebar-content {
+        padding-top: 80px;
+        padding-bottom: 100px;
+      }
+
+      .state-button {
+        bottom: 120px;
+      }
+    }
+
+    .inverted-theme {
+      .mode-buttons {
+        background-color: map-get($colors, 'black');
       }
     }
   }

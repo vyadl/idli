@@ -1,41 +1,14 @@
-<template>
-  <label
-    class="radio-custom"
-    :class="`${globalTheme}-theme`"
-  >
-    <input
-      class="input"
-      type="radio"
-      :value="value"
-      :disabled="disabled"
-      :checked="isChecked"
-      @change="change"
-      @click="click"
-    >
-    <div
-      class="label"
-      :class="{
-        small,
-        disabled,
-        checked: isChecked,
-      }"
-    >
-      {{ label }}
-    </div>
-  </label>
-</template>
-
 <script>
 export default {
-  model: {
-    prop: 'modelValue',
-    event: 'change',
-  },
   props: {
     label: String,
     small: {
       type: Boolean,
       default: false,
+    },
+    styleType: {
+      type: String,
+      default: 'custom',
     },
     value: [Number, String],
     modelValue: {
@@ -46,6 +19,7 @@ export default {
       default: false,
     },
   },
+  emits: ['update:modelValue', 'click'],
   computed: {
     isChecked() {
       return this.modelValue === this.value;
@@ -53,7 +27,7 @@ export default {
   },
   methods: {
     change() {
-      this.$emit('change', this.value);
+      this.$emit('update:modelValue', this.value);
     },
     click() {
       this.$emit('click');
@@ -62,73 +36,156 @@ export default {
 };
 </script>
 
+<template>
+  <label
+    class="radio-custom"
+    :class="[
+      styleType,
+      `${globalTheme}-theme`,
+      { disabled },
+    ]"
+  >
+    <input
+      class="input"
+      type="radio"
+      :value="value"
+      :disabled="disabled"
+      :checked="isChecked"
+      @change="change"
+      @click="click"
+    >
+    <span
+      class="title"
+      :class="{
+        small,
+        disabled,
+        checked: isChecked,
+      }"
+    >
+      {{ label }}
+    </span>
+  </label>
+</template>
+
 <style lang="scss">
   .radio-custom {
-    display: block;
-    width: fit-content;
-    margin-bottom: 10px;
-    margin-right: 7px;
     cursor: pointer;
 
-    .input {
-      display: none;
+    &.disabled {
+      pointer-events: none;
     }
 
-    .label {
-      border: 2px solid map-get($colors, 'black');
-      border-radius: 25px;
-      padding: 5px 10px 6px;
-      background-color: map-get($colors, 'white');
-      font-size: 14px;
-      transition:
-        background-color .3s .05s,
-        color .2s .05s;
+    .title {
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    &.initial {
+      display: flex;
+
+      .title {
+        padding-left: 5px;
+      }
+
+      .small {
+        font-size: 13px;
+      }
+    }
+
+    &.custom {
+      display: block;
+      padding-bottom: 20px;
+      margin-right: 7px;
 
       &:last-of-type {
         margin-right: 0;
       }
 
-      &.small {
-        padding: 3px 7px 4px;
-        font-size: 12px;
-      }
+      .title {
+        border: 2px solid map-get($colors, 'black');
+        border-radius: 25px;
+        padding: 5px 10px 6px;
+        background-color: map-get($colors, 'white');
+        font-size: 14px;
+        transition:
+          background-color 0.2s,
+          color 0.2s,
+          border-color 0.2s;
 
-      &.disabled {
-        &.checked {
-          background-color: map-get($colors, 'gray-light');
+        &:last-of-type {
+          margin-right: 0;
         }
 
-        border-color: map-get($colors, 'gray-light');
-        background-color: map-get($colors, 'transparent');
-        color: map-get($colors, 'gray-light');
+        &.small {
+          padding: 3px 7px 4px;
+          font-size: 12px;
+        }
+
+        &.disabled {
+          border-color: map-get($colors, 'gray-light');
+          background-color: map-get($colors, 'transparent');
+          color: map-get($colors, 'gray-light');
+
+          &.checked {
+            background-color: map-get($colors, 'gray-light');
+          }
+        }
+
+        &.checked {
+          background-color: map-get($colors, 'black');
+          border-color: map-get($colors, 'black');
+          color: map-get($colors, 'white');
+
+          &:hover {
+            background-color: map-get($colors, 'gray-dark');
+            border-color: map-get($colors, 'gray-dark');
+            color: map-get($colors, 'white');
+          }
+        }
+
+        &:hover {
+          border-color: map-get($colors, 'gray-light');
+          color: map-get($colors, 'gray-light');
+        }
       }
 
-      &.checked,
-      &:hover {
-        background-color: map-get($colors, 'black');
-        color: map-get($colors, 'white');
+      .input {
+        display: none;
       }
     }
 
     &.inverted-theme {
-      .label {
-        border-color: map-get($colors, 'white');
-        background-color: map-get($colors, 'black');
+      &.custom {
+        .title {
+          border-color: map-get($colors, 'white');
+          background-color: map-get($colors, 'black');
 
-        &.disabled {
-          &.checked {
-            background-color: map-get($colors, 'gray-dark');
+          &.disabled {
+            border-color: map-get($colors, 'gray-dark');
+            background-color: map-get($colors, 'transparent');
+            color: map-get($colors, 'gray-dark');
+
+            &.checked {
+              background-color: map-get($colors, 'gray-dark');
+            }
           }
 
-          border-color: map-get($colors, 'gray-dark');
-          background-color: map-get($colors, 'transparent');
-          color: map-get($colors, 'gray-dark');
-        }
+          &.checked {
+            background-color: map-get($colors, 'white');
+            color: map-get($colors, 'black');
 
-        &.checked,
-        &:hover {
-          background-color: map-get($colors, 'white');
-          color: map-get($colors, 'black');
+            &:hover {
+              background-color: map-get($colors, 'gray-light');
+              border-color: map-get($colors, 'gray-light');
+              color: map-get($colors, 'black');
+            }
+          }
+
+          &:hover {
+            border-color: map-get($colors, 'gray-dark');
+            color: map-get($colors, 'gray-dark');
+          }
         }
       }
     }

@@ -1,27 +1,29 @@
-<template>
-  <ModalBasic
-    class="item-modal"
-    name="itemModal"
-    :title="edittingItemObj ? 'edit item' : 'new item'"
-  >
-    <ItemForm />
-  </ModalBasic>
-</template>
-
 <script>
 import ModalBasic from '@/components/modals/ModalBasic.vue';
-import ItemForm from '@/components/list/ItemForm.vue';
+import ItemForm from '@/components/item/ItemForm.vue';
+import ItemView from '@/components/item/ItemView.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     ModalBasic,
     ItemForm,
+    ItemView,
   },
   computed: {
-    ...mapGetters({
-      edittingItemObj: 'edittingItemObj',
-    }),
+    ...mapGetters('lists', [
+      'isOwnerView',
+    ]),
   },
 };
 </script>
+
+<template>
+  <ModalBasic
+    class="item-modal"
+    name="itemModal"
+  >
+    <ItemForm v-if="isOwnerView" />
+    <ItemView v-else />
+  </ModalBasic>
+</template>

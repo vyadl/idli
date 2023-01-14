@@ -1,23 +1,3 @@
-<template>
-  <label
-    class="input-custom"
-    :class="`${globalTheme}-theme`"
-  >
-    <div class="label">
-      {{ label }}
-    </div>
-    <input
-      class="input"
-      :type="type"
-      :value="value"
-      :disabled="disabled"
-      :required="required"
-      @input="input($event)"
-      ref="input"
-    >
-  </label>
-</template>
-
 <script>
 export default {
   props: {
@@ -29,7 +9,16 @@ export default {
       type: String,
       default: 'text',
     },
-    value: String,
+    styleType: {
+      type: String,
+      validator(value) {
+        return value 
+          ? ['unbordered'].includes(value)
+          : true;
+      },
+    },
+    modelValue: String,
+    icon: String,
     disabled: {
       type: Boolean,
       default: false,
@@ -38,10 +27,33 @@ export default {
       type: Boolean,
       default: false,
     },
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    withAdditionalElement: {
+      type: Boolean,
+      default: false,
+    },
+    isFocus: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: [
+    'input',
+    'update:modelValue',
+    'blur',
+  ],
+  mounted() {
+    if (this.isFocus) {
+      this.$nextTick(() => this.focus());
+    }
   },
   methods: {
-    input(event) {
-      this.$emit('input', event.target.value);
+    input(value) {
+      this.$emit('input', value);
+      this.$emit('update:modelValue', value);
     },
     focus() {
       this.$refs.input.focus();
@@ -50,11 +62,70 @@ export default {
 };
 </script>
 
+<template>
+  <label
+    class="input-custom"
+    :class="[
+      `${globalTheme}-theme`,
+      { disabled, 'with-additional-element': withAdditionalElement },
+      styleType,
+    ]"
+  >
+    <div class="label">
+      {{ label }}
+    </div>
+    <input
+      ref="input"
+      class="input"
+      :type="type"
+      :value="modelValue"
+      :disabled="disabled"
+      :required="required"
+      :placeholder="placeholder"
+      @input="input($event.target.value)"
+      @blur="$emit('blur')"
+    >
+    <div
+      v-if="icon"
+      class="icon-wrapper"
+    >
+      <img 
+        :src="icon"
+        alt="icon"
+        class="icon"
+      >
+    </div>
+  </label>
+</template>
+
 <style lang="scss">
   .input-custom {
     display: block;
     width: 100%;
     margin-bottom: 15px;
+
+    &.disabled {
+      pointer-events: none;
+
+      .input {
+        color: map-get($colors, 'gray-light');
+      }
+    }
+
+    &.unbordered {
+      margin-bottom: 0;
+
+      .input {
+        padding: 0;
+        border: none;
+      }
+    }
+
+    &.with-additional-element {
+      .input {
+        padding-right: 45px;
+      }
+    }
 
     .label {
       font-size: 12px;
@@ -65,16 +136,36 @@ export default {
       width: 100%;
       padding: 9px 3px 4px;
       border-bottom: 1px solid map-get($colors, 'gray-light');
-      transition: border-color .3s;
+      transition: border-color 0.3s;
 
       &:focus {
         border-color: map-get($colors, 'black');
       }
     }
 
+    .icon-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .icon {
+      display: block;
+      position: absolute;
+      width: 17px;
+      top: 50%;
+      transform: translate(-20%, -140%);
+      right: 0;
+    }
+
     &.inverted-theme {
       .label {
         color: map-get($colors, 'gray-light');
+      }
+
+      &.disabled {
+        .input {
+          color: map-get($colors, 'gray-dark');
+        }
       }
 
       .input {
@@ -84,6 +175,10 @@ export default {
         &:focus {
           border-color: map-get($colors, 'white');
         }
+      }
+
+      .icon {
+        filter: invert(100%);
       }
     }
   }

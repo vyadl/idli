@@ -2,10 +2,12 @@ $colors: (
   'black': #000,
   'gray-dark': #555,
   'gray-light': #aaa,
+  'gray-very-light': #f6f4f4,
   'white': #fff,
   'error-text': #da470d,
 );
 
 $text: (
-  'title-font-size': 17px,
+  'big-title-font-size': 17px,
+  'small-title-font-size': 14px,
 );
