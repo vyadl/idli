@@ -145,7 +145,7 @@ export default {
       this.updateRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
 
       if (this.edittingItemObj.title || this.edittingItemObj.details) {
-        this._saveItemOnServer();
+        this._saveItemOnServer(this.edittingItemObj);
       }
     },
     addRelatedItem() {
@@ -415,8 +415,7 @@ export default {
 
   .referring-units-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
+    gap: 10px;
   }
 
   .single-button-container,

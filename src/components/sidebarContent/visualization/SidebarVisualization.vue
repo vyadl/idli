@@ -71,7 +71,7 @@ export default {
   },
   watch: {
     sorting: function sortingHandler(newSorting) {
-      if (this.unstructuredModes.includes(this.mode) && newSorting === 'custom') {
+      if (this.unstructuredModes.includes(this.mode) && newSorting !== 'shuffled') {
         this._setMode('list');
       }
 
@@ -83,10 +83,8 @@ export default {
         this.toggleShuffleTrigger();
       }
     },
-    mode: function modeHandler(newMode, oldMode) {
-      if (this.unstructuredModes.includes(oldMode) && this.structuredModes.includes(newMode)) {
-        this._setSorting('custom');
-      } else if (this.unstructuredModes.includes(newMode)) {
+    mode: function modeHandler(newMode) {
+      if (this.unstructuredModes.includes(newMode)) {
         this._setSorting('shuffled');
       } else if (['list', 'page'].includes(newMode)
         && ['random', 'edges'].includes(this.listAlign)) {
@@ -167,6 +165,7 @@ export default {
           </div>
         </div>
         <CheckboxCustom
+          v-if="!unstructuredModes.includes(mode)"
           label="reverse order"
           style-type="initial"
           :value="false"

@@ -1,6 +1,6 @@
 {
   "name": "idli",
-  "version": "0.2.5",
+  "version": "1.3.3",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^3.0.1",
-    "@vueform/multiselect": "^2.5.8",
+    "@vueform/multiselect": "2.5.8",
     "@yeger/vue-masonry-wall": "^3.0.42",
     "axios": "^0.26.1",
     "get-browser-fingerprint": "^2.1.1",

@@ -5,6 +5,15 @@ import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { commitFromRoot, dispatchFromRoot } from '@/store/utils'; // eslint-disable-line import/no-cycle
 
 export default {
+  _getPublicListsForAuthScreen() {
+    return this.$config.axios
+      .get(`${this.$config.apiBasePath}mascot-list-titles`)
+      .then(response => response.data.titles)
+      .catch(error => {
+        throw getErrorMessage(error.response.data);
+      });
+  },
+
   _requestRegistration({ dispatch }, { email, username }) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
@@ -162,7 +171,7 @@ export default {
       });
   },
 
-  _logOut({ commit }, { mode }) {
+  _logOut({ dispatch }, { mode }) {
     const fingerprint = JSON.stringify(getBrowserFingerprint());
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -180,19 +189,7 @@ export default {
     )
       .then(() => {
         if (mode !== 'allExceptCurrent') {
-          commit('logOut');
-
-          localStorage.removeItem('user');
-          localStorage.removeItem('currentListId');
-
-          commitFromRoot('sidebar/closeSidebar');
-          commitFromRoot('filters/resetFilters');
-          commitFromRoot('setCurrentListItems', []);
-          dispatchFromRoot('visualization/_resetVisualizationToDefault');
-
-          deleteAccessToken();
-
-          router.push({ name: 'signIn' });
+          dispatch('_logOutLocally');
         } else {
           commitFromRoot('setNotification', { text: 'All other sessions were terminated' });
         }
@@ -203,6 +200,25 @@ export default {
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
+  },
+
+  _logOutLocally({ commit }) {
+    commit('logOut');
+
+    localStorage.removeItem('user');
+    localStorage.removeItem('currentListId');
+
+    commitFromRoot('sidebar/closeSidebar');
+    commitFromRoot('filters/resetFilters');
+    commitFromRoot('setCurrentListItems', []);
+    commitFromRoot('lists/setCurrentListObj', null);
+    commitFromRoot('lists/setCurrentListId', null);
+    commitFromRoot('setModalNameToShow', '');
+    dispatchFromRoot('visualization/_resetVisualizationToDefault');
+
+    deleteAccessToken();
+
+    router.push({ name: 'signIn' });
   },
   
   _setUserFromLocalStorage({ commit }) {

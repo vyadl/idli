@@ -39,10 +39,6 @@ export default {
       tags: '',
       categories: '',
     },
-    isCreatePossible: {
-      tags: true,
-      categories: true,
-    },
     requestHandling: {
       isRequestProcessing: false,
       errorMessage: '',
@@ -58,7 +54,7 @@ export default {
       'isUserOwnsCurrentList',
     ]),
     isPublicViewLinkShown() {
-      return this.list && !this.list.isPrivate;
+      return this.list.id && !this.list.isPrivate;
     },
     tagsTitles() {
       return this.list?.tags.map(tag => tag.title);
@@ -112,8 +108,6 @@ export default {
           title,
           id: null,
         });
-      } else {
-        this.$refs[groupingFieldType].deselect(title);
       }
     },
     deleteGroupingField(groupingFieldType, title) {
@@ -122,7 +116,6 @@ export default {
       );
     },
     checkGroupingFieldTitle(groupingFieldType, title) {
-      this.isCreatePossible[groupingFieldType] = true;
       this.titleErrors[groupingFieldType] = '';
       this.newTitles[groupingFieldType] = title;
 
@@ -130,7 +123,6 @@ export default {
 
       if (!isGroupingFieldTitleUnique) {
         this.titleErrors[groupingFieldType] = this.$options.GROUPING_FIELD_TITLE_ERROR;
-        this.isCreatePossible[groupingFieldType] = false;
       }
 
       return isGroupingFieldTitleUnique;
@@ -284,13 +276,11 @@ export default {
       size="small"
     >
       <MultiselectCustom
-        ref="tags"
         :value="tagsTitles"
         :options="tagsTitles"
         mode="tags"
         placeholder="start typing to add new tag"
         :can-clear="false"
-        :create-option="!titleErrors.tags"
         :show-options="!titleErrors.tags"
         :disabled="requestHandling.isRequestProcessing"
         no-options-text=""
@@ -325,13 +315,11 @@ export default {
       size="small"
     >
       <MultiselectCustom
-        ref="categories"
         :value="categoriesTitles"
         :options="categoriesTitles"
         mode="tags"
         placeholder="start typing to add new category"
         :can-clear="false"
-        :create-option="!titleErrors.categories"
         :show-options="!titleErrors.categories"
         :disabled="requestHandling.isRequestProcessing"
         no-options-text=""
@@ -433,8 +421,7 @@ export default {
 
     .referring-units-container {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 5px;
+      gap: 10px;
     }
 
     .referring-unit,

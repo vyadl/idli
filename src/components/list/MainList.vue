@@ -416,8 +416,6 @@ export default {
       position: fixed;
       z-index: 1;
       width: 100%;
-      padding: 10px 10px 0;
-      background-color: map-get($colors, 'white');
 
       &.hidden {
         opacity: 0;
@@ -425,6 +423,8 @@ export default {
     }
 
     .list-title {
+      padding: 10px 10px 0;
+      background-color: map-get($colors, 'white');
       font-size: map-get($text, 'big-title-font-size');
       color: map-get($colors, 'gray-light');
     }
@@ -434,7 +434,7 @@ export default {
       grid-template-rows: repeat(2, 20px);
       align-items: start;
       gap: 10px;
-      padding-top: 10px;
+      padding: 10px 10px 0;
     }
 
     .items-container {
@@ -464,11 +464,8 @@ export default {
     }
 
     &.inverted-theme {
-      .header {
-        background-color: map-get($colors, 'black');
-      }
-
       .list-title {
+        background-color: map-get($colors, 'black');
         color: map-get($colors, 'gray-dark');
       }
     }

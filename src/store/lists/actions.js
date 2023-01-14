@@ -123,7 +123,7 @@ export default {
       });
   },
 
-  _updateList({ commit, dispatch }, {
+  _updateList({ getters, commit, dispatch }, {
     title,
     isPrivate,
     tags,
@@ -151,6 +151,11 @@ export default {
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
+
+        if (getters.currentListId === responseList.id) {
+          commit('setCurrentListObj', responseList);
+          commitFromRoot('setCurrentListItems', responseList.items);
+        }
 
         return responseList;
       })
@@ -278,7 +283,12 @@ export default {
       });
   },
 
-  async _addTagForListAndItem({ commit, rootGetters }, { listObj, tagTitle }) {
+  async _addTagForListAndItem(
+    { commit, rootGetters, dispatch },
+    { listObj, itemObj, tagTitle },
+  ) {
+    commitFromRoot('increaseExplicitRequestsNumber');
+
     return this.$config.axios
       .patch(
         `${this.$config.apiBasePath}list/update/${listObj.id}`,
@@ -291,43 +301,69 @@ export default {
       )
       .then(({ data: responseList }) => {
         const newTagObj = responseList.tags.find(tag => tag.title === tagTitle);
+        let { tags } = itemObj;
+        
+        tags = [...tags, newTagObj.id];
 
+        if (rootGetters['items/edittingItemObj']) {
+          commitFromRoot('updateItemFieldLocally', {
+            field: 'tags',
+            value: tags,
+          });
+        }
+
+        dispatchFromRoot('items/_saveItemOnServer', { ...itemObj, tags });
         commit('setCurrentListObj', responseList);
-        commitFromRoot('updateItemFieldLocally', {
-          field: 'tags',
-          value: [...rootGetters['items/edittingItemObj'].tags, newTagObj.id],
-        });
-        dispatchFromRoot('items/_saveItemOnServer');
       })
       .catch(error => {
         notifyAboutError(error);
-        dispatchFromRoot('items/_fetchItemById', {
-          id: rootGetters['items/edittingItemObj'],
-          cancelToken: null,
-        });
+        dispatch('_fetchListById', { id: listObj.id, cancelToken: null });
+      })
+      .finally(() => {
+        commitFromRoot('decreaseExplicitRequestsNumber');
       });
   },
 
-  _addCategoryForListAndItem({ dispatch, getters, rootGetters }, { listObj, categoryTitle }) {
-    return dispatch('_updateList', listObj)
-      .then(() => {
-        const newCategoryObj = getters.currentListCategories?.find(
+  _addCategoryForListAndItem(
+    { commit, rootGetters, dispatch },
+    { listObj, itemObj, categoryTitle },
+  ) {
+    commitFromRoot('increaseExplicitRequestsNumber');
+
+    return this.$config.axios
+      .patch(
+        `${this.$config.apiBasePath}list/update/${listObj.id}`,
+        {
+          title: listObj.title,
+          isPrivate: listObj.isPrivate,
+          tags: listObj.tags,
+          categories: listObj.categories,
+        },
+      )
+      .then(({ data: responseList }) => {
+        const newCategoryObj = responseList.categories?.find(
           category => category.title === categoryTitle,
         );
+        let { category } = itemObj;
 
-        commitFromRoot('updateItemFieldLocally', {
-          field: 'category',
-          value: newCategoryObj.id,
-        });
+        category = newCategoryObj.id;
 
-        dispatchFromRoot('items/_saveItemOnServer');
+        if (rootGetters['items/edittingItemObj']) {
+          commitFromRoot('updateItemFieldLocally', {
+            field: 'category',
+            value: category,
+          });
+        }
+
+        dispatchFromRoot('items/_saveItemOnServer', { ...itemObj, category });
+        commit('setCurrentListObj', responseList);
       })
       .catch(error => {
         notifyAboutError(error);
-        dispatchFromRoot('items/_fetchItemById', {
-          id: rootGetters['items/edittingItemObj'],
-          cancelToken: null,
-        });
+        dispatch('_fetchListById', { id: listObj.id, cancelToken: null });
+      })
+      .finally(() => {
+        commitFromRoot('decreaseExplicitRequestsNumber');
       });
   },
 

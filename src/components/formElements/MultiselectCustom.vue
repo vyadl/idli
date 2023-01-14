@@ -33,6 +33,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    clearSearchTrigger: Boolean,
   },
   emits: [
     'select',
@@ -40,6 +41,13 @@ export default {
     'clear',
     'search-change',
   ],
+  watch: {
+    clearSearchTrigger(value) {
+      if (value) {
+        this.$refs.multiselect.clearSearch();
+      }
+    },
+  },
   methods: {
     select(tag) {
       this.$emit('select', tag);
@@ -50,8 +58,8 @@ export default {
     clear() {
       this.$emit('clear');
     },
-    searchChange() {
-      this.$emit('search-change');
+    searchChange(option) {
+      this.$emit('search-change', option);
     },
   },
 };
@@ -59,6 +67,7 @@ export default {
 
 <template>
   <MultiselectExternal
+    ref="multiselect"
     :class="[
       `${globalTheme}-theme`,
       { 'small-text': smallText },
@@ -76,10 +85,11 @@ export default {
     :can-clear="canClear"
     :disabled="disabled"
     :clear-on-blur="false"
-    @select="tag => select(tag)"
-    @deselect="tag => deselect(tag)"
+    :add-option-on="[false]"
+    @select="option => select(option)"
+    @deselect="option => deselect(option)"
     @clear="clear"
-    @search-change="searchChange"
+    @search-change="option => searchChange(option)"
   >
     <template #beforelist>
       <slot name="beforelist" />

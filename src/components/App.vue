@@ -5,6 +5,7 @@ import WithSidebarLayout from '@/components/layouts/WithSidebarLayout.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
+import AboutModal from '@/components/modals/AboutModal.vue';
 import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
@@ -18,6 +19,7 @@ export default {
     ConfirmationModal,
     ListModal,
     ItemModal,
+    AboutModal,
     PasswordChangeModal,
     AppNotification,
   },
@@ -160,6 +162,7 @@ export default {
     </component>
     <ListModal />
     <ItemModal />
+    <AboutModal />
     <ConfirmationModal />
     <PasswordChangeModal />
     <AppNotification v-if="notification" />

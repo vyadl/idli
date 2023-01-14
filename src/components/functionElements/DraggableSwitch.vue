@@ -94,10 +94,16 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: fit-content;
+  background-color: map-get($colors, 'white');
 
   &.checkbox {
     align-items: flex-start;
     padding-top: 5px;
+  }
+
+  &.inverted-theme {
+    background-color: map-get($colors, 'black');
   }
 }
 </style>
