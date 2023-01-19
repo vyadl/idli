@@ -1,4 +1,4 @@
-import { router } from '@/router'; // eslint-disable-line import/no-cycle
+// import { router } from '@/router'; // eslint-disable-line import/no-cycle
 
 export default {
   isSidebarOpen: state => state.sidebar.isOpen,
@@ -8,15 +8,15 @@ export default {
     && !rootGetters['lists/isPublicView'],
 
   itemPublicView: (state, getters, rootState, rootGetters) => !rootGetters['auth/isLoggedIn']
-    && router.currentRoute._value.name === 'item',
+    && rootGetters.currentRouteName === 'item',
 
   listPublicView: (state, getters, rootState, rootGetters) => (
     !rootGetters['auth/isLoggedIn'] 
-    && router.currentRoute._value.name === 'list'
+    && rootGetters.currentRouteName === 'list'
   ) || (
     rootGetters['auth/isLoggedIn'] 
     && rootGetters['lists/isPublicView']
-    && router.currentRoute._value.name === 'list'
+    && rootGetters.currentRouteName === 'list'
   ),
 
   currentSidebarView: (state, getters) => {

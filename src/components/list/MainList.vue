@@ -4,7 +4,6 @@ import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
-import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -22,7 +21,6 @@ export default {
     ListItem,
     ButtonText,
     InfoMessage,
-    PopupBox,
   },
   data() {
     return {
@@ -70,11 +68,6 @@ export default {
       'isSidebarOpen',
       'sidebarMode',
     ]),
-    isAddUnitPossible() {
-      return this.currentListObj 
-        && !this.isFocusOnList 
-        && this.isOwnerView;
-    },
     styles() {
       let styles = {};
 
@@ -247,9 +240,6 @@ export default {
     ...mapActions('sidebar', [
       '_closeSidebar',
     ]),
-    openListModal() {
-      this.$vfm.show('listModal');
-    },
     fetchItemById(id) {
       this.resetRelatedUnitsLocally();
 
@@ -339,25 +329,6 @@ export default {
             size="small"
             @click="toggleShuffleTrigger"
           />
-          <PopupBox
-            v-if="isAddUnitPossible"
-            button-style-type="plus"
-            stop-propagation
-            content-type="functional"
-          >
-            <ButtonText
-              text="new list"
-              style-type="brick"
-              size="small"
-              @click="openListModal"
-            />
-            <ButtonText
-              text="new item"
-              style-type="brick"
-              size="small"
-              @click="_addNewItemPlaceholder"
-            />
-          </PopupBox>
         </div>
       </header>
       <div
@@ -376,11 +347,13 @@ export default {
               :gap="20"
             >
               <template #default="{ item }">
-                <ListItem
-                  :key="item?.id"
-                  :item="item"
-                  @click="fetchItemById"
-                />
+                <div class="single-item-container">
+                  <ListItem
+                    :key="item?.id"
+                    :item="item"
+                    @click="fetchItemById"
+                  />
+                </div>
               </template>
             </masonry-wall>
           </template>
@@ -461,6 +434,11 @@ export default {
         min-height: 100vh;
         padding: 0;
       }
+    }
+
+    .single-item-container {
+      width: 200px;
+      overflow-wrap: anywhere;
     }
 
     &.inverted-theme {

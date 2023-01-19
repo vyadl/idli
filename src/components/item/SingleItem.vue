@@ -33,34 +33,47 @@ export default {
     ]),
   },
   async created() {
-    try {
-      this.item = await this._fetchItemById({
-        id: this.$route.params.id,
-        cancelToken: null,
-      });
+    // async function loadItem() {
+    //   try {
+    //     this.item = await this._fetchItemById({
+    //       id: this.$route.params.id,
+    //       cancelToken: null,
+    //     });
 
-      this._fetchListById({
-        id: this.currentItemObj.listId, 
-        cancelToken: null,
-      })
-        .then(() => {
-          this.item = this.currentItemObj;
-          this._findAndSetEdittingItemIndex(this.item);
+    //     this._fetchListById({
+    //       id: this.currentItemObj.listId, 
+    //       cancelToken: null,
+    //     })
+    //       .then(() => {
+    //         this.item = this.currentItemObj;
+    //         this._findAndSetEdittingItemIndex(this.item);
 
-          if (this.isItemFormInSidebar) {
-            this._openSidebar('item');
-          } else {
-            this._toggleItemFormLocation();
-            this._openSidebar('item');
-          }
+    //         if (this.isItemFormInSidebar) {
+    //           this._openSidebar('item');
+    //         } else {
+    //           this._toggleItemFormLocation();
+    //           this._openSidebar('item');
+    //         }
 
-          this.$router.push({ query: { sidebar: 'item' } });
-        });
-    } catch (error) {
-      console.log(error);
+    //         this.$router.push({ query: { sidebar: 'item' } });
+    //       });
+    //   } catch (error) {
+    //     console.log(error);
 
-      this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
-    }
+    //     this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
+    //   }
+    // }
+
+    this.loadItem();
+
+    this.$watch(
+      () => this.$route.params.id,
+      () => {
+        if (this.$route.name === 'item') {
+          this.loadItem();
+        }
+      },
+    );
   },
   unmounted() {
     this.setCurrentItemObj(null);
@@ -84,6 +97,36 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
+    async loadItem() {
+      try {
+        this.item = await this._fetchItemById({
+          id: this.$route.params.id,
+          cancelToken: null,
+        });
+
+        this._fetchListById({
+          id: this.currentItemObj.listId, 
+          cancelToken: null,
+        })
+          .then(() => {
+            this.item = this.currentItemObj;
+            this._findAndSetEdittingItemIndex(this.item);
+
+            if (this.isItemFormInSidebar) {
+              this._openSidebar('item');
+            } else {
+              this._toggleItemFormLocation();
+              this._openSidebar('item');
+            }
+
+            this.$router.push({ query: { sidebar: 'item' } });
+          });
+      } catch (error) {
+        console.log(error);
+
+        this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
+      }
+    },
     setItemForEditting() {
       this._findAndSetEdittingItemIndex(this.item);
 
@@ -111,7 +154,7 @@ export default {
   >
     <CustomLink
       :to="{ name: 'list', params: { id: item.listId } }"
-      title="Go to the list the item is from"
+      title="list for this item"
       class="link-to-parent-list"
     />
     <div class="item-container">

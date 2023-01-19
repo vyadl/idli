@@ -15,12 +15,8 @@ export default {
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
+      'currentItemTags',
     ]),
-    currentItemTags() {
-      return this.currentListTags.filter(
-        listTag => this.edittingItemObj.tags.includes(listTag.id),
-      );
-    },
     currentItemCategory() {
       return this.currentListCategories.find(
         category => category.id === this.edittingItemObj.category,

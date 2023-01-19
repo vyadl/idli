@@ -253,7 +253,7 @@ export default {
             :title="item.title || 'untitled'"
             class="related-unit"
             :class="{ 'untitled-item': !item.title }"
-            target="_blank"
+            with-external-link
           />
         </div>
       </SectionCard>
@@ -279,7 +279,7 @@ export default {
             :to="{ name: 'list', params: { id: list.id || list } }"
             :title="list.title"
             class="related-unit"
-            target="_blank"
+            with-external-link
           />
         </div>
       </SectionCard>
@@ -385,7 +385,7 @@ export default {
           :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"
-          target="_blank"
+          with-external-link
         />
       </div>
     </TogglingBlock>

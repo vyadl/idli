@@ -9,6 +9,7 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import SearchVault from '@/components/functionElements/SearchVault.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 
@@ -24,6 +25,7 @@ export default {
     ButtonSign,
     CustomLink,
     SearchVault,
+    PopupBox,
   },
   computed: {
     ...mapGetters('appearance', [
@@ -35,6 +37,8 @@ export default {
     ...mapGetters('lists', [
       'isUserOwnsCurrentList',
       'isPublicView',
+      'currentListObj',
+      'isOwnerView',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -45,6 +49,11 @@ export default {
       'sidebarMode',
       'currentSidebarView',
     ]),
+    isAddUnitPossible() {
+      return this.currentListObj 
+        && !this.isFocusOnList 
+        && this.isOwnerView;
+    },
     sidebarModes() {
       return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
     },
@@ -62,10 +71,16 @@ export default {
     ...mapActions('lists', [
       '_setCurrentListView',
     ]),
+    ...mapActions('items', [
+      '_addNewItemPlaceholder',
+    ]),
     ...mapActions('sidebar', [
       '_openSidebar',
       '_closeSidebar',
     ]),
+    openListModal() {
+      this.$vfm.show('listModal');
+    },
     defineButtonStyleType(mode) {
       if (mode === 'bin' && !this.isMobileScreen) {
         return 'underline';
@@ -109,6 +124,27 @@ export default {
     >
       <SearchVault />
     </div>
+    <PopupBox
+      v-if="isAddUnitPossible"
+      class="add-unit-button"
+      button-style-type="plus"
+      position="left"
+      stop-propagation
+      content-type="functional"
+    >
+      <ButtonText
+        text="new item"
+        style-type="brick"
+        size="small"
+        @click="_addNewItemPlaceholder"
+      />
+      <ButtonText
+        text="new list"
+        style-type="brick"
+        size="small"
+        @click="openListModal"
+      />
+    </PopupBox>
     <div
       v-if="isPublicView && isLoggedIn"
       class="exit-public-view-button"
@@ -216,7 +252,7 @@ export default {
     .exit-public-view-button,
     .auth-buttons {
       position: fixed;
-      top: 35px;
+      top: 10px;
       transform: translateX(-100%) translateX(-20px);
     }
 
@@ -276,6 +312,12 @@ export default {
       position: fixed;
       top: 15px;
       transform: translateX(-100%) translateX(-15px);
+    }
+
+    .add-unit-button {
+      position: fixed;
+      top: 45px;
+      transform: translateX(-100%) translateX(-13px);
     }
 
     &.inverted-theme {

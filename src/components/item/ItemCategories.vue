@@ -1,6 +1,5 @@
 <script>
 import MultiselectCustom from '@/components/formElements/MultiselectCustom.vue';
-import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { 
   mapGetters,
   mapActions,
@@ -11,27 +10,28 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     MultiselectCustom,
-    ErrorMessage,
   },
+  emits: [
+    'throw-error',
+    'clear-error',
+  ],
   data() {
     return {
       newTitle: '',
-      clearSearchTrigger: false,
+      clearSearch: false,
       requestHandling: {
         isRequestProcessing: false,
-        errorMessage: '',
       },
     };
   },
   computed: {
     ...mapGetters([
-      'currentListItems',
       'explicitRequestsNumber',
     ]),
     ...mapGetters('lists', [
       'lists',
       'currentListCategories',
-      'currentListTags',
+      'currentListCategoriesTitles',
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
@@ -39,12 +39,6 @@ export default {
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
-    currentListCategoriesTitles() {
-      return this.currentListCategories.map(category => category.title);
-    },
-    currentListTagsTitles() {
-      return this.currentListTags.map(tag => tag.title);
-    },
     currentItemCategoryTitle() {
       const categoryObj = this.currentListCategories.find(
         category => category.id === this.edittingItemObj.category,
@@ -64,24 +58,19 @@ export default {
       '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
-      '_addCategoryForListAndItem',
+      '_checkGroupingFieldTitleUniqueness',
+      '_addGroupingFieldForListAndItem',
     ]),
-    checkTitleUniqueness(categoryTitle) {
-      const isTitleUnique = !this.currentListTagsTitles.includes(categoryTitle)
-        && !this.currentListCategoriesTitles.includes(categoryTitle);
+    async checkTitleUniqueness(categoryTitle) {
+      const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(categoryTitle);
 
-      this.requestHandling.errorMessage = isTitleUnique
-        ? ''
-        : 'filter with this name already exists';
-
-      this.newTitle = isTitleUnique
-        ? categoryTitle
-        : '';
+      this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
+      this.newTitle = isTitleUnique ? categoryTitle : '';
 
       return isTitleUnique;
     },
     changeCategory(categoryTitle) {
-      this.requestHandling.errorMessage = '';
+      this.$emit('clear-error');
 
       const newCategoryObj = this.currentListCategories.find(
         category => category.title === categoryTitle,
@@ -94,7 +83,7 @@ export default {
       }
     },
     createNewCategory(categoryTitle) {
-      this.clearSearchTrigger = true;
+      this.clearSearch = true;
 
       const isTitleUnique = this.checkTitleUniqueness(categoryTitle);
 
@@ -106,12 +95,17 @@ export default {
         this.requestHandling.isRequestProcessing = true;
 
         const listObj = this.lists.find(list => list.id === listId);
-        const request = this._addCategoryForListAndItem({ listObj, itemObj, categoryTitle });
+        const request = this._addGroupingFieldForListAndItem({
+          listObj,
+          itemObj,
+          title: categoryTitle,
+          groupingFieldType: 'category',
+        });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
           .then(() => {
             this.newTitle = '';
-            this.clearSearchTrigger = false;
+            this.clearSearch = false;
           });
       }
     },
@@ -139,9 +133,9 @@ export default {
       :small-text="isItemFormInSidebar"
       :options="currentListCategoriesTitles"
       :create-option="false"
-      :clear-search-trigger="clearSearchTrigger"
+      :clear-search-trigger="clearSearch"
       :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
-      :show-options="!requestHandling.errorMessage && !explicitRequestsNumber"
+      :show-options="!explicitRequestsNumber"
       @select="category => changeCategory(category)"
       @clear="removeCategory()"
       @search-change="checkTitleUniqueness"
@@ -156,34 +150,23 @@ export default {
             {{ newTitle }}
           </div>
           <div class="new-option-desc">
-            create new
+            ( create new )
           </div>
         </div>
       </template>
     </MultiselectCustom>
-    <div class="error-container">
-      <ErrorMessage
-        v-if="requestHandling.errorMessage"
-        :message="requestHandling.errorMessage"
-      />
-    </div>
   </div>
 </template>
 
 <style lang="scss">
 .item-categories {
-  .error-container {
-    height: 20px;
-    padding-top: 10px;
-  }
-
   .create-option {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
 
     &:hover {
@@ -192,9 +175,23 @@ export default {
   }
 
   .new-option-desc {
-    font-size: 12px;
+    font-size: 14px;
     font-variant: small-caps;
     color: map-get($colors, 'gray-dark');
+  }
+
+  &.inverted-theme {
+    .create-option {
+      color: map-get($colors, 'white');
+
+      &:hover {
+        background: map-get($colors, 'gray-dark');
+      }
+    }
+
+    .new-option-desc {
+      color: map-get($colors, 'gray-light');
+    }
   }
 }
 </style>

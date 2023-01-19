@@ -9,4 +9,5 @@ export default {
   modalNameToShow: '',
   confirmationModalTitle: '',
   explicitRequestsNumber: 0,
+  currentRouteName: '',
 };

@@ -125,16 +125,21 @@ export default {
       background-size: contain;
       width: 25px;
       height: 25px;
+      filter: invert(40%);
       transition: filter 0.2s;
+
+      &:hover,
+      &.active {
+        filter: invert(0%);
+      }
 
       &.big {
         width: 45px;
         height: 45px;
       }
 
-      &:hover,
       &:disabled {
-        filter: invert(40%);
+        filter: invert(60%);
       }
     }
 
@@ -207,8 +212,8 @@ export default {
     &.loupe {
       background-image: url('/icons/loupe.svg');
       background-size: contain;
-      width: 25px;
-      height: 25px;
+      width: 20px;
+      height: 20px;
       filter: invert(40%);
       transition: filter 0.2s;
 

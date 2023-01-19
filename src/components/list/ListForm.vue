@@ -1,5 +1,5 @@
 <script>
-import InputCustom from '@/components/formElements/InputCustom.vue';
+import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
@@ -16,7 +16,7 @@ import { handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
-    InputCustom,
+    TextareaCustom,
     CheckboxCustom,
     ButtonText,
     ErrorMessage,
@@ -38,6 +38,14 @@ export default {
     newTitles: {
       tags: '',
       categories: '',
+    },
+    clearSearch: {
+      tags: false,
+      categories: false,
+    },
+    appendOption: {
+      tags: false,
+      categories: false,
     },
     requestHandling: {
       isRequestProcessing: false,
@@ -90,6 +98,11 @@ export default {
       this._setEdittingListObj(null);
       this.requestHandling.errorMessage = '';
     },
+    finishAppendOption(groupingFieldType) {
+      this.clearSearch[groupingFieldType] = false;
+      this.appendOption[groupingFieldType] = false;
+      this.newTitles[groupingFieldType] = '';
+    },
     showErrors({ isListTitleUnique, areGroupingFieldsTitlesValid }) {
       if (!isListTitleUnique) {
         this.titleErrors.list = this.$options.LIST_TITLE_ERROR;
@@ -101,6 +114,9 @@ export default {
       }
     },
     addGroupingField(groupingFieldType, title) {
+      this.clearSearch[groupingFieldType] = true;
+      this.appendOption[groupingFieldType] = true;
+
       const isGroupingFieldTitleUnique = this.checkGroupingFieldTitle(groupingFieldType, title);
 
       if (isGroupingFieldTitleUnique) {
@@ -238,9 +254,10 @@ export default {
     :class="`${globalTheme}-theme`"
     @submit.prevent="list.id ? updateList() : addList()"
   >
-    <InputCustom
+    <TextareaCustom
       v-model="list.title"
       label="title"
+      :rows="3"
       :is-focus="true"
       :disabled="requestHandling.isRequestProcessing"
       required
@@ -281,20 +298,30 @@ export default {
         mode="tags"
         placeholder="start typing to add new tag"
         :can-clear="false"
+        :create-option="false"
         :show-options="!titleErrors.tags"
         :disabled="requestHandling.isRequestProcessing"
+        :clear-search-trigger="clearSearch.tags"
+        :append-option="appendOption.tags"
+        :new-title="newTitles.tags"
         no-options-text=""
         no-results-text=""
-        @select="title => addGroupingField('tags', title)"
         @deselect="title => deleteGroupingField('tags', title)"
         @search-change="title => checkGroupingFieldTitle('tags', title)"
+        @finish-append-option="finishAppendOption('tags')"
       >
         <template #beforelist>
           <div
             v-if="newTitles.tags"
-            class="multiselect-hint"
+            class="create-option"
+            @click="addGroupingField('tags', newTitles.tags)"
           >
-            press the option below to add it
+            <div>
+              {{ newTitles.tags }}
+            </div>
+            <div class="new-option-desc">
+              ( create new )
+            </div>
           </div>
           <div
             v-else
@@ -320,20 +347,30 @@ export default {
         mode="tags"
         placeholder="start typing to add new category"
         :can-clear="false"
+        :create-option="false"
         :show-options="!titleErrors.categories"
         :disabled="requestHandling.isRequestProcessing"
+        :clear-search-trigger="clearSearch.categories"
+        :append-option="appendOption.categories"
+        :new-title="newTitles.categories"
         no-options-text=""
         no-results-text=""
-        @select="title => addGroupingField('categories', title)"
         @deselect="title => deleteGroupingField('categories', title)"
         @search-change="title => checkGroupingFieldTitle('categories', title)"
+        @finish-append-option="finishAppendOption('categories')"
       >
         <template #beforelist>
           <div
             v-if="newTitles.categories"
-            class="multiselect-hint"
+            class="create-option"
+            @click="addGroupingField('categories', newTitles.categories)"
           >
-            press the option below to add it
+            <div>
+              {{ newTitles.categories }}
+            </div>
+            <div class="new-option-desc">
+              ( create new )
+            </div>
           </div>
           <div
             v-else
@@ -435,10 +472,32 @@ export default {
     }
 
     .multiselect-hint {
-      padding: 12px;
-      font-size: 12px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: bold;
       font-variant: small-caps;
       letter-spacing: 0.9px;
+      color: map-get($colors, 'gray-dark');
+      cursor: default;
+    }
+
+    .create-option {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--ms-option-bg-pointed, #f3f4f6);
+      }
+    }
+
+    .new-option-desc {
+      font-size: 14px;
+      font-variant: small-caps;
       color: map-get($colors, 'gray-dark');
     }
 
@@ -486,6 +545,19 @@ export default {
       .untitled-item,
       .stats {
         color: map-get($colors, 'gray-dark');
+      }
+
+      .create-option {
+        color: map-get($colors, 'white');
+
+        &:hover {
+          background: map-get($colors, 'gray-dark');
+        }
+      }
+
+      .new-option-desc,
+      .multiselect-hint {
+        color: map-get($colors, 'gray-light');
       }
     }
   }

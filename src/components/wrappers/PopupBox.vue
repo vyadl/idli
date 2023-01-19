@@ -135,7 +135,7 @@ export default {
     }
 
     &.left {
-      bottom: -2px;
+      top: -5px;
       right: 130%;
     }
 

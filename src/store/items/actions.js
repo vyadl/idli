@@ -56,16 +56,21 @@ export default {
     commit('setEdittingItemIndex', itemIndex);
   },
 
-  _addNewItemPlaceholder({ dispatch, rootGetters }) {
-    const newItem = new Item();
-    const itemWithTemporaryId = {
-      ...newItem,
-      temporaryId: Date.now(),
-      listId: rootGetters['lists/currentListId'],
-    };
+  _addNewItemPlaceholder({ commit, dispatch, rootGetters }) {
+    const unsavedItem = rootGetters.currentListItems.find(item => item.temporaryId);
 
-    commitFromRoot('addItem', itemWithTemporaryId);
-    dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+    if (!unsavedItem) {
+      const newItem = new Item();
+      const itemWithTemporaryId = {
+        ...newItem,
+        temporaryId: Date.now(),
+        listId: rootGetters['lists/currentListId'],
+      };
+
+      commit('resetRelatedUnitsLocally');
+      commitFromRoot('addItem', itemWithTemporaryId);
+      dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+    }
 
     rootGetters['settings/isItemFormInSidebar']
       ? dispatchFromRoot('sidebar/_openSidebar', 'item')

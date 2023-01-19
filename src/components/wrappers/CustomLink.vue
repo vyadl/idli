@@ -5,6 +5,7 @@ export default {
     title: String,
     target: String,
     withArrow: Boolean,
+    withExternalLink: Boolean,
   },
 };
 </script>
@@ -17,6 +18,15 @@ export default {
     >
       {{ title }} 
     </router-link>
+    <router-link
+      v-if="withExternalLink"
+      class="external-link"
+      :to="to"
+      target="_blank"
+    />
+    <!-- <ButtonSign
+        style-type="external-link"
+      /> -->
     <div
       v-if="withArrow"
       class="arrow"
@@ -29,6 +39,22 @@ export default {
 <style lang="scss">
 .custom-link {
   position: relative;
+  // display: flex;
+
+  .external-link {
+    background-image: url('/icons/external-link.svg');
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    margin-left: 8px;
+    filter: invert(40%);
+    transition: filter 0.2s;
+
+    &:hover,
+    &.active {
+      filter: invert(0%);
+    }
+  }
   
   .arrow {
     position: relative;

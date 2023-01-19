@@ -34,17 +34,26 @@ export default {
       default: true,
     },
     clearSearchTrigger: Boolean,
+    appendOption: Boolean,
+    newTitle: String,
   },
   emits: [
     'select',
     'deselect',
     'clear',
     'search-change',
+    'finish-append-option',
   ],
   watch: {
     clearSearchTrigger(value) {
       if (value) {
         this.$refs.multiselect.clearSearch();
+      }
+    },
+    appendOption(value) {
+      if (value) {
+        this.$refs.multiselect.select({ value: this.newTitle });
+        this.$emit('finish-append-option');
       }
     },
   },
@@ -142,6 +151,11 @@ export default {
     padding-top: 10px;
   }
 
+  &-dropdown {
+    border: 1px solid map-get($colors, 'gray-dark');
+    border-top: none;
+  }
+
   &-option {
     font-size: 14px;
 
@@ -202,6 +216,10 @@ export default {
       &-search {
         background: map-get($colors, 'black');
         color: map-get($colors, 'white');
+      }
+
+      &-dropdown {
+        border-color: map-get($colors, 'gray-light');
       }
 
       &-tag-remove {

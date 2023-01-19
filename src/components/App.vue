@@ -60,6 +60,13 @@ export default {
     },
   },
   created() {
+    this.$watch(
+      () => this.$route.name,
+      name => {
+        this.setCurrentRouteName(name);
+      },
+    );
+    
     this._checkAndSetIsMobileScreen();
     window.addEventListener(
       'resize',
@@ -99,6 +106,9 @@ export default {
     );
   },
   methods: {
+    ...mapMutations([
+      'setCurrentRouteName',
+    ]),
     ...mapMutations('sidebar', [
       'changeSidebarMode',
     ]),

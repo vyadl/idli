@@ -96,9 +96,9 @@ export default {
       color: map-get($colors, 'black');
       background-color: map-get($colors, 'white');
       transition:
-        background-color 0.3s 0.05s,
-        color 0.2s 0.05s,
-        border-color 0.2s 0.05s;
+        background-color 0.2s,
+        color 0.2s,
+        border-color 0.2s;
 
       &.small {
         padding: 3px 10px 4px;

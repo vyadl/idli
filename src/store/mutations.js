@@ -14,6 +14,10 @@ export default {
     state.confirmationModalTitle = title;
   },
 
+  setCurrentRouteName(state, name) {
+    state.currentRouteName = name;
+  },
+
   increaseExplicitRequestsNumber(state) {
     state.explicitRequestsNumber++;
   },
@@ -58,8 +62,6 @@ export default {
     
     state.currentListItems.splice(index, 1, item);
   },
-
-  updateItemById() {},
 
   deleteItem(state, id) {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);
