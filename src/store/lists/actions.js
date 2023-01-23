@@ -84,6 +84,7 @@ export default {
         if (getters.isUserOwnsCurrentList) {
           commit('updateList', responseList);
         }
+
         commitFromRoot('setCurrentListItems', responseList.items);
         commit('setCurrentListObj', responseList);
 

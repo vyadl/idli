@@ -5,6 +5,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -18,6 +19,7 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
+import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
@@ -27,6 +29,7 @@ export default {
     TogglingBlock,
     SectionCard,
     PopupBox,
+    CustomLink,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -149,9 +152,10 @@ export default {
       }
     });
 
-    this.resetRelatedUnitsLocally();
     this.setCurrentItemObj(null);
     this.setEdittingItemIndex(null);
+
+    deleteFromQuery(this.isItemFormInSidebar ? ['item', 'sidebar'] : 'item');
   },
   methods: {
     ...mapMutations([
@@ -333,6 +337,17 @@ export default {
         </TogglingBlock>
       </TogglingBlock>
     </div>
+    <div
+      v-if="$route.name !== 'item'"
+      class="single-item-link"
+    >
+      <CustomLink
+        :to="{ name: 'item', params: { id: edittingItemObj.id } }"
+        title="open item separately"
+        target="_blank"
+        size="small"
+      />
+    </div>
     <footer
       v-if="edittingItemObj?.id"
       class="footer"
@@ -377,6 +392,10 @@ export default {
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
+    }
+
+    .single-item-link {
+      padding-top: 15px;
     }
 
     .footer {

@@ -5,28 +5,29 @@ export default {
     title: String,
     target: String,
     withArrow: Boolean,
-    withExternalLink: Boolean,
+    size: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['small'].includes(value)
+          : true;
+      },
+    },
   },
 };
 </script>
 
 <template>
-  <span class="custom-link">
+  <span
+    class="custom-link"
+    :class="[ size, `${globalTheme}-theme` ]"
+  >
     <router-link
       :to="to"
       :target="target"
     >
       {{ title }} 
     </router-link>
-    <router-link
-      v-if="withExternalLink"
-      class="external-link"
-      :to="to"
-      target="_blank"
-    />
-    <!-- <ButtonSign
-        style-type="external-link"
-      /> -->
     <div
       v-if="withArrow"
       class="arrow"
@@ -39,22 +40,22 @@ export default {
 <style lang="scss">
 .custom-link {
   position: relative;
-  // display: flex;
+  color: map-get($colors, 'black');
 
-  .external-link {
-    background-image: url('/icons/external-link.svg');
-    background-size: contain;
-    width: 15px;
-    height: 15px;
-    margin-left: 8px;
-    filter: invert(40%);
-    transition: filter 0.2s;
+  // .external-link {
+  //   background-image: url('/icons/external-link.svg');
+  //   background-size: contain;
+  //   width: 15px;
+  //   height: 15px;
+  //   margin-left: 8px;
+  //   filter: invert(40%);
+  //   transition: filter 0.2s;
 
-    &:hover,
-    &.active {
-      filter: invert(0%);
-    }
-  }
+  //   &:hover,
+  //   &.active {
+  //     filter: invert(0%);
+  //   }
+  // }
   
   .arrow {
     position: relative;
@@ -69,17 +70,47 @@ export default {
     &::after {
       content: '';
       position: absolute;
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-right: 1px solid map-get($colors, 'gray-light');
       border-top: 1px solid map-get($colors, 'gray-light');
-      transform: translate(-7px, 6px) rotate(45deg);
+      transform: translate(-7px, 7px) rotate(45deg);
+    }
+  }
+
+  &.small {
+    font-size: 13px;
+    color: map-get($colors, 'gray-dark');
+
+    .arrow {
+      &::after {
+        width: 6px;
+        height: 6px;
+        transform: translate(-5px, 8px) rotate(45deg);
+      }
     }
   }
 
   &:hover {
     .arrow {
       opacity: 1;
+    }
+  }
+
+  &.inverted-theme {
+    color: map-get($colors, 'white');
+
+    &.small {
+      color: map-get($colors, 'gray-light');
+    }
+
+    .arrow {
+      color: map-get($colors, 'gray-dark');
+
+      &::after {
+        border-right-color: map-get($colors, 'gray-dark');
+        border-top-color: map-get($colors, 'gray-dark');
+      }
     }
   }
 }

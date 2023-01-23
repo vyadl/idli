@@ -3,6 +3,7 @@ import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
@@ -20,6 +21,7 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
+    ButtonSign,
     InfoMessage,
   },
   data() {
@@ -165,6 +167,26 @@ export default {
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
 
+    const handleItemForm = () => {
+      if (this.$route.query.item) {
+        this.isItemFormInSidebar
+          ? this._openSidebar('item')
+          : this.$vfm.show('itemModal');
+      } else {
+        this.isItemFormInSidebar
+          ? this._closeSidebar()
+          : this.$vfm.hide('itemModal');
+      }
+    };
+
+    const loadItem = item => {
+      this._fetchItemById({ id: item, cancelToken: null })
+        .then((responseItem) => {
+          this._findAndSetEdittingItemIndex(responseItem);
+          handleItemForm();
+        });
+    };
+
     const queryOptions = {
       tags: {
         callback: this.setTags,
@@ -192,6 +214,9 @@ export default {
         callback: this.toggleItemsOrder,
         withoutPayload: true,
       },
+      item: {
+        callback: loadItem,
+      },
     };
 
     try {
@@ -204,6 +229,23 @@ export default {
       console.log(error);
       this._closeSidebar();
     }
+
+    this.$watch(
+      () => this.$route.params.id,
+      id => {
+        this._fetchListById({ id, cancelToken: null });
+        handleItemForm();
+      },
+    );
+
+    this.$watch(
+      () => this.$route.query.item,
+      item => {
+        if (item && item !== this.edittingItemObj?.id) {
+          loadItem(item);
+        }
+      },
+    );
   },
   methods: {
     ...mapMutations('filters', [
@@ -233,11 +275,13 @@ export default {
     ...mapActions('items', [
       '_fetchItemById',
       '_addNewItemPlaceholder',
+      '_findAndSetEdittingItemIndex',
     ]),
     ...mapActions('filters', [
       '_filterList',
     ]),
     ...mapActions('sidebar', [
+      '_openSidebar',
       '_closeSidebar',
     ]),
     fetchItemById(id) {
@@ -366,6 +410,17 @@ export default {
             />
           </template>
         </template>
+        <div
+          v-if="!['stars', 'cloud'].includes(mode)"
+          class="add-item-button"
+          title="add new item"
+        >
+          <ButtonSign
+            style-type="plus"
+            stop-propagation
+            @click="_addNewItemPlaceholder"
+          />
+        </div>
       </div>
     </div>
     <div
@@ -433,6 +488,17 @@ export default {
         width: 100%;
         min-height: 100vh;
         padding: 0;
+      }
+
+      &.cards-mode {
+        .add-item-button {
+          width: 40px;
+          margin-top: 20px;
+          padding: 5px;
+          border: 2px solid map-get($colors, 'black');
+          border-radius: 3px;
+          cursor: pointer;
+        }
       }
     }
 

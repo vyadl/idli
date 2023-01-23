@@ -35,7 +35,7 @@ export default {
     },
     clearSearchTrigger: Boolean,
     appendOption: Boolean,
-    newTitle: String,
+    // newTitle: String,
   },
   emits: [
     'select',
@@ -44,6 +44,12 @@ export default {
     'search-change',
     'finish-append-option',
   ],
+  data() {
+    return {
+      searchValue: '',
+      localValue: [],
+    };
+  },
   watch: {
     clearSearchTrigger(value) {
       if (value) {
@@ -52,22 +58,34 @@ export default {
     },
     appendOption(value) {
       if (value) {
-        this.$refs.multiselect.select({ value: this.newTitle });
+        this.$refs.multiselect.select({ value: this.searchValue });
         this.$emit('finish-append-option');
       }
     },
+    value: {
+      handler(value) {
+        this.localValue = value;
+      },
+      immediate: true,
+    },
   },
   methods: {
-    select(tag) {
-      this.$emit('select', tag);
+    select(option) {
+      this.$emit('select', option);
     },
-    deselect(tag) {
-      this.$emit('deselect', tag);
+    deselect(option) {
+      this.$emit('deselect', option);
+    },
+    change() {
+      if (typeof this.value !== 'string') {
+        this.localValue = [...this.value];
+      }
     },
     clear() {
       this.$emit('clear');
     },
     searchChange(option) {
+      this.searchValue = option;
       this.$emit('search-change', option);
     },
   },
@@ -82,7 +100,7 @@ export default {
       { 'small-text': smallText },
       { 'with-hint': !noResultsText }
     ]"
-    :value="value"
+    :value="localValue"
     :mode="mode"
     :placeholder="placeholder"
     :no-options-text="noOptionsText"
@@ -98,6 +116,7 @@ export default {
     @select="option => select(option)"
     @deselect="option => deselect(option)"
     @clear="clear"
+    @change="change"
     @search-change="option => searchChange(option)"
   >
     <template #beforelist>

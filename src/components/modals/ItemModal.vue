@@ -22,6 +22,7 @@ export default {
   <ModalBasic
     class="item-modal"
     name="itemModal"
+    :width="isOwnerView ? 500 : 400"
   >
     <ItemForm v-if="isOwnerView" />
     <ItemView v-else />

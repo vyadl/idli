@@ -33,71 +33,7 @@ export default {
     ]),
   },
   async created() {
-    // async function loadItem() {
-    //   try {
-    //     this.item = await this._fetchItemById({
-    //       id: this.$route.params.id,
-    //       cancelToken: null,
-    //     });
-
-    //     this._fetchListById({
-    //       id: this.currentItemObj.listId, 
-    //       cancelToken: null,
-    //     })
-    //       .then(() => {
-    //         this.item = this.currentItemObj;
-    //         this._findAndSetEdittingItemIndex(this.item);
-
-    //         if (this.isItemFormInSidebar) {
-    //           this._openSidebar('item');
-    //         } else {
-    //           this._toggleItemFormLocation();
-    //           this._openSidebar('item');
-    //         }
-
-    //         this.$router.push({ query: { sidebar: 'item' } });
-    //       });
-    //   } catch (error) {
-    //     console.log(error);
-
-    //     this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
-    //   }
-    // }
-
-    this.loadItem();
-
-    this.$watch(
-      () => this.$route.params.id,
-      () => {
-        if (this.$route.name === 'item') {
-          this.loadItem();
-        }
-      },
-    );
-  },
-  unmounted() {
-    this.setCurrentItemObj(null);
-  },
-  methods: {
-    ...mapMutations('items', [
-      'setCurrentItemObj',
-    ]),
-    ...mapActions('lists', [
-      '_fetchListById',
-      '_fetchListsForUser',
-    ]),
-    ...mapActions('items', [
-      '_fetchItemById',
-      '_findAndSetEdittingItemIndex',
-    ]),
-    ...mapActions('settings', [
-      '_toggleItemFormLocation',
-    ]),
-    ...mapActions('sidebar', [
-      '_openSidebar',
-      '_closeSidebar',
-    ]),
-    async loadItem() {
+    const loadItem = async () => {
       try {
         this.item = await this._fetchItemById({
           id: this.$route.params.id,
@@ -126,7 +62,41 @@ export default {
 
         this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
       }
-    },
+    };
+
+    loadItem(this.$route.params.id);
+
+    this.$watch(
+      () => this.$route.params.id,
+      id => {
+        if (this.$route.name === 'item') {
+          loadItem(id);
+        }
+      },
+    );
+  },
+  unmounted() {
+    this.setCurrentItemObj(null);
+  },
+  methods: {
+    ...mapMutations('items', [
+      'setCurrentItemObj',
+    ]),
+    ...mapActions('lists', [
+      '_fetchListById',
+      '_fetchListsForUser',
+    ]),
+    ...mapActions('items', [
+      '_fetchItemById',
+      '_findAndSetEdittingItemIndex',
+    ]),
+    ...mapActions('settings', [
+      '_toggleItemFormLocation',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
+      '_closeSidebar',
+    ]),
     setItemForEditting() {
       this._findAndSetEdittingItemIndex(this.item);
 
@@ -160,9 +130,10 @@ export default {
     <div class="item-container">
       <div 
         class="item-title"
+        :class="{ untitled: !item.title }"
         @click.stop="setItemForEditting"
       >
-        {{ item.title }}
+        {{ item.title || 'Untitled' }}
       </div>
       <div
         v-if="item.details"
@@ -200,6 +171,10 @@ export default {
       padding: 5px;
       font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
+
+      &.untitled{
+        opacity: 0.5;
+      }
     }
 
     .item-details {

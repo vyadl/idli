@@ -392,7 +392,7 @@ export default {
         <CustomLink
           v-for="item in list.referringItems"
           :key="item.id"
-          :to="{ name: 'item', params: { id: item.id || item } }"
+          :to="{ name: 'item', params: { id: item.id || item }, query: { item: item.id } }"
           :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"

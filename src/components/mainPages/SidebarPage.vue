@@ -128,7 +128,7 @@ export default {
       v-if="isAddUnitPossible"
       class="add-unit-button"
       button-style-type="plus"
-      position="left"
+      :position="isMobileScreen ? 'upper-right' : 'left'"
       stop-propagation
       content-type="functional"
     >
@@ -180,6 +180,7 @@ export default {
             'mode-button' : !isMobileScreen && mode !== 'bin',
             'bin-mode-button' : mode === 'bin',
           }"
+          :with-box-shadow="!isMobileScreen && mode !== 'bin'"
           :text="mode"
           :style-type="defineButtonStyleType(mode)"
           :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
@@ -276,6 +277,7 @@ export default {
       flex-direction: column;
       align-items: flex-end;
       margin-bottom: 10px;
+      transform: translateX(10px);
       transition: transform 0.4s;
     }
 
@@ -291,7 +293,6 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        box-shadow: -2px 2px 3px 3px rgb(0 0 0 / 25%);
       }
     }
 
@@ -310,12 +311,14 @@ export default {
 
     .search-button {
       position: fixed;
+      z-index: 100;
       top: 15px;
       transform: translateX(-100%) translateX(-15px);
     }
 
     .add-unit-button {
       position: fixed;
+      z-index: 100;
       top: 45px;
       transform: translateX(-100%) translateX(-13px);
     }
@@ -331,12 +334,6 @@ export default {
 
       .sidebar-content {
         background-color: map-get($colors, 'black');
-      }
-
-      .mode-button {
-        &::before {
-          box-shadow: -2px 2px 2px 2px rgb(255 255 255 / 70%);
-        }
       }
     }
   }

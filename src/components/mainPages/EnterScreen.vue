@@ -72,6 +72,7 @@ export default {
                   target="_blank"
                   :title="title"
                   with-arrow
+                  size="small"
                 />
               </div>
             </div>
@@ -128,15 +129,7 @@ export default {
 
     .public-list {
       margin-bottom: 5px;
-      text-align: left;
-      font-size: 13px;
-      color: map-get($colors, 'gray-dark');
-    }
-
-    &.inverted-theme {
-      .public-list {
-        color: map-get($colors, 'gray-light');
-      }
+      text-align: left;      
     }
   }
 </style>
