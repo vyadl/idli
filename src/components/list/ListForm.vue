@@ -11,8 +11,7 @@ import MultiselectCustom from '@/components/formElements/MultiselectCustom.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
-import { getFormattedDate } from '@/utils/misc';
-import { handleRequestStatuses } from '@/utils/misc';
+import { getFormattedDate, handleRequestStatuses } from '@/utils/misc';
 
 export default {
   components: {
@@ -283,7 +282,7 @@ export default {
           query: { view: 'public' }
         }"
         title="check how others will see your list"
-        target="_blank"
+        new-tab
       />
     </div>
     <SectionCard
@@ -396,7 +395,6 @@ export default {
           :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"
-          target="_blank"
         />
       </div>
     </TogglingBlock>

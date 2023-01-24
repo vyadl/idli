@@ -69,9 +69,8 @@ export default {
               >
                 <CustomLink
                   :to="{ name: 'list', params: { id } }"
-                  target="_blank"
                   :title="title"
-                  with-arrow
+                  new-tab
                   size="small"
                 />
               </div>

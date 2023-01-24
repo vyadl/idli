@@ -1,5 +1,3 @@
-// import { router } from '@/router'; // eslint-disable-line import/no-cycle
-
 export default {
   isSidebarOpen: state => state.sidebar.isOpen,
   sidebarMode: state => state.sidebar.mode,

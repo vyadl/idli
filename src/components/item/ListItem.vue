@@ -148,14 +148,12 @@ export default {
       padding: 5px 15px;
       border: 1px solid map-get($colors, 'black');
 
-      .item {
-        &-title {
-          font-size: 14px;
-        }
+      .item-title {
+        font-size: 14px;
+      }
 
-        &-details {
-          font-size: 12px;
-        }
+      .item-details {
+        font-size: 12px;
       }
     }
 

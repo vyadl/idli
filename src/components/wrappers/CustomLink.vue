@@ -3,8 +3,7 @@ export default {
   props: {
     to: Object,
     title: String,
-    target: String,
-    withArrow: Boolean,
+    newTab: Boolean,
     size: {
       type: String,
       validator(value) {
@@ -24,16 +23,14 @@ export default {
   >
     <router-link
       :to="to"
-      :target="target"
+      :target="newTab ? '_blank' : ''"
     >
       {{ title }} 
     </router-link>
     <div
-      v-if="withArrow"
-      class="arrow"
-    >
-      —
-    </div>
+      v-if="newTab"
+      class="new-tab-icon"
+    />
   </span>
 </template>
 
@@ -42,59 +39,29 @@ export default {
   position: relative;
   color: map-get($colors, 'black');
 
-  // .external-link {
-  //   background-image: url('/icons/external-link.svg');
-  //   background-size: contain;
-  //   width: 15px;
-  //   height: 15px;
-  //   margin-left: 8px;
-  //   filter: invert(40%);
-  //   transition: filter 0.2s;
-
-  //   &:hover,
-  //   &.active {
-  //     filter: invert(0%);
-  //   }
-  // }
-  
-  .arrow {
+  .new-tab-icon {
     position: relative;
-    display: inline;
-    padding-left: 3px;
-    width: 10px;
-    height: 10px;
-    color: map-get($colors, 'gray-light');
+    display: inline-block;
+    top: 2px;
+    left: 7px;
+    background-image: url('/icons/external-link.svg');
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    filter: invert(50%);
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.3s;
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      width: 7px;
-      height: 7px;
-      border-right: 1px solid map-get($colors, 'gray-light');
-      border-top: 1px solid map-get($colors, 'gray-light');
-      transform: translate(-7px, 7px) rotate(45deg);
+  &:hover {
+    .new-tab-icon {
+      opacity: 1;
     }
   }
 
   &.small {
     font-size: 13px;
     color: map-get($colors, 'gray-dark');
-
-    .arrow {
-      &::after {
-        width: 6px;
-        height: 6px;
-        transform: translate(-5px, 8px) rotate(45deg);
-      }
-    }
-  }
-
-  &:hover {
-    .arrow {
-      opacity: 1;
-    }
   }
 
   &.inverted-theme {
@@ -102,15 +69,6 @@ export default {
 
     &.small {
       color: map-get($colors, 'gray-light');
-    }
-
-    .arrow {
-      color: map-get($colors, 'gray-dark');
-
-      &::after {
-        border-right-color: map-get($colors, 'gray-dark');
-        border-top-color: map-get($colors, 'gray-dark');
-      }
     }
   }
 }

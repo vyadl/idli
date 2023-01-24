@@ -286,12 +286,17 @@ export default {
 
   _checkGroupingFieldTitleUniqueness({ getters }, title) {
     return !getters.currentListTagsTitles.includes(title)
-    && !getters.currentListCategoriesTitles.includes(title);
+      && !getters.currentListCategoriesTitles.includes(title);
   },
 
   _addGroupingFieldForListAndItem(
     { commit, rootGetters, dispatch },
-    { listObj, itemObj, title, groupingFieldType },
+    {
+      listObj,
+      itemObj, 
+      title,
+      groupingFieldType,
+    },
   ) {
     commitFromRoot('increaseExplicitRequestsNumber');
 

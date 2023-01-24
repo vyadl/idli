@@ -107,8 +107,8 @@ export default {
       <CustomLink
         :to="{ name: 'item', params: { id: currentItemObj.id } }"
         title="open item separately"
-        target="_blank"
         size="small"
+        new-tab
       />
     </div>
   </div>

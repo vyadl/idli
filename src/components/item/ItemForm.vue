@@ -344,8 +344,8 @@ export default {
       <CustomLink
         :to="{ name: 'item', params: { id: edittingItemObj.id } }"
         title="open item separately"
-        target="_blank"
         size="small"
+        new-tab
       />
     </div>
     <footer

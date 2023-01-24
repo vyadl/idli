@@ -161,13 +161,11 @@ export default {
     >
       <CustomLink
         :to="{ name: 'requestRegistration' }"
-        target="_blank"
         title="sign up"
       />
       or
       <CustomLink
         :to="{ name: 'signIn' }"
-        target="_blank"
         title="sign in"
       />
     </div>
