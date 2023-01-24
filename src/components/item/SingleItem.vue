@@ -172,7 +172,7 @@ export default {
       font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
 
-      &.untitled{
+      &.untitled {
         opacity: 0.5;
       }
     }
