@@ -1,6 +1,5 @@
 <script>
 import SelectCustom from '@/components/formElements/SelectCustom.vue';
-import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
@@ -15,18 +14,28 @@ import {
 export default {
   components: {
     SelectCustom,
-    RadioCustom,
     ButtonText,
     ButtonSign,
     SectionCard,
     TogglingBlock,
     CustomLink,
   },
+  props: {
+    position: {
+      type: String,
+      default: 'centered',
+      validator(value) {
+        return value
+          ? ['centered', 'left'].includes(value)
+          : true;
+      },
+    },
+  },
   LISTS_DEFAULT_OPTION: '- choose list -',
   ITEMS_DEFAULT_OPTION: '- choose item -',
   data() {
     return {
-      relatedUnitMode: 'item',
+      relatedUnitMode: '',
       chosenListId: null,
       chosenItemId: null,
       itemsFromPossibleRelatedList: [],
@@ -44,6 +53,15 @@ export default {
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
+    areRelatedItemsLoaded() {
+      return this.currentItemObj?.relatedItems?.[0] instanceof Object;
+    },
+    areRelatedListsLoaded() {
+      return this.currentItemObj?.relatedLists?.[0] instanceof Object;
+    },
+    areReferringItemsLoaded() {
+      return this.currentItemObj?.referringItems?.[0] instanceof Object;
+    },
     isRelatedUnitModeAnItem() {
       return this.relatedUnitMode === 'item';
     },
@@ -119,7 +137,10 @@ export default {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
     changeRelatedUnitMode(value) {
-      this.relatedUnitMode = value;
+      this.relatedUnitMode === value 
+        ? this.relatedUnitMode = ''
+        : this.relatedUnitMode = value;
+
       this.chosenListId = null;
       this.chosenItemId = null;
     },
@@ -231,10 +252,11 @@ export default {
   >
     <div>
       <SectionCard
-        v-if="currentItemObj?.relatedItems?.length"
+        v-if="areRelatedItemsLoaded"
         title="related items"
         size="small"
         text-style="caps"
+        :position="position"
       >
         <div 
           v-for="item in currentItemObj?.relatedItems"
@@ -249,19 +271,19 @@ export default {
             @click="deleteRelatedItem(item.id)"
           />
           <CustomLink
-            :to="{ name: 'item', params: { id: item.id || item } }"
+            :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
             :title="item.title || 'untitled'"
             class="related-unit"
             :class="{ 'untitled-item': !item.title }"
-            target="_blank"
           />
         </div>
       </SectionCard>
       <SectionCard
-        v-if="currentItemObj?.relatedLists?.length"
+        v-if="areRelatedListsLoaded"
         title="related lists"
         size="small"
         text-style="caps"
+        :position="position"
       >
         <div 
           v-for="list in currentItemObj?.relatedLists"
@@ -279,113 +301,107 @@ export default {
             :to="{ name: 'list', params: { id: list.id || list } }"
             :title="list.title"
             class="related-unit"
-            target="_blank"
           />
         </div>
       </SectionCard>
     </div>
-    <TogglingBlock
+    <div
       v-if="isOwnerView"
-      title="add related list/item"
+      :class="{ compact: isItemFormInSidebar }"
     >
+      <div class="new-related-unit-type">
+        <ButtonText 
+          v-for="relatedUnitType in ['item', 'list']"
+          :key="relatedUnitType"
+          size="small"
+          :active="relatedUnitMode === relatedUnitType"
+          :text="`add related ${relatedUnitType}`"
+          @click="changeRelatedUnitMode(relatedUnitType)"
+        />
+      </div>
       <div
-        class="add-related-form"
-        :class="{ compact: isItemFormInSidebar }"
+        v-if="relatedUnitMode"
+        class="unit-adding-section"
       >
-        <div class="new-related-unit-type">
-          <RadioCustom 
-            v-for="relatedUnitType in ['item', 'list']"
-            :key="relatedUnitType"
-            :label="relatedUnitType"
-            :value="relatedUnitType"
-            :model-value="relatedUnitMode"
-            style-type="initial"
-            small
-            @update:model-value="value => changeRelatedUnitMode(value)"
-          />
-        </div>
-        <div class="unit-adding-section">
-          <div class="select-units">
-            <SelectCustom 
-              :default-option="$options.LISTS_DEFAULT_OPTION"
-              :default-option-selected="!chosenListId"
-              :disabled="areTextFieldsEmpty"
-              :model-value="chosenListId"
-              @update:model-value="value => setNewRelatedUnitId('list', value)"
+        <div class="select-units">
+          <SelectCustom 
+            :default-option="$options.LISTS_DEFAULT_OPTION"
+            :default-option-selected="!chosenListId"
+            :disabled="areTextFieldsEmpty"
+            :model-value="chosenListId"
+            @update:model-value="value => setNewRelatedUnitId('list', value)"
+          >
+            <option
+              v-for="list in choosableLists"
+              :key="list.id"
+              :value="list.id"
+            >
+              {{ list.title }}
+            </option>
+            <optgroup
+              v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
+              label="already related lists:"
+              disabled
             >
               <option
-                v-for="list in choosableLists"
+                v-for="list in currentItemObj?.relatedLists"
                 :key="list.id"
-                :value="list.id"
               >
                 {{ list.title }}
               </option>
-              <optgroup
-                v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
-                label="already related lists:"
-                disabled
-              >
-                <option
-                  v-for="list in currentItemObj?.relatedLists"
-                  :key="list.id"
-                >
-                  {{ list.title }}
-                </option>
-              </optgroup>
-            </SelectCustom>
-            <SelectCustom
-              v-if="isRelatedUnitModeAnItem"
-              :default-option="$options.ITEMS_DEFAULT_OPTION"
-              :default-option-selected="!chosenItemId"
-              :disabled="!itemsFromPossibleRelatedList?.length"
-              @update:model-value="value => setNewRelatedUnitId('item', value)"
+            </optgroup>
+          </SelectCustom>
+          <SelectCustom
+            v-if="isRelatedUnitModeAnItem"
+            :default-option="$options.ITEMS_DEFAULT_OPTION"
+            :default-option-selected="!chosenItemId"
+            :disabled="!itemsFromPossibleRelatedList?.length"
+            @update:model-value="value => setNewRelatedUnitId('item', value)"
+          >
+            <option
+              v-for="item in choosableItems"
+              :key="item.id"
+              :class="{ 'untitled-item': !item.title }"
+              :value="item.id"
+            >
+              {{ item.title || 'untitled' }}
+            </option>
+            <optgroup
+              v-if="alreadyRelatedItemsInChosenList?.length"
+              label="already related items:"
+              disabled
             >
               <option
-                v-for="item in choosableItems"
+                v-for="item in alreadyRelatedItemsInChosenList"
                 :key="item.id"
-                :class="{ 'untitled-item': !item.title }"
-                :value="item.id"
               >
-                {{ item.title || 'untitled' }}
+                {{ item.title }}
               </option>
-              <optgroup
-                v-if="alreadyRelatedItemsInChosenList?.length"
-                label="already related items:"
-                disabled
-              >
-                <option
-                  v-for="item in alreadyRelatedItemsInChosenList"
-                  :key="item.id"
-                >
-                  {{ item.title }}
-                </option>
-              </optgroup>
-            </SelectCustom>
-          </div>  
-          <div class="single-button-container">
-            <ButtonText
-              text="add"
-              size="small"
-              :disabled="isAddRelatedButtonDisabled"
-              @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
-            />
-          </div>
+            </optgroup>
+          </SelectCustom>
+        </div>
+        <div class="single-button-container">
+          <ButtonText
+            text="add"
+            size="small"
+            :disabled="isAddRelatedButtonDisabled"
+            @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
+          />
         </div>
       </div>
-    </TogglingBlock>
+    </div>
     <TogglingBlock
-      v-if="currentItemObj?.referringItems?.length"
+      v-if="areReferringItemsLoaded"
       title="referring items"
     >
       <div class="referring-units-container">
         <CustomLink
           v-for="item in currentItemObj?.referringItems"
           :key="item.id"
-          :to="{ name: 'item', params: { id: item.id || item } }"
+          :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id || item } }"
           :title="item.title || 'untitled'"
           class="referring-unit"
           :class="{ 'untitled-item': !item.title}"
-          target="_blank"
         />
       </div>
     </TogglingBlock>
@@ -428,16 +444,17 @@ export default {
     gap: 20px;
   }
 
-  .add-related-form {
+  .new-related-unit-type {
     display: flex;
-    align-items: center;
+    justify-content: space-around;
+    padding-top: 20px;
   }
 
-  .new-related-unit-type,
   .unit-adding-section {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    padding-top: 20px;
   }
 
   .unit-adding-section {
@@ -449,13 +466,9 @@ export default {
   }
 
   .compact {
-    &.add-related-form {
-      flex-direction: column;
-    }
-
     .new-related-unit-type {
-      flex-direction: row;
-      padding-bottom: 20px;
+      justify-content: space-between;
+      gap: 40px;
     }
 
     .select-units {
@@ -486,18 +499,14 @@ export default {
       grid-template-columns: 1fr;
     }
 
-    .add-related-form {
-      flex-flow: column wrap;
-    }
-
     .new-related-unit-type {
-      flex-direction: row;
-      padding-bottom: 20px;
+      justify-content: space-between;
+      gap: 40px;
     }
 
     .select-units {
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 15px;
       padding-bottom: 10px;
     }
   }

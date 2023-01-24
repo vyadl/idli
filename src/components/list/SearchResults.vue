@@ -144,7 +144,7 @@ export default {
             <CustomLink
               class="result-unit"
               :title="item.title"
-              :to="{ name: 'item', params: { id: item.id } }"
+              :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
             />
             <div
               v-if="item.details.includes(searchValue)"

@@ -120,7 +120,6 @@ export default {
 
   .popup-content {
     position: absolute;
-    z-index: 100;
     width: 200px;
     background-color: map-get($colors, 'white');
     border: 1px solid map-get($colors, 'gray-light');
@@ -135,7 +134,7 @@ export default {
     }
 
     &.left {
-      bottom: -2px;
+      top: -5px;
       right: 130%;
     }
 

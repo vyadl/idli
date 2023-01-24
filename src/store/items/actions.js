@@ -5,10 +5,17 @@ import {
   dispatchFromRoot,
   generateTitleFromDetails,
 } from '@/store/utils';
+import { addQueryItems } from '@/router/utils';
 import { Item } from '@/models/models'; // eslint-disable-line import/no-cycle
 
 export default {
-  _fetchItemById({ commit }, { id, cancelToken }) {
+  _fetchItemById({ commit, rootGetters }, { id, cancelToken }) {
+    const localItem = rootGetters.currentListItems.find(item => item.id === id);
+
+    if (localItem) {
+      commit('setCurrentItemObj', localItem);
+    }
+
     commitFromRoot('increaseExplicitRequestsNumber');
 
     return this.$config.axios
@@ -16,10 +23,12 @@ export default {
         `${this.$config.apiBasePath}item/${id}`,
         { cancelToken },
       )
-      .then(({ data }) => {
-        commit('setCurrentItemObj', data);
-        
-        return data;
+      .then(({ data: responseItem }) => {
+        commit('setCurrentItemObj', responseItem);
+        commitFromRoot('updateItemInCurrentListItems', JSON.parse(JSON.stringify(responseItem)));
+        addQueryItems({ item: id });
+
+        return responseItem;
       })
       .catch(error => {
         if (!cancelToken) {
@@ -42,7 +51,7 @@ export default {
         : item1.id === item2.id;
     }
 
-    if (rootGetters['lists/currentListId']) {
+    if (rootGetters.currentListItems[0] instanceof Object) {
       itemIndex = rootGetters.currentListItems
         .findIndex(item => compareItemsById(item, targetItem));
     } else {
@@ -56,16 +65,21 @@ export default {
     commit('setEdittingItemIndex', itemIndex);
   },
 
-  _addNewItemPlaceholder({ dispatch, rootGetters }) {
-    const newItem = new Item();
-    const itemWithTemporaryId = {
-      ...newItem,
-      temporaryId: Date.now(),
-      listId: rootGetters['lists/currentListId'],
-    };
+  _addNewItemPlaceholder({ commit, dispatch, rootGetters }) {
+    const unsavedItem = rootGetters.currentListItems.find(item => item.temporaryId);
 
-    commitFromRoot('addItem', itemWithTemporaryId);
-    dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+    if (!unsavedItem) {
+      const newItem = new Item();
+      const itemWithTemporaryId = {
+        ...newItem,
+        temporaryId: Date.now(),
+        listId: rootGetters['lists/currentListId'],
+      };
+
+      commit('resetRelatedUnitsLocally');
+      commitFromRoot('addItem', itemWithTemporaryId);
+      dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+    }
 
     rootGetters['settings/isItemFormInSidebar']
       ? dispatchFromRoot('sidebar/_openSidebar', 'item')

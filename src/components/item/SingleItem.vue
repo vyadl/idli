@@ -33,34 +33,47 @@ export default {
     ]),
   },
   async created() {
-    try {
-      this.item = await this._fetchItemById({
-        id: this.$route.params.id,
-        cancelToken: null,
-      });
-
-      this._fetchListById({
-        id: this.currentItemObj.listId, 
-        cancelToken: null,
-      })
-        .then(() => {
-          this.item = this.currentItemObj;
-          this._findAndSetEdittingItemIndex(this.item);
-
-          if (this.isItemFormInSidebar) {
-            this._openSidebar('item');
-          } else {
-            this._toggleItemFormLocation();
-            this._openSidebar('item');
-          }
-
-          this.$router.push({ query: { sidebar: 'item' } });
+    const loadItem = async () => {
+      try {
+        this.item = await this._fetchItemById({
+          id: this.$route.params.id,
+          cancelToken: null,
         });
-    } catch (error) {
-      console.log(error);
 
-      this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
-    }
+        this._fetchListById({
+          id: this.currentItemObj.listId, 
+          cancelToken: null,
+        })
+          .then(() => {
+            this.item = this.currentItemObj;
+            this._findAndSetEdittingItemIndex(this.item);
+
+            if (this.isItemFormInSidebar) {
+              this._openSidebar('item');
+            } else {
+              this._toggleItemFormLocation();
+              this._openSidebar('item');
+            }
+
+            this.$router.push({ query: { sidebar: 'item' } });
+          });
+      } catch (error) {
+        console.log(error);
+
+        this.$router.push({ name: this.isLoggedIn ? 'home' : 'auth' });      
+      }
+    };
+
+    loadItem(this.$route.params.id);
+
+    this.$watch(
+      () => this.$route.params.id,
+      id => {
+        if (this.$route.name === 'item') {
+          loadItem(id);
+        }
+      },
+    );
   },
   unmounted() {
     this.setCurrentItemObj(null);
@@ -111,15 +124,16 @@ export default {
   >
     <CustomLink
       :to="{ name: 'list', params: { id: item.listId } }"
-      title="Go to the list the item is from"
+      title="list for this item"
       class="link-to-parent-list"
     />
     <div class="item-container">
       <div 
         class="item-title"
+        :class="{ untitled: !item.title }"
         @click.stop="setItemForEditting"
       >
-        {{ item.title }}
+        {{ item.title || 'Untitled' }}
       </div>
       <div
         v-if="item.details"
@@ -157,6 +171,10 @@ export default {
       padding: 5px;
       font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
+
+      &.untitled {
+        opacity: 0.5;
+      }
     }
 
     .item-details {

@@ -52,6 +52,7 @@ export default {
     ]),
     ...mapGetters('lists', [
       'currentListObj',
+      'isOwnerView',
     ]),
     ...mapGetters('visualization', [
       ...Object.keys(defaultVisualization),
@@ -139,6 +140,7 @@ export default {
             @change="_setSorting(mainSortingOptions.custom.type)"
           />
           <DraggableSwitch
+            v-if="isOwnerView"
             title="reorder mode"
             hint-position="lower-left"
             style-type="checkbox"

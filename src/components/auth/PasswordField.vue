@@ -70,6 +70,11 @@ export default {
     right: 0;
     transform: translate(-25%, -50%);
     cursor: pointer;
+    transition: filter 0.2s;
+
+    &:hover {
+      filter: invert(100%);
+    }
   }
 }
 </style>

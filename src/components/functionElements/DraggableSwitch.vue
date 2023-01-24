@@ -58,7 +58,10 @@ export default {
 <template>
   <div
     class="draggable-switch"
-    :class="styleType"
+    :class="[
+      styleType,
+      `${globalTheme}-theme`,
+    ]"
   >
     <CheckboxCustom
       v-if="styleType === 'checkbox'"

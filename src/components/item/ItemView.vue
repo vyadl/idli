@@ -1,11 +1,14 @@
 <script>
 import SectionCard from '@/components/wrappers/SectionCard.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import { mapGetters, mapMutations } from 'vuex';
+import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
     SectionCard,
+    CustomLink,
     RelatedUnits,
   },
   computed: {
@@ -14,25 +17,32 @@ export default {
       'currentListCategories',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
     ]),
-    currentItemTags() {
-      return this.currentListTags.filter(
-        listTag => this.edittingItemObj.tags.includes(listTag.id),
-      );
-    },
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+    ]),
     currentItemCategory() {
       return this.currentListCategories.find(
-        category => category.id === this.edittingItemObj.category,
+        category => category.id === this.currentItemObj.category,
+      );
+    },
+    currentItemTags() {
+      return this.currentListTags.filter(
+        listTag => this.currentItemObj.tags.includes(listTag.id),
       );
     },
   },
   unmounted() {
+    this.setCurrentItemObj(null);
     this.setEdittingItemIndex(null); 
+
+    deleteFromQuery(this.isItemFormInSidebar ? ['item', 'sidebar'] : 'item');
   },
   methods: {
     ...mapMutations('items', [
       'setEdittingItemIndex',
+      'setCurrentItemObj',
     ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
@@ -43,18 +53,18 @@ export default {
 
 <template>
   <div
-    v-if="edittingItemObj"
+    v-if="currentItemObj"
     class="item-view"
   >
     <div class="text-fields">
       <div class="title">
-        {{ edittingItemObj.title }}
+        {{ currentItemObj.title }}
       </div>
       <div 
-        v-if="edittingItemObj.details"
+        v-if="currentItemObj.details"
         class="details"
       > 
-        {{ edittingItemObj.details }}
+        {{ currentItemObj.details }}
       </div>
     </div>
     <div class="item-filters">
@@ -63,6 +73,7 @@ export default {
         title="tags"
         size="small"
         text-style="caps"
+        position="left"
       >
         <div class="filters-container">
           <span
@@ -79,6 +90,7 @@ export default {
         title="category"
         size="small"
         text-style="caps"
+        position="left"
       >
         <div class="filter-container">
           <div class="category">
@@ -87,7 +99,18 @@ export default {
         </div>
       </SectionCard>
     </div>
-    <RelatedUnits />
+    <RelatedUnits position="left" />
+    <div
+      v-if="$route.name !== 'item'"
+      class="single-item-link"
+    >
+      <CustomLink
+        :to="{ name: 'item', params: { id: currentItemObj.id } }"
+        title="open item separately"
+        size="small"
+        new-tab
+      />
+    </div>
   </div>
 </template>
 
@@ -114,7 +137,7 @@ export default {
     .filters-container {
       display: flex;
       align-items: baseline;
-      justify-content: center;
+      justify-content: flex-start;
       flex-wrap: wrap;
       gap: 7px;
     }
@@ -124,6 +147,11 @@ export default {
       color: map-get($colors, 'gray-dark');
       font-size: 14px;
       text-align: center;
+    }
+
+    .single-item-link {
+      padding: 15px 0;
+      text-align: right;
     }
   }
 </style>

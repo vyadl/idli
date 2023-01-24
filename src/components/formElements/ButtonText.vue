@@ -2,6 +2,7 @@
 export default {
   props: {
     text: String,
+    withBoxShadow: Boolean,
     size: {
       type: String,
       default: 'medium',
@@ -64,7 +65,8 @@ export default {
     class="button-text"
     :class="[
       styleType,
-      [size, { active }],
+      size,
+      { active, 'with-box-shadow': withBoxShadow },
       `${globalTheme}-theme`,
     ]"
     :title="title"
@@ -96,9 +98,10 @@ export default {
       color: map-get($colors, 'black');
       background-color: map-get($colors, 'white');
       transition:
-        background-color 0.3s 0.05s,
-        color 0.2s 0.05s,
-        border-color 0.2s 0.05s;
+        background-color 0.2s,
+        color 0.2s,
+        border-color 0.2s,
+        box-shadow 0.2s;
 
       &.small {
         padding: 3px 10px 4px;
@@ -111,15 +114,28 @@ export default {
         border-width: 1px;
       }
 
+      &.with-box-shadow {
+        border-color: map-get($colors, 'gray-dark');
+        box-shadow: -4px 4px map-get($colors, 'gray-dark');
+      }
+
       &.active {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
         border-color: map-get($colors, 'black');
 
+        &.with-box-shadow {
+          box-shadow: -4px 4px map-get($colors, 'gray-dark');
+        }
+
         &:hover {
           background-color: map-get($colors, 'gray-dark');
           border-color: map-get($colors, 'gray-dark');
           color: map-get($colors, 'white');
+
+          &.with-box-shadow {
+            box-shadow: -4px 4px map-get($colors, 'gray-light');
+          }
         }
       }
 
@@ -127,6 +143,10 @@ export default {
         background-color: map-get($colors, 'white');
         border-color: map-get($colors, 'gray-light');
         color: map-get($colors, 'gray-light');
+
+        &.with-box-shadow {
+          box-shadow: -4px 4px map-get($colors, 'gray-light');
+        }
       }
 
       &:disabled {
@@ -140,7 +160,6 @@ export default {
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
-      background-color: map-get($colors, 'white');
       transition: color 0.2s;
 
       &:hover {
@@ -222,15 +241,28 @@ export default {
         background-color: map-get($colors, 'black');
         color: map-get($colors, 'white');
 
+        &.with-box-shadow {
+          border-color: map-get($colors, 'gray-light');
+          box-shadow: -4px 4px map-get($colors, 'gray-light');
+        }
+
         &.active {
           background-color: map-get($colors, 'white');
           color: map-get($colors, 'black');
           border-color: map-get($colors, 'white');
 
+          &.with-box-shadow {
+            box-shadow: -4px 4px map-get($colors, 'gray-light');
+          }
+
           &:hover {
             background-color: map-get($colors, 'gray-light');
             border-color: map-get($colors, 'gray-light');
             color: map-get($colors, 'black');
+
+            &.with-box-shadow {
+              box-shadow: -4px 4px map-get($colors, 'gray-dark');
+            }
           }
         }
 
@@ -238,6 +270,10 @@ export default {
           background-color: map-get($colors, 'black');
           border-color: map-get($colors, 'gray-dark');
           color: map-get($colors, 'gray-dark');
+
+          &.with-box-shadow {
+            box-shadow: -4px 4px map-get($colors, 'gray-dark');
+          }
         }
 
         &:disabled {
@@ -248,7 +284,6 @@ export default {
 
       &.underline {
         color: map-get($colors, 'gray-light');
-        background-color: map-get($colors, 'black');
 
         &:hover {
           color: map-get($colors, 'gray-dark');

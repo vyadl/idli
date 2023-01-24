@@ -1,10 +1,11 @@
 <script>
-import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
+import CustomLink from '@/components/wrappers/CustomLink.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -18,15 +19,17 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
+import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
-    InputCustom,
     TextareaCustom,
     ButtonText,
+    ErrorMessage,
     TogglingBlock,
     SectionCard,
     PopupBox,
+    CustomLink,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -36,6 +39,7 @@ export default {
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
     directly, not by grouping (like tags or category)`,
+  GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
   setup() {
     const store = useStore();
     const API_REQUEST_DELAY = 1500;
@@ -72,6 +76,7 @@ export default {
   },
   data() {
     return {
+      groupingFieldErrorMessage: '',
       showingStatuses: {
         detailsTextarea: false,
       },
@@ -149,6 +154,8 @@ export default {
 
     this.setCurrentItemObj(null);
     this.setEdittingItemIndex(null);
+
+    deleteFromQuery(this.isItemFormInSidebar ? ['item', 'sidebar'] : 'item');
   },
   methods: {
     ...mapMutations([
@@ -242,6 +249,12 @@ export default {
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
+    showErrorMessage() {
+      this.groupingFieldErrorMessage = this.$options.GROUPING_FIELD_ERROR_MESSAGE;
+    },
+    clearErrorMessage() {
+      this.groupingFieldErrorMessage = '';
+    },
     getFormattedDate(value) {
       return getFormattedDate(value);
     },
@@ -256,8 +269,9 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <div class="text-fields">
-      <InputCustom
+      <TextareaCustom
         class="title-input"
+        :rows="3"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!edittingItemObj.id"
@@ -267,6 +281,7 @@ export default {
       <TextareaCustom
         v-if="isDetailsTextareaShown"
         label="details"
+        :rows="4"
         :model-value="edittingItemObj.details"
         :disabled="!!explicitRequestsNumber"
         @update:model-value="value => updateItemField('details', value)"
@@ -284,13 +299,22 @@ export default {
         title="category, tags & related"
         :force-show="areAddonsShown"
       >
+        <div class="error-container">
+          <ErrorMessage
+            v-if="groupingFieldErrorMessage"
+            :message="groupingFieldErrorMessage"
+          />
+        </div>
         <SectionCard
           title="category"
           position="left"
           text-style="caps"
           size="small"
         >
-          <ItemCategories />
+          <ItemCategories
+            @throw-error="showErrorMessage"
+            @clear-error="clearErrorMessage"
+          />
         </SectionCard>
         <SectionCard
           title="tags"
@@ -298,7 +322,10 @@ export default {
           text-style="caps"
           size="small"
         >
-          <ItemTags />
+          <ItemTags
+            @throw-error="showErrorMessage"
+            @clear-error="clearErrorMessage"
+          />
         </SectionCard>
         <TogglingBlock
           title="related entities"
@@ -309,6 +336,17 @@ export default {
           <RelatedUnits />
         </TogglingBlock>
       </TogglingBlock>
+    </div>
+    <div
+      v-if="$route.name !== 'item'"
+      class="single-item-link"
+    >
+      <CustomLink
+        :to="{ name: 'item', params: { id: edittingItemObj.id } }"
+        title="open item separately"
+        size="small"
+        new-tab
+      />
     </div>
     <footer
       v-if="edittingItemObj?.id"
@@ -344,9 +382,9 @@ export default {
       padding-top: 15px;
     }
 
-    .filters-container {
-      display: flex;
-      gap: 5px;
+    .error-container {
+      height: 20px;
+      padding-bottom: 10px;
     }
 
     .single-button-container {
@@ -354,6 +392,10 @@ export default {
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
+    }
+
+    .single-item-link {
+      padding-top: 15px;
     }
 
     .footer {

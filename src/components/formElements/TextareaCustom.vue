@@ -3,6 +3,8 @@ export default {
   props: {
     label: String,
     modelValue: String,
+    placeholder: String,
+    rows: Number,
     disabled: {
       type: Boolean,
       default: false,
@@ -30,8 +32,9 @@ export default {
     </div>
     <textarea
       class="textarea"
-      rows="4"
+      :rows="rows"
       :value="modelValue"
+      :placeholder="placeholder"
       :disabled="disabled"
       @input="input($event)"
     />
@@ -50,6 +53,7 @@ export default {
     }
 
     .textarea {
+      resize: vertical;
       width: 100%;
       padding: 5px;
       border-bottom: 1px solid map-get($colors, 'gray-light');

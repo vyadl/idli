@@ -5,7 +5,11 @@ export default {
   currentListObj: state => state.currentListObj,
   edittingListObj: state => state.edittingListObj,
   currentListTags: (state, getters) => getters.currentListObj?.tags,
+  currentListTagsTitles: (state, getters) => getters.currentListTags.map(tag => tag.title),
   currentListCategories: (state, getters) => getters.currentListObj?.categories,
+  currentListCategoriesTitles: (state, getters) => getters.currentListCategories.map(
+    category => category.title,
+  ),
   isUserOwnsCurrentList: state => state.lists.some(
     list => list.id === state.currentListId,
   ),

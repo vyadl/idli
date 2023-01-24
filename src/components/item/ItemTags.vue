@@ -1,6 +1,5 @@
 <script>
 import MultiselectCustom from '@/components/formElements/MultiselectCustom.vue';
-import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { 
   mapGetters,
   mapActions,
@@ -11,15 +10,17 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     MultiselectCustom,
-    ErrorMessage,
   },
+  emits: [
+    'throw-error',
+    'clear-error',
+  ],
   data() {
     return {
       newTitle: '',
-      clearSearchTrigger: false,
+      clearSearch: false,
       requestHandling: {
         isRequestProcessing: false,
-        errorMessage: '',
       },
     };
   },
@@ -30,8 +31,7 @@ export default {
     ...mapGetters('lists', [
       'lists',
       'currentListTags',
-      'currentListObj',
-      'currentListCategories',
+      'currentListTagsTitles',
     ]),
     ...mapGetters('items', [
       'edittingItemObj',
@@ -40,12 +40,6 @@ export default {
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
-    currentListTagsTitles() {
-      return this.currentListTags.map(tag => tag.title);
-    },
-    currentListCategoriesTitles() {
-      return this.currentListCategories.map(category => category.title);
-    },
     currentItemTagsTitles() {
       return this.currentItemTags.map(tag => tag.title);
     },
@@ -61,24 +55,19 @@ export default {
       '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
-      '_addTagForListAndItem',
+      '_checkGroupingFieldTitleUniqueness',
+      '_addGroupingFieldForListAndItem',
     ]),
-    checkTitleUniqueness(categoryTitle) {
-      const isTitleUnique = !this.currentListCategoriesTitles.includes(categoryTitle)
-        && !this.currentListTagsTitles.includes(categoryTitle);
+    async checkTitleUniqueness(tagTitle) {
+      const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(tagTitle);
 
-      this.requestHandling.errorMessage = isTitleUnique
-        ? ''
-        : 'filter with this name already exists';
-
-      this.newTitle = isTitleUnique
-        ? categoryTitle
-        : '';
+      this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
+      this.newTitle = isTitleUnique ? tagTitle : '';
 
       return isTitleUnique;
     },
     addTag(tagTitle) {
-      this.requestHandling.errorMessage = '';
+      this.$emit('clear-error');
 
       const newTagObj = this.currentListTags?.find(tag => tag.title === tagTitle);
 
@@ -89,7 +78,7 @@ export default {
       }
     },
     createNewTag(tagTitle) {
-      this.clearSearchTrigger = true;
+      this.clearSearch = true;
 
       const isTitleUnique = this.checkTitleUniqueness(tagTitle);
 
@@ -101,12 +90,17 @@ export default {
         this.requestHandling.isRequestProcessing = true;
 
         const listObj = this.lists.find(list => list.id === listId);
-        const request = this._addTagForListAndItem({ listObj, tagTitle, itemObj }); 
+        const request = this._addGroupingFieldForListAndItem({
+          listObj,
+          itemObj,
+          title: tagTitle,
+          groupingFieldType: 'tags',
+        }); 
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
           .then(() => {
             this.newTitle = '';
-            this.clearSearchTrigger = false;
+            this.clearSearch = false;
           });
       }
     },
@@ -138,10 +132,10 @@ export default {
 <template>
   <div
     class="item-tags"
+    :class="`${globalTheme}-theme`"
   >
     <MultiselectCustom
       :value="currentItemTagsTitles"
-      :class="`${globalTheme}-theme`"
       mode="tags"
       placeholder="add tags"
       no-options-text="no tags - start typing to add new"
@@ -150,9 +144,9 @@ export default {
       :options="currentListTagsTitles"
       :can-clear="false"
       :create-option="false"
-      :clear-search-trigger="clearSearchTrigger"
+      :clear-search-trigger="clearSearch"
       :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
-      :show-options="!requestHandling.errorMessage && !explicitRequestsNumber"
+      :show-options="!explicitRequestsNumber"
       @select="tag => addTag(tag)"
       @deselect="tag => deleteTag(tag)"
       @search-change="checkTitleUniqueness"
@@ -167,27 +161,16 @@ export default {
             {{ newTitle }}
           </div>
           <div class="new-option-desc">
-            create new
+            ( create new )
           </div>
         </div>
       </template>
     </MultiselectCustom>
-    <div class="error-container">
-      <ErrorMessage
-        v-if="requestHandling.errorMessage"
-        :message="requestHandling.errorMessage"
-      />
-    </div>
   </div>
 </template>
 
 <style lang="scss">
 .item-tags {
-  .error-container {
-    height: 20px;
-    padding-top: 10px;
-  }
-
   .create-option {
     display: flex;
     flex-wrap: wrap;
@@ -206,6 +189,20 @@ export default {
     font-size: 12px;
     font-variant: small-caps;
     color: map-get($colors, 'gray-dark');
+  }
+
+  &.inverted-theme {
+    .create-option {
+      color: map-get($colors, 'white');
+
+      &:hover {
+        background: map-get($colors, 'gray-dark');
+      }
+    }
+
+    .new-option-desc {
+      color: map-get($colors, 'gray-light');
+    }
   }
 }
 </style>
