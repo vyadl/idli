@@ -228,15 +228,15 @@ export default {
       box-shadow 0.7s;
 
     &.shown {
-      box-shadow: 15px 0 30px 0 map-get($colors, 'gray-light');
+      box-shadow: 15px 0 25px 0 map-get($colors, 'gray-light');
       transform: translateX(0);
 
       .mode-buttons {
-        transform: translateX(-100%) translateX(-15px);
+        transform: translateX(-105%) translateX(-15px);
       }
 
       .state-button {
-        transform: translateX(-110%) rotate(180deg);
+        transform: translateX(-130%) rotate(180deg);
       }
     }
 
@@ -259,7 +259,7 @@ export default {
       position: relative;
       width: 100%;
       height: 100%;
-      padding: 30px;
+      padding: 25px;
       overflow-y: auto;
       overflow-x: hidden;
       background-color: map-get($colors, 'white');
@@ -303,6 +303,7 @@ export default {
       position: fixed;
       bottom: 40px;
       width: fit-content;
+      background-color: map-get($colors, 'white');
       transition: transform 0.4s;
       transform: translateX(-100%);
     }
@@ -311,13 +312,17 @@ export default {
       position: fixed;
       z-index: 100;
       top: 15px;
+      padding: 5px;
+      background-color: map-get($colors, 'white');
       transform: translateX(-100%) translateX(-15px);
     }
 
     .add-unit-button {
       position: fixed;
       z-index: 100;
-      top: 45px;
+      top: 50px;
+      padding: 5px;
+      background-color: map-get($colors, 'white');
       transform: translateX(-100%) translateX(-13px);
     }
 
@@ -330,6 +335,9 @@ export default {
         box-shadow: none;
       }
 
+      .add-unit-button,
+      .search-button,
+      .state-button,
       .sidebar-content {
         background-color: map-get($colors, 'black');
       }

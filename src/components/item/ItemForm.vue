@@ -271,6 +271,7 @@ export default {
     <div class="text-fields">
       <TextareaCustom
         class="title-input"
+        label="title"
         :rows="3"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
@@ -299,12 +300,6 @@ export default {
         title="category, tags & related"
         :force-show="areAddonsShown"
       >
-        <div class="error-container">
-          <ErrorMessage
-            v-if="groupingFieldErrorMessage"
-            :message="groupingFieldErrorMessage"
-          />
-        </div>
         <SectionCard
           title="category"
           position="left"
@@ -327,18 +322,24 @@ export default {
             @clear-error="clearErrorMessage"
           />
         </SectionCard>
-        <TogglingBlock
-          title="related entities"
-          :hint-text="$options.RELATED_UNITS_HINT_TEXT"
-          :force-show="!!edittingItemObj.relatedItems?.length
-            || !!edittingItemObj.relatedLists?.length"
-        >
-          <RelatedUnits />
-        </TogglingBlock>
+        <ErrorMessage
+          v-if="groupingFieldErrorMessage"
+          :message="groupingFieldErrorMessage"
+        />
+        <div class="related-hint-button-container">
+          <PopupBox 
+            button-style-type="hint"
+            stop-propagation
+            position="left"
+          >
+            {{ $options.RELATED_UNITS_HINT_TEXT }}
+          </PopupBox>
+        </div>
+        <RelatedUnits />
       </TogglingBlock>
     </div>
     <div
-      v-if="$route.name !== 'item'"
+      v-if="$route.name !== 'item' && edittingItemObj?.id"
       class="single-item-link"
     >
       <CustomLink
@@ -382,20 +383,11 @@ export default {
       padding-top: 15px;
     }
 
-    .error-container {
-      height: 20px;
-      padding-bottom: 10px;
-    }
-
-    .single-button-container {
+    .related-hint-button-container {
       display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .single-item-link {
-      padding-top: 15px;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-top: 10px;
     }
 
     .footer {

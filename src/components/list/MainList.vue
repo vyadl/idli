@@ -111,6 +111,11 @@ export default {
         && this.mode === 'list'
         && this.isOwnerView;
     },
+    isAddItemButtonShown() {
+      return !['stars', 'cloud'].includes(this.mode)
+        && this.finalList.length
+        && this.isOwnerView;
+    },
   },
   watch: {
     shuffleTrigger() {
@@ -173,9 +178,11 @@ export default {
           ? this._openSidebar('item')
           : this.$vfm.show('itemModal');
       } else {
-        this.isItemFormInSidebar
-          ? this._closeSidebar()
-          : this.$vfm.hide('itemModal');
+        this.$vfm.hide('itemModal');
+      }
+
+      if (this.$route.query.sidebar === 'item') {
+        this._closeSidebar();
       }
     };
 
@@ -411,7 +418,7 @@ export default {
           </template>
         </template>
         <div
-          v-if="!['stars', 'cloud'].includes(mode)"
+          v-if="isAddItemButtonShown"
           class="add-item-button"
           title="add new item"
         >

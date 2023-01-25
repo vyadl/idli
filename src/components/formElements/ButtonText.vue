@@ -94,7 +94,7 @@ export default {
 
     &.bordered {
       border: 2px solid map-get($colors, 'black');
-      border-radius: 3px;
+      border-radius: 1px;
       color: map-get($colors, 'black');
       background-color: map-get($colors, 'white');
       transition:
@@ -156,10 +156,11 @@ export default {
     }
 
     &.underline {
-      padding: 5px 2px;
+      padding: 5px 0;
       font-size: 13px;
       text-decoration: underline;
       color: map-get($colors, 'gray-dark');
+      background-color: map-get($colors, 'white');
       transition: color 0.2s;
 
       &:hover {
@@ -284,6 +285,7 @@ export default {
 
       &.underline {
         color: map-get($colors, 'gray-light');
+        background-color: map-get($colors, 'black');
 
         &:hover {
           color: map-get($colors, 'gray-dark');

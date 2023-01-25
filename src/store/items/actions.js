@@ -10,6 +10,8 @@ import { Item } from '@/models/models'; // eslint-disable-line import/no-cycle
 
 export default {
   _fetchItemById({ commit, rootGetters }, { id, cancelToken }) {
+    addQueryItems({ item: id });
+
     const localItem = rootGetters.currentListItems.find(item => item.id === id);
 
     if (localItem) {
@@ -26,7 +28,6 @@ export default {
       .then(({ data: responseItem }) => {
         commit('setCurrentItemObj', responseItem);
         commitFromRoot('updateItemInCurrentListItems', JSON.parse(JSON.stringify(responseItem)));
-        addQueryItems({ item: id });
 
         return responseItem;
       })

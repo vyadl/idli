@@ -29,6 +29,7 @@ export default {
     ]),
     ...mapGetters('lists', [
       'isPublicView',
+      'isUserOwnsCurrentList',
     ]),
     ...mapGetters('sidebar', [
       'sidebarMode',
@@ -85,7 +86,13 @@ export default {
         callback: this._openSidebar,
       },
       view: {
-        callback: this.setCurrentListView,
+        callback: view => {
+          if (this.isUserOwnsCurrentList) {
+            this.setCurrentListView(view);
+          } else {
+            deleteFromQuery('view');
+          }
+        },
       },
     };
 
@@ -133,24 +140,12 @@ export default {
     ...mapActions([
       '_setUnitsFromLocalStorage',
     ]),
-    openSidebarInLayout() {
-      if (this.layout === 'WithSidebarLayout') {
-        this._openSidebar(this.sidebarMode);
-      }      
-    },
-    closeSidebarInLayout() {
-      if (this.layout === 'WithSidebarLayout') {
-        this._closeSidebar();
-      }   
-    },
   },
 };
 </script>
 
 <template>
   <div
-    v-touch:swipe.left="openSidebarInLayout"
-    v-touch:swipe.right="closeSidebarInLayout"
     class="app"
     :class="`${globalTheme}-theme`"
   >

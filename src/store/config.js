@@ -19,6 +19,7 @@ export const defaultVisualization = {
 const sidebarButtonsForViews = {
   loggedInView: ['filters', 'visualization', 'lists', 'settings', 'bin'],
   itemPublicView: ['settings'],
+  itemLoggedInView: ['lists', 'settings', 'bin'],
   listPublicView: ['filters', 'visualization', 'settings'],
 };
 
@@ -32,6 +33,11 @@ export const sidebarModesForViews = {
     sidebarModes: sidebarButtonsForViews.itemPublicView,
     allowedSidebarModes: ['item', ...sidebarButtonsForViews.itemPublicView],
     default: 'settings',
+  },
+  itemLoggedInView: {
+    sidebarModes: sidebarButtonsForViews.itemLoggedInView,
+    allowedSidebarModes: ['item', ...sidebarButtonsForViews.itemLoggedInView],
+    default: 'lists',
   },
   listPublicView: {
     sidebarModes: sidebarButtonsForViews.listPublicView,

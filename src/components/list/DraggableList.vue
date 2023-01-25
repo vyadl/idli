@@ -11,6 +11,7 @@ export default {
   data() {
     return {
       isDragging: false,
+      serverRequests: [],
     };
   },
   computed: {
@@ -28,6 +29,12 @@ export default {
     ...mapMutations([
       'setCurrentListItems',
     ]),
+    ...mapMutations('items', [
+      'resetRelatedUnitsLocally',
+    ]),
+    ...mapActions('items', [
+      '_fetchItemById',
+    ]),
     ...mapActions('lists', [
       '_updateListItemsOrder',
     ]),
@@ -40,6 +47,28 @@ export default {
     updateList(value) {
       this.setCurrentListItems(value);
       this._updateListItemsOrder();
+    },
+    fetchItemById(id) {
+      this.resetRelatedUnitsLocally();
+
+      if (this.serverRequests.length) {
+        this.serverRequests.forEach(request => {
+          request.cancel();
+        });
+      }
+
+      const source = this.$config.axios.CancelToken.source();
+
+      this.serverRequests.push(source);
+      this._fetchItemById({
+        id,
+        cancelToken: source.token,
+      })
+        .finally(() => {
+          const index = this.serverRequests.findIndex(request => request === source);
+
+          this.serverRequests.splice(index, 1);
+        });
     },
   },
 };
@@ -63,6 +92,7 @@ export default {
         :item="element"
         class="list-item"
         bordered
+        @click="fetchItemById"
       />
     </template>
   </DraggableExternal>

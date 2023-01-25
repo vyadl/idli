@@ -57,8 +57,11 @@ export default {
     class="item-view"
   >
     <div class="text-fields">
-      <div class="title">
-        {{ currentItemObj.title }}
+      <div
+        class="title"
+        :class="{ untitled: !currentItemObj.title }"
+      >
+        {{ currentItemObj.title || 'Untitled' }}
       </div>
       <div 
         v-if="currentItemObj.details"
@@ -123,6 +126,10 @@ export default {
     .title {
       font-size: 22px;
       margin-bottom: 20px;
+
+      &.untitled {
+        opacity: 0.5;
+      }
     }
 
     .details {
@@ -146,7 +153,6 @@ export default {
     .category {
       color: map-get($colors, 'gray-dark');
       font-size: 14px;
-      text-align: center;
     }
 
     .single-item-link {
