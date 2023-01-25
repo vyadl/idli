@@ -119,7 +119,7 @@ export default {
   >
     <div
       class="item-title"
-      :class="{ untitled: isUntitled }"
+      :class="{ untitled: isUntitled }" 
       @click.stop="setItemForEditting"
     >
       {{ itemName }}

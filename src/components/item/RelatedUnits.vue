@@ -256,7 +256,7 @@ export default {
         title="related items"
         size="small"
         text-style="caps"
-        :position="position"
+        position="left"
       >
         <div 
           v-for="item in currentItemObj?.relatedItems"
@@ -270,7 +270,17 @@ export default {
             title="delete"
             @click="deleteRelatedItem(item.id)"
           />
+          <div
+            v-if="item.deletedAt"
+            class="related-unit"
+          >
+            {{ item.title }}
+            <span class="deleted-status">
+              (in bin)
+            </span>
+          </div>
           <CustomLink
+            v-else
             :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
             :title="item.title || 'untitled'"
             class="related-unit"
@@ -283,7 +293,7 @@ export default {
         title="related lists"
         size="small"
         text-style="caps"
-        :position="position"
+        position="left"
       >
         <div 
           v-for="list in currentItemObj?.relatedLists"
@@ -297,7 +307,17 @@ export default {
             title="delete"
             @click="deleteRelatedList(list.id)"
           />
+          <div
+            v-if="list.deletedAt"
+            class="related-unit"
+          >
+            {{ list.title }} 
+            <span class="deleted-status">
+              (in bin)
+            </span>
+          </div>
           <CustomLink
+            v-else
             :to="{ name: 'list', params: { id: list.id || list } }"
             :title="list.title"
             class="related-unit"
@@ -309,15 +329,23 @@ export default {
       v-if="isOwnerView"
       :class="{ compact: isItemFormInSidebar }"
     >
-      <div class="new-related-unit-type">
-        <ButtonText 
-          v-for="relatedUnitType in ['item', 'list']"
-          :key="relatedUnitType"
-          size="small"
-          :active="relatedUnitMode === relatedUnitType"
-          :text="`add related ${relatedUnitType}`"
-          @click="changeRelatedUnitMode(relatedUnitType)"
-        />
+      <div class="choosing-unit-type-section">
+        <div class="adding-form-title">
+          add related {{ relatedUnitMode }}
+        </div>
+        <div
+          v-if="!relatedUnitMode"
+          class="new-related-unit-type"
+        >
+          <ButtonText
+            v-for="relatedUnitType in ['item', 'list']"
+            :key="relatedUnitType"
+            size="small"
+            :active="relatedUnitMode === relatedUnitType"
+            :text="`${relatedUnitType}`"
+            @click="changeRelatedUnitMode(relatedUnitType)"
+          />
+        </div>
       </div>
       <div
         v-if="relatedUnitMode"
@@ -380,12 +408,17 @@ export default {
             </optgroup>
           </SelectCustom>
         </div>
-        <div class="single-button-container">
+        <div class="buttons-container">
           <ButtonText
             text="add"
             size="small"
             :disabled="isAddRelatedButtonDisabled"
             @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
+          />
+          <ButtonText
+            text="cancel"
+            size="small"
+            @click="relatedUnitMode = ''"
           />
         </div>
       </div>
@@ -395,14 +428,27 @@ export default {
       title="referring items"
     >
       <div class="referring-units-container">
-        <CustomLink
+        <div
           v-for="item in currentItemObj?.referringItems"
           :key="item.id"
-          :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id || item } }"
-          :title="item.title || 'untitled'"
-          class="referring-unit"
-          :class="{ 'untitled-item': !item.title}"
-        />
+        >
+          <div
+            v-if="item.deletedAt"
+            class="referring-unit"
+          >
+            {{ item.title }} 
+            <span class="deleted-status">
+              (in bin)
+            </span>
+          </div>
+          <CustomLink
+            v-else
+            :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id || item } }"
+            :title="item.title || 'untitled'"
+            class="referring-unit"
+            :class="{ 'untitled-item': !item.title}"
+          />
+        </div>
       </div>
     </TogglingBlock>
   </div>
@@ -434,45 +480,54 @@ export default {
     gap: 10px;
   }
 
-  .single-button-container,
-  .select-units {
+  .buttons-container {
     display: flex;
-    justify-content: center;
+    gap: 10px;
   }
 
   .select-units {
+    display: flex;
+    flex-direction: column;
     gap: 20px;
+  }
+
+  .choosing-unit-type-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 0;
   }
 
   .new-related-unit-type {
     display: flex;
-    justify-content: space-around;
-    padding-top: 20px;
+    gap: 15px;
+  }
+
+  .adding-form-title {
+    padding-top: 5px;
+    font-size: 16px;
+    font-variant: small-caps;
   }
 
   .unit-adding-section {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    padding-top: 20px;
+    padding: 15px 0;
   }
 
   .unit-adding-section {
     flex-grow: 1;
   }
 
-  .untitled-item {
+  .untitled-item,
+  .deleted-status {
     color: map-get($colors, 'gray-light');
   }
 
   .compact {
-    .new-related-unit-type {
-      justify-content: space-between;
-      gap: 40px;
-    }
-
     .select-units {
-      gap: 10px;
+      gap: 20px;
       padding-bottom: 10px;
     }
   }
@@ -487,7 +542,8 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
-    .untitled-item {
+    .untitled-item,
+    .deleted-status {
       color: map-get($colors, 'gray-dark');
     }
   }
@@ -497,11 +553,6 @@ export default {
   .related-units {
     .referring-units-container {
       grid-template-columns: 1fr;
-    }
-
-    .new-related-unit-type {
-      justify-content: space-between;
-      gap: 40px;
     }
 
     .select-units {

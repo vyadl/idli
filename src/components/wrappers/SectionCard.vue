@@ -1,7 +1,20 @@
 <script>
+import PopupBox from '@/components/wrappers/PopupBox.vue';
+import { mapGetters } from 'vuex';
+
 export default {
+  components: {
+    PopupBox,
+  },
   props: {
-    title: String,
+    title: {
+      type: String,
+      default: '',
+    },
+    hintText: {
+      type: String,
+      default: '',
+    },
     textStyle: {
       type: String,
       validator(value) {
@@ -28,6 +41,11 @@ export default {
       },
     },
   },
+  computed: {
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+    ]),
+  },
 };
 </script>
 
@@ -36,23 +54,43 @@ export default {
     class="section-card"
     :class="`${globalTheme}-theme`"
   >
-    <h1
-      v-if="title"
-      class="title"
-      :class="[ textStyle, size, position ]"
-    >
-      {{ title }}
-    </h1>
+    <div class="title-section">
+      <h1
+        v-if="title"
+        class="title"
+        :class="[ textStyle, size, position ]"
+      >
+        {{ title }}
+      </h1>
+      <div
+        v-if="hintText"
+        class="hint-area"
+      >
+        <PopupBox 
+          button-style-type="hint"
+          stop-propagation
+          :position="isItemFormInSidebar ? 'upper-center' : 'right'"
+        >
+          {{ hintText }}
+        </PopupBox>
+      </div>
+    </div>
     <slot />
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .section-card {
     width: 100%;
     margin-bottom: 15px;
 
-    &>.title {
+    .title-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title {
       width: fit-content;
       padding: 10px 0;
       font-size: map-get($text, 'big-title-font-size');
@@ -69,15 +107,15 @@ export default {
         font-size: map-get($text, 'small-title-font-size');
       }
 
-      &.big {
-        font-size: 24px;
-        line-height: 1.6;
-      }
-
       &.caps {
-        font-variant-caps: all-small-caps;
+        font-variant: small-caps;
         letter-spacing: 1.8px;
         margin-bottom: 0;
+      }
+
+      &.big {
+        font-size: 18px;
+        line-height: 1.6;
       }
     }
 

@@ -55,7 +55,8 @@ export default {
     .textarea {
       resize: vertical;
       width: 100%;
-      padding: 5px;
+      min-height: 30px;
+      padding: 5px 5px 5px 0;
       border-bottom: 1px solid map-get($colors, 'gray-light');
       transition: border-color 0.3s;
 

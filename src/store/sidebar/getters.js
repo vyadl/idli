@@ -3,10 +3,14 @@ export default {
   sidebarMode: state => state.sidebar.mode,
 
   loggedInView: (state, getters, rootState, rootGetters) => rootGetters['auth/isLoggedIn']
-    && !rootGetters['lists/isPublicView'],
+    && !rootGetters['lists/isPublicView']
+    && rootGetters.currentRouteName !== 'item',
 
   itemPublicView: (state, getters, rootState, rootGetters) => !rootGetters['auth/isLoggedIn']
     && rootGetters.currentRouteName === 'item',
+
+  itemLoggedInView: (state, getters, rootState, rootGetters) => rootGetters['auth/isLoggedIn']
+  && rootGetters.currentRouteName === 'item',
 
   listPublicView: (state, getters, rootState, rootGetters) => (
     !rootGetters['auth/isLoggedIn'] 
@@ -21,6 +25,7 @@ export default {
     const sidebarPossibleViews = {
       loggedInView: getters.loggedInView,
       itemPublicView: getters.itemPublicView,
+      itemLoggedInView: getters.itemLoggedInView,
       listPublicView: getters.listPublicView,
     };
     
