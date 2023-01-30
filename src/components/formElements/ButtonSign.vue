@@ -5,7 +5,15 @@ export default {
       type: String,
       validator(value) {
         return value 
-          ? ['hint', 'info', 'dots', 'cross', 'arrow', 'plus', 'loupe'].includes(value)
+          ? [
+            'hint',
+            'info',
+            'dots',
+            'cross',
+            'arrow',
+            'plus',
+            'loupe',
+          ].includes(value)
           : true;
       },
     },

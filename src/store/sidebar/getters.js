@@ -10,7 +10,7 @@ export default {
     && rootGetters.currentRouteName === 'item',
 
   itemLoggedInView: (state, getters, rootState, rootGetters) => rootGetters['auth/isLoggedIn']
-  && rootGetters.currentRouteName === 'item',
+    && rootGetters.currentRouteName === 'item',
 
   listPublicView: (state, getters, rootState, rootGetters) => (
     !rootGetters['auth/isLoggedIn'] 

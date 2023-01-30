@@ -14,11 +14,11 @@ export function pushRouteKeepQuery({ name, params }) {
   });
 }
 
-export function addQueryItems(additionalQuery) {
+export function addQueryItems(queryToAdd) {
   router.push({
     query: {
       ...getQuery(),
-      ...additionalQuery,
+      ...queryToAdd,
     },
   });
 }
@@ -37,7 +37,20 @@ export function deleteFromQuery(queryToDelete) {
   router.push({ query });
 }
 
-export function changeQuery(option, value) {
+export function modifyQuery({ queryToDelete, queryToAdd }) {
+  const query = {
+    ...getQuery(),
+    ...queryToAdd,
+  };
+
+  queryToDelete.forEach(key => {
+    delete query[key];
+  });
+
+  router.push({ query });
+}
+
+export function changeQueryOption(option, value) {
   if (value) {
     addQueryItems({
       [option]: value,
@@ -50,7 +63,7 @@ export function changeQuery(option, value) {
 export function changeQueryRespectingDefault(option, value) {
   const isValueDefault = checkDefaultValue(defaultQueryValues, option, value);
 
-  changeQuery(
+  changeQueryOption(
     defaultQueryValues[option].queryName,
     isValueDefault ? null : value,
   );

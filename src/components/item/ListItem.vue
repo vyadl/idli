@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import { addQueryItems } from '@/router/utils';
 
 export default {
   props: {
@@ -86,15 +87,23 @@ export default {
       '_openSidebar',
     ]),
     setItemForEditting() {
-      if (this.item.id) {
-        this.$emit('click', this.item.id);
-      }
+      const { id } = this.item;
 
       this._findAndSetEdittingItemIndex(this.item);
 
       this.isItemFormInSidebar
         ? this._openSidebar('item')
         : this.$vfm.show('itemModal');
+
+      if (id) {
+        addQueryItems(
+          this.isItemFormInSidebar 
+            ? { item: id, sidebar: 'item' } 
+            : { item: id },
+        );
+
+        this.$emit('click', id);
+      }
     },
     randomNumber(min, max) {
       return Math.floor(min + Math.random() * (max + 1 - min));
@@ -119,7 +128,7 @@ export default {
   >
     <div
       class="item-title"
-      :class="{ untitled: isUntitled }" 
+      :class="{ untitled: isUntitled }"
       @click.stop="setItemForEditting"
     >
       {{ itemName }}

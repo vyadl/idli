@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { deleteFromQuery, changeQueryRespectingDefault } from '@/router/utils';
-import { defaultVisualization } from '@/store/config';
+import { queryGroups } from '@/router/config';
 import { dispatchFromRoot } from '@/store/utils';
 
 export default {
@@ -31,25 +31,8 @@ export default {
     commit('toggleItemDetailsShowingMode');
     changeQueryRespectingDefault('areItemDetailsShown', getters.areItemDetailsShown);
   },
-  _resetVisualizationToDefault({ getters, commit }) {
-    commit('setSorting', defaultVisualization.sorting);
-    commit('setMode', defaultVisualization.mode);
-    commit('setListAlign', defaultVisualization.listAlign);
-
-    if (getters.areItemDetailsShown) {
-      commit('toggleItemDetailsShowingMode');
-    }
-
-    if (getters.isItemsOrderReversed) {
-      commit('toggleItemsOrder');
-    }
-
-    deleteFromQuery([
-      'sorting',
-      'mode',
-      'submode',
-      'reverse-order',
-      'with-details',
-    ]);
+  _resetVisualizationToDefault({ commit }) {
+    commit('resetVisualizationToDefault');
+    deleteFromQuery(queryGroups.visualization);
   },
 };

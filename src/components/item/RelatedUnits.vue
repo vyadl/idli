@@ -4,7 +4,6 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
-import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { 
   mapGetters,
   mapActions,
@@ -18,18 +17,6 @@ export default {
     ButtonSign,
     SectionCard,
     TogglingBlock,
-    CustomLink,
-  },
-  props: {
-    position: {
-      type: String,
-      default: 'centered',
-      validator(value) {
-        return value
-          ? ['centered', 'left'].includes(value)
-          : true;
-      },
-    },
   },
   LISTS_DEFAULT_OPTION: '- choose list -',
   ITEMS_DEFAULT_OPTION: '- choose item -',
@@ -90,9 +77,6 @@ export default {
       return this.currentItemObj?.relatedItems
         ?.filter(item => item.listId === this.chosenListId);
     },
-    areTextFieldsEmpty() {
-      return !this.edittingItemObj.title && !this.edittingItemObj.details;
-    },
   },
   watch: {
     chosenListId(listId) {
@@ -124,14 +108,22 @@ export default {
     ]),
     ...mapMutations('items', [
       'updateRelatedUnitsLocally',
+      'setEdittingItemIndex',
     ]),
     ...mapActions('lists', [
       '_fetchItemsByListId',
+      '_fetchListById',
     ]),
     ...mapActions('items', [
       '_saveItemOnServer',
       '_updateItemOnServer',
       '_addItemOnServer',
+      '_fetchItemById',
+      '_findAndSetEdittingItemIndex',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
+      '_closeSidebar',
     ]),
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
@@ -161,7 +153,7 @@ export default {
 
       return isListChoosingOnlyToShowItems ? isSavedOnServer : isChoosable;
     },
-    updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {  
+    updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {
       this.updateItemFieldLocally({ field, value: idsForServerUpdate });
       this.updateRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
 
@@ -183,6 +175,7 @@ export default {
       });
 
       this.chosenItemId = null;
+      this.relatedUnitMode = '';
     },
     addRelatedList() {
       this.updateItemField({
@@ -198,6 +191,7 @@ export default {
       });
 
       this.chosenListId = null;
+      this.relatedUnitMode = '';
     },
     deleteRelatedItem(id) {
       const idsForServerUpdate = this.getFieldPropertyWithoutElementById({
@@ -241,6 +235,36 @@ export default {
 
       return copiedArray.length ? copiedArray : null;
     },
+    async goToItem({ listId, itemId }) {
+      const query = this.isItemFormInSidebar
+        ? { item: itemId, sidebar: 'item' }
+        : { item: itemId };
+
+      await this.$router.push(
+        { name: 'list', params: { id: listId }, query },
+      );
+
+      this._fetchListById({ id: listId, cancelToken: null })
+        .then(async () => {
+          const item = await this._fetchItemById({ id: itemId, cancelToken: null });
+
+          this._findAndSetEdittingItemIndex(item);
+
+          this.isItemFormInSidebar
+            ? this._openSidebar('item')
+            : this.$vfm.show('itemModal');
+        });
+    },
+    async goToList(listId) {
+      await this.$router.push(
+        { name: 'list', params: { id: listId } },
+      );
+
+      this._closeSidebar();
+      this.$vfm.hide('itemModal');
+
+      this._fetchListById({ id: listId, cancelToken: null });
+    },
   },
 };
 </script>
@@ -279,12 +303,13 @@ export default {
               (in bin)
             </span>
           </div>
-          <CustomLink
+          <ButtonText
             v-else
-            :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
-            :title="item.title || 'untitled'"
+            style-type="underline"
+            :text="item.title || 'untitled'"
             class="related-unit"
             :class="{ 'untitled-item': !item.title }"
+            @click="goToItem({ itemId: item.id, listId: item.listId })"
           />
         </div>
       </SectionCard>
@@ -316,11 +341,12 @@ export default {
               (in bin)
             </span>
           </div>
-          <CustomLink
+          <ButtonText
             v-else
-            :to="{ name: 'list', params: { id: list.id || list } }"
-            :title="list.title"
+            style-type="underline"
+            :text="list.title || 'untitled'"
             class="related-unit"
+            @click="goToList(list.id)"
           />
         </div>
       </SectionCard>
@@ -355,7 +381,6 @@ export default {
           <SelectCustom 
             :default-option="$options.LISTS_DEFAULT_OPTION"
             :default-option-selected="!chosenListId"
-            :disabled="areTextFieldsEmpty"
             :model-value="chosenListId"
             @update:model-value="value => setNewRelatedUnitId('list', value)"
           >
@@ -441,12 +466,13 @@ export default {
               (in bin)
             </span>
           </div>
-          <CustomLink
+          <ButtonText
             v-else
-            :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id || item } }"
-            :title="item.title || 'untitled'"
+            style-type="underline"
+            :text="item.title || 'untitled'"
             class="referring-unit"
-            :class="{ 'untitled-item': !item.title}"
+            :class="{ 'untitled-item': !item.title }"
+            @click="goToItem({ itemId: item.id, listId: item.listId })"
           />
         </div>
       </div>
@@ -512,8 +538,8 @@ export default {
   .unit-adding-section {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: 15px 0;
+    gap: 20px;
+    padding-bottom: 15px;
   }
 
   .unit-adding-section {

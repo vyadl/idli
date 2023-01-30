@@ -35,7 +35,6 @@ export default {
     },
     clearSearchTrigger: Boolean,
     appendOption: Boolean,
-    // newTitle: String,
   },
   emits: [
     'select',

@@ -257,7 +257,7 @@ export default {
       v-model="list.title"
       label="title"
       :rows="3"
-      :is-focus="true"
+      :is-focus="!list.id"
       :disabled="requestHandling.isRequestProcessing"
       required
       @blur="validateListTitle"

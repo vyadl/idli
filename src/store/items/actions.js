@@ -5,13 +5,18 @@ import {
   dispatchFromRoot,
   generateTitleFromDetails,
 } from '@/store/utils';
-import { addQueryItems } from '@/router/utils';
 import { Item } from '@/models/models'; // eslint-disable-line import/no-cycle
 
 export default {
-  _fetchItemById({ commit, rootGetters }, { id, cancelToken }) {
-    addQueryItems({ item: id });
+  _openSingleItemInNewTab({ getters }) {
+    window.open(`${window.location.origin}/item/${getters.currentItemObj.id}`, '_blank');
+  },
 
+  _copySingleItemLink({ getters }) {
+    navigator.clipboard.writeText(`${window.location.origin}/item/${getters.currentItemObj.id}`);
+  },
+
+  _fetchItemById({ commit, rootGetters }, { id, cancelToken }) {
     const localItem = rootGetters.currentListItems.find(item => item.id === id);
 
     if (localItem) {
@@ -27,7 +32,6 @@ export default {
       )
       .then(({ data: responseItem }) => {
         commit('setCurrentItemObj', responseItem);
-        commitFromRoot('updateItemInCurrentListItems', JSON.parse(JSON.stringify(responseItem)));
 
         return responseItem;
       })

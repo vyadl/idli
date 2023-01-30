@@ -1,15 +1,15 @@
 <script>
 import SectionCard from '@/components/wrappers/SectionCard.vue';
-import CustomLink from '@/components/wrappers/CustomLink.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
+import ItemActionsMenu from '@/components/item/ItemActionsMenu.vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
     SectionCard,
-    CustomLink,
     RelatedUnits,
+    ItemActionsMenu,
   },
   computed: {
     ...mapGetters('lists', [
@@ -56,6 +56,7 @@ export default {
     v-if="currentItemObj"
     class="item-view"
   >
+    <ItemActionsMenu />
     <div class="text-fields">
       <div
         class="title"
@@ -102,23 +103,13 @@ export default {
         </div>
       </SectionCard>
     </div>
-    <RelatedUnits position="left" />
-    <div
-      v-if="$route.name !== 'item'"
-      class="single-item-link"
-    >
-      <CustomLink
-        :to="{ name: 'item', params: { id: currentItemObj.id } }"
-        title="open item separately"
-        size="small"
-        new-tab
-      />
-    </div>
+    <RelatedUnits />
   </div>
 </template>
 
 <style lang="scss" scoped>
   .item-view {
+    
     .text-fields {
       margin-bottom: 40px;
     }
@@ -153,11 +144,6 @@ export default {
     .category {
       color: map-get($colors, 'gray-dark');
       font-size: 14px;
-    }
-
-    .single-item-link {
-      padding: 15px 0;
-      text-align: right;
     }
   }
 </style>

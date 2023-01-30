@@ -1,12 +1,13 @@
 // eslint-disable-next-line import/no-cycle
-import { changeQuery, changeQueryRespectingDefault, deleteFromQuery } from '@/router/utils';
+import { changeQueryOption, changeQueryRespectingDefault, deleteFromQuery } from '@/router/utils';
+import { queryGroups } from '@/router/config';
 import { MIN_SEARCH_SYMBOLS } from '@/store/config';
 
 export default {
   _setCurrentSearchValue({ commit }, search) {
     commit('setCurrentSearchValue', search);
 
-    changeQuery(
+    changeQueryOption(
       'search', 
       search.length >= MIN_SEARCH_SYMBOLS ? search : null,
     );
@@ -45,10 +46,6 @@ export default {
 
   _resetFilters({ commit }) {
     commit('resetFilters');
-    deleteFromQuery([
-      'search',
-      'tags',
-      'categories',
-    ]);
+    deleteFromQuery(queryGroups.filters);
   },
 };

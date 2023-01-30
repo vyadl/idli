@@ -24,7 +24,7 @@ export default {
       default: 'hint',
       validator(value) {
         return value
-          ? ['hint', 'info', 'plus', 'loupe'].includes(value)
+          ? ['hint', 'info', 'plus', 'loupe', 'dots'].includes(value)
           : true;
       },
     },

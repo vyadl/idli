@@ -24,6 +24,74 @@ export default {
     ButtonSign,
     InfoMessage,
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      const loadItem = item => {
+        vm._fetchItemById({ id: item, cancelToken: null })
+          .then((responseItem) => {
+            vm._findAndSetEdittingItemIndex(responseItem);
+            
+            if (to.query.item) {
+              vm.isItemFormInSidebar
+                ? vm._openSidebar('item')
+                : vm.$vfm.show('itemModal');
+            } else {
+              vm.$vfm.hide('itemModal');
+            }
+
+            if (to.query.sidebar === 'item' && !vm.isItemFormInSidebar) {
+              vm._closeSidebar();
+            }
+          });
+      };
+
+      const queryOptions = {
+        tags: {
+          callback: vm.setTags,
+        },
+        categories: {
+          callback: vm.setCategories,
+        },
+        sorting: {
+          callback: vm.setSorting,
+        },
+        mode: {
+          callback: vm.setMode,
+        },
+        submode: {
+          callback: vm.setListAlign,
+        },
+        search: {
+          callback: vm.setCurrentSearchValue,
+        },
+        'with-details': {
+          callback: vm.toggleItemDetailsShowingMode,
+          withoutPayload: true,
+        },
+        'reverse-order': {
+          callback: vm.toggleItemsOrder,
+          withoutPayload: true,
+        },
+        view: {
+          callback: vm.setCurrentListView,
+        },
+        item: {
+          callback: loadItem,
+        },
+      };
+
+      if (to.params.id) {
+        vm._fetchListById({ id: to.params.id, cancelToken: null })
+          .then(() => {
+            handleQueryOnLoad(queryOptions, to.query);
+          })
+          .catch((error) => {
+            console.log(error);
+            this._closeSidebar();
+          });
+      }
+    });
+  },
   data() {
     return {
       sortingOptions: null,
@@ -113,7 +181,7 @@ export default {
     },
     isAddItemButtonShown() {
       return !['stars', 'cloud'].includes(this.mode)
-        && this.finalList.length
+        && this.finalList?.length
         && this.isOwnerView;
     },
   },
@@ -171,88 +239,6 @@ export default {
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
-
-    const handleItemForm = () => {
-      if (this.$route.query.item) {
-        this.isItemFormInSidebar
-          ? this._openSidebar('item')
-          : this.$vfm.show('itemModal');
-      } else {
-        this.$vfm.hide('itemModal');
-      }
-
-      if (this.$route.query.sidebar === 'item') {
-        this._closeSidebar();
-      }
-    };
-
-    const loadItem = item => {
-      this._fetchItemById({ id: item, cancelToken: null })
-        .then((responseItem) => {
-          this._findAndSetEdittingItemIndex(responseItem);
-          handleItemForm();
-        });
-    };
-
-    const queryOptions = {
-      tags: {
-        callback: this.setTags,
-      },
-      categories: {
-        callback: this.setCategories,
-      },
-      sorting: {
-        callback: this.setSorting,
-      },
-      mode: {
-        callback: this.setMode,
-      },
-      submode: {
-        callback: this.setListAlign,
-      },
-      search: {
-        callback: this.setCurrentSearchValue,
-      },
-      'with-details': {
-        callback: this.toggleItemDetailsShowingMode,
-        withoutPayload: true,
-      },
-      'reverse-order': {
-        callback: this.toggleItemsOrder,
-        withoutPayload: true,
-      },
-      item: {
-        callback: loadItem,
-      },
-    };
-
-    try {
-      if (this.$route.params.id) {
-        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
-      }
-
-      handleQueryOnLoad(queryOptions, this.$route.query);
-    } catch (error) {
-      console.log(error);
-      this._closeSidebar();
-    }
-
-    this.$watch(
-      () => this.$route.params.id,
-      id => {
-        this._fetchListById({ id, cancelToken: null });
-        handleItemForm();
-      },
-    );
-
-    this.$watch(
-      () => this.$route.query.item,
-      item => {
-        if (item && item !== this.edittingItemObj?.id) {
-          loadItem(item);
-        }
-      },
-    );
   },
   methods: {
     ...mapMutations('filters', [
@@ -271,6 +257,9 @@ export default {
     ...mapMutations('items', [
       'setEdittingItemIndex',
       'resetRelatedUnitsLocally',
+    ]),
+    ...mapMutations('lists', [
+      'setCurrentListView',
     ]),
     ...mapActions([
       '_setUnitsFromLocalStorage',
