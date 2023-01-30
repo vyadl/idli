@@ -1,3 +1,5 @@
+import { defaultVisualization } from '@/store/config';
+
 export default {
   setSorting(state, sorting) {
     state.visualization.sorting = sorting;
@@ -16,5 +18,10 @@ export default {
   },
   toggleItemsOrder(state) {
     state.visualization.isItemsOrderReversed = !state.visualization.isItemsOrderReversed;
+  },
+  resetVisualizationToDefault(state) {
+    Object.keys(defaultVisualization).forEach(key => {
+      state.visualization[key] = defaultVisualization[key];
+    });
   },
 };

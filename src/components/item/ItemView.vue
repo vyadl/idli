@@ -1,14 +1,18 @@
 <script>
+import ButtonText from '@/components/formElements/ButtonText.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
+    ButtonText,
     SectionCard,
     CustomLink,
+    PopupBox,
     RelatedUnits,
   },
   computed: {
@@ -47,6 +51,12 @@ export default {
     closeItemModal() {
       this.$vfm.hide('itemModal');
     },
+    openSingleItemInNewTab() {
+      window.open(`${window.location.origin}/item/${this.currentItemObj.id}`, '_blank');
+    },
+    copySingleItemLink() {
+      navigator.clipboard.writeText(`${window.location.origin}/item/${this.currentItemObj.id}`);
+    },
   },
 };
 </script>
@@ -56,6 +66,27 @@ export default {
     v-if="currentItemObj"
     class="item-view"
   >
+    <div class="menu-button-container">
+      <PopupBox
+        button-style-type="dots"
+        stop-propagation
+        position="left"
+        content-type="functional"
+      >
+        <ButtonText
+          text="copy item link"
+          style-type="brick"
+          size="small"
+          @click="copySingleItemLink"
+        />
+        <ButtonText
+          text="open item in new tab"
+          style-type="brick"
+          size="small"
+          @click="openSingleItemInNewTab"
+        />
+      </PopupBox>
+    </div>
     <div class="text-fields">
       <div
         class="title"
@@ -102,7 +133,7 @@ export default {
         </div>
       </SectionCard>
     </div>
-    <RelatedUnits position="left" />
+    <RelatedUnits />
     <div
       v-if="$route.name !== 'item'"
       class="single-item-link"
@@ -119,6 +150,13 @@ export default {
 
 <style lang="scss" scoped>
   .item-view {
+    .menu-button-container {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-top: 10px;
+    }
+    
     .text-fields {
       margin-bottom: 40px;
     }

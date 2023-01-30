@@ -119,7 +119,7 @@ export default {
       class="edge-move-catcher"
     />
     <div
-      v-if="!isPublicView"
+      v-if="isOwnerView"
       class="search-button"
     >
       <SearchVault />

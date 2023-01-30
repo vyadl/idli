@@ -86,17 +86,11 @@ export default {
         callback: this._openSidebar,
       },
       view: {
-        callback: view => {
-          if (this.isUserOwnsCurrentList) {
-            this.setCurrentListView(view);
-          } else {
-            deleteFromQuery('view');
-          }
-        },
+        callback: this.setCurrentListView,
       },
     };
 
-    this.$watch(
+    const unwatch = this.$watch(
       () => this.$route.query,
       query => {
         handleQueryOnLoad(queryOptions, query);
@@ -109,6 +103,8 @@ export default {
           this.changeSidebarMode('filters');
           this._closeSidebar();
         }
+
+        unwatch();
       },
     );
   },

@@ -5,7 +5,6 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import CustomLink from '@/components/wrappers/CustomLink.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -29,7 +28,6 @@ export default {
     TogglingBlock,
     SectionCard,
     PopupBox,
-    CustomLink,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -127,6 +125,10 @@ export default {
     },
   },
   unmounted() {
+    if (!this.isItemFormInSidebar) {
+      deleteFromQuery('item');
+    }
+
     const isItemSaveNeeded = this.edittingItemObj?.tags
       && this.edittingItemObj.category
       && !this.explicitRequestsNumber;
@@ -154,8 +156,6 @@ export default {
 
     this.setCurrentItemObj(null);
     this.setEdittingItemIndex(null);
-
-    deleteFromQuery(this.isItemFormInSidebar ? ['item', 'sidebar'] : 'item');
   },
   methods: {
     ...mapMutations([
@@ -213,32 +213,18 @@ export default {
         delete this.serverRequests[itemActualId];
       }
 
-      let newIndex = null;
-
       if (this.$route.name === 'item') {
         this._closeSidebar();
         this.$router.push({ name: 'list', params: { id: item.listId } });
       } else if (this.isItemFormInSidebar && item.temporaryId) {
         this._closeSidebar();
       } else if (this.isItemFormInSidebar) {
-        this.$emit('scrollSidebarToTop');
-        newIndex = this.currentListItems[this.edittingItemIndex] 
-          ? this.edittingItemIndex 
-          : this.currentListItems.length - 1;
+        this.setEdittingItemIndex(null);
       } else {
         this.closeItemModal();
       }
 
       this.resetRelatedUnitsLocally();
-      this.setEdittingItemIndex(newIndex);
-
-      if (this.isItemFormInSidebar) {
-        this._fetchItemById({
-          id: this.edittingItemObj.id,
-          cancelToken: null,
-        });
-      }
-
       this._fetchDeletedItems();
     },
     disableCategory(id) {
@@ -255,6 +241,12 @@ export default {
     clearErrorMessage() {
       this.groupingFieldErrorMessage = '';
     },
+    openSingleItemInNewTab() {
+      window.open(`${window.location.origin}/item/${this.edittingItemObj.id}`, '_blank');
+    },
+    copySingleItemLink() {
+      navigator.clipboard.writeText(`${window.location.origin}/item/${this.edittingItemObj.id}`);
+    },
     getFormattedDate(value) {
       return getFormattedDate(value);
     },
@@ -268,6 +260,27 @@ export default {
     class="item-form"
     :class="`${globalTheme}-theme`"
   >
+    <div class="menu-button-container">
+      <PopupBox
+        button-style-type="dots"
+        stop-propagation
+        position="left"
+        content-type="functional"
+      >
+        <ButtonText
+          text="copy item link"
+          style-type="brick"
+          size="small"
+          @click="copySingleItemLink"
+        />
+        <ButtonText
+          text="open item in new tab"
+          style-type="brick"
+          size="small"
+          @click="openSingleItemInNewTab"
+        />
+      </PopupBox>
+    </div>
     <div class="text-fields">
       <TextareaCustom
         class="title-input"
@@ -338,17 +351,6 @@ export default {
         <RelatedUnits />
       </TogglingBlock>
     </div>
-    <div
-      v-if="$route.name !== 'item' && edittingItemObj?.id"
-      class="single-item-link"
-    >
-      <CustomLink
-        :to="{ name: 'item', params: { id: edittingItemObj.id } }"
-        title="open item separately"
-        size="small"
-        new-tab
-      />
-    </div>
     <footer
       v-if="edittingItemObj?.id"
       class="footer"
@@ -383,7 +385,8 @@ export default {
       padding-top: 15px;
     }
 
-    .related-hint-button-container {
+    .related-hint-button-container,
+    .menu-button-container {
       display: flex;
       justify-content: flex-end;
       align-items: flex-end;

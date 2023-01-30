@@ -32,3 +32,22 @@ export const defaultQueryValues = {
     queryName: 'view',
   },
 };
+
+export const queryGroups = {
+  visualization: [
+    'sorting',
+    'mode',
+    'submode',
+    'reverse-order',
+    'with-details',
+  ],
+  filters: [
+    'search',
+    'tags',
+    'categories',
+  ],
+  sidebar: [
+    'sidebar',
+    'item',
+  ],
+};

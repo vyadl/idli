@@ -113,7 +113,7 @@ export default {
     },
     isAddItemButtonShown() {
       return !['stars', 'cloud'].includes(this.mode)
-        && this.finalList.length
+        && this.finalList?.length
         && this.isOwnerView;
     },
   },
@@ -161,7 +161,7 @@ export default {
       deep: true,
     },
   },
-  async created() {
+  async created() {    
     this.setArrowHotkeys();
 
     this.sortingOptions = {
@@ -172,25 +172,22 @@ export default {
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
 
-    const handleItemForm = () => {
-      if (this.$route.query.item) {
-        this.isItemFormInSidebar
-          ? this._openSidebar('item')
-          : this.$vfm.show('itemModal');
-      } else {
-        this.$vfm.hide('itemModal');
-      }
-
-      if (this.$route.query.sidebar === 'item') {
-        this._closeSidebar();
-      }
-    };
-
     const loadItem = item => {
       this._fetchItemById({ id: item, cancelToken: null })
         .then((responseItem) => {
           this._findAndSetEdittingItemIndex(responseItem);
-          handleItemForm();
+          
+          if (this.$route.query.item) {
+            this.isItemFormInSidebar
+              ? this._openSidebar('item')
+              : this.$vfm.show('itemModal');
+          } else {
+            this.$vfm.hide('itemModal');
+          }
+
+          if (this.$route.query.sidebar === 'item' && !this.isItemFormInSidebar) {
+            this._closeSidebar();
+          }
         });
     };
 
@@ -236,23 +233,6 @@ export default {
       console.log(error);
       this._closeSidebar();
     }
-
-    this.$watch(
-      () => this.$route.params.id,
-      id => {
-        this._fetchListById({ id, cancelToken: null });
-        handleItemForm();
-      },
-    );
-
-    this.$watch(
-      () => this.$route.query.item,
-      item => {
-        if (item && item !== this.edittingItemObj?.id) {
-          loadItem(item);
-        }
-      },
-    );
   },
   methods: {
     ...mapMutations('filters', [

@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
-import { addQueryItems, deleteFromQuery } from '@/router/utils';
+import { addQueryItems, deleteFromQuery, modifyQuery } from '@/router/utils';
+import { queryGroups } from '@/router/config';
 import { sidebarModesForViews } from '@/store/config';
 
 export default {
@@ -10,15 +11,24 @@ export default {
     } = sidebarModesForViews[getters.currentSidebarView];
 
     const isModeAllowed = allowedSidebarModes.includes(mode);
+    const finalMode = isModeAllowed ? mode : defaultModeForCurrentView;
     
     commit('openSidebar');
-    commit('changeSidebarMode', isModeAllowed ? mode : defaultModeForCurrentView);
-    addQueryItems({ sidebar: isModeAllowed ? mode : defaultModeForCurrentView });
+    commit('changeSidebarMode', finalMode);
+
+    if (mode === 'item') {
+      addQueryItems({ sidebar: finalMode });
+    } else {
+      modifyQuery({
+        queryToDelete: ['item'],
+        queryToAdd: { sidebar: finalMode },
+      });
+    }
   },
 
   _closeSidebar({ commit, getters }) {
     commit('closeSidebar');
-    deleteFromQuery('sidebar');
+    deleteFromQuery(queryGroups.sidebar);
 
     if (getters.sidebarMode === 'item') {
       commit('changeSidebarMode', 'lists');

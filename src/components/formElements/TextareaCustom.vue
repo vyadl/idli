@@ -4,6 +4,7 @@ export default {
     label: String,
     modelValue: String,
     placeholder: String,
+    isFocus: Boolean,
     rows: Number,
     disabled: {
       type: Boolean,
@@ -11,6 +12,13 @@ export default {
     },
   },
   emits: ['update:modelValue'],
+  mounted() {
+    this.$nextTick(() => {
+      if (this.isFocus) {
+        this.$refs.textarea.focus();
+      }
+    });
+  },
   methods: {
     input(event) {
       this.$emit('update:modelValue', event.target.value);
@@ -31,6 +39,7 @@ export default {
       {{ label }}
     </div>
     <textarea
+      ref="textarea"
       class="textarea"
       :rows="rows"
       :value="modelValue"

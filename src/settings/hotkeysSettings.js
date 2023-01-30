@@ -25,6 +25,7 @@ export function initHotkeys() {
       && !event.target.closest('textarea')
       && store.getters['settings/isUsingHotkeys']
       && pressedKeys.size === 1
+      && !document.querySelector('.vfm__container')
     ) {
       switch (key) {
         case 'KeyI':
