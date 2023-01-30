@@ -1,5 +1,4 @@
 <script>
-import { mapGetters } from 'vuex';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 
@@ -8,17 +7,22 @@ export default {
     ButtonText,
     PopupBox,
   },
-  computed: {
-    ...mapGetters('items', [
-      'currentItemObj',
-    ]),
-  },
-  methods: {
-    openSingleItemInNewTab() {
-      window.open(`${window.location.origin}/item/${this.currentItemObj.id}`, '_blank');
-    },
-    copySingleItemLink() {
-      navigator.clipboard.writeText(`${window.location.origin}/item/${this.currentItemObj.id}`);
+  props: {
+    options: Array,
+    position: {
+      type: String,
+      default: 'left',
+      validator(value) {
+        return value
+          ? ['right',
+            'left',
+            'lower-left',
+            'upper-right',
+            'upper-center',
+            'lower-center']
+            .includes(value)
+          : true;
+      },
     },
   },
 };
@@ -29,20 +33,16 @@ export default {
     <PopupBox
       button-style-type="dots"
       stop-propagation
-      position="left"
+      :position="position"
       content-type="functional"
     >
       <ButtonText
-        text="copy item link"
+        v-for="option in options"
+        :key="option.name"
+        :text="option.name"
         style-type="brick"
         size="small"
-        @click="copySingleItemLink"
-      />
-      <ButtonText
-        text="open item in new tab"
-        style-type="brick"
-        size="small"
-        @click="openSingleItemInNewTab"
+        @click="option.method"
       />
     </PopupBox>
   </div>

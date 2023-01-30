@@ -8,6 +8,14 @@ import {
 import { Item } from '@/models/models'; // eslint-disable-line import/no-cycle
 
 export default {
+  _openSingleItemInNewTab({ getters }) {
+    window.open(`${window.location.origin}/item/${getters.currentItemObj.id}`, '_blank');
+  },
+
+  _copySingleItemLink({ getters }) {
+    navigator.clipboard.writeText(`${window.location.origin}/item/${getters.currentItemObj.id}`);
+  },
+
   _fetchItemById({ commit, rootGetters }, { id, cancelToken }) {
     const localItem = rootGetters.currentListItems.find(item => item.id === id);
 

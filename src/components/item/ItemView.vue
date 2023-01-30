@@ -1,8 +1,8 @@
 <script>
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
-import DropdownMenu from '@/components/item/DropdownMenu.vue';
-import { mapGetters, mapMutations } from 'vuex';
+import DropdownMenu from '@/components/wrappers/DropdownMenu.vue';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
 
 export default {
@@ -32,6 +32,18 @@ export default {
         listTag => this.currentItemObj.tags.includes(listTag.id),
       );
     },
+    dropdownMenuOptions() {
+      return [
+        {
+          name: 'copy item link',
+          method: this._copySingleItemLink,
+        },
+        {
+          name: 'open item in new tab',
+          method: this._openSingleItemInNewTab,
+        },
+      ];
+    },
   },
   unmounted() {
     this.setCurrentItemObj(null);
@@ -43,6 +55,10 @@ export default {
     ...mapMutations('items', [
       'setEdittingItemIndex',
       'setCurrentItemObj',
+    ]),
+    ...mapActions('items', [
+      '_copySingleItemLink',
+      '_openSingleItemInNewTab',
     ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
@@ -56,7 +72,7 @@ export default {
     v-if="currentItemObj"
     class="item-view"
   >
-    <DropdownMenu />
+    <DropdownMenu :options="dropdownMenuOptions" />
     <div class="text-fields">
       <div
         class="title"
