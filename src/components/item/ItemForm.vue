@@ -5,7 +5,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import DropdownMenu from '@/components/wrappers/DropdownMenu.vue';
+import ItemActionsMenu from '@/components/item/ItemActionsMenu.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -29,7 +29,7 @@ export default {
     TogglingBlock,
     SectionCard,
     PopupBox,
-    DropdownMenu,
+    ItemActionsMenu,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -126,18 +126,6 @@ export default {
         || !!this.edittingItemObj.relatedLists?.length
         || this.showingStatuses.addons;
     },
-    dropdownMenuOptions() {
-      return [
-        {
-          name: 'copy item link',
-          method: this._copySingleItemLink,
-        },
-        {
-          name: 'open item in new tab',
-          method: this._openSingleItemInNewTab,
-        },
-      ];
-    },
   },
   unmounted() {
     if (!this.isItemFormInSidebar) {
@@ -190,8 +178,6 @@ export default {
       '_setListIdFromLocalStorage',
     ]),
     ...mapActions('items', [
-      '_copySingleItemLink',
-      '_openSingleItemInNewTab',
       '_saveItemOnServer',
       '_addItemOnServer',
       '_updateItemOnServer',
@@ -271,7 +257,7 @@ export default {
     class="item-form"
     :class="`${globalTheme}-theme`"
   >
-    <DropdownMenu :options="dropdownMenuOptions" />
+    <ItemActionsMenu />
     <div class="text-fields">
       <TextareaCustom
         class="title-input"

@@ -14,12 +14,14 @@ export default {
       default: 'left',
       validator(value) {
         return value
-          ? ['right',
+          ? [
+            'right',
             'left',
             'lower-left',
             'upper-right',
             'upper-center',
-            'lower-center']
+            'lower-center',
+          ]
             .includes(value)
           : true;
       },
@@ -42,6 +44,7 @@ export default {
         :text="option.name"
         style-type="brick"
         size="small"
+        stop-propagation
         @click="option.method"
       />
     </PopupBox>
