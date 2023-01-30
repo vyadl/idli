@@ -5,6 +5,7 @@ import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
+import DropdownMenu from '@/components/item/DropdownMenu.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -28,6 +29,7 @@ export default {
     TogglingBlock,
     SectionCard,
     PopupBox,
+    DropdownMenu,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -241,12 +243,6 @@ export default {
     clearErrorMessage() {
       this.groupingFieldErrorMessage = '';
     },
-    openSingleItemInNewTab() {
-      window.open(`${window.location.origin}/item/${this.edittingItemObj.id}`, '_blank');
-    },
-    copySingleItemLink() {
-      navigator.clipboard.writeText(`${window.location.origin}/item/${this.edittingItemObj.id}`);
-    },
     getFormattedDate(value) {
       return getFormattedDate(value);
     },
@@ -260,27 +256,7 @@ export default {
     class="item-form"
     :class="`${globalTheme}-theme`"
   >
-    <div class="menu-button-container">
-      <PopupBox
-        button-style-type="dots"
-        stop-propagation
-        position="left"
-        content-type="functional"
-      >
-        <ButtonText
-          text="copy item link"
-          style-type="brick"
-          size="small"
-          @click="copySingleItemLink"
-        />
-        <ButtonText
-          text="open item in new tab"
-          style-type="brick"
-          size="small"
-          @click="openSingleItemInNewTab"
-        />
-      </PopupBox>
-    </div>
+    <DropdownMenu />
     <div class="text-fields">
       <TextareaCustom
         class="title-input"
@@ -385,8 +361,7 @@ export default {
       padding-top: 15px;
     }
 
-    .related-hint-button-container,
-    .menu-button-container {
+    .related-hint-button-container {
       display: flex;
       justify-content: flex-end;
       align-items: flex-end;

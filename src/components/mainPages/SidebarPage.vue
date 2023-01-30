@@ -12,6 +12,7 @@ import SearchVault from '@/components/functionElements/SearchVault.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
+import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
@@ -57,6 +58,22 @@ export default {
     sidebarModes() {
       return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
     },
+  },
+  created() {
+    const { sidebar } = this.$route.query;
+    
+    if (sidebar) {
+      this._openSidebar(sidebar);
+    }
+
+    if (this.$route.query.item && this.$route.name !== 'list') {
+      deleteFromQuery('item');
+    }
+
+    if (this.isPublicView && this.sidebarMode === 'lists') {
+      this.changeSidebarMode('filters');
+      this._closeSidebar();
+    }
   },
   mounted() {
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {

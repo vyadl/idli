@@ -10,7 +10,6 @@ import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
-import { handleQueryOnLoad, deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
@@ -80,33 +79,6 @@ export default {
     this._setUnitsFromLocalStorage(['settings']);
 
     initHotkeys();
-
-    const queryOptions = {
-      sidebar: {
-        callback: this._openSidebar,
-      },
-      view: {
-        callback: this.setCurrentListView,
-      },
-    };
-
-    const unwatch = this.$watch(
-      () => this.$route.query,
-      query => {
-        handleQueryOnLoad(queryOptions, query);
-
-        if (this.$route.query.item && this.$route.name !== 'list') {
-          deleteFromQuery('item');
-        }
-
-        if (this.isPublicView && this.sidebarMode === 'lists') {
-          this.changeSidebarMode('filters');
-          this._closeSidebar();
-        }
-
-        unwatch();
-      },
-    );
   },
   methods: {
     ...mapMutations([
@@ -114,9 +86,6 @@ export default {
     ]),
     ...mapMutations('sidebar', [
       'changeSidebarMode',
-    ]),
-    ...mapMutations('lists', [
-      'setCurrentListView',
     ]),
     ...mapActions('auth', [
       '_setUserFromLocalStorage',
