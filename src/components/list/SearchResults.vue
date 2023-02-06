@@ -3,6 +3,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
+// eslint-disable-next-line import/no-cycle
 import { deleteFromQuery, deleteExtraQuery, handleQueryOnLoad } from '@/router/utils';
 
 export default {
@@ -144,10 +145,10 @@ export default {
             <CustomLink
               class="result-unit"
               :title="item.title"
-              :to="{ name: 'item', params: { id: item.id } }"
+              :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
             />
             <div
-              v-if="item.details.includes(searchValue)"
+              v-if="item.details.toLowerCase().includes(searchValue.toLowerCase())"
               class="item-details result-unit"
             >
               {{ item.details }}

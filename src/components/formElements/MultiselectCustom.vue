@@ -34,31 +34,57 @@ export default {
       default: true,
     },
     clearSearchTrigger: Boolean,
+    appendOption: Boolean,
   },
   emits: [
     'select',
     'deselect',
     'clear',
     'search-change',
+    'finish-append-option',
   ],
+  data() {
+    return {
+      searchValue: '',
+      localValue: [],
+    };
+  },
   watch: {
     clearSearchTrigger(value) {
       if (value) {
         this.$refs.multiselect.clearSearch();
       }
     },
+    appendOption(value) {
+      if (value) {
+        this.$refs.multiselect.select({ value: this.searchValue });
+        this.$emit('finish-append-option');
+      }
+    },
+    value: {
+      handler(value) {
+        this.localValue = value;
+      },
+      immediate: true,
+    },
   },
   methods: {
-    select(tag) {
-      this.$emit('select', tag);
+    select(option) {
+      this.$emit('select', option);
     },
-    deselect(tag) {
-      this.$emit('deselect', tag);
+    deselect(option) {
+      this.$emit('deselect', option);
+    },
+    change() {
+      if (typeof this.value !== 'string') {
+        this.localValue = [...this.value];
+      }
     },
     clear() {
       this.$emit('clear');
     },
     searchChange(option) {
+      this.searchValue = option;
       this.$emit('search-change', option);
     },
   },
@@ -73,7 +99,7 @@ export default {
       { 'small-text': smallText },
       { 'with-hint': !noResultsText }
     ]"
-    :value="value"
+    :value="localValue"
     :mode="mode"
     :placeholder="placeholder"
     :no-options-text="noOptionsText"
@@ -89,6 +115,7 @@ export default {
     @select="option => select(option)"
     @deselect="option => deselect(option)"
     @clear="clear"
+    @change="change"
     @search-change="option => searchChange(option)"
   >
     <template #beforelist>
@@ -140,6 +167,11 @@ export default {
 
   &-tags-search-wrapper {
     padding-top: 10px;
+  }
+
+  &-dropdown {
+    border: 1px solid map-get($colors, 'gray-dark');
+    border-top: none;
   }
 
   &-option {
@@ -202,6 +234,10 @@ export default {
       &-search {
         background: map-get($colors, 'black');
         color: map-get($colors, 'white');
+      }
+
+      &-dropdown {
+        border-color: map-get($colors, 'gray-light');
       }
 
       &-tag-remove {

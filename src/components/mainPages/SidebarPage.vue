@@ -9,8 +9,10 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import SearchVault from '@/components/functionElements/SearchVault.vue';
+import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
+import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
@@ -24,6 +26,7 @@ export default {
     ButtonSign,
     CustomLink,
     SearchVault,
+    PopupBox,
   },
   computed: {
     ...mapGetters('appearance', [
@@ -35,6 +38,8 @@ export default {
     ...mapGetters('lists', [
       'isUserOwnsCurrentList',
       'isPublicView',
+      'currentListObj',
+      'isOwnerView',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -45,9 +50,30 @@ export default {
       'sidebarMode',
       'currentSidebarView',
     ]),
+    isAddUnitPossible() {
+      return this.currentListObj 
+        && !this.isFocusOnList 
+        && this.isOwnerView;
+    },
     sidebarModes() {
       return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
     },
+  },
+  created() {
+    const { sidebar } = this.$route.query;
+    
+    if (sidebar) {
+      this._openSidebar(sidebar);
+    }
+
+    if (this.$route.query.item && this.$route.name !== 'list') {
+      deleteFromQuery('item');
+    }
+
+    if (this.isPublicView && this.sidebarMode === 'lists') {
+      this.changeSidebarMode('filters');
+      this._closeSidebar();
+    }
   },
   mounted() {
     this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
@@ -62,10 +88,16 @@ export default {
     ...mapActions('lists', [
       '_setCurrentListView',
     ]),
+    ...mapActions('items', [
+      '_addNewItemPlaceholder',
+    ]),
     ...mapActions('sidebar', [
       '_openSidebar',
       '_closeSidebar',
     ]),
+    openListModal() {
+      this.$vfm.show('listModal');
+    },
     defineButtonStyleType(mode) {
       if (mode === 'bin' && !this.isMobileScreen) {
         return 'underline';
@@ -104,11 +136,32 @@ export default {
       class="edge-move-catcher"
     />
     <div
-      v-if="!isPublicView"
+      v-if="isOwnerView"
       class="search-button"
     >
       <SearchVault />
     </div>
+    <PopupBox
+      v-if="isAddUnitPossible"
+      class="add-unit-button"
+      button-style-type="plus"
+      :position="isMobileScreen ? 'upper-right' : 'left'"
+      stop-propagation
+      content-type="functional"
+    >
+      <ButtonText
+        text="new item"
+        style-type="brick"
+        size="small"
+        @click="_addNewItemPlaceholder"
+      />
+      <ButtonText
+        text="new list"
+        style-type="brick"
+        size="small"
+        @click="openListModal"
+      />
+    </PopupBox>
     <div
       v-if="isPublicView && isLoggedIn"
       class="exit-public-view-button"
@@ -125,13 +178,11 @@ export default {
     >
       <CustomLink
         :to="{ name: 'requestRegistration' }"
-        target="_blank"
         title="sign up"
       />
       or
       <CustomLink
         :to="{ name: 'signIn' }"
-        target="_blank"
         title="sign in"
       />
     </div>
@@ -144,6 +195,7 @@ export default {
             'mode-button' : !isMobileScreen && mode !== 'bin',
             'bin-mode-button' : mode === 'bin',
           }"
+          :with-box-shadow="!isMobileScreen && mode !== 'bin'"
           :text="mode"
           :style-type="defineButtonStyleType(mode)"
           :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
@@ -193,15 +245,15 @@ export default {
       box-shadow 0.7s;
 
     &.shown {
-      box-shadow: 15px 0 30px 0 map-get($colors, 'gray-light');
+      box-shadow: 15px 0 25px 0 map-get($colors, 'gray-light');
       transform: translateX(0);
 
       .mode-buttons {
-        transform: translateX(-100%) translateX(-15px);
+        transform: translateX(-105%) translateX(-15px);
       }
 
       .state-button {
-        transform: translateX(-110%) rotate(180deg);
+        transform: translateX(-130%) rotate(180deg);
       }
     }
 
@@ -216,7 +268,7 @@ export default {
     .exit-public-view-button,
     .auth-buttons {
       position: fixed;
-      top: 35px;
+      top: 10px;
       transform: translateX(-100%) translateX(-20px);
     }
 
@@ -224,7 +276,7 @@ export default {
       position: relative;
       width: 100%;
       height: 100%;
-      padding: 30px;
+      padding: 25px;
       overflow-y: auto;
       overflow-x: hidden;
       background-color: map-get($colors, 'white');
@@ -240,6 +292,7 @@ export default {
       flex-direction: column;
       align-items: flex-end;
       margin-bottom: 10px;
+      transform: translateX(10px);
       transition: transform 0.4s;
     }
 
@@ -255,7 +308,6 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        box-shadow: -2px 2px 3px 3px rgb(0 0 0 / 25%);
       }
     }
 
@@ -268,14 +320,27 @@ export default {
       position: fixed;
       bottom: 40px;
       width: fit-content;
+      background-color: map-get($colors, 'white');
       transition: transform 0.4s;
       transform: translateX(-100%);
     }
 
     .search-button {
       position: fixed;
+      z-index: 100;
       top: 15px;
+      padding: 5px;
+      background-color: map-get($colors, 'white');
       transform: translateX(-100%) translateX(-15px);
+    }
+
+    .add-unit-button {
+      position: fixed;
+      z-index: 100;
+      top: 50px;
+      padding: 5px;
+      background-color: map-get($colors, 'white');
+      transform: translateX(-100%) translateX(-13px);
     }
 
     &.inverted-theme {
@@ -287,14 +352,11 @@ export default {
         box-shadow: none;
       }
 
+      .add-unit-button,
+      .search-button,
+      .state-button,
       .sidebar-content {
         background-color: map-get($colors, 'black');
-      }
-
-      .mode-button {
-        &::before {
-          box-shadow: -2px 2px 2px 2px rgb(255 255 255 / 70%);
-        }
       }
     }
   }

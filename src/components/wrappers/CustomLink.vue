@@ -3,57 +3,72 @@ export default {
   props: {
     to: Object,
     title: String,
-    target: String,
-    withArrow: Boolean,
+    newTab: Boolean,
+    size: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['small'].includes(value)
+          : true;
+      },
+    },
   },
 };
 </script>
 
 <template>
-  <span class="custom-link">
+  <span
+    class="custom-link"
+    :class="[ size, `${globalTheme}-theme` ]"
+  >
     <router-link
       :to="to"
-      :target="target"
+      :target="newTab ? '_blank' : ''"
     >
       {{ title }} 
     </router-link>
     <div
-      v-if="withArrow"
-      class="arrow"
-    >
-      —
-    </div>
+      v-if="newTab"
+      class="new-tab-icon"
+    />
   </span>
 </template>
 
 <style lang="scss">
 .custom-link {
   position: relative;
-  
-  .arrow {
-    position: relative;
-    display: inline;
-    padding-left: 3px;
-    width: 10px;
-    height: 10px;
-    color: map-get($colors, 'gray-light');
-    opacity: 0;
-    transition: opacity 0.2s;
+  color: map-get($colors, 'black');
 
-    &::after {
-      content: '';
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-right: 1px solid map-get($colors, 'gray-light');
-      border-top: 1px solid map-get($colors, 'gray-light');
-      transform: translate(-7px, 6px) rotate(45deg);
-    }
+  .new-tab-icon {
+    position: relative;
+    display: inline-block;
+    top: 2px;
+    left: 7px;
+    background-image: url('/icons/external-link.svg');
+    background-size: contain;
+    width: 15px;
+    height: 15px;
+    filter: invert(50%);
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
   &:hover {
-    .arrow {
+    .new-tab-icon {
       opacity: 1;
+    }
+  }
+
+  &.small {
+    font-size: 13px;
+    color: map-get($colors, 'gray-dark');
+  }
+
+  &.inverted-theme {
+    color: map-get($colors, 'white');
+
+    &.small {
+      color: map-get($colors, 'gray-light');
     }
   }
 }

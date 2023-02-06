@@ -16,6 +16,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('appearance', [
+      'isMobileScreen',
+    ]),
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
@@ -45,7 +48,7 @@ export default {
   >
     <PopupBox
       button-style-type="loupe"
-      position="left"
+      :position="isMobileScreen ? 'upper-right' : 'left'"
       stop-propagation
     >
       <form @submit.prevent="redirectToSearchResults">

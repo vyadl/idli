@@ -3,8 +3,8 @@ import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
-import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
 // eslint-disable-next-line import/no-cycle
@@ -21,8 +21,76 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
+    ButtonSign,
     InfoMessage,
-    PopupBox,
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      const loadItem = item => {
+        vm._fetchItemById({ id: item, cancelToken: null })
+          .then((responseItem) => {
+            vm._findAndSetEdittingItemIndex(responseItem);
+            
+            if (to.query.item) {
+              vm.isItemFormInSidebar
+                ? vm._openSidebar('item')
+                : vm.$vfm.show('itemModal');
+            } else {
+              vm.$vfm.hide('itemModal');
+            }
+
+            if (to.query.sidebar === 'item' && !vm.isItemFormInSidebar) {
+              vm._closeSidebar();
+            }
+          });
+      };
+
+      const queryOptions = {
+        tags: {
+          callback: vm.setTags,
+        },
+        categories: {
+          callback: vm.setCategories,
+        },
+        sorting: {
+          callback: vm.setSorting,
+        },
+        mode: {
+          callback: vm.setMode,
+        },
+        submode: {
+          callback: vm.setListAlign,
+        },
+        search: {
+          callback: vm.setCurrentSearchValue,
+        },
+        'with-details': {
+          callback: vm.toggleItemDetailsShowingMode,
+          withoutPayload: true,
+        },
+        'reverse-order': {
+          callback: vm.toggleItemsOrder,
+          withoutPayload: true,
+        },
+        view: {
+          callback: vm.setCurrentListView,
+        },
+        item: {
+          callback: loadItem,
+        },
+      };
+
+      if (to.params.id) {
+        vm._fetchListById({ id: to.params.id, cancelToken: null })
+          .then(() => {
+            handleQueryOnLoad(queryOptions, to.query);
+          })
+          .catch((error) => {
+            console.log(error);
+            this._closeSidebar();
+          });
+      }
+    });
   },
   data() {
     return {
@@ -70,11 +138,6 @@ export default {
       'isSidebarOpen',
       'sidebarMode',
     ]),
-    isAddUnitPossible() {
-      return this.currentListObj 
-        && !this.isFocusOnList 
-        && this.isOwnerView;
-    },
     styles() {
       let styles = {};
 
@@ -114,6 +177,11 @@ export default {
     isDraggableSwitchShown() {
       return this.sorting === 'custom'
         && this.mode === 'list'
+        && this.isOwnerView;
+    },
+    isAddItemButtonShown() {
+      return !['stars', 'cloud'].includes(this.mode)
+        && this.finalList?.length
         && this.isOwnerView;
     },
   },
@@ -171,46 +239,6 @@ export default {
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
-
-    const queryOptions = {
-      tags: {
-        callback: this.setTags,
-      },
-      categories: {
-        callback: this.setCategories,
-      },
-      sorting: {
-        callback: this.setSorting,
-      },
-      mode: {
-        callback: this.setMode,
-      },
-      submode: {
-        callback: this.setListAlign,
-      },
-      search: {
-        callback: this.setCurrentSearchValue,
-      },
-      'with-details': {
-        callback: this.toggleItemDetailsShowingMode,
-        withoutPayload: true,
-      },
-      'reverse-order': {
-        callback: this.toggleItemsOrder,
-        withoutPayload: true,
-      },
-    };
-
-    try {
-      if (this.$route.params.id) {
-        await this._fetchListById({ id: this.$route.params.id, cancelToken: null });
-      }
-
-      handleQueryOnLoad(queryOptions, this.$route.query);
-    } catch (error) {
-      console.log(error);
-      this._closeSidebar();
-    }
   },
   methods: {
     ...mapMutations('filters', [
@@ -230,6 +258,9 @@ export default {
       'setEdittingItemIndex',
       'resetRelatedUnitsLocally',
     ]),
+    ...mapMutations('lists', [
+      'setCurrentListView',
+    ]),
     ...mapActions([
       '_setUnitsFromLocalStorage',
     ]),
@@ -240,16 +271,15 @@ export default {
     ...mapActions('items', [
       '_fetchItemById',
       '_addNewItemPlaceholder',
+      '_findAndSetEdittingItemIndex',
     ]),
     ...mapActions('filters', [
       '_filterList',
     ]),
     ...mapActions('sidebar', [
+      '_openSidebar',
       '_closeSidebar',
     ]),
-    openListModal() {
-      this.$vfm.show('listModal');
-    },
     fetchItemById(id) {
       this.resetRelatedUnitsLocally();
 
@@ -339,25 +369,6 @@ export default {
             size="small"
             @click="toggleShuffleTrigger"
           />
-          <PopupBox
-            v-if="isAddUnitPossible"
-            button-style-type="plus"
-            stop-propagation
-            content-type="functional"
-          >
-            <ButtonText
-              text="new list"
-              style-type="brick"
-              size="small"
-              @click="openListModal"
-            />
-            <ButtonText
-              text="new item"
-              style-type="brick"
-              size="small"
-              @click="_addNewItemPlaceholder"
-            />
-          </PopupBox>
         </div>
       </header>
       <div
@@ -376,11 +387,13 @@ export default {
               :gap="20"
             >
               <template #default="{ item }">
-                <ListItem
-                  :key="item?.id"
-                  :item="item"
-                  @click="fetchItemById"
-                />
+                <div class="single-item-container">
+                  <ListItem
+                    :key="item?.id"
+                    :item="item"
+                    @click="fetchItemById"
+                  />
+                </div>
               </template>
             </masonry-wall>
           </template>
@@ -393,6 +406,17 @@ export default {
             />
           </template>
         </template>
+        <div
+          v-if="isAddItemButtonShown"
+          class="add-item-button"
+          title="add new item"
+        >
+          <ButtonSign
+            style-type="plus"
+            stop-propagation
+            @click="_addNewItemPlaceholder"
+          />
+        </div>
       </div>
     </div>
     <div
@@ -461,6 +485,22 @@ export default {
         min-height: 100vh;
         padding: 0;
       }
+
+      &.cards-mode {
+        .add-item-button {
+          width: 40px;
+          margin-top: 20px;
+          padding: 5px;
+          border: 2px solid map-get($colors, 'black');
+          border-radius: 3px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .single-item-container {
+      width: 200px;
+      overflow-wrap: anywhere;
     }
 
     &.inverted-theme {

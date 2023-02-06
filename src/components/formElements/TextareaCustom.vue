@@ -3,12 +3,22 @@ export default {
   props: {
     label: String,
     modelValue: String,
+    placeholder: String,
+    isFocus: Boolean,
+    rows: Number,
     disabled: {
       type: Boolean,
       default: false,
     },
   },
   emits: ['update:modelValue'],
+  mounted() {
+    this.$nextTick(() => {
+      if (this.isFocus) {
+        this.$refs.textarea.focus();
+      }
+    });
+  },
   methods: {
     input(event) {
       this.$emit('update:modelValue', event.target.value);
@@ -29,9 +39,11 @@ export default {
       {{ label }}
     </div>
     <textarea
+      ref="textarea"
       class="textarea"
-      rows="4"
+      :rows="rows"
       :value="modelValue"
+      :placeholder="placeholder"
       :disabled="disabled"
       @input="input($event)"
     />
@@ -50,8 +62,10 @@ export default {
     }
 
     .textarea {
+      resize: vertical;
       width: 100%;
-      padding: 5px;
+      min-height: 30px;
+      padding: 5px 5px 5px 0;
       border-bottom: 1px solid map-get($colors, 'gray-light');
       transition: border-color 0.3s;
 

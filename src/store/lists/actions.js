@@ -84,6 +84,7 @@ export default {
         if (getters.isUserOwnsCurrentList) {
           commit('updateList', responseList);
         }
+
         commitFromRoot('setCurrentListItems', responseList.items);
         commit('setCurrentListObj', responseList);
 
@@ -283,50 +284,19 @@ export default {
       });
   },
 
-  async _addTagForListAndItem(
-    { commit, rootGetters, dispatch },
-    { listObj, itemObj, tagTitle },
-  ) {
-    commitFromRoot('increaseExplicitRequestsNumber');
-
-    return this.$config.axios
-      .patch(
-        `${this.$config.apiBasePath}list/update/${listObj.id}`,
-        {
-          title: listObj.title,
-          isPrivate: listObj.isPrivate,
-          tags: listObj.tags,
-          categories: listObj.categories,
-        },
-      )
-      .then(({ data: responseList }) => {
-        const newTagObj = responseList.tags.find(tag => tag.title === tagTitle);
-        let { tags } = itemObj;
-        
-        tags = [...tags, newTagObj.id];
-
-        if (rootGetters['items/edittingItemObj']) {
-          commitFromRoot('updateItemFieldLocally', {
-            field: 'tags',
-            value: tags,
-          });
-        }
-
-        dispatchFromRoot('items/_saveItemOnServer', { ...itemObj, tags });
-        commit('setCurrentListObj', responseList);
-      })
-      .catch(error => {
-        notifyAboutError(error);
-        dispatch('_fetchListById', { id: listObj.id, cancelToken: null });
-      })
-      .finally(() => {
-        commitFromRoot('decreaseExplicitRequestsNumber');
-      });
+  _checkGroupingFieldTitleUniqueness({ getters }, title) {
+    return !getters.currentListTagsTitles.includes(title)
+      && !getters.currentListCategoriesTitles.includes(title);
   },
 
-  _addCategoryForListAndItem(
+  _addGroupingFieldForListAndItem(
     { commit, rootGetters, dispatch },
-    { listObj, itemObj, categoryTitle },
+    {
+      listObj,
+      itemObj, 
+      title,
+      groupingFieldType,
+    },
   ) {
     commitFromRoot('increaseExplicitRequestsNumber');
 
@@ -341,21 +311,28 @@ export default {
         },
       )
       .then(({ data: responseList }) => {
-        const newCategoryObj = responseList.categories?.find(
-          category => category.title === categoryTitle,
+        const isAddingCategory = groupingFieldType === 'category';
+        const newGroupingFieldObj = responseList[isAddingCategory
+          ? 'categories'
+          : 'tags']?.find(
+          groupingField => groupingField.title === title,
         );
-        let { category } = itemObj;
 
-        category = newCategoryObj.id;
-
+        if (isAddingCategory) {
+          // eslint-disable-next-line no-param-reassign
+          itemObj[groupingFieldType] = newGroupingFieldObj.id;
+        } else {
+          itemObj[groupingFieldType].push(newGroupingFieldObj.id);
+        }
+        
         if (rootGetters['items/edittingItemObj']) {
           commitFromRoot('updateItemFieldLocally', {
-            field: 'category',
-            value: category,
+            field: `${groupingFieldType}`,
+            value: itemObj[groupingFieldType],
           });
         }
 
-        dispatchFromRoot('items/_saveItemOnServer', { ...itemObj, category });
+        dispatchFromRoot('items/_saveItemOnServer', itemObj);
         commit('setCurrentListObj', responseList);
       })
       .catch(error => {

@@ -10,7 +10,6 @@ import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
-import { handleQueryOnLoad } from '@/router/utils';
 
 export default {
   components: {
@@ -29,6 +28,7 @@ export default {
     ]),
     ...mapGetters('lists', [
       'isPublicView',
+      'isUserOwnsCurrentList',
     ]),
     ...mapGetters('sidebar', [
       'sidebarMode',
@@ -60,6 +60,13 @@ export default {
     },
   },
   created() {
+    this.$watch(
+      () => this.$route.name,
+      name => {
+        this.setCurrentRouteName(name);
+      },
+    );
+    
     this._checkAndSetIsMobileScreen();
     window.addEventListener(
       'resize',
@@ -72,38 +79,13 @@ export default {
     this._setUnitsFromLocalStorage(['settings']);
 
     initHotkeys();
-
-    const queryOptions = {
-      sidebar: {
-        callback: sidebar => {
-          this._openSidebar(sidebar);
-        },
-      },
-      view: {
-        callback: view => {
-          this.setCurrentListView(view);
-        },
-      },
-    };
-
-    this.$watch(
-      () => this.$route.query,
-      query => {
-        handleQueryOnLoad(queryOptions, query);
-
-        if (this.isPublicView && this.sidebarMode === 'lists') {
-          this.changeSidebarMode('filters');
-          this._closeSidebar();
-        }
-      },
-    );
   },
   methods: {
+    ...mapMutations([
+      'setCurrentRouteName',
+    ]),
     ...mapMutations('sidebar', [
       'changeSidebarMode',
-    ]),
-    ...mapMutations('lists', [
-      'setCurrentListView',
     ]),
     ...mapActions('auth', [
       '_setUserFromLocalStorage',
@@ -123,24 +105,12 @@ export default {
     ...mapActions([
       '_setUnitsFromLocalStorage',
     ]),
-    openSidebarInLayout() {
-      if (this.layout === 'WithSidebarLayout') {
-        this._openSidebar(this.sidebarMode);
-      }      
-    },
-    closeSidebarInLayout() {
-      if (this.layout === 'WithSidebarLayout') {
-        this._closeSidebar();
-      }   
-    },
   },
 };
 </script>
 
 <template>
   <div
-    v-touch:swipe.left="openSidebarInLayout"
-    v-touch:swipe.right="closeSidebarInLayout"
     class="app"
     :class="`${globalTheme}-theme`"
   >

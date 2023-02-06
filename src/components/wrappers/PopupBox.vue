@@ -24,7 +24,7 @@ export default {
       default: 'hint',
       validator(value) {
         return value
-          ? ['hint', 'info', 'plus', 'loupe'].includes(value)
+          ? ['hint', 'info', 'plus', 'loupe', 'dots'].includes(value)
           : true;
       },
     },
@@ -120,7 +120,7 @@ export default {
 
   .popup-content {
     position: absolute;
-    z-index: 100;
+    z-index: 15;
     width: 200px;
     background-color: map-get($colors, 'white');
     border: 1px solid map-get($colors, 'gray-light');
@@ -135,7 +135,7 @@ export default {
     }
 
     &.left {
-      bottom: -2px;
+      top: -5px;
       right: 130%;
     }
 

@@ -1,10 +1,11 @@
 <script>
-import InputCustom from '@/components/formElements/InputCustom.vue';
 import TextareaCustom from '@/components/formElements/TextareaCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
+import ItemActionsMenu from '@/components/item/ItemActionsMenu.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
@@ -18,15 +19,17 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
+import { deleteFromQuery } from '@/router/utils';
 
 export default {
   components: {
-    InputCustom,
     TextareaCustom,
     ButtonText,
+    ErrorMessage,
     TogglingBlock,
     SectionCard,
     PopupBox,
+    ItemActionsMenu,
     RelatedUnits,
     ItemTags,
     ItemCategories,
@@ -36,6 +39,7 @@ export default {
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
     directly, not by grouping (like tags or category)`,
+  GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
   setup() {
     const store = useStore();
     const API_REQUEST_DELAY = 1500;
@@ -72,6 +76,7 @@ export default {
   },
   data() {
     return {
+      groupingFieldErrorMessage: '',
       showingStatuses: {
         detailsTextarea: false,
       },
@@ -86,6 +91,7 @@ export default {
       'edittingItemIndex',
       'edittingItemObj',
       'currentItemTags',
+      'currentItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -122,6 +128,10 @@ export default {
     },
   },
   unmounted() {
+    if (!this.isItemFormInSidebar) {
+      deleteFromQuery('item');
+    }
+
     const isItemSaveNeeded = this.edittingItemObj?.tags
       && this.edittingItemObj.category
       && !this.explicitRequestsNumber;
@@ -206,32 +216,18 @@ export default {
         delete this.serverRequests[itemActualId];
       }
 
-      let newIndex = null;
-
       if (this.$route.name === 'item') {
         this._closeSidebar();
         this.$router.push({ name: 'list', params: { id: item.listId } });
       } else if (this.isItemFormInSidebar && item.temporaryId) {
         this._closeSidebar();
       } else if (this.isItemFormInSidebar) {
-        this.$emit('scrollSidebarToTop');
-        newIndex = this.currentListItems[this.edittingItemIndex] 
-          ? this.edittingItemIndex 
-          : this.currentListItems.length - 1;
+        this.setEdittingItemIndex(null);
       } else {
         this.closeItemModal();
       }
 
       this.resetRelatedUnitsLocally();
-      this.setEdittingItemIndex(newIndex);
-
-      if (this.isItemFormInSidebar) {
-        this._fetchItemById({
-          id: this.edittingItemObj.id,
-          cancelToken: null,
-        });
-      }
-
       this._fetchDeletedItems();
     },
     disableCategory(id) {
@@ -241,6 +237,12 @@ export default {
     },
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
+    },
+    showErrorMessage() {
+      this.groupingFieldErrorMessage = this.$options.GROUPING_FIELD_ERROR_MESSAGE;
+    },
+    clearErrorMessage() {
+      this.groupingFieldErrorMessage = '';
     },
     getFormattedDate(value) {
       return getFormattedDate(value);
@@ -255,9 +257,12 @@ export default {
     class="item-form"
     :class="`${globalTheme}-theme`"
   >
+    <ItemActionsMenu />
     <div class="text-fields">
-      <InputCustom
+      <TextareaCustom
         class="title-input"
+        label="title"
+        :rows="3"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!edittingItemObj.id"
@@ -267,6 +272,7 @@ export default {
       <TextareaCustom
         v-if="isDetailsTextareaShown"
         label="details"
+        :rows="4"
         :model-value="edittingItemObj.details"
         :disabled="!!explicitRequestsNumber"
         @update:model-value="value => updateItemField('details', value)"
@@ -290,7 +296,10 @@ export default {
           text-style="caps"
           size="small"
         >
-          <ItemCategories />
+          <ItemCategories
+            @throw-error="showErrorMessage"
+            @clear-error="clearErrorMessage"
+          />
         </SectionCard>
         <SectionCard
           title="tags"
@@ -298,16 +307,25 @@ export default {
           text-style="caps"
           size="small"
         >
-          <ItemTags />
+          <ItemTags
+            @throw-error="showErrorMessage"
+            @clear-error="clearErrorMessage"
+          />
         </SectionCard>
-        <TogglingBlock
-          title="related entities"
-          :hint-text="$options.RELATED_UNITS_HINT_TEXT"
-          :force-show="!!edittingItemObj.relatedItems?.length
-            || !!edittingItemObj.relatedLists?.length"
-        >
-          <RelatedUnits />
-        </TogglingBlock>
+        <ErrorMessage
+          v-if="groupingFieldErrorMessage"
+          :message="groupingFieldErrorMessage"
+        />
+        <div class="related-hint-button-container">
+          <PopupBox 
+            button-style-type="hint"
+            stop-propagation
+            position="left"
+          >
+            {{ $options.RELATED_UNITS_HINT_TEXT }}
+          </PopupBox>
+        </div>
+        <RelatedUnits />
       </TogglingBlock>
     </div>
     <footer
@@ -344,16 +362,11 @@ export default {
       padding-top: 15px;
     }
 
-    .filters-container {
+    .related-hint-button-container {
       display: flex;
-      gap: 5px;
-    }
-
-    .single-button-container {
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-top: 10px;
     }
 
     .footer {

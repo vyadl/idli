@@ -93,7 +93,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .toggling-block {
     position: relative;
     width: 100%;
@@ -156,7 +156,7 @@ export default {
     }
 
     .block-content {
-      padding: 20px 10px 10px;
+      padding: 20px 0 10px;
     }
   }
 </style>

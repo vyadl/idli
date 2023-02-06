@@ -48,35 +48,37 @@ export default {
         @click="openForm('signIn')"
       />
     </div>
-    <Transition name="slide-fade">
-      <div
-        v-if="publicListsForAuthScreen"
-        class="public-lists-section"
-      >
-        <div class="conjunction">
-          — or —
-        </div>
-        <div class="public-lists-container">
-          <span class="public-lists-title">
-            check some public lists:
-          </span>
-          <div>
-            <div 
-              v-for="( title, id ) in publicListsForAuthScreen"
-              :key="id"
-              class="public-list"
-            >
-              <CustomLink
-                :to="{ name: 'list', params: { id } }"
-                target="_blank"
-                :title="title"
-                with-arrow
-              />
+    <div class="public-lists-section-wrapper">
+      <Transition name="slide-fade">
+        <div
+          v-if="publicListsForAuthScreen"
+          class="public-lists-section"
+        >
+          <div class="conjunction">
+            — or —
+          </div>
+          <div class="public-lists-container">
+            <span class="public-lists-title">
+              check some public lists:
+            </span>
+            <div>
+              <div 
+                v-for="( title, id ) in publicListsForAuthScreen"
+                :key="id"
+                class="public-list"
+              >
+                <CustomLink
+                  :to="{ name: 'list', params: { id } }"
+                  :title="title"
+                  new-tab
+                  size="small"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </div>
   </div>
 </template>
 
@@ -95,6 +97,10 @@ export default {
       justify-content: space-between;
       align-items: center;
       gap: 10px;
+    }
+
+    .public-lists-section-wrapper {
+      height: 180px;
     }
 
     .public-lists-section,
@@ -122,15 +128,7 @@ export default {
 
     .public-list {
       margin-bottom: 5px;
-      text-align: left;
-      font-size: 13px;
-      color: map-get($colors, 'gray-dark');
-    }
-
-    &.inverted-theme {
-      .public-list {
-        color: map-get($colors, 'gray-light');
-      }
+      text-align: left;      
     }
   }
 </style>

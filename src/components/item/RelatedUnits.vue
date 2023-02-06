@@ -1,11 +1,9 @@
 <script>
 import SelectCustom from '@/components/formElements/SelectCustom.vue';
-import RadioCustom from '@/components/formElements/RadioCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
-import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { 
   mapGetters,
   mapActions,
@@ -15,18 +13,16 @@ import {
 export default {
   components: {
     SelectCustom,
-    RadioCustom,
     ButtonText,
     ButtonSign,
     SectionCard,
     TogglingBlock,
-    CustomLink,
   },
   LISTS_DEFAULT_OPTION: '- choose list -',
   ITEMS_DEFAULT_OPTION: '- choose item -',
   data() {
     return {
-      relatedUnitMode: 'item',
+      relatedUnitMode: '',
       chosenListId: null,
       chosenItemId: null,
       itemsFromPossibleRelatedList: [],
@@ -44,6 +40,15 @@ export default {
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
+    areRelatedItemsLoaded() {
+      return this.currentItemObj?.relatedItems?.[0] instanceof Object;
+    },
+    areRelatedListsLoaded() {
+      return this.currentItemObj?.relatedLists?.[0] instanceof Object;
+    },
+    areReferringItemsLoaded() {
+      return this.currentItemObj?.referringItems?.[0] instanceof Object;
+    },
     isRelatedUnitModeAnItem() {
       return this.relatedUnitMode === 'item';
     },
@@ -71,9 +76,6 @@ export default {
     alreadyRelatedItemsInChosenList() {
       return this.currentItemObj?.relatedItems
         ?.filter(item => item.listId === this.chosenListId);
-    },
-    areTextFieldsEmpty() {
-      return !this.edittingItemObj.title && !this.edittingItemObj.details;
     },
   },
   watch: {
@@ -106,20 +108,31 @@ export default {
     ]),
     ...mapMutations('items', [
       'updateRelatedUnitsLocally',
+      'setEdittingItemIndex',
     ]),
     ...mapActions('lists', [
       '_fetchItemsByListId',
+      '_fetchListById',
     ]),
     ...mapActions('items', [
       '_saveItemOnServer',
       '_updateItemOnServer',
       '_addItemOnServer',
+      '_fetchItemById',
+      '_findAndSetEdittingItemIndex',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
+      '_closeSidebar',
     ]),
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
     changeRelatedUnitMode(value) {
-      this.relatedUnitMode = value;
+      this.relatedUnitMode === value 
+        ? this.relatedUnitMode = ''
+        : this.relatedUnitMode = value;
+
       this.chosenListId = null;
       this.chosenItemId = null;
     },
@@ -140,7 +153,7 @@ export default {
 
       return isListChoosingOnlyToShowItems ? isSavedOnServer : isChoosable;
     },
-    updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {  
+    updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {
       this.updateItemFieldLocally({ field, value: idsForServerUpdate });
       this.updateRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
 
@@ -162,6 +175,7 @@ export default {
       });
 
       this.chosenItemId = null;
+      this.relatedUnitMode = '';
     },
     addRelatedList() {
       this.updateItemField({
@@ -177,6 +191,7 @@ export default {
       });
 
       this.chosenListId = null;
+      this.relatedUnitMode = '';
     },
     deleteRelatedItem(id) {
       const idsForServerUpdate = this.getFieldPropertyWithoutElementById({
@@ -220,6 +235,36 @@ export default {
 
       return copiedArray.length ? copiedArray : null;
     },
+    async goToItem({ listId, itemId }) {
+      const query = this.isItemFormInSidebar
+        ? { item: itemId, sidebar: 'item' }
+        : { item: itemId };
+
+      await this.$router.push(
+        { name: 'list', params: { id: listId }, query },
+      );
+
+      this._fetchListById({ id: listId, cancelToken: null })
+        .then(async () => {
+          const item = await this._fetchItemById({ id: itemId, cancelToken: null });
+
+          this._findAndSetEdittingItemIndex(item);
+
+          this.isItemFormInSidebar
+            ? this._openSidebar('item')
+            : this.$vfm.show('itemModal');
+        });
+    },
+    async goToList(listId) {
+      await this.$router.push(
+        { name: 'list', params: { id: listId } },
+      );
+
+      this._closeSidebar();
+      this.$vfm.hide('itemModal');
+
+      this._fetchListById({ id: listId, cancelToken: null });
+    },
   },
 };
 </script>
@@ -231,10 +276,11 @@ export default {
   >
     <div>
       <SectionCard
-        v-if="currentItemObj?.relatedItems?.length"
+        v-if="areRelatedItemsLoaded"
         title="related items"
         size="small"
         text-style="caps"
+        position="left"
       >
         <div 
           v-for="item in currentItemObj?.relatedItems"
@@ -248,20 +294,31 @@ export default {
             title="delete"
             @click="deleteRelatedItem(item.id)"
           />
-          <CustomLink
-            :to="{ name: 'item', params: { id: item.id || item } }"
-            :title="item.title || 'untitled'"
+          <div
+            v-if="item.deletedAt"
+            class="related-unit"
+          >
+            {{ item.title }}
+            <span class="deleted-status">
+              (in bin)
+            </span>
+          </div>
+          <ButtonText
+            v-else
+            style-type="underline"
+            :text="item.title || 'untitled'"
             class="related-unit"
             :class="{ 'untitled-item': !item.title }"
-            target="_blank"
+            @click="goToItem({ itemId: item.id, listId: item.listId })"
           />
         </div>
       </SectionCard>
       <SectionCard
-        v-if="currentItemObj?.relatedLists?.length"
+        v-if="areRelatedListsLoaded"
         title="related lists"
         size="small"
         text-style="caps"
+        position="left"
       >
         <div 
           v-for="list in currentItemObj?.relatedLists"
@@ -275,118 +332,149 @@ export default {
             title="delete"
             @click="deleteRelatedList(list.id)"
           />
-          <CustomLink
-            :to="{ name: 'list', params: { id: list.id || list } }"
-            :title="list.title"
+          <div
+            v-if="list.deletedAt"
             class="related-unit"
-            target="_blank"
+          >
+            {{ list.title }} 
+            <span class="deleted-status">
+              (in bin)
+            </span>
+          </div>
+          <ButtonText
+            v-else
+            style-type="underline"
+            :text="list.title || 'untitled'"
+            class="related-unit"
+            @click="goToList(list.id)"
           />
         </div>
       </SectionCard>
     </div>
-    <TogglingBlock
+    <div
       v-if="isOwnerView"
-      title="add related list/item"
+      :class="{ compact: isItemFormInSidebar }"
     >
-      <div
-        class="add-related-form"
-        :class="{ compact: isItemFormInSidebar }"
-      >
-        <div class="new-related-unit-type">
-          <RadioCustom 
+      <div class="choosing-unit-type-section">
+        <div class="adding-form-title">
+          add related {{ relatedUnitMode }}
+        </div>
+        <div
+          v-if="!relatedUnitMode"
+          class="new-related-unit-type"
+        >
+          <ButtonText
             v-for="relatedUnitType in ['item', 'list']"
             :key="relatedUnitType"
-            :label="relatedUnitType"
-            :value="relatedUnitType"
-            :model-value="relatedUnitMode"
-            style-type="initial"
-            small
-            @update:model-value="value => changeRelatedUnitMode(value)"
+            size="small"
+            :active="relatedUnitMode === relatedUnitType"
+            :text="`${relatedUnitType}`"
+            @click="changeRelatedUnitMode(relatedUnitType)"
           />
         </div>
-        <div class="unit-adding-section">
-          <div class="select-units">
-            <SelectCustom 
-              :default-option="$options.LISTS_DEFAULT_OPTION"
-              :default-option-selected="!chosenListId"
-              :disabled="areTextFieldsEmpty"
-              :model-value="chosenListId"
-              @update:model-value="value => setNewRelatedUnitId('list', value)"
+      </div>
+      <div
+        v-if="relatedUnitMode"
+        class="unit-adding-section"
+      >
+        <div class="select-units">
+          <SelectCustom 
+            :default-option="$options.LISTS_DEFAULT_OPTION"
+            :default-option-selected="!chosenListId"
+            :model-value="chosenListId"
+            @update:model-value="value => setNewRelatedUnitId('list', value)"
+          >
+            <option
+              v-for="list in choosableLists"
+              :key="list.id"
+              :value="list.id"
+            >
+              {{ list.title }}
+            </option>
+            <optgroup
+              v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
+              label="already related lists:"
+              disabled
             >
               <option
-                v-for="list in choosableLists"
+                v-for="list in currentItemObj?.relatedLists"
                 :key="list.id"
-                :value="list.id"
               >
                 {{ list.title }}
               </option>
-              <optgroup
-                v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
-                label="already related lists:"
-                disabled
-              >
-                <option
-                  v-for="list in currentItemObj?.relatedLists"
-                  :key="list.id"
-                >
-                  {{ list.title }}
-                </option>
-              </optgroup>
-            </SelectCustom>
-            <SelectCustom
-              v-if="isRelatedUnitModeAnItem"
-              :default-option="$options.ITEMS_DEFAULT_OPTION"
-              :default-option-selected="!chosenItemId"
-              :disabled="!itemsFromPossibleRelatedList?.length"
-              @update:model-value="value => setNewRelatedUnitId('item', value)"
+            </optgroup>
+          </SelectCustom>
+          <SelectCustom
+            v-if="isRelatedUnitModeAnItem"
+            :default-option="$options.ITEMS_DEFAULT_OPTION"
+            :default-option-selected="!chosenItemId"
+            :disabled="!itemsFromPossibleRelatedList?.length"
+            @update:model-value="value => setNewRelatedUnitId('item', value)"
+          >
+            <option
+              v-for="item in choosableItems"
+              :key="item.id"
+              :class="{ 'untitled-item': !item.title }"
+              :value="item.id"
+            >
+              {{ item.title || 'untitled' }}
+            </option>
+            <optgroup
+              v-if="alreadyRelatedItemsInChosenList?.length"
+              label="already related items:"
+              disabled
             >
               <option
-                v-for="item in choosableItems"
+                v-for="item in alreadyRelatedItemsInChosenList"
                 :key="item.id"
-                :class="{ 'untitled-item': !item.title }"
-                :value="item.id"
               >
-                {{ item.title || 'untitled' }}
+                {{ item.title }}
               </option>
-              <optgroup
-                v-if="alreadyRelatedItemsInChosenList?.length"
-                label="already related items:"
-                disabled
-              >
-                <option
-                  v-for="item in alreadyRelatedItemsInChosenList"
-                  :key="item.id"
-                >
-                  {{ item.title }}
-                </option>
-              </optgroup>
-            </SelectCustom>
-          </div>  
-          <div class="single-button-container">
-            <ButtonText
-              text="add"
-              size="small"
-              :disabled="isAddRelatedButtonDisabled"
-              @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
-            />
-          </div>
+            </optgroup>
+          </SelectCustom>
+        </div>
+        <div class="buttons-container">
+          <ButtonText
+            text="add"
+            size="small"
+            :disabled="isAddRelatedButtonDisabled"
+            @click="isRelatedUnitModeAnItem ? addRelatedItem() : addRelatedList()"
+          />
+          <ButtonText
+            text="cancel"
+            size="small"
+            @click="relatedUnitMode = ''"
+          />
         </div>
       </div>
-    </TogglingBlock>
+    </div>
     <TogglingBlock
-      v-if="currentItemObj?.referringItems?.length"
+      v-if="areReferringItemsLoaded"
       title="referring items"
     >
       <div class="referring-units-container">
-        <CustomLink
+        <div
           v-for="item in currentItemObj?.referringItems"
           :key="item.id"
-          :to="{ name: 'item', params: { id: item.id || item } }"
-          :title="item.title || 'untitled'"
-          class="referring-unit"
-          :class="{ 'untitled-item': !item.title}"
-          target="_blank"
-        />
+        >
+          <div
+            v-if="item.deletedAt"
+            class="referring-unit"
+          >
+            {{ item.title }} 
+            <span class="deleted-status">
+              (in bin)
+            </span>
+          </div>
+          <ButtonText
+            v-else
+            style-type="underline"
+            :text="item.title || 'untitled'"
+            class="referring-unit"
+            :class="{ 'untitled-item': !item.title }"
+            @click="goToItem({ itemId: item.id, listId: item.listId })"
+          />
+        </div>
       </div>
     </TogglingBlock>
   </div>
@@ -418,48 +506,54 @@ export default {
     gap: 10px;
   }
 
-  .single-button-container,
-  .select-units {
+  .buttons-container {
     display: flex;
-    justify-content: center;
+    gap: 10px;
   }
 
   .select-units {
+    display: flex;
+    flex-direction: column;
     gap: 20px;
   }
 
-  .add-related-form {
+  .choosing-unit-type-section {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 0;
   }
 
-  .new-related-unit-type,
+  .new-related-unit-type {
+    display: flex;
+    gap: 15px;
+  }
+
+  .adding-form-title {
+    padding-top: 5px;
+    font-size: 16px;
+    font-variant: small-caps;
+  }
+
   .unit-adding-section {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    padding-bottom: 15px;
   }
 
   .unit-adding-section {
     flex-grow: 1;
   }
 
-  .untitled-item {
+  .untitled-item,
+  .deleted-status {
     color: map-get($colors, 'gray-light');
   }
 
   .compact {
-    &.add-related-form {
-      flex-direction: column;
-    }
-
-    .new-related-unit-type {
-      flex-direction: row;
-      padding-bottom: 20px;
-    }
-
     .select-units {
-      gap: 10px;
+      gap: 20px;
       padding-bottom: 10px;
     }
   }
@@ -474,7 +568,8 @@ export default {
       color: map-get($colors, 'gray-light');
     }
 
-    .untitled-item {
+    .untitled-item,
+    .deleted-status {
       color: map-get($colors, 'gray-dark');
     }
   }
@@ -486,18 +581,9 @@ export default {
       grid-template-columns: 1fr;
     }
 
-    .add-related-form {
-      flex-flow: column wrap;
-    }
-
-    .new-related-unit-type {
-      flex-direction: row;
-      padding-bottom: 20px;
-    }
-
     .select-units {
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 15px;
       padding-bottom: 10px;
     }
   }

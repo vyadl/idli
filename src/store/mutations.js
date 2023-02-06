@@ -14,6 +14,10 @@ export default {
     state.confirmationModalTitle = title;
   },
 
+  setCurrentRouteName(state, name) {
+    state.currentRouteName = name;
+  },
+
   increaseExplicitRequestsNumber(state) {
     state.explicitRequestsNumber++;
   },
@@ -30,6 +34,12 @@ export default {
 
   setCurrentListItems(state, items) {
     state.currentListItems = items;
+  },
+
+  updateItemInCurrentListItems(state, item) {
+    const index = state.currentListItems.findIndex(localItem => localItem.id === item.id);
+
+    state.currentListItems.splice(index, 1, item);
   },
 
   addItem(state, item) {
@@ -58,8 +68,6 @@ export default {
     
     state.currentListItems.splice(index, 1, item);
   },
-
-  updateItemById() {},
 
   deleteItem(state, id) {
     state.currentListItems = state.currentListItems.filter(item => item.id !== id);

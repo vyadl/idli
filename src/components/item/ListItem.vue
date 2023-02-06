@@ -1,5 +1,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import { addQueryItems } from '@/router/utils';
 
 export default {
   props: {
@@ -86,12 +87,23 @@ export default {
       '_openSidebar',
     ]),
     setItemForEditting() {
-      this.$emit('click', this.item.id);
+      const { id } = this.item;
+
       this._findAndSetEdittingItemIndex(this.item);
 
       this.isItemFormInSidebar
         ? this._openSidebar('item')
         : this.$vfm.show('itemModal');
+
+      if (id) {
+        addQueryItems(
+          this.isItemFormInSidebar 
+            ? { item: id, sidebar: 'item' } 
+            : { item: id },
+        );
+
+        this.$emit('click', id);
+      }
     },
     randomNumber(min, max) {
       return Math.floor(min + Math.random() * (max + 1 - min));
@@ -113,17 +125,18 @@ export default {
       },
     ]"
     :style="styles"
-    @click.stop="setItemForEditting"
   >
     <div
       class="item-title"
       :class="{ untitled: isUntitled }"
+      @click.stop="setItemForEditting"
     >
       {{ itemName }}
     </div>
     <div
       v-if="areItemDetailsShown && item.details && ['list', 'cards'].includes(mode)"
       class="item-details"
+      @click.stop="setItemForEditting"
     >
       {{ item?.details }}
     </div>
@@ -138,7 +151,6 @@ export default {
     align-items: inherit;
     margin-bottom: 10px;
     width: 100%;
-    cursor: pointer;
     transition: transform 0.2s;
 
     &.bordered {
@@ -159,6 +171,7 @@ export default {
       padding: 5px;
       font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
+      cursor: pointer;
 
       &.untitled{
         opacity: 0.5;
@@ -169,6 +182,7 @@ export default {
       align-self: inherit;
       padding: 5px;
       color: map-get($colors, 'gray-dark');
+      cursor: pointer;
     }
 
     &.active {
@@ -269,10 +283,8 @@ export default {
     }
 
     &.inverted-theme {
-      .item-title {
-        &.bordered {
-          border: 1px solid map-get($colors, 'white');
-        }
+      &.bordered {
+        border-color: map-get($colors, 'white');
       }
 
       .item-details {

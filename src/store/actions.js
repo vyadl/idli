@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { deleteFromQuery } from '@/router/utils';
+import { queryGroups } from '@/router/config';
 import { notifyAboutError } from '@/store/utils';
 import { getErrorMessage } from '@/backendInteraction/serverErrors';
 
@@ -77,18 +78,12 @@ export default {
 
   // reset views
 
-  _resetCustomView({ commit, dispatch }) {
+  _resetCustomView({ commit }) {
     commit('filters/resetFilters');
-    dispatch('visualization/_resetVisualizationToDefault');
+    commit('visualization/resetVisualizationToDefault');
     deleteFromQuery([
-      'sorting',
-      'mode',
-      'submode',
-      'reverse-order',
-      'with-details',
-      'search',
-      'tags',
-      'categories',
+      ...queryGroups.filters,
+      ...queryGroups.visualization,
     ]);
   },
 };
