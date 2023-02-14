@@ -14,6 +14,7 @@ export default {
   emits: [
     'throw-error',
     'clear-error',
+    'save-item',
   ],
   data() {
     return {
@@ -25,37 +26,25 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'explicitRequestsNumber',
-    ]),
     ...mapGetters('lists', [
       'lists',
       'currentListCategories',
       'currentListCategoriesTitles',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
+      'currentItemCategory',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
-    currentItemCategoryTitle() {
-      const categoryObj = this.currentListCategories.find(
-        category => category.id === this.edittingItemObj.category,
-      );
-
-      return categoryObj?.title || '';
-    },
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('items', [
       'updateItemFieldLocally',
     ]),
     ...mapMutations('lists', [
       'addCategoryToListLocally',
-    ]),
-    ...mapActions('items', [
-      '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
       '_checkGroupingFieldTitleUniqueness',
@@ -88,8 +77,8 @@ export default {
       const isTitleUnique = this.checkTitleUniqueness(categoryTitle);
 
       if (isTitleUnique) {
-        const { listId } = this.edittingItemObj;
-        const itemObj = JSON.parse(JSON.stringify(this.edittingItemObj));
+        const { listId } = this.currentItemObj;
+        const itemObj = JSON.parse(JSON.stringify(this.currentItemObj));
 
         this.addCategoryToListLocally({ listId, categoryTitle });
         this.requestHandling.isRequestProcessing = true;
@@ -114,7 +103,7 @@ export default {
     },
     updateItemCategory(value) {
       this.updateItemFieldLocally({ field: 'category', value });
-      this._saveItemOnServer(this.edittingItemObj);
+      this.$emit('save-item');
     },
   },
 };
@@ -126,7 +115,7 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <MultiselectCustom
-      :value="currentItemCategoryTitle"
+      :value="currentItemCategory?.title || ''"
       placeholder="choose category"
       no-options-text="no categories - start typing to add new"
       no-results-text=""
@@ -134,8 +123,7 @@ export default {
       :options="currentListCategoriesTitles"
       :create-option="false"
       :clear-search-trigger="clearSearch"
-      :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
-      :show-options="!explicitRequestsNumber"
+      :disabled="requestHandling.isRequestProcessing"
       @select="category => changeCategory(category)"
       @clear="removeCategory()"
       @search-change="checkTitleUniqueness"

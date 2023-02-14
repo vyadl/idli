@@ -43,7 +43,7 @@ export default {
         commitFromRoot('decreaseExplicitRequestsNumber');
         await dispatch('_fetchingAfterBinActions', false);
 
-        if (rootGetters.lists.length) {
+        if (rootGetters['lists/lists'].length && rootGetters['lists/currentListId']) {
           dispatchFromRoot('lists/_fetchCurrentListItems');
         }
       });

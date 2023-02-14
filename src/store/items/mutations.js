@@ -1,21 +1,49 @@
 export default {
-  setCurrentItemObj(state, item) {
-    state.currentItemObj = item;
+  setCurrentItemObj(state, value) {
+    state.currentItemObj = value;
   },
 
-  setEdittingItemIndex(state, index) {
-    state.edittingItemIndex = index;
+  setResponseItemObj(state, value) {
+    state.responseItemObj = value;
   },
 
-  updateRelatedUnitsLocally(state, { field, value }) {
+  updateItemFieldLocally(state, { field, value }) {
     state.currentItemObj[field] = value;
   },
 
-  resetRelatedUnitsLocally(state) {
-    if (state.currentItemObj) {
-      state.currentItemObj.relatedItems = null;
-      state.currentItemObj.relatedLists = null;
-      state.currentItemObj.referringItems = null;
-    }
+  setIsItemSavingAllowed(state, value) {
+    state.isItemSavingAllowed = value;
+  },
+
+  setPartialCache(state, items) {
+    items.forEach(item => {
+      state.partialCache[item.id] = item;
+    });
+  },
+
+  removeCacheByListId(state, listId) {
+    const itemsToDelete = Object.keys(state.partialCache).map(
+      itemId => state.partialCache[itemId].listId === listId,
+    );
+
+    itemsToDelete.forEach(item => {
+      delete state.cache[item.id];
+      delete state.partialCache[item.id];
+    });
+  },
+
+  saveItemInCache(state, item) {
+    state.cache[item.id] = item;
+    state.partialCache[item.id] = item;
+  },
+
+  removeItemFromCache(state, itemId) {
+    delete state.cache[itemId];
+    delete state.partialCache[itemId];
+  },
+
+  resetItemsCache(state) {
+    state.cache = {};
+    state.partialCache = {};
   },
 };

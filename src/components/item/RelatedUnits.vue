@@ -20,6 +20,14 @@ export default {
   },
   LISTS_DEFAULT_OPTION: '- choose list -',
   ITEMS_DEFAULT_OPTION: '- choose item -',
+  props: {
+    itemToShow: Object,
+    editable: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  emits: ['save-item'],
   data() {
     return {
       relatedUnitMode: '',
@@ -33,21 +41,17 @@ export default {
       'lists',
       'isOwnerView',
     ]),
-    ...mapGetters('items', [
-      'edittingItemObj',
-      'currentItemObj',
-    ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
     areRelatedItemsLoaded() {
-      return this.currentItemObj?.relatedItems?.[0] instanceof Object;
+      return this.itemToShow?.relatedItems?.[0] instanceof Object;
     },
     areRelatedListsLoaded() {
-      return this.currentItemObj?.relatedLists?.[0] instanceof Object;
+      return this.itemToShow?.relatedLists?.[0] instanceof Object;
     },
     areReferringItemsLoaded() {
-      return this.currentItemObj?.referringItems?.[0] instanceof Object;
+      return this.itemToShow?.referringItems?.[0] instanceof Object;
     },
     isRelatedUnitModeAnItem() {
       return this.relatedUnitMode === 'item';
@@ -74,7 +78,7 @@ export default {
         .filter(item => this.isUnitChoosable(item, 'id', 'relatedItems'));
     },
     alreadyRelatedItemsInChosenList() {
-      return this.currentItemObj?.relatedItems
+      return this.itemToShow?.relatedItems
         ?.filter(item => item.listId === this.chosenListId);
     },
   },
@@ -103,23 +107,17 @@ export default {
     },
   },
   methods: {
-    ...mapMutations([
-      'updateItemFieldLocally',
-    ]),
     ...mapMutations('items', [
-      'updateRelatedUnitsLocally',
-      'setEdittingItemIndex',
+      'updateItemFieldLocally',
     ]),
     ...mapActions('lists', [
       '_fetchItemsByListId',
       '_fetchListById',
     ]),
     ...mapActions('items', [
-      '_saveItemOnServer',
       '_updateItemOnServer',
       '_addItemOnServer',
       '_fetchItemById',
-      '_findAndSetEdittingItemIndex',
     ]),
     ...mapActions('sidebar', [
       '_openSidebar',
@@ -137,7 +135,7 @@ export default {
       this.chosenItemId = null;
     },
     setNewRelatedUnitId(unitType, value) {
-      unitType === 'list' 
+      unitType === 'list'
         ? this.chosenListId = value 
         : this.chosenItemId = value;
     },
@@ -146,30 +144,27 @@ export default {
       const isListChoosingOnlyToShowItems = this.isRelatedUnitModeAnItem && isCurrentUnitList;
 
       const isSavedOnServer = typeof unit.id !== 'undefined';
-      const isItself = this.edittingItemObj[unitIdFieldName] === unit.id;
-      const isAlreadyRelated = this.edittingItemObj[targetRelatedArr]?.includes(unit.id);
+      const isItself = this.itemToShow[unitIdFieldName] === unit.id;
+      const isAlreadyRelated = this.itemToShow[targetRelatedArr]?.some(
+        relatedUnit => unit.id === relatedUnit.id,
+      );
 
       const isChoosable = isSavedOnServer && !isItself && !isAlreadyRelated;
 
       return isListChoosingOnlyToShowItems ? isSavedOnServer : isChoosable;
     },
-    updateItemField({ field, idsForServerUpdate, fullUnitsForLocalUpdate }) {
-      this.updateItemFieldLocally({ field, value: idsForServerUpdate });
-      this.updateRelatedUnitsLocally({ field, value: fullUnitsForLocalUpdate });
+    updateItemField({ field, fullUnitsForLocalUpdate }) {
+      this.updateItemFieldLocally({ field, value: fullUnitsForLocalUpdate });
 
-      if (this.edittingItemObj.title || this.edittingItemObj.details) {
-        this._saveItemOnServer(this.edittingItemObj);
+      if (this.itemToShow.title || this.itemToShow.details) {
+        this.$emit('save-item');
       }
     },
     addRelatedItem() {
       this.updateItemField({
         field: 'relatedItems',
-        idsForServerUpdate: [
-          ...(this.edittingItemObj.relatedItems || []),
-          this.chosenItemId,
-        ],
         fullUnitsForLocalUpdate: [
-          ...(this.currentItemObj.relatedItems || []),
+          ...(this.itemToShow.relatedItems || []),
           this.itemsFromPossibleRelatedList[this.chosenItemIndex],
         ],
       });
@@ -180,12 +175,8 @@ export default {
     addRelatedList() {
       this.updateItemField({
         field: 'relatedLists',
-        idsForServerUpdate: [
-          ...(this.edittingItemObj.relatedLists || []),
-          this.chosenListId,
-        ],
         fullUnitsForLocalUpdate: [
-          ...(this.currentItemObj.relatedLists || []),
+          ...(this.itemToShow.relatedLists || []),
           this.lists[this.chosenListIndex],
         ],
       });
@@ -194,34 +185,24 @@ export default {
       this.relatedUnitMode = '';
     },
     deleteRelatedItem(id) {
-      const idsForServerUpdate = this.getFieldPropertyWithoutElementById({
-        initialArray: this.edittingItemObj.relatedItems,
-        unitIdToDelete: id,
-      });
       const fullUnitsForLocalUpdate = this.getFieldPropertyWithoutElementById({
-        initialArray: this.currentItemObj.relatedItems,
+        initialArray: this.itemToShow.relatedItems,
         unitIdToDelete: id,
       });
 
       this.updateItemField({
         field: 'relatedItems',
-        idsForServerUpdate,
         fullUnitsForLocalUpdate,
       });
     },
     deleteRelatedList(id) {
-      const idsForServerUpdate = this.getFieldPropertyWithoutElementById({
-        initialArray: this.edittingItemObj.relatedLists,
-        unitIdToDelete: id,
-      });
       const fullUnitsForLocalUpdate = this.getFieldPropertyWithoutElementById({
-        initialArray: this.currentItemObj.relatedLists,
+        initialArray: this.itemToShow.relatedLists,
         unitIdToDelete: id,
       });
 
       this.updateItemField({
         field: 'relatedLists',
-        idsForServerUpdate,
         fullUnitsForLocalUpdate,
       });
     },
@@ -246,9 +227,7 @@ export default {
 
       this._fetchListById({ id: listId, cancelToken: null })
         .then(async () => {
-          const item = await this._fetchItemById({ id: itemId, cancelToken: null });
-
-          this._findAndSetEdittingItemIndex(item);
+          await this._fetchItemById({ id: itemId, cancelToken: null });
 
           this.isItemFormInSidebar
             ? this._openSidebar('item')
@@ -283,12 +262,12 @@ export default {
         position="left"
       >
         <div 
-          v-for="item in currentItemObj?.relatedItems"
+          v-for="item in itemToShow?.relatedItems"
           :key="item.id"
           class="related-unit-container"
         >
           <ButtonSign
-            v-if="isOwnerView"
+            v-if="isOwnerView && editable"
             class="delete-related-unit-button"
             style-type="cross"
             title="delete"
@@ -321,12 +300,12 @@ export default {
         position="left"
       >
         <div 
-          v-for="list in currentItemObj?.relatedLists"
+          v-for="list in itemToShow?.relatedLists"
           :key="list.id"
           class="related-unit-container"
         >
           <ButtonSign
-            v-if="isOwnerView"
+            v-if="isOwnerView && editable"
             class="delete-related-unit-button"
             style-type="cross"
             title="delete"
@@ -352,7 +331,7 @@ export default {
       </SectionCard>
     </div>
     <div
-      v-if="isOwnerView"
+      v-if="isOwnerView && editable"
       :class="{ compact: isItemFormInSidebar }"
     >
       <div class="choosing-unit-type-section">
@@ -392,12 +371,12 @@ export default {
               {{ list.title }}
             </option>
             <optgroup
-              v-if="relatedUnitMode === 'list' && edittingItemObj.relatedLists?.length"
+              v-if="relatedUnitMode === 'list' && itemToShow.relatedLists?.length"
               label="already related lists:"
               disabled
             >
               <option
-                v-for="list in currentItemObj?.relatedLists"
+                v-for="list in itemToShow?.relatedLists"
                 :key="list.id"
               >
                 {{ list.title }}
@@ -454,7 +433,7 @@ export default {
     >
       <div class="referring-units-container">
         <div
-          v-for="item in currentItemObj?.referringItems"
+          v-for="item in itemToShow?.referringItems"
           :key="item.id"
         >
           <div

@@ -36,18 +36,8 @@ export default {
     state.currentListItems = items;
   },
 
-  updateItemInCurrentListItems(state, item) {
-    const index = state.currentListItems.findIndex(localItem => localItem.id === item.id);
-
-    state.currentListItems.splice(index, 1, item);
-  },
-
   addItem(state, item) {
     state.currentListItems.push(item);
-  },
-
-  updateItemFieldLocally(state, { field, value }) {
-    state.currentListItems[state.items.edittingItemIndex][field] = value;
   },
 
   updateItemFieldsByServerResponse(state, item) {

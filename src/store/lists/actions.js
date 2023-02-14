@@ -85,6 +85,7 @@ export default {
           commit('updateList', responseList);
         }
 
+        commitFromRoot('items/setPartialCache', responseList.items);
         commitFromRoot('setCurrentListItems', responseList.items);
         commit('setCurrentListObj', responseList);
 
@@ -155,6 +156,7 @@ export default {
 
         if (getters.currentListId === responseList.id) {
           commit('setCurrentListObj', responseList);
+          commitFromRoot('items/setPartialCache', responseList.items);
           commitFromRoot('setCurrentListItems', responseList.items);
         }
 
@@ -197,6 +199,7 @@ export default {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     await this.$config.axios.delete(`${this.$config.apiBasePath}list/delete/${id}`);
+    commitFromRoot('items/removeCacheByListId', id);
 
     if (getters.currentListObj?.id === id) {
       if (getters.lists.length > 1) {
@@ -262,6 +265,7 @@ export default {
       .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
       .then(({ data: responseList }) => {
         commitFromRoot('setCurrentListItems', responseList.items);
+        commitFromRoot('items/setPartialCache', responseList.items);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -325,8 +329,8 @@ export default {
           itemObj[groupingFieldType].push(newGroupingFieldObj.id);
         }
         
-        if (rootGetters['items/edittingItemObj']) {
-          commitFromRoot('updateItemFieldLocally', {
+        if (rootGetters['items/currentItemObj']) {
+          commit('updateItemFieldLocally', {
             field: `${groupingFieldType}`,
             value: itemObj[groupingFieldType],
           });
@@ -388,6 +392,7 @@ export default {
   
       commit('addItemsFromTestList', responseItems);
       commitFromRoot('setCurrentListItems', responseItems);
+      commitFromRoot('items/setPartialCache', responseItems);
       commit('setCurrentListObj', responseList);
     } catch (error) {
       throw getErrorMessage(error.response.data);

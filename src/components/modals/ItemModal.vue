@@ -14,6 +14,9 @@ export default {
     ...mapGetters('lists', [
       'isOwnerView',
     ]),
+    ...mapGetters('items', [
+      'currentItemObj',
+    ]),
   },
 };
 </script>
@@ -25,6 +28,9 @@ export default {
     :width="isOwnerView ? 500 : 400"
   >
     <ItemForm v-if="isOwnerView" />
-    <ItemView v-else />
+    <ItemView
+      v-else
+      :item="currentItemObj"
+    />
   </ModalBasic>
 </template>

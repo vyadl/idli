@@ -16,14 +16,24 @@ export default {
     navigator.clipboard.writeText(`${window.location.origin}/item/${getters.currentItemObj.id}`);
   },
 
-  _fetchItemById({ commit, rootGetters }, { id, cancelToken }) {
-    const localItem = rootGetters.currentListItems.find(item => item.id === id);
+  _fetchItemById(
+    {
+      getters,
+      commit,
+      dispatch,
+      rootGetters,
+    }, 
+    { id, cancelToken },
+  ) {
+    const fullCachedItem = getters.cache[id];
+    const cachedItem = fullCachedItem || getters.partialCache[id];
 
-    if (localItem) {
-      commit('setCurrentItemObj', localItem);
+    if (cachedItem) {
+      commit('setCurrentItemObj', cachedItem);
     }
 
     commitFromRoot('increaseExplicitRequestsNumber');
+    commit('setIsItemSavingAllowed', false);
 
     return this.$config.axios
       .get(
@@ -31,7 +41,45 @@ export default {
         { cancelToken },
       )
       .then(({ data: responseItem }) => {
-        commit('setCurrentItemObj', responseItem);
+        const isItemFormDisplayed = rootGetters['sidebar/sidebarMode'] === 'item' 
+          || !rootGetters['settings/isItemFormInSidebar'];
+
+        if (isItemFormDisplayed) {
+          if (fullCachedItem) {
+            if (rootGetters['lists/isOwnerView']) {
+              const isLocalItemEqualToServerItem = Object.keys(fullCachedItem).every(
+                key => {
+                  return fullCachedItem[key] instanceof Object
+                    ? responseItem[key].every(
+                      (e, i) => JSON.stringify(e) === JSON.stringify(fullCachedItem[key][i]),
+                    )
+                    : fullCachedItem[key] === responseItem[key];
+                },
+              );
+    
+              if (isLocalItemEqualToServerItem) {
+                commit('setCurrentItemObj', responseItem);
+                commit('setIsItemSavingAllowed', true);
+    
+                if (getters.isItemChanged) {
+                  dispatch('_updateItemOnServer', {
+                    item: getters.currentItemObj,
+                    cancelToken: null,
+                  });
+                }
+              } else {
+                commit('setResponseItemObj', responseItem);
+                commitFromRoot('setModalNameToShow', 'itemConflictModal');
+              }
+            } else {
+              commit('setCurrentItemObj', responseItem);
+            }
+          } else {
+            commit('setCurrentItemObj', responseItem);
+          }
+        }
+
+        commit('saveItemInCache', responseItem);
 
         return responseItem;
       })
@@ -47,30 +95,7 @@ export default {
       });
   },
 
-  _findAndSetEdittingItemIndex({ commit, rootGetters }, targetItem) {
-    let itemIndex = null;
-
-    function compareItemsById(item1, item2) {
-      return item1.temporaryId
-        ? item1.temporaryId === item2.temporaryId
-        : item1.id === item2.id;
-    }
-
-    if (rootGetters.currentListItems[0] instanceof Object) {
-      itemIndex = rootGetters.currentListItems
-        .findIndex(item => compareItemsById(item, targetItem));
-    } else {
-      const { listId } = targetItem;
-      const listIndex = rootGetters['lists/lists'].findIndex(list => list.id === listId);
-
-      itemIndex = rootGetters['lists/lists'][listIndex].items
-        .findIndex(item => compareItemsById(item, targetItem));
-    }
-
-    commit('setEdittingItemIndex', itemIndex);
-  },
-
-  _addNewItemPlaceholder({ commit, dispatch, rootGetters }) {
+  _addNewItemPlaceholder({ commit, rootGetters }) {
     const unsavedItem = rootGetters.currentListItems.find(item => item.temporaryId);
 
     if (!unsavedItem) {
@@ -81,9 +106,10 @@ export default {
         listId: rootGetters['lists/currentListId'],
       };
 
-      commit('resetRelatedUnitsLocally');
       commitFromRoot('addItem', itemWithTemporaryId);
-      dispatch('_findAndSetEdittingItemIndex', itemWithTemporaryId);
+      commit('setCurrentItemObj', itemWithTemporaryId);
+    } else {
+      commit('setCurrentItemObj', unsavedItem);
     }
 
     rootGetters['settings/isItemFormInSidebar']
@@ -91,28 +117,30 @@ export default {
       : commitFromRoot('setModalNameToShow', 'itemModal');
   },
 
-  _saveItemOnServer({ dispatch, getters }, item) {
+  _saveItemOnServer({ commit, dispatch, getters }, item) {
     const { details } = item;
     let { title } = item;
 
     if (!title && details) {
       title = generateTitleFromDetails(details);
 
-      if (getters.edittingItemObj) {
-        commitFromRoot('updateItemFieldLocally', {
+      if (getters.currentItemObj) {
+        commit('updateItemFieldLocally', {
           field: 'title',
           value: title,
         });
       }
     }
 
+    const newItem = {
+      ...item,
+      title,
+    };
+
     dispatch(item.temporaryId
       ? '_addItemOnServer'
       : '_updateItemOnServer', {
-      item: {
-        ...item,
-        title,
-      },
+      item: newItem,
       cancelToken: null,
     });
   },
@@ -132,13 +160,16 @@ export default {
         {
           ...item,
           title,
+          relatedItems: getters.currentRelatedItemsIds,
+          relatedLists: getters.currentRelatedListsIds,
         }, 
         { cancelToken },
       )
       .then(({ data: responseItem }) => {
         commitFromRoot('updateItemByTemporaryId', responseItem);
+        commit('saveItemInCache', responseItem);
 
-        if (getters.edittingItemObj) {
+        if (getters.currentItemObj) {
           commit('setCurrentItemObj', responseItem);
         }
       })
@@ -148,7 +179,7 @@ export default {
       });
   },
 
-  _updateItemOnServer({ dispatch }, { item, cancelToken }) {
+  _updateItemOnServer({ getters, commit, dispatch }, { item, cancelToken }) {
     let { title } = item;
     const { details } = item;
 
@@ -162,11 +193,14 @@ export default {
         {
           ...item,
           title,
+          relatedItems: getters.currentRelatedItemsIds,
+          relatedLists: getters.currentRelatedListsIds,
         },
         { cancelToken },
       )
       .then(({ data: responseItem }) => {
         commitFromRoot('updateItemFieldsByServerResponse', responseItem);
+        commit('saveItemInCache', responseItem);
       })
       .catch(error => {
         if (!cancelToken) {
@@ -176,8 +210,9 @@ export default {
       });
   },
 
-  _deleteItemOnServer(state, { itemId, listId }) {
+  _deleteItemOnServer({ commit }, { itemId, listId }) {
     commitFromRoot('deleteItem', itemId);
+    commit('removeItemFromCache', itemId);
     
     this.$config.axios
       .delete(`${this.$config.apiBasePath}item/delete/${listId}/${itemId}`)

@@ -20,7 +20,7 @@ export default {
       'isOwnerView',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
     ]),
   },
   methods: {
@@ -36,14 +36,17 @@ export default {
 
 <template>
   <SectionCard
-    v-if="edittingItemObj"
+    v-if="currentItemObj"
     class="sidebar-item"
   >
     <ItemForm 
       v-if="isOwnerView"
       @scroll-sidebar-to-top="scrollSidebarToTop"
     />
-    <ItemView v-else />
+    <ItemView
+      v-else
+      :item="currentItemObj"
+    />
   </SectionCard>
   <div v-else>
     <InfoMessage message="choose item from the list to see it here" />

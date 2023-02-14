@@ -7,6 +7,7 @@ import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
 import AboutModal from '@/components/modals/AboutModal.vue';
 import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
+import ItemConflictModal from '@/components/modals/ItemConflictModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
@@ -20,6 +21,7 @@ export default {
     ItemModal,
     AboutModal,
     PasswordChangeModal,
+    ItemConflictModal,
     AppNotification,
   },
   computed: {
@@ -135,6 +137,7 @@ export default {
     <AboutModal />
     <ConfirmationModal />
     <PasswordChangeModal />
+    <ItemConflictModal />
     <AppNotification v-if="notification" />
   </div>
 </template>

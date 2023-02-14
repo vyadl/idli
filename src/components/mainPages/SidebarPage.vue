@@ -136,7 +136,7 @@ export default {
       class="edge-move-catcher"
     />
     <div
-      v-if="isOwnerView"
+      v-if="isOwnerView || $route.name === 'home'"
       class="search-button"
     >
       <SearchVault />

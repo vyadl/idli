@@ -6,6 +6,7 @@ import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import PasswordField from '@/components/auth/PasswordField.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+// eslint-disable-next-line import/no-cycle
 import { handleQueryOnLoad } from '@/router/utils';
 import { handleRequestStatuses } from '@/utils/misc';
 
