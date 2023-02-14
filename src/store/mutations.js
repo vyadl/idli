@@ -54,7 +54,7 @@ export default {
     const targetIndex = state.currentListItems
       .findIndex(localItem => localItem.id === item.id);
     const targetItem = state.currentListItems[targetIndex];
-    const fieldsToUpdate = ['updatedAt', 'title'];
+    const fieldsToUpdate = ['updatedAt'];
 
     fieldsToUpdate.forEach(field => {
       targetItem[field] = item[field];
