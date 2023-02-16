@@ -15,35 +15,31 @@ export default {
     state.isItemSavingAllowed = value;
   },
 
-  setPartialCache(state, items) {
-    items.forEach(item => {
-      state.partialCache[item.id] = item;
-    });
-  },
-
   removeCacheByListId(state, listId) {
-    const itemsToDelete = Object.keys(state.partialCache).map(
-      itemId => state.partialCache[itemId].listId === listId,
+    const itemsToDelete = Object.keys(state.cache).map(
+      itemId => state.cache[itemId].listId === listId,
     );
 
     itemsToDelete.forEach(item => {
       delete state.cache[item.id];
-      delete state.partialCache[item.id];
+    });
+  },
+
+  saveManyItemsInCache(state, items) {
+    items.forEach(item => {
+      state.cache[item.id] = item;
     });
   },
 
   saveItemInCache(state, item) {
     state.cache[item.id] = item;
-    state.partialCache[item.id] = item;
   },
 
   removeItemFromCache(state, itemId) {
     delete state.cache[itemId];
-    delete state.partialCache[itemId];
   },
 
   resetItemsCache(state) {
     state.cache = {};
-    state.partialCache = {};
   },
 };

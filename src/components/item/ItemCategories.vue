@@ -34,12 +34,16 @@ export default {
     ...mapGetters('items', [
       'currentItemObj',
       'currentItemCategory',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
   },
   methods: {
+    ...mapMutations([
+      'updateItemFieldInCurrentList',
+    ]),
     ...mapMutations('items', [
       'updateItemFieldLocally',
     ]),
@@ -51,6 +55,11 @@ export default {
       '_addGroupingFieldForListAndItem',
     ]),
     async checkTitleUniqueness(categoryTitle) {
+      if (this.responseItemObj) {
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(categoryTitle);
 
       this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
@@ -103,6 +112,7 @@ export default {
     },
     updateItemCategory(value) {
       this.updateItemFieldLocally({ field: 'category', value });
+      this.updateItemFieldInCurrentList({ field: 'category', value });
       this.$emit('save-item');
     },
   },

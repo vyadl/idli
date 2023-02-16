@@ -10,8 +10,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    blurTrigger: Boolean,
   },
   emits: ['update:modelValue'],
+  watch: {
+    blurTrigger() {
+      this.$refs.textarea.blur();
+    },
+  },
   mounted() {
     this.$nextTick(() => {
       if (this.isFocus) {

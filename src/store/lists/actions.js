@@ -1,5 +1,6 @@
 import { router } from '@/router'; // eslint-disable-line import/no-cycle
 import { pushRouteKeepQuery, changeQueryRespectingDefault } from '@/router/utils'; // eslint-disable-line import/no-cycle
+import routerQueue from '@/router/routerQueue';
 // eslint-disable-next-line import/no-cycle
 import { notifyAboutError, commitFromRoot, dispatchFromRoot } from '@/store/utils';
 import { getErrorMessage } from '@/backendInteraction/serverErrors';
@@ -85,7 +86,7 @@ export default {
           commit('updateList', responseList);
         }
 
-        commitFromRoot('items/setPartialCache', responseList.items);
+        commitFromRoot('items/saveManyItemsInCache', responseList.items);
         commitFromRoot('setCurrentListItems', responseList.items);
         commit('setCurrentListObj', responseList);
 
@@ -156,7 +157,7 @@ export default {
 
         if (getters.currentListId === responseList.id) {
           commit('setCurrentListObj', responseList);
-          commitFromRoot('items/setPartialCache', responseList.items);
+          commitFromRoot('items/saveManyItemsInCache', responseList.items);
           commitFromRoot('setCurrentListItems', responseList.items);
         }
 
@@ -252,7 +253,10 @@ export default {
   },
 
   _setCurrentListView({ commit }, viewType) {
-    changeQueryRespectingDefault('currentListView', viewType);
+    routerQueue.add({
+      method: changeQueryRespectingDefault,
+      args: { option: 'currentListView', value: viewType },
+    });
     commit('setCurrentListView', viewType);
   },
 
@@ -265,7 +269,7 @@ export default {
       .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
       .then(({ data: responseList }) => {
         commitFromRoot('setCurrentListItems', responseList.items);
-        commitFromRoot('items/setPartialCache', responseList.items);
+        commitFromRoot('items/saveManyItemsInCache', responseList.items);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -328,9 +332,19 @@ export default {
         } else {
           itemObj[groupingFieldType].push(newGroupingFieldObj.id);
         }
+
+        if (rootGetters.currentListItems) {
+          commitFromRoot(
+            'updateItemFieldInCurrentList',
+            {
+              field: `${groupingFieldType}`,
+              value: itemObj[groupingFieldType],
+            },
+          );
+        }
         
         if (rootGetters['items/currentItemObj']) {
-          commit('updateItemFieldLocally', {
+          commitFromRoot('items/updateItemFieldLocally', {
             field: `${groupingFieldType}`,
             value: itemObj[groupingFieldType],
           });
@@ -392,7 +406,7 @@ export default {
   
       commit('addItemsFromTestList', responseItems);
       commitFromRoot('setCurrentListItems', responseItems);
-      commitFromRoot('items/setPartialCache', responseItems);
+      commitFromRoot('items/saveManyItemsInCache', responseItems);
       commit('setCurrentListObj', responseList);
     } catch (error) {
       throw getErrorMessage(error.response.data);

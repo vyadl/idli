@@ -16,6 +16,44 @@ export default {
     navigator.clipboard.writeText(`${window.location.origin}/item/${getters.currentItemObj.id}`);
   },
 
+  _syncCachedItemWithServerItem(
+    { getters, commit, dispatch },
+    { cachedItem, responseItem },
+  ) {
+    const isItemsVersionsMatch = cachedItem.updatedAt === responseItem.updatedAt;
+
+    function checkItemsEquality({ firstItem, secondItem }) {
+      return Object.keys(firstItem).every(
+        key => {
+          return firstItem[key] instanceof Object
+            ? firstItem[key].every(
+              (e, i) => JSON.stringify(e) === JSON.stringify(secondItem[key][i]),
+            )
+            : firstItem[key] === secondItem[key];
+        },
+      );
+    }
+
+    if (isItemsVersionsMatch) {
+      const isItemChangedBeforeServerResponse = checkItemsEquality({
+        firstItem: getters.currentItemObj, 
+        secondItem: cachedItem,
+      });
+
+      commit('setIsItemSavingAllowed', true);
+
+      if (isItemChangedBeforeServerResponse) {
+        dispatch('_updateItemOnServer', {
+          item: getters.currentItemObj,
+          cancelToken: null,
+        });
+      }
+    } else {
+      commit('setResponseItemObj', responseItem);
+      commitFromRoot('setModalNameToShow', 'itemConflictModal');
+    }
+  },
+
   _fetchItemById(
     {
       getters,
@@ -25,15 +63,14 @@ export default {
     }, 
     { id, cancelToken },
   ) {
-    const fullCachedItem = getters.cache[id];
-    const cachedItem = fullCachedItem || getters.partialCache[id];
+    const cachedItem = getters.cache[id];
 
     if (cachedItem) {
       commit('setCurrentItemObj', cachedItem);
+      commit('setIsItemSavingAllowed', false);
     }
-
+    
     commitFromRoot('increaseExplicitRequestsNumber');
-    commit('setIsItemSavingAllowed', false);
 
     return this.$config.axios
       .get(
@@ -45,38 +82,11 @@ export default {
           || !rootGetters['settings/isItemFormInSidebar'];
 
         if (isItemFormDisplayed) {
-          if (fullCachedItem) {
-            if (rootGetters['lists/isOwnerView']) {
-              const isLocalItemEqualToServerItem = Object.keys(fullCachedItem).every(
-                key => {
-                  return fullCachedItem[key] instanceof Object
-                    ? responseItem[key].every(
-                      (e, i) => JSON.stringify(e) === JSON.stringify(fullCachedItem[key][i]),
-                    )
-                    : fullCachedItem[key] === responseItem[key];
-                },
-              );
-    
-              if (isLocalItemEqualToServerItem) {
-                commit('setCurrentItemObj', responseItem);
-                commit('setIsItemSavingAllowed', true);
-    
-                if (getters.isItemChanged) {
-                  dispatch('_updateItemOnServer', {
-                    item: getters.currentItemObj,
-                    cancelToken: null,
-                  });
-                }
-              } else {
-                commit('setResponseItemObj', responseItem);
-                commitFromRoot('setModalNameToShow', 'itemConflictModal');
-              }
-            } else {
-              commit('setCurrentItemObj', responseItem);
-            }
-          } else {
-            commit('setCurrentItemObj', responseItem);
-          }
+          const isCachedItemNeedHanding = cachedItem && rootGetters['lists/isOwnerView'];
+
+          isCachedItemNeedHanding
+            ? dispatch('_syncCachedItemWithServerItem', { cachedItem, responseItem })
+            : commit('setCurrentItemObj', responseItem);
         }
 
         commit('saveItemInCache', responseItem);
@@ -117,12 +127,24 @@ export default {
       : commitFromRoot('setModalNameToShow', 'itemModal');
   },
 
-  _saveItemOnServer({ commit, dispatch, getters }, item) {
+  _saveItemOnServer({
+    commit,
+    dispatch,
+    getters,
+    rootGetters,
+  }, item) {
     const { details } = item;
     let { title } = item;
 
     if (!title && details) {
       title = generateTitleFromDetails(details);
+
+      if (rootGetters.currentListItems) {
+        commitFromRoot(
+          'updateItemFieldInCurrentList',
+          { field: 'title', value: title },
+        );
+      }
 
       if (getters.currentItemObj) {
         commit('updateItemFieldLocally', {
@@ -180,6 +202,10 @@ export default {
   },
 
   _updateItemOnServer({ getters, commit, dispatch }, { item, cancelToken }) {
+    if (!getters.isItemSavingAllowed) {
+      return;
+    }
+
     let { title } = item;
     const { details } = item;
 

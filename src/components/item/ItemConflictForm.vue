@@ -1,12 +1,10 @@
 <script>
-import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import ItemView from '@/components/item/ItemView.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
   components: {
-    InfoMessage,
     ItemView,
     ButtonText,
   },
@@ -32,14 +30,15 @@ export default {
         cancelToken: null,
       })
         .then(() => {
-          this.setIsItemSavingAllowed(true);
-          this.$vfm.hide('itemConflictModal');
-          this.setResponseItemObj(null);
+          this.finishConflictResolve();
         });
     },
     restoreItemFromServer() {
       this.setCurrentItemObj(this.responseItemObj);
       this.saveItemInCache(this.responseItemObj);
+      this.finishConflictResolve();
+    },
+    finishConflictResolve() {
       this.setIsItemSavingAllowed(true);
       this.$vfm.hide('itemConflictModal');
       this.setResponseItemObj(null);
@@ -50,58 +49,55 @@ export default {
 
 <template>
   <div class="item-conflict-form">
-    <InfoMessage
-      class="message"
-      message="There is another version of the item on server. Action required:"
-      big
-    />
+    <div class="message">
+      There is another version of the item on server. 
+      <br> Action required:
+    </div>
     <div class="items-to-compare">
-      <div class="item-version">
-        <ButtonText
-          text="save current item"
-          size="small"
-          @click="saveCurrentItem"
-        />
-        <ItemView
-          :item="currentItemObj"
-        />
-      </div>
-      <div class="item-version">
-        <ButtonText
-          text="restore item from server"
-          size="small"
-          @click="restoreItemFromServer"
-        />
-        <ItemView
-          :item="responseItemObj"
-        />
-      </div>
+      <ItemView
+        v-for="item in [currentItemObj, responseItemObj]"
+        :key="item?.updatedAt"
+        :item="item"
+        :is-query-need-deleting="false"
+      />
+    </div>
+    <div class="buttons-container">
+      <ButtonText
+        text="save current item"
+        size="small"
+        @click="saveCurrentItem"
+      />
+      <ButtonText
+        text="restore from server"
+        size="small"
+        @click="restoreItemFromServer"
+      />
     </div>
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .item-conflict-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
     
     .message {
-      text-align: center;
-      padding-bottom: 20px;
+      padding: 15px;
+      margin: 10px;
+      border: 1px solid map-get($colors, 'gray-dark');
+      box-shadow: 4px 4px map-get($colors, 'gray-dark');
     }
 
     .items-to-compare {
-      grid-area: c;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 25px;
     }
 
-    .item-version {
+    .buttons-container {
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      justify-content: space-around;
     }
   }
 </style>

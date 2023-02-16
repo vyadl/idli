@@ -107,17 +107,12 @@ export default {
     },
     exitPublicView() {
       this._setCurrentListView('owner');
+      this._closeSidebar();
     },
     changeSidebarState() {
       this.isSidebarOpen
         ? this._closeSidebar()
         : this._openSidebar(this.sidebarMode);
-    },
-    scrollSidebarToTop() {
-      this.$refs.sidebarContent.scroll({
-        top: 0,
-        behavior: 'smooth',
-      });
     },
   },
 };
@@ -222,10 +217,7 @@ export default {
       <SidebarLists v-if="sidebarMode === 'lists'" />
       <SidebarSettings v-if="sidebarMode === 'settings'" />
       <SidebarBin v-if="sidebarMode === 'bin'" />
-      <SidebarItem
-        v-if="sidebarMode === 'item'"
-        @scroll-sidebar-to-top="scrollSidebarToTop"
-      />
+      <SidebarItem v-if="sidebarMode === 'item'" />
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemActionsMenu from '@/components/item/ItemActionsMenu.vue';
 import { mapGetters } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
+import routerQueue from '@/router/routerQueue';
 
 export default {
   components: {
@@ -13,10 +14,14 @@ export default {
   },
   props: {
     item: Object,
+    isQueryNeedDeleting: {
+      type: Boolean,
+      default: true,
+    },
   },
   computed: {
-    ...mapGetters([
-      'modalNameToShow',
+    ...mapGetters('items', [
+      'isItemSavingAllowed',
     ]),
     ...mapGetters('lists', [
       'lists',
@@ -39,11 +44,16 @@ export default {
     },
   },
   unmounted() {
-    deleteFromQuery(
-      this.isItemFormInSidebar
+    if (this.isQueryNeedDeleting) {
+      const args = this.isItemFormInSidebar
         ? ['item', 'sidebar']
-        : 'item',
-    );
+        : 'item';
+
+      routerQueue.add({
+        method: deleteFromQuery,
+        args,
+      });
+    }
   },
   methods: {
     closeItemModal() {
@@ -58,7 +68,7 @@ export default {
     v-if="item"
     class="item-view"
   >
-    <ItemActionsMenu v-if="modalNameToShow !== 'itemConflictModal'" />
+    <ItemActionsMenu v-if="isItemSavingAllowed" />
     <div class="text-fields">
       <div
         class="title"

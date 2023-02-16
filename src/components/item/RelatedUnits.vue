@@ -37,6 +37,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('items', [
+      'responseItemObj',
+    ]),
     ...mapGetters('lists', [
       'lists',
       'isOwnerView',
@@ -107,6 +110,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations([
+      'updateItemFieldInCurrentList',
+    ]),
     ...mapMutations('items', [
       'updateItemFieldLocally',
     ]),
@@ -127,6 +133,11 @@ export default {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
     changeRelatedUnitMode(value) {
+      if (this.responseItemObj) {
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
       this.relatedUnitMode === value 
         ? this.relatedUnitMode = ''
         : this.relatedUnitMode = value;
@@ -155,6 +166,7 @@ export default {
     },
     updateItemField({ field, fullUnitsForLocalUpdate }) {
       this.updateItemFieldLocally({ field, value: fullUnitsForLocalUpdate });
+      this.updateItemFieldInCurrentList({ field, value: fullUnitsForLocalUpdate });
 
       if (this.itemToShow.title || this.itemToShow.details) {
         this.$emit('save-item');

@@ -14,7 +14,6 @@ export default {
     InfoMessage,
     ButtonText,
   },
-  emits: ['scrollSidebarToTop'],
   computed: {
     ...mapGetters('lists', [
       'isOwnerView',
@@ -27,9 +26,6 @@ export default {
     ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
-    scrollSidebarToTop() {
-      this.$emit('scrollSidebarToTop');
-    },
   },
 };
 </script>
@@ -39,10 +35,7 @@ export default {
     v-if="currentItemObj"
     class="sidebar-item"
   >
-    <ItemForm 
-      v-if="isOwnerView"
-      @scroll-sidebar-to-top="scrollSidebarToTop"
-    />
+    <ItemForm v-if="isOwnerView" />
     <ItemView
       v-else
       :item="currentItemObj"

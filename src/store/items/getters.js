@@ -3,12 +3,6 @@ export default {
   responseItemObj: state => state.responseItemObj,
   isItemSavingAllowed: state => state.isItemSavingAllowed,
 
-  isItemChanged: state => {
-    return Object.keys(state.currentItemObj).some(
-      key => state.currentItemObj?.[key] !== state.cache[state.currentItemObj?.id],
-    );
-  },
-
   currentItemTags: (state, getters, rootState, rootGetters) => {
     return rootGetters['lists/currentListTags'].filter(
       listTag => getters.currentItemObj?.tags?.includes(listTag.id),
@@ -30,5 +24,4 @@ export default {
   },
 
   cache: state => state.cache,
-  partialCache: state => state.partialCache,
 };

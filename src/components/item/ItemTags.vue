@@ -34,6 +34,7 @@ export default {
     ...mapGetters('items', [
       'currentItemObj',
       'currentItemTags',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -43,6 +44,9 @@ export default {
     },
   },
   methods: {
+    ...mapMutations([
+      'updateItemFieldInCurrentList',
+    ]),
     ...mapMutations('items', [
       'updateItemFieldLocally',
     ]),
@@ -54,6 +58,11 @@ export default {
       '_addGroupingFieldForListAndItem',
     ]),
     async checkTitleUniqueness(tagTitle) {
+      if (this.responseItemObj) {
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(tagTitle);
 
       this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
@@ -90,7 +99,7 @@ export default {
           itemObj,
           title: tagTitle,
           groupingFieldType: 'tags',
-        }); 
+        });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
           .then(() => {
@@ -118,6 +127,7 @@ export default {
     },
     updateItemTags(value) {
       this.updateItemFieldLocally({ field: 'tags', value });
+      this.updateItemFieldInCurrentList({ field: 'tags', value });
       this.$emit('save-item');
     },
   },

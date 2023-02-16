@@ -20,6 +20,7 @@ import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
 import { deleteFromQuery } from '@/router/utils';
+import routerQueue from '@/router/routerQueue';
 
 export default {
   components: {
@@ -34,7 +35,6 @@ export default {
     ItemTags,
     ItemCategories,
   },
-  emits: ['scrollSidebarToTop'],
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
@@ -80,6 +80,7 @@ export default {
       showingStatuses: {
         detailsTextarea: false,
       },
+      blurTrigger: false,
     };
   },
   computed: {
@@ -90,7 +91,7 @@ export default {
     ...mapGetters('items', [
       'currentItemTags',
       'currentItemObj',
-      'isItemSavingAllowed',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -128,7 +129,10 @@ export default {
   },
   unmounted() {
     if (!this.isItemFormInSidebar) {
-      deleteFromQuery('item');
+      routerQueue.add({
+        method: deleteFromQuery,
+        args: 'item',
+      });
     }
 
     const isItemSaveNeeded = this.currentItemObj?.tags
@@ -145,7 +149,7 @@ export default {
         });
       }
 
-      this.saveItemIfAllowed();
+      this._saveItemOnServer(this.currentItemObj);
     }
 
     this.currentListItems.forEach(item => {
@@ -161,11 +165,10 @@ export default {
   methods: {
     ...mapMutations([
       'deleteItemByTemporaryId',
+      'updateItemFieldInCurrentList',
     ]),
     ...mapMutations('items', [
       'updateItemFieldLocally',
-    ]),
-    ...mapMutations('items', [
       'setCurrentItemObj',
     ]),
     ...mapActions('sidebar', [
@@ -187,23 +190,21 @@ export default {
     closeItemModal() {
       this.$vfm.hide('itemModal');
     },
-    saveItemIfAllowed() {
-      if (this.isItemSavingAllowed) {
-        this._saveItemOnServer(this.currentItemObj);
-      }
-    },
     updateItemField(field, value) {
       this.updateItemFieldLocally({ field, value });
+      this.updateItemFieldInCurrentList({ field, value });
 
-      if (this.isItemSavingAllowed) {
-        if (this.currentItemObj.title || this.currentItemObj.details) {
-          this.callActionDebounced(
-            this.currentItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
-            this.currentItemObj,
-          );
-        }
-      } else {
-        this.callActionDebounced(this.$vfm.show('itemConflictModal'));
+      if (this.responseItemObj) {
+        this.blurTrigger = !this.blurTrigger;
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
+      if (this.currentItemObj.title || this.currentItemObj.details) {
+        this.callActionDebounced(
+          this.currentItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
+          this.currentItemObj,
+        );
       }
     },
     removeItem(item) {
@@ -229,17 +230,15 @@ export default {
         this._closeSidebar();
       } else if (this.isItemFormInSidebar) {
         this.setCurrentItemObj(null);
-        deleteFromQuery('item');
+        routerQueue.add({
+          method: deleteFromQuery,
+          args: 'item',
+        });
       } else {
         this.closeItemModal();
       }
 
       this._fetchDeletedItems();
-    },
-    disableCategory(id) {
-      if (this.currentItemObj.category === id) {
-        this.updateItemField({ field: 'category', value: '' });
-      }
     },
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
@@ -272,6 +271,7 @@ export default {
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!currentItemObj.id"
+        :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('title', value)"    
       />
       <TextareaCustom
@@ -279,6 +279,7 @@ export default {
         label="details"
         :rows="4"
         :model-value="currentItemObj.details"
+        :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('details', value)"
       />
       <ButtonText
@@ -303,7 +304,7 @@ export default {
           <ItemCategories
             @throw-error="showErrorMessage"
             @clear-error="clearErrorMessage"
-            @save-item="saveItemIfAllowed"
+            @save-item="_saveItemOnServer(currentItemObj)"
           />
         </SectionCard>
         <SectionCard
@@ -315,7 +316,7 @@ export default {
           <ItemTags
             @throw-error="showErrorMessage"
             @clear-error="clearErrorMessage"
-            @save-item="saveItemIfAllowed"
+            @save-item="_saveItemOnServer(currentItemObj)"
           />
         </SectionCard>
         <ErrorMessage
@@ -333,7 +334,7 @@ export default {
         </div>
         <RelatedUnits
           :item-to-show="currentItemObj"
-          @save-item="saveItemIfAllowed"
+          @save-item="_saveItemOnServer(currentItemObj)"
         />
       </TogglingBlock>
     </div>
