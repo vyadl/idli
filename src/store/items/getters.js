@@ -22,6 +22,4 @@ export default {
   currentRelatedListsIds: (state, getters) => {
     return getters.currentItemObj?.relatedLists?.map(relatedList => relatedList.id);
   },
-
-  cache: state => state.cache,
 };

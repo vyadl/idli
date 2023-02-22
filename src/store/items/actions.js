@@ -55,15 +55,10 @@ export default {
   },
 
   _fetchItemById(
-    {
-      getters,
-      commit,
-      dispatch,
-      rootGetters,
-    }, 
+    { commit, dispatch, rootGetters }, 
     { id, cancelToken },
   ) {
-    const cachedItem = getters.cache[id];
+    const cachedItem = rootGetters['cache/cache'][id];
 
     if (cachedItem) {
       commit('setCurrentItemObj', cachedItem);
@@ -89,7 +84,7 @@ export default {
             : commit('setCurrentItemObj', responseItem);
         }
 
-        commit('saveItemInCache', responseItem);
+        dispatchFromRoot('cache/_saveItemInCache', responseItem);
 
         return responseItem;
       })
@@ -189,7 +184,7 @@ export default {
       )
       .then(({ data: responseItem }) => {
         commitFromRoot('updateItemByTemporaryId', responseItem);
-        commit('saveItemInCache', responseItem);
+        dispatchFromRoot('cache/_saveItemInCache', responseItem);
 
         if (getters.currentItemObj) {
           commit('setCurrentItemObj', responseItem);
@@ -201,7 +196,7 @@ export default {
       });
   },
 
-  _updateItemOnServer({ getters, commit, dispatch }, { item, cancelToken }) {
+  _updateItemOnServer({ getters, dispatch }, { item, cancelToken }) {
     if (!getters.isItemSavingAllowed) {
       return;
     }
@@ -226,7 +221,7 @@ export default {
       )
       .then(({ data: responseItem }) => {
         commitFromRoot('updateItemFieldsByServerResponse', responseItem);
-        commit('saveItemInCache', responseItem);
+        dispatchFromRoot('cache/_saveItemInCache', responseItem);
       })
       .catch(error => {
         if (!cancelToken) {
@@ -236,9 +231,9 @@ export default {
       });
   },
 
-  _deleteItemOnServer({ commit }, { itemId, listId }) {
+  _deleteItemOnServer(state, { itemId, listId }) {
     commitFromRoot('deleteItem', itemId);
-    commit('removeItemFromCache', itemId);
+    dispatchFromRoot('cache/_removeItemFromCache', itemId);
     
     this.$config.axios
       .delete(`${this.$config.apiBasePath}item/delete/${listId}/${itemId}`)

@@ -19,7 +19,9 @@ export default {
       'setIsItemSavingAllowed',
       'setCurrentItemObj',
       'setResponseItemObj',
-      'saveItemInCache',
+    ]),
+    ...mapActions('cache', [
+      '_saveItemInCache',
     ]),
     ...mapActions('items', [
       '_updateItemOnServer',
@@ -35,7 +37,7 @@ export default {
     },
     restoreItemFromServer() {
       this.setCurrentItemObj(this.responseItemObj);
-      this.saveItemInCache(this.responseItemObj);
+      this._saveItemInCache(this.responseItemObj);
       this.finishConflictResolve();
     },
     finishConflictResolve() {

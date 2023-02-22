@@ -79,6 +79,8 @@ export default {
 
     this._setUserFromLocalStorage();
     this._setUnitsFromLocalStorage(['settings']);
+    this._setItemsCacheFromLocalStorage();
+    this._setListsLogFromLocalStorage();
 
     initHotkeys();
   },
@@ -95,6 +97,10 @@ export default {
     ...mapActions('lists', [
       '_fetchTestLists',
       '_fetchListsForUser',
+    ]),
+    ...mapActions('cache', [
+      '_setItemsCacheFromLocalStorage',
+      '_setListsLogFromLocalStorage',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',

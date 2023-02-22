@@ -82,13 +82,16 @@ export default {
         { cancelToken },
       )
       .then(({ data: responseList }) => {
+        const { items } = responseList;
+
         if (getters.isUserOwnsCurrentList) {
           commit('updateList', responseList);
         }
 
-        commitFromRoot('items/saveManyItemsInCache', responseList.items);
-        commitFromRoot('setCurrentListItems', responseList.items);
+        commitFromRoot('setCurrentListItems', items);
         commit('setCurrentListObj', responseList);
+
+        dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items });
 
         return responseList;
       })
@@ -152,14 +155,17 @@ export default {
           categories,
         },
       )
-      .then(({ data: responseList }) => {
+      .then(({ data: responseList }) => {  
+        const { items } = responseList;
+
         commit('updateList', responseList);
 
         if (getters.currentListId === responseList.id) {
           commit('setCurrentListObj', responseList);
-          commitFromRoot('items/saveManyItemsInCache', responseList.items);
-          commitFromRoot('setCurrentListItems', responseList.items);
+          commitFromRoot('setCurrentListItems', items);
         }
+
+        dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items });
 
         return responseList;
       })
@@ -200,7 +206,7 @@ export default {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     await this.$config.axios.delete(`${this.$config.apiBasePath}list/delete/${id}`);
-    commitFromRoot('items/removeCacheByListId', id);
+    dispatchFromRoot('cache/_removeCacheByListId', id);
 
     if (getters.currentListObj?.id === id) {
       if (getters.lists.length > 1) {
@@ -268,8 +274,10 @@ export default {
     return this.$config.axios
       .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
       .then(({ data: responseList }) => {
-        commitFromRoot('setCurrentListItems', responseList.items);
-        commitFromRoot('items/saveManyItemsInCache', responseList.items);
+        const { id, items } = responseList;
+
+        commitFromRoot('setCurrentListItems', items);
+        dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items });
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
@@ -405,9 +413,13 @@ export default {
       );
   
       commit('addItemsFromTestList', responseItems);
-      commitFromRoot('setCurrentListItems', responseItems);
-      commitFromRoot('items/saveManyItemsInCache', responseItems);
       commit('setCurrentListObj', responseList);
+      commitFromRoot('setCurrentListItems', responseItems);
+
+      dispatchFromRoot('cache/_saveItemsFromListInCache', {
+        id: responseList.id, 
+        items: responseItems,
+      });
     } catch (error) {
       throw getErrorMessage(error.response.data);
     } finally {
