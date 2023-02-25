@@ -1,8 +1,8 @@
 import lsManager from '@/services/localStorageManager';
 
 export default {
-  _setItemInLocalStorage({ commit }, { name, value }) {
-    const changedValues = lsManager.setItem({ name, value });
+  _setItemInLocalStorage({ commit }, { key, value }) {
+    const changedValues = lsManager.setItemAndReturnUpdatedValues({ key, value });
 
     if (changedValues) {
       commit('setListsLog', changedValues.listsLog);
@@ -14,7 +14,7 @@ export default {
     const cache = lsManager.getItem('itemsCache');
 
     if (cache) {
-      commit('setItemsCache', JSON.parse(cache));
+      commit('setItemsCache', cache);
     }
   },
 
@@ -22,7 +22,7 @@ export default {
     const listsLog = lsManager.getItem('listsLog');
 
     if (listsLog) {
-      commit('setListsLog', JSON.parse(listsLog));
+      commit('setListsLog', listsLog);
     }
   },
 
@@ -31,19 +31,19 @@ export default {
       commit('saveItemsFromListInCache', items);
       commit('addListLoListsLog', id);
 
-      dispatch('_setItemInLocalStorage', { name: 'itemsCache', value: getters.cache });
-      dispatch('_setItemInLocalStorage', { name: 'listsLog', value: getters.listsLog });
+      dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.cache });
+      dispatch('_setItemInLocalStorage', { key: 'listsLog', value: getters.listsLog });
     }
   },
 
   _saveItemInCache({ getters, commit, dispatch }, item) {
     commit('saveItemInCache', item);
-    dispatch('_setItemInLocalStorage', { name: 'itemsCache', value: getters.cache });
+    dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.cache });
   },
 
   _removeItemFromCache({ getters, commit, dispatch }, itemId) {
     commit('removeItemFromCache', itemId);
-    dispatch('_setItemInLocalStorage', { name: 'itemsCache', value: getters.cache });
+    dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.cache });
   },
 
   _resetItemsCache({ commit }) {

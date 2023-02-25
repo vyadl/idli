@@ -1,32 +1,45 @@
 export default {
-  setItem({ name, value }) {
+  setItemAndReturnUpdatedValues({ key, value }) {
     let returnValue = null;
 
     try {
-      localStorage.setItem(name, JSON.stringify(value));
-    } catch {
-      const valuesWithoutOldestData = this.removeOldestData();
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (err) {
+      if (this.isQuotaExceededError(err)) {
+        const valuesWithoutOldestData = this.removeOldestDataAndReturnUpdatedValues();
 
-      if (valuesWithoutOldestData) {
-        returnValue = valuesWithoutOldestData;
-        this.setItem({ name, value });
+        if (valuesWithoutOldestData) {
+          returnValue = valuesWithoutOldestData;
+          this.setItemAndReturnUpdatedValues({ key, value });
+        }
       }
     }
-
+  
     return returnValue;
   },
 
-  removeOldestData() {
-    const listsLog = JSON.parse(this.getItem('listsLog'));
+  isQuotaExceededError(err) {
+    return err instanceof DOMException
+      && (
+        err.code === 22
+        || err.code === 1014
+        || err.name === 'QuotaExceededError'
+        || err.name === 'NS_ERROR_DOM_QUOTA_REACHED'
+      );
+  },
 
-    if (!listsLog || !Object.keys(listsLog).length) {
+  removeOldestDataAndReturnUpdatedValues() {
+    const listsLog = this.getItem('listsLog');
+    const listsIdsFromLog = Object.keys(listsLog);
+
+    if (!listsLog || !listsIdsFromLog.length) {
       return null;
     }
 
-    const itemsCache = JSON.parse(this.getItem('itemsCache'));
+    const itemsCache = this.getItem('itemsCache');
 
     const oldestSavedListTimestamp = Math.min(...Object.values(listsLog));
-    const oldestSavedListId = Object.keys(listsLog)
+    const oldestSavedListId = listsIdsFromLog
       .find(key => listsLog[key] === oldestSavedListTimestamp);
     
     const itemsIdsToDelete = Object.keys(itemsCache).filter(
@@ -39,16 +52,22 @@ export default {
 
     delete listsLog[oldestSavedListId];
 
-    this.setItem({ name: 'listsLog', value: listsLog });
+    this.setItemAndReturnUpdatedValues({ key: 'listsLog', value: listsLog });
 
     return { itemsCache, listsLog };
   },
   
-  removeItem(name) {
-    localStorage.removeItem(name);
+  removeItem(key) {
+    localStorage.removeItem(key);
   },
   
-  getItem(name) {
-    return localStorage.getItem(name);
+  getItem(key) {
+    const value = localStorage.getItem(key);
+
+    if (!value) {
+      return null;
+    }
+
+    return JSON.parse(value);
   },
 };
