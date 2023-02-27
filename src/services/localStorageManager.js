@@ -62,18 +62,18 @@ export default {
   },
   
   getItem(key) {
-    const value = localStorage.getItem(key);
+    const rawValue = localStorage.getItem(key);
 
-    if (!value) {
+    if (!rawValue) {
       return null;
     }
 
     let returnValue;
 
     try {
-      returnValue = JSON.parse(value);
+      returnValue = JSON.parse(rawValue);
     } catch {
-      returnValue = value;
+      returnValue = rawValue;
     }
 
     return returnValue;
