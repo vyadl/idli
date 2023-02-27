@@ -84,6 +84,10 @@ export default {
       '_openSidebar',
     ]),
     setItemForEditting() {
+      if (this.isItemActive) {
+        return;
+      }
+
       const { id } = this.item;
 
       this.isItemFormInSidebar
