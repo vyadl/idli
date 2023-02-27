@@ -27,20 +27,19 @@ export default {
       '_updateItemOnServer',
     ]),
     saveCurrentItem() {
+      this.setIsItemSavingAllowed(true);
       this._updateItemOnServer({
         item: this.currentItemObj,
         cancelToken: null,
       })
         .then(() => {
-          this.finishConflictResolve();
+          this.$vfm.hide('itemConflictModal');
+          this.setResponseItemObj(null);
         });
     },
     restoreItemFromServer() {
       this.setCurrentItemObj(this.responseItemObj);
       this._saveItemInCache(this.responseItemObj);
-      this.finishConflictResolve();
-    },
-    finishConflictResolve() {
       this.setIsItemSavingAllowed(true);
       this.$vfm.hide('itemConflictModal');
       this.setResponseItemObj(null);
