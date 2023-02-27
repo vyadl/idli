@@ -68,6 +68,14 @@ export default {
       return null;
     }
 
-    return JSON.parse(value);
+    let returnValue;
+
+    try {
+      returnValue = JSON.parse(value);
+    } catch {
+      returnValue = value;
+    }
+
+    return returnValue;
   },
 };
