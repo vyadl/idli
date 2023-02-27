@@ -20,6 +20,7 @@ import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
 import { deleteFromQuery } from '@/router/utils';
+import routerQueue from '@/router/routerQueue';
 
 export default {
   components: {
@@ -34,7 +35,6 @@ export default {
     ItemTags,
     ItemCategories,
   },
-  emits: ['scrollSidebarToTop'],
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
@@ -80,6 +80,7 @@ export default {
       showingStatuses: {
         detailsTextarea: false,
       },
+      blurTrigger: false,
     };
   },
   computed: {
@@ -88,10 +89,9 @@ export default {
       'explicitRequestsNumber',
     ]),
     ...mapGetters('items', [
-      'edittingItemIndex',
-      'edittingItemObj',
       'currentItemTags',
       'currentItemObj',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -99,45 +99,48 @@ export default {
     itemName() {
       return this.isUntitled
         ? ''
-        : this.edittingItemObj.title;
+        : this.currentItemObj.title;
     },
     isUntitled() {
-      return !this.edittingItemObj.title;
+      return !this.currentItemObj.title;
     },
     titlePlaceholder() {
       let placeholder = '';
 
-      if (this.edittingItemObj.temporaryId) {
+      if (this.currentItemObj.temporaryId) {
         placeholder = this.$options.NEW_ITEM_PLACEHOLDER;
       } else if (this.isUntitled) {
         placeholder = this.$options.UNTITLED_ITEM_PLACEHOLDER;
-      }  
+      }
 
       return placeholder;
     },
     isDetailsTextareaShown() {
-      return !!this.edittingItemObj.details.length 
+      return !!this.currentItemObj.details.length 
         || this.showingStatuses.detailsTextarea;
     },
     areAddonsShown() {
-      return typeof this.edittingItemObj.category === 'number'
+      return typeof this.currentItemObj.category === 'number'
         || !!this.currentItemTags?.length
-        || !!this.edittingItemObj.relatedItems?.length
-        || !!this.edittingItemObj.relatedLists?.length
+        || !!this.currentItemObj.relatedItems?.length
+        || !!this.currentItemObj.relatedLists?.length
         || this.showingStatuses.addons;
     },
   },
   unmounted() {
     if (!this.isItemFormInSidebar) {
-      deleteFromQuery('item');
+      routerQueue.add({
+        method: deleteFromQuery,
+        args: 'item',
+      });
     }
 
-    const isItemSaveNeeded = this.edittingItemObj?.tags
-      && this.edittingItemObj.category
+    const isItemSaveNeeded = this.currentItemObj?.tags
+      && this.currentItemObj.category
       && !this.explicitRequestsNumber;
 
     if (isItemSaveNeeded) {
-      const { title, details } = this.edittingItemObj;
+      const { title, details } = this.currentItemObj;
 
       if (!title && details) {
         this.updateItemFieldLocally({
@@ -146,7 +149,7 @@ export default {
         });
       }
 
-      this._saveItemOnServer(this.edittingItemObj);
+      this._saveItemOnServer(this.currentItemObj);
     }
 
     this.currentListItems.forEach(item => {
@@ -158,17 +161,15 @@ export default {
     });
 
     this.setCurrentItemObj(null);
-    this.setEdittingItemIndex(null);
   },
   methods: {
     ...mapMutations([
-      'updateItemFieldLocally',
       'deleteItemByTemporaryId',
+      'updateItemFieldInCurrentList',
     ]),
     ...mapMutations('items', [
+      'updateItemFieldLocally',
       'setCurrentItemObj',
-      'setEdittingItemIndex',
-      'resetRelatedUnitsLocally',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',
@@ -182,7 +183,6 @@ export default {
       '_addItemOnServer',
       '_updateItemOnServer',
       '_deleteItemOnServer',
-      '_fetchItemById',
     ]),
     ...mapActions('bin', [
       '_fetchDeletedItems',
@@ -192,11 +192,18 @@ export default {
     },
     updateItemField(field, value) {
       this.updateItemFieldLocally({ field, value });
-        
-      if (this.edittingItemObj.title || this.edittingItemObj.details) {
+      this.updateItemFieldInCurrentList({ field, value });
+
+      if (this.responseItemObj) {
+        this.blurTrigger = !this.blurTrigger;
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
+      if (this.currentItemObj.title || this.currentItemObj.details) {
         this.callActionDebounced(
-          this.edittingItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
-          this.edittingItemObj,
+          this.currentItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
+          this.currentItemObj,
         );
       }
     },
@@ -222,18 +229,16 @@ export default {
       } else if (this.isItemFormInSidebar && item.temporaryId) {
         this._closeSidebar();
       } else if (this.isItemFormInSidebar) {
-        this.setEdittingItemIndex(null);
+        this.setCurrentItemObj(null);
+        routerQueue.add({
+          method: deleteFromQuery,
+          args: 'item',
+        });
       } else {
         this.closeItemModal();
       }
 
-      this.resetRelatedUnitsLocally();
       this._fetchDeletedItems();
-    },
-    disableCategory(id) {
-      if (this.edittingItemObj.category === id) {
-        this.updateItemField({ field: 'category', value: '' });
-      }
     },
     toggleShowingStatus(target) {
       this.showingStatuses[target] = !this.showingStatuses[target];
@@ -253,7 +258,7 @@ export default {
 
 <template>
   <div
-    v-if="edittingItemObj"
+    v-if="currentItemObj"
     class="item-form"
     :class="`${globalTheme}-theme`"
   >
@@ -265,16 +270,16 @@ export default {
         :rows="3"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
-        :is-focus="!edittingItemObj.id"
-        :disabled="!!explicitRequestsNumber"
+        :is-focus="!currentItemObj.id"
+        :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('title', value)"    
       />
       <TextareaCustom
         v-if="isDetailsTextareaShown"
         label="details"
         :rows="4"
-        :model-value="edittingItemObj.details"
-        :disabled="!!explicitRequestsNumber"
+        :model-value="currentItemObj.details"
+        :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('details', value)"
       />
       <ButtonText
@@ -299,6 +304,7 @@ export default {
           <ItemCategories
             @throw-error="showErrorMessage"
             @clear-error="clearErrorMessage"
+            @save-item="_saveItemOnServer(currentItemObj)"
           />
         </SectionCard>
         <SectionCard
@@ -310,6 +316,7 @@ export default {
           <ItemTags
             @throw-error="showErrorMessage"
             @clear-error="clearErrorMessage"
+            @save-item="_saveItemOnServer(currentItemObj)"
           />
         </SectionCard>
         <ErrorMessage
@@ -325,11 +332,14 @@ export default {
             {{ $options.RELATED_UNITS_HINT_TEXT }}
           </PopupBox>
         </div>
-        <RelatedUnits />
+        <RelatedUnits
+          :item-to-show="currentItemObj"
+          @save-item="_saveItemOnServer(currentItemObj)"
+        />
       </TogglingBlock>
     </div>
     <footer
-      v-if="edittingItemObj?.id"
+      v-if="currentItemObj?.id"
       class="footer"
     >
       <PopupBox
@@ -338,16 +348,16 @@ export default {
         stop-propagation
       >
         <div>
-          created at: {{ getFormattedDate(edittingItemObj.createdAt) }}
+          created at: {{ getFormattedDate(currentItemObj.createdAt) }}
         </div>
         <div>
-          updated at: {{ getFormattedDate(edittingItemObj.updatedAt) }}
+          updated at: {{ getFormattedDate(currentItemObj.updatedAt) }}
         </div>
       </PopupBox>
       <ButtonText
         text="delete"
         style-type="underline"
-        @click="removeItem(edittingItemObj)"
+        @click="removeItem(currentItemObj)"
       />
     </footer>
   </div>

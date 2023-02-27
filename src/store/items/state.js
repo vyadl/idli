@@ -1,4 +1,6 @@
 export default {
   currentItemObj: null,
-  edittingItemIndex: null,
+  responseItemObj: null,
+  isItemSavingAllowed: true,
+  cache: {},
 };

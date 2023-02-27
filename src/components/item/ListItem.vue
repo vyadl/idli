@@ -25,7 +25,7 @@ export default {
       'areItemDetailsShown',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
     ]),
     isUntitled() {
       return !this.item.title;
@@ -44,9 +44,9 @@ export default {
       return name;
     },
     isItemActive() {
-      return this.edittingItemObj?.temporaryId 
-        ? this.edittingItemObj.temporaryId === this.item.temporaryId
-        : this.edittingItemObj?.id === this.item.id;
+      return this.currentItemObj?.temporaryId 
+        ? this.currentItemObj.temporaryId === this.item.temporaryId
+        : this.currentItemObj?.id === this.item.id;
     },
     styles() {
       this.shuffleTrigger; // eslint-disable-line no-unused-expressions
@@ -80,16 +80,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions('items', [
-      '_findAndSetEdittingItemIndex',
-    ]),
     ...mapActions('sidebar', [
       '_openSidebar',
     ]),
     setItemForEditting() {
       const { id } = this.item;
-
-      this._findAndSetEdittingItemIndex(this.item);
 
       this.isItemFormInSidebar
         ? this._openSidebar('item')

@@ -14,6 +14,7 @@ export default {
   emits: [
     'throw-error',
     'clear-error',
+    'save-item',
   ],
   data() {
     return {
@@ -25,17 +26,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'explicitRequestsNumber',
-    ]),
     ...mapGetters('lists', [
       'lists',
       'currentListTags',
       'currentListTagsTitles',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
       'currentItemTags',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
@@ -46,19 +45,24 @@ export default {
   },
   methods: {
     ...mapMutations([
+      'updateItemFieldInCurrentList',
+    ]),
+    ...mapMutations('items', [
       'updateItemFieldLocally',
     ]),
     ...mapMutations('lists', [
       'addTagToListLocally',
-    ]),
-    ...mapActions('items', [
-      '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
       '_checkGroupingFieldTitleUniqueness',
       '_addGroupingFieldForListAndItem',
     ]),
     async checkTitleUniqueness(tagTitle) {
+      if (this.responseItemObj) {
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(tagTitle);
 
       this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
@@ -72,7 +76,7 @@ export default {
       const newTagObj = this.currentListTags?.find(tag => tag.title === tagTitle);
 
       if (newTagObj) {
-        this.updateItemTags([...this.edittingItemObj.tags, newTagObj.id]);
+        this.updateItemTags([...this.currentItemObj.tags, newTagObj.id]);
       } else {
         this.createNewTag(tagTitle);
       }
@@ -83,8 +87,8 @@ export default {
       const isTitleUnique = this.checkTitleUniqueness(tagTitle);
 
       if (isTitleUnique) {
-        const { listId } = this.edittingItemObj;
-        const itemObj = JSON.parse(JSON.stringify(this.edittingItemObj));
+        const { listId } = this.currentItemObj;
+        const itemObj = JSON.parse(JSON.stringify(this.currentItemObj));
 
         this.addTagToListLocally({ listId, tagTitle });
         this.requestHandling.isRequestProcessing = true;
@@ -95,7 +99,7 @@ export default {
           itemObj,
           title: tagTitle,
           groupingFieldType: 'tags',
-        }); 
+        });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
           .then(() => {
@@ -110,11 +114,11 @@ export default {
       );
 
       if (removedTagObj) {
-        const removedTagIndex = this.edittingItemObj.tags.findIndex(
+        const removedTagIndex = this.currentItemObj.tags.findIndex(
           tagId => tagId === removedTagObj.id,
         );
         
-        const tagsArrayCopy = [...this.edittingItemObj.tags];
+        const tagsArrayCopy = [...this.currentItemObj.tags];
 
         tagsArrayCopy.splice(removedTagIndex, 1);
 
@@ -123,7 +127,8 @@ export default {
     },
     updateItemTags(value) {
       this.updateItemFieldLocally({ field: 'tags', value });
-      this._saveItemOnServer(this.edittingItemObj);
+      this.updateItemFieldInCurrentList({ field: 'tags', value });
+      this.$emit('save-item');
     },
   },
 };
@@ -145,8 +150,7 @@ export default {
       :can-clear="false"
       :create-option="false"
       :clear-search-trigger="clearSearch"
-      :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
-      :show-options="!explicitRequestsNumber"
+      :disabled="requestHandling.isRequestProcessing"
       @select="tag => addTag(tag)"
       @deselect="tag => deleteTag(tag)"
       @search-change="checkTitleUniqueness"

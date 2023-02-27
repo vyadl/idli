@@ -1,21 +1,17 @@
 export default {
-  setCurrentItemObj(state, item) {
-    state.currentItemObj = item;
+  setCurrentItemObj(state, value) {
+    state.currentItemObj = value;
   },
 
-  setEdittingItemIndex(state, index) {
-    state.edittingItemIndex = index;
+  setResponseItemObj(state, value) {
+    state.responseItemObj = value;
   },
 
-  updateRelatedUnitsLocally(state, { field, value }) {
+  updateItemFieldLocally(state, { field, value }) {
     state.currentItemObj[field] = value;
   },
 
-  resetRelatedUnitsLocally(state) {
-    if (state.currentItemObj) {
-      state.currentItemObj.relatedItems = null;
-      state.currentItemObj.relatedLists = null;
-      state.currentItemObj.referringItems = null;
-    }
+  setIsItemSavingAllowed(state, value) {
+    state.isItemSavingAllowed = value;
   },
 };

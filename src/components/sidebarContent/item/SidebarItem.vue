@@ -14,36 +14,32 @@ export default {
     InfoMessage,
     ButtonText,
   },
-  emits: ['scrollSidebarToTop'],
   computed: {
     ...mapGetters('lists', [
       'isOwnerView',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
     ]),
   },
   methods: {
     ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
-    scrollSidebarToTop() {
-      this.$emit('scrollSidebarToTop');
-    },
   },
 };
 </script>
 
 <template>
   <SectionCard
-    v-if="edittingItemObj"
+    v-if="currentItemObj"
     class="sidebar-item"
   >
-    <ItemForm 
-      v-if="isOwnerView"
-      @scroll-sidebar-to-top="scrollSidebarToTop"
+    <ItemForm v-if="isOwnerView" />
+    <ItemView
+      v-else
+      :item="currentItemObj"
     />
-    <ItemView v-else />
   </SectionCard>
   <div v-else>
     <InfoMessage message="choose item from the list to see it here" />

@@ -28,9 +28,7 @@ export default {
     next(vm => {
       const loadItem = item => {
         vm._fetchItemById({ id: item, cancelToken: null })
-          .then((responseItem) => {
-            vm._findAndSetEdittingItemIndex(responseItem);
-            
+          .then(() => {            
             if (to.query.item) {
               vm.isItemFormInSidebar
                 ? vm._openSidebar('item')
@@ -87,7 +85,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
-            this._closeSidebar();
+            vm._closeSidebar();
           });
       }
     });
@@ -115,7 +113,7 @@ export default {
       'isOwnerView',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
     ]),
     ...mapGetters('filters', [
       'allFilters',
@@ -255,8 +253,7 @@ export default {
       'toggleItemsOrder',
     ]),
     ...mapMutations('items', [
-      'setEdittingItemIndex',
-      'resetRelatedUnitsLocally',
+      'setCurrentItemObj',
     ]),
     ...mapMutations('lists', [
       'setCurrentListView',
@@ -271,7 +268,6 @@ export default {
     ...mapActions('items', [
       '_fetchItemById',
       '_addNewItemPlaceholder',
-      '_findAndSetEdittingItemIndex',
     ]),
     ...mapActions('filters', [
       '_filterList',
@@ -281,8 +277,6 @@ export default {
       '_closeSidebar',
     ]),
     fetchItemById(id) {
-      this.resetRelatedUnitsLocally();
-
       if (this.serverRequests.length) {
         this.serverRequests.forEach(request => {
           request.cancel();
@@ -313,25 +307,25 @@ export default {
       document.addEventListener('keyup', event => {
         if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
           if ((event.code === 'ArrowUp' || event.code === 'ArrowDown')
-            && this.edittingItemObj
+            && this.currentItemObj
             && this.isItemFormInSidebar
             && !['cloud', 'stars'].includes(this.mode)) {
             const currentItemIndex = this.finalList
-              .findIndex(item => item === this.edittingItemObj);
+              .findIndex(item => item.id === this.currentItemObj.id);
 
             if (event.code === 'ArrowUp' && this.finalList[currentItemIndex - 1]) {
-              const newIndex = this.currentListObj.items
-                .findIndex(item => item === this.finalList[currentItemIndex - 1]);
+              const newItemObj = this.currentListObj.items
+                .find(item => item === this.finalList[currentItemIndex - 1]);
 
-              this.setEdittingItemIndex(newIndex);
+              this.setCurrentItemObj(newItemObj);
             } else if (event.code === 'ArrowDown' && this.finalList[currentItemIndex + 1]) {
-              const newIndex = this.currentListObj.items
-                .findIndex(item => item === this.finalList[currentItemIndex + 1]);
+              const newItemObj = this.currentListObj.items
+                .find(item => item === this.finalList[currentItemIndex + 1]);
 
-              this.setEdittingItemIndex(newIndex);
+              this.setCurrentItemObj(newItemObj);
             }
 
-            this.fetchItemById(this.edittingItemObj.id);
+            this.fetchItemById(this.currentItemObj.id);
           }
         }
       });

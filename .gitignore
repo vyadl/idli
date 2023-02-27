@@ -8,3 +8,4 @@ dist
 .htaccess
 app.js
 .vscode
+src/testingData.js

@@ -7,20 +7,20 @@ export default {
   _setCurrentSearchValue({ commit }, search) {
     commit('setCurrentSearchValue', search);
 
-    changeQueryOption(
-      'search', 
-      search.length >= MIN_SEARCH_SYMBOLS ? search : null,
-    );
+    changeQueryOption({
+      option: 'search', 
+      value: search.length >= MIN_SEARCH_SYMBOLS ? search : null,
+    });
   },
 
   _setTags({ commit }, tags) {
     commit('setTags', tags);
-    changeQueryRespectingDefault('tags', JSON.stringify(tags));
+    changeQueryRespectingDefault({ option: 'tags', value: JSON.stringify(tags) });
   },
 
   _setCategories({ commit }, categories) {
     commit('setCategories', categories);
-    changeQueryRespectingDefault('categories', JSON.stringify(categories));
+    changeQueryRespectingDefault({ option: 'categories', value: JSON.stringify(categories) });
   },
 
   _filterList({ state, getters, commit }, list) {

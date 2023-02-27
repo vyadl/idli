@@ -29,9 +29,6 @@ export default {
     ...mapMutations([
       'setCurrentListItems',
     ]),
-    ...mapMutations('items', [
-      'resetRelatedUnitsLocally',
-    ]),
     ...mapActions('items', [
       '_fetchItemById',
     ]),
@@ -49,8 +46,6 @@ export default {
       this._updateListItemsOrder();
     },
     fetchItemById(id) {
-      this.resetRelatedUnitsLocally();
-
       if (this.serverRequests.length) {
         this.serverRequests.forEach(request => {
           request.cancel();
