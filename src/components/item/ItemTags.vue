@@ -44,12 +44,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations([
-      'updateItemFieldInCurrentList',
-    ]),
-    ...mapMutations('items', [
-      'updateItemFieldLocally',
-    ]),
     ...mapMutations('lists', [
       'addTagToListLocally',
     ]),
@@ -126,9 +120,7 @@ export default {
       }
     },
     updateItemTags(value) {
-      this.updateItemFieldLocally({ field: 'tags', value });
-      this.updateItemFieldInCurrentList({ field: 'tags', value });
-      this.$emit('save-item');
+      this.$emit('save-item', 'tags', value);
     },
   },
 };

@@ -15,7 +15,7 @@ export default {
       default: 'bordered',
       validator(value) {
         return value
-          ? ['bordered'].includes(value)
+          ? ['bordered', 'plain'].includes(value)
           : true;
       },
     },
@@ -123,10 +123,10 @@ export default {
     z-index: 15;
     width: 200px;
     background-color: map-get($colors, 'white');
-    border: 1px solid map-get($colors, 'gray-light');
 
     &.bordered {
       padding: 7px 10px;
+      border: 1px solid map-get($colors, 'gray-light');
     }
 
     &.right {
@@ -175,9 +175,12 @@ export default {
     &.inverted-theme {
       background-color: map-get($colors, 'black');
 
+      &.popup-content {
+        border-color: map-get($colors, 'gray-dark');
+      }
+
       &.informational {
         color: map-get($colors, 'gray-light');
-        font-size: 12px;
       }
     }
   }

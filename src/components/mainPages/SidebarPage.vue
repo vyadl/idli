@@ -13,6 +13,7 @@ import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { sidebarModesForViews } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
+import { sidebarWidth, sidebarButtonsWidth, sidebarWidthBreakpoint } from '@/scss/style.module.scss';
 
 export default {
   components: {
@@ -27,6 +28,13 @@ export default {
     CustomLink,
     SearchVault,
     PopupBox,
+  },
+  emits: ['resize'],
+  data() {
+    return {
+      dividerPosition: +sidebarWidth,
+      compactLayout: 'left',
+    };
   },
   computed: {
     ...mapGetters('appearance', [
@@ -58,6 +66,19 @@ export default {
     sidebarModes() {
       return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
     },
+    sidebarStyles() {
+      const styles = {};
+
+      styles.width = `${this.dividerPosition}px`;
+      styles.transform = this.isSidebarOpen
+        ? 'translateX(0)'
+        : `translateX(${this.dividerPosition}px)`;
+
+      return styles;
+    },
+    isSidebarBreakpointReached() {
+      return this.dividerPosition > +sidebarWidthBreakpoint;
+    },
   },
   created() {
     const { sidebar } = this.$route.query;
@@ -83,6 +104,24 @@ export default {
         );
       }
     });
+
+    window.addEventListener('resize', () => {
+      const isRemainingSpaceEnoughForSidebarButtons = window.innerWidth > this.dividerPosition 
+        + +sidebarButtonsWidth;
+      const isSidebarButtonsBreakpointReached = window.innerWidth < this.dividerPosition 
+        + +sidebarButtonsWidth * 2;
+
+      if (!isRemainingSpaceEnoughForSidebarButtons && !this.isMobileScreen) {
+        this.dividerPosition = window.innerWidth - +sidebarButtonsWidth;
+      }
+
+      if (this.isMobileScreen) {
+        this.dividerPosition = +sidebarWidth;
+      }
+
+      this.compactLayout = isSidebarButtonsBreakpointReached;
+      this.$emit('resize', this.dividerPosition);
+    });
   },
   methods: {
     ...mapActions('lists', [
@@ -95,15 +134,42 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
+    handleResize(e) {
+      e.preventDefault();
+
+      const newPosition = window.innerWidth - e.pageX;
+      const isRemainingSpaceEnoughForSidebarButtons = e.pageX >= +sidebarButtonsWidth;
+      const isSidebarButtonsBreakpointReached = e.pageX < +sidebarButtonsWidth * 2;
+
+      if (newPosition >= +sidebarWidth && isRemainingSpaceEnoughForSidebarButtons) {
+        this.dividerPosition = newPosition;
+      }
+
+      if (!isRemainingSpaceEnoughForSidebarButtons) {
+        this.dividerPosition = window.innerWidth - +sidebarButtonsWidth;
+        this.endResize();
+      }
+
+      this.compactLayout = isSidebarButtonsBreakpointReached;
+      this.$emit('resize', this.dividerPosition);
+    },
+    startResize() {
+      document.addEventListener('mousemove', this.handleResize);
+    },
+    endResize() {
+      document.removeEventListener('mousemove', this.handleResize);
+    },
     openListModal() {
       this.$vfm.show('listModal');
     },
     defineButtonStyleType(mode) {
-      if (mode === 'bin' && !this.isMobileScreen) {
+      if (mode === 'bin' && !this.isMobileScreen && !this.compactLayout) {
         return 'underline';
       }
 
-      return this.isMobileScreen ? 'brick' : 'bordered';
+      return this.isMobileScreen || this.compactLayout
+        ? 'brick'
+        : 'bordered';
     },
     exitPublicView() {
       this._setCurrentListView('owner');
@@ -122,14 +188,27 @@ export default {
   <div
     class="sidebar-page"
     :class="[
-      { shown: isSidebarOpen },
+      {
+        shown: isSidebarOpen,
+        compact: compactLayout,
+      },
       `${globalTheme}-theme`,
     ]"
+    :style="sidebarStyles"
+    @mouseup="endResize()"
   >
     <div
+      v-show="!isSidebarOpen"
       ref="edgeMoveCatcher"
       class="edge-move-catcher"
     />
+    <div
+      v-if="isSidebarOpen && !isMobileScreen"
+      class="divider-container"
+      @mousedown="startResize()"
+    >
+      <div class="divider" />
+    </div>
     <div
       v-if="isOwnerView || $route.name === 'home'"
       class="search-button"
@@ -140,7 +219,7 @@ export default {
       v-if="isAddUnitPossible"
       class="add-unit-button"
       button-style-type="plus"
-      :position="isMobileScreen ? 'upper-right' : 'left'"
+      :position="isMobileScreen || compactLayout ? 'upper-right' : 'left'"
       stop-propagation
       content-type="functional"
     >
@@ -181,19 +260,21 @@ export default {
         title="sign in"
       />
     </div>
-    <div class="sidebar-buttons">
+    <div
+      class="sidebar-buttons"
+    >
       <div class="mode-buttons">
         <ButtonText
           v-for="mode in sidebarModes"
           :key="mode"
           :class="{
-            'mode-button' : !isMobileScreen && mode !== 'bin',
+            'mode-button' : !isMobileScreen && !compactLayout && mode !== 'bin',
             'bin-mode-button' : mode === 'bin',
           }"
-          :with-box-shadow="!isMobileScreen && mode !== 'bin'"
+          :with-box-shadow="!isMobileScreen && !compactLayout && mode !== 'bin'"
           :text="mode"
           :style-type="defineButtonStyleType(mode)"
-          :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
+          :size="mode === 'bin' || isMobileScreen || compactLayout ? 'small' : ''"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
@@ -212,12 +293,27 @@ export default {
       ref="sidebarContent"
       class="sidebar-content"
     >
-      <SidebarVisualization v-if="sidebarMode === 'visualization'" />
-      <SidebarFilters v-if="sidebarMode === 'filters'" />
-      <SidebarLists v-if="sidebarMode === 'lists'" />
+      <SidebarVisualization
+        v-if="sidebarMode === 'visualization'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
+      <SidebarFilters
+        v-if="sidebarMode === 'filters'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
+      <SidebarLists
+        v-if="sidebarMode === 'lists'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
       <SidebarSettings v-if="sidebarMode === 'settings'" />
-      <SidebarBin v-if="sidebarMode === 'bin'" />
-      <SidebarItem v-if="sidebarMode === 'item'" />
+      <SidebarBin
+        v-if="sidebarMode === 'bin'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
+      <SidebarItem
+        v-if="sidebarMode === 'item'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
     </div>
   </div>
 </template>
@@ -228,18 +324,11 @@ export default {
     z-index: 10;
     top: 0;
     right: 0;
-    width: 300px;
     height: 100vh;
     background-color: map-get($colors, 'white');
-    transform: translateX(300px);
-    transition:
-      transform 0.3s,
-      box-shadow 0.7s;
+    transition: transform 0.3s;
 
     &.shown {
-      box-shadow: 15px 0 25px 0 map-get($colors, 'gray-light');
-      transform: translateX(0);
-
       .mode-buttons {
         transform: translateX(-105%) translateX(-15px);
       }
@@ -255,6 +344,34 @@ export default {
       height: 100vh;
       width: 1px;
       left: -1px;
+    }
+
+    .divider-container {
+      --padding-right: 8px;
+      position: absolute;
+      z-index: 10;
+      height: 100vh;
+      right: calc(100% - var(--padding-right));
+      display: flex;
+      justify-content: flex-end;
+      padding-right: var(--padding-right);
+      width: calc(var(--padding-right) * 2);
+      background-color: transparent;
+      cursor: ew-resize;
+
+      &:hover {
+        .divider {
+          width: 4px;
+        }
+      }
+    }
+
+    .divider {
+      top: 0;
+      height: 100vh;
+      width: 2px;
+      background: map-get($colors, 'gray-light');
+      transition: width 0.2s;
     }
 
     .exit-public-view-button,
@@ -338,11 +455,6 @@ export default {
     &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
-      border-left: 1px solid map-get($colors, 'gray-light');
-
-      &.shown {
-        box-shadow: none;
-      }
 
       .add-unit-button,
       .search-button,
@@ -350,12 +462,16 @@ export default {
       .sidebar-content {
         background-color: map-get($colors, 'black');
       }
-    }
-  }
 
-  @media #{breakpoints.$s-media} {
-    .sidebar-page {
+      .divider {
+        background-color: map-get($colors, 'gray-dark');
+      }
+    }
+
+    &.compact {
       &.shown {
+        border-left: 1px solid map-get($colors, 'gray-light');
+
         .mode-buttons {
           transform: none;
         }
@@ -366,8 +482,47 @@ export default {
         }
       }
 
-      .search-button {
-        top: 80px;
+      .sidebar-buttons {
+        position: fixed;
+        z-index: 9;
+        top: 0;
+        bottom: unset;
+        padding-bottom: 30px;
+      }
+
+      .mode-buttons {
+        flex-flow: row wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2px;
+        padding: 10px 20px;
+        background-color: map-get($colors, 'white');
+      }
+
+      .sidebar-content {
+        padding-top: 80px;
+        padding-bottom: 100px;
+      }
+
+      .state-button {
+        bottom: 120px;
+      }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .sidebar-page {
+      &.shown {
+        border-left: 1px solid map-get($colors, 'gray-light');
+
+        .mode-buttons {
+          transform: none;
+        }
+
+        .exit-public-view-button,
+        .auth-buttons {
+          display: none;
+        }
       }
 
       .sidebar-buttons {
@@ -398,6 +553,8 @@ export default {
     }
 
     .inverted-theme {
+      border-left: 1px solid map-get($colors, 'gray-dark');
+
       .mode-buttons {
         background-color: map-get($colors, 'black');
       }

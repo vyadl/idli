@@ -14,6 +14,9 @@ export default {
     RadioCustom,
     ButtonText,
   },
+  props: {
+    dividerPosition: Number,
+  },
   data() {
     return {
       themeTitles: ['default', 'inverted'],
@@ -85,7 +88,7 @@ export default {
 <template>
   <SectionCard
     class="sidebar-settings"
-    :class="`${globalTheme}-theme`"
+    :class="[`${globalTheme}-theme`]"
     title="settings"
   >
     <div class="options-container">
@@ -171,6 +174,9 @@ export default {
 
 <style lang="scss">
   .sidebar-settings {
+    max-width: 300px;
+    margin: 0 auto;
+
     .options-container {
       margin-bottom: 20px;
     }

@@ -35,6 +35,9 @@ export default {
     ItemTags,
     ItemCategories,
   },
+  props: {
+    isSidebarBreakpointReached: Boolean,
+  },
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
@@ -135,18 +138,17 @@ export default {
       });
     }
 
-    const isItemSaveNeeded = this.currentItemObj?.tags
-      && this.currentItemObj.category
-      && !this.explicitRequestsNumber;
-
-    if (isItemSaveNeeded) {
+    if (!this.serverRequests.length) {
       const { title, details } = this.currentItemObj;
 
       if (!title && details) {
-        this.updateItemFieldLocally({
+        const generatedTitleObj = {
           field: 'title',
           value: generateTitleFromDetails(details),
-        });
+        };
+
+        this.updateItemFieldLocally(generatedTitleObj);
+        this.updateItemFieldInCurrentList(generatedTitleObj);
       }
 
       this._saveItemOnServer(this.currentItemObj);
@@ -193,6 +195,11 @@ export default {
     updateItemField(field, value) {
       this.updateItemFieldLocally({ field, value });
       this.updateItemFieldInCurrentList({ field, value });
+
+      this.updateItemFieldLocally({
+        field: 'updatedAt',
+        value: new Date().toISOString(),
+      });
 
       if (this.responseItemObj) {
         this.blurTrigger = !this.blurTrigger;
@@ -295,30 +302,35 @@ export default {
         title="category, tags & related"
         :force-show="areAddonsShown"
       >
-        <SectionCard
-          title="category"
-          position="left"
-          text-style="caps"
-          size="small"
+        <div
+          class="grouping-fields"
+          :class="{ 'two-columns': isSidebarBreakpointReached }"
         >
-          <ItemCategories
-            @throw-error="showErrorMessage"
-            @clear-error="clearErrorMessage"
-            @save-item="_saveItemOnServer(currentItemObj)"
-          />
-        </SectionCard>
-        <SectionCard
-          title="tags"
-          position="left"
-          text-style="caps"
-          size="small"
-        >
-          <ItemTags
-            @throw-error="showErrorMessage"
-            @clear-error="clearErrorMessage"
-            @save-item="_saveItemOnServer(currentItemObj)"
-          />
-        </SectionCard>
+          <SectionCard
+            title="category"
+            position="left"
+            text-style="caps"
+            size="small"
+          >
+            <ItemCategories
+              @throw-error="showErrorMessage"
+              @clear-error="clearErrorMessage"
+              @save-item="updateItemField"
+            />
+          </SectionCard>
+          <SectionCard
+            title="tags"
+            position="left"
+            text-style="caps"
+            size="small"
+          >
+            <ItemTags
+              @throw-error="showErrorMessage"
+              @clear-error="clearErrorMessage"
+              @save-item="updateItemField"
+            />
+          </SectionCard>
+        </div>
         <ErrorMessage
           v-if="groupingFieldErrorMessage"
           :message="groupingFieldErrorMessage"
@@ -334,7 +346,7 @@ export default {
         </div>
         <RelatedUnits
           :item-to-show="currentItemObj"
-          @save-item="_saveItemOnServer(currentItemObj)"
+          @save-item="updateItemField"
         />
       </TogglingBlock>
     </div>
@@ -370,6 +382,16 @@ export default {
     }
     .extra-content {
       padding-top: 15px;
+    }
+
+    .grouping-fields {
+      display: flex;
+      flex-direction: column;
+
+      &.two-columns {
+        flex-direction: row;
+        gap: 20px;
+      }
     }
 
     .related-hint-button-container {

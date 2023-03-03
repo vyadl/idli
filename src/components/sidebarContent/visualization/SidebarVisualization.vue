@@ -17,6 +17,9 @@ export default {
     ButtonText,
     InfoMessage,
   },
+  props: {
+    isSidebarBreakpointReached: Boolean,
+  },
   data: () => ({
     mainSortingOptions: {
       custom: {
@@ -119,7 +122,10 @@ export default {
 <template>
   <div class="sidebar-visualization">
     <div v-if="currentListObj">
-      <SectionCard title="sorting">
+      <SectionCard
+        title="sorting"
+        :position="isSidebarBreakpointReached ? 'left' : 'centered'"
+      >
         <div class="buttons-container">
           <RadioCustom
             v-for="sortingOption in secondarySortingOptions"
@@ -175,7 +181,10 @@ export default {
           @update:model-value="_toggleItemsOrder"
         />
       </SectionCard>
-      <SectionCard title="mode">
+      <SectionCard
+        title="mode"
+        :position="isSidebarBreakpointReached ? 'left' : 'centered'"
+      >
         <div class="buttons-container">
           <RadioCustom
             v-for="title in modeTitles"

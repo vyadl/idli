@@ -14,6 +14,9 @@ export default {
     ButtonText,
     InfoMessage,
   },
+  props: {
+    isSidebarBreakpointReached: Boolean,
+  },
   computed: {
     ...mapGetters('filters', [
       'checkedTags',
@@ -49,14 +52,21 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <div v-if="currentListObj">
-      <SectionCard title="search in list">
+      <SectionCard
+        title="search in list"
+        :position="isSidebarBreakpointReached ? 'left' : 'centered'"
+      >
         <SearchField />
       </SectionCard>
-      <SectionCard title="filters">
+      <SectionCard
+        title="filters"
+        :position="isSidebarBreakpointReached ? 'left' : 'centered'"
+      >
         <SectionCard
           class="filters-title"
           title="tags"
           size="small"
+          :position="isSidebarBreakpointReached ? 'left' : 'centered'"
         >
           <InfoMessage
             v-if="tagsInfoMessage"
@@ -77,6 +87,7 @@ export default {
           class="filters-title"
           title="categories"
           size="small"
+          :position="isSidebarBreakpointReached ? 'left' : 'centered'"
         >
           <InfoMessage
             v-if="categoriesInfoMessage"

@@ -2,7 +2,7 @@
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
 import ItemView from '@/components/item/ItemView.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -18,6 +18,11 @@ export default {
       'currentItemObj',
     ]),
   },
+  methods: {
+    ...mapMutations('items', [
+      'setCurrentItemObj',
+    ]),
+  },
 };
 </script>
 
@@ -31,6 +36,7 @@ export default {
     <ItemView
       v-else
       :item="currentItemObj"
+      @finish-view="setCurrentItemObj(null)"
     />
   </ModalBasic>
 </template>

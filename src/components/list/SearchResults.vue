@@ -3,6 +3,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
+import SearchField from '@/components/formElements/SearchField.vue';
 // eslint-disable-next-line import/no-cycle
 import { deleteFromQuery, deleteExtraQuery, handleQueryOnLoad } from '@/router/utils';
 
@@ -11,6 +12,7 @@ export default {
     SectionCard,
     CustomLink,
     InfoMessage,
+    SearchField,
   },
   computed: {
     ...mapGetters([
@@ -122,6 +124,9 @@ export default {
     class="search-results"
     :class="`${globalTheme}-theme`"
   >
+    <div class="search-input-section">
+      <SearchField />
+    </div>
     <SectionCard
       title="search results"
       text-style="caps"
@@ -185,6 +190,12 @@ export default {
 .search-results {
   min-height: 100vh;
   padding-top: 90px;
+
+  .search-input-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
 
   .results-columns {
     display: grid;
