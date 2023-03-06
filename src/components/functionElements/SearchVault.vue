@@ -1,12 +1,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import SearchField from '@/components/formElements/SearchField.vue';
+import VaultSearchField from '@/components/formElements/VaultSearchField.vue';
 
 export default {
   components: {
     PopupBox,
-    SearchField,
+    VaultSearchField,
   },
   computed: {
     ...mapGetters('appearance', [
@@ -30,7 +30,7 @@ export default {
       :position="isMobileScreen ? 'upper-right' : 'left'"
       stop-propagation
     >
-      <SearchField />
+      <VaultSearchField />
     </PopupBox>
   </div>
 </template>

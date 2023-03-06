@@ -1,5 +1,5 @@
 <script>
-import SearchField from '@/components/sidebarContent/filters/SearchField.vue';
+import LocalSearchField from '@/components/sidebarContent/filters/LocalSearchField.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -8,7 +8,7 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SearchField,
+    LocalSearchField,
     SectionCard,
     CheckboxCustom,
     ButtonText,
@@ -56,7 +56,7 @@ export default {
         title="search in list"
         :position="isSidebarBreakpointReached ? 'left' : 'centered'"
       >
-        <SearchField />
+        <LocalSearchField />
       </SectionCard>
       <SectionCard
         title="filters"

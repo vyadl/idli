@@ -24,7 +24,7 @@ export default {
 </script>
 
 <template>
-  <div class="search-field">
+  <div class="vault-search-field">
     <form @submit.prevent="redirectToSearchResults">
       <InputCustom
         v-model="searchValue"
@@ -45,7 +45,7 @@ export default {
 </template>
 
 <style lang="scss">
-.search-field {
+.vault-search-field {
   position: relative;
   padding: 7px 10px;
   width: fit-content;

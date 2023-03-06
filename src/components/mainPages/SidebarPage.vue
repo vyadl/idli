@@ -10,10 +10,9 @@ import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import SearchVault from '@/components/functionElements/SearchVault.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import { sidebarModesForViews } from '@/store/config';
+import { sidebarModesForViews, sidebarWidthValues } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
-import { sidebarWidth, sidebarButtonsWidth, sidebarWidthBreakpoint } from '@/scss/style.module.scss';
 
 export default {
   components: {
@@ -32,8 +31,8 @@ export default {
   emits: ['resize'],
   data() {
     return {
-      dividerPosition: +sidebarWidth,
-      compactLayout: 'left',
+      dividerPosition: sidebarWidthValues.main,
+      compactLayout: false,
     };
   },
   computed: {
@@ -77,7 +76,7 @@ export default {
       return styles;
     },
     isSidebarBreakpointReached() {
-      return this.dividerPosition > +sidebarWidthBreakpoint;
+      return this.dividerPosition > sidebarWidthValues.breakpoint;
     },
   },
   created() {
@@ -97,31 +96,7 @@ export default {
     }
   },
   mounted() {
-    this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
-      if (!this.isSidebarOpen) {
-        this._openSidebar(
-          this.sidebarMode || sidebarModesForViews[this.currentSidebarView]?.default,
-        );
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      const isRemainingSpaceEnoughForSidebarButtons = window.innerWidth > this.dividerPosition 
-        + +sidebarButtonsWidth;
-      const isSidebarButtonsBreakpointReached = window.innerWidth < this.dividerPosition 
-        + +sidebarButtonsWidth * 2;
-
-      if (!isRemainingSpaceEnoughForSidebarButtons && !this.isMobileScreen) {
-        this.dividerPosition = window.innerWidth - +sidebarButtonsWidth;
-      }
-
-      if (this.isMobileScreen) {
-        this.dividerPosition = +sidebarWidth;
-      }
-
-      this.compactLayout = isSidebarButtonsBreakpointReached;
-      this.$emit('resize', this.dividerPosition);
-    });
+    window.addEventListener('resize', this.handleWindowResize);
   },
   methods: {
     ...mapActions('lists', [
@@ -134,19 +109,45 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
-    handleResize(e) {
-      e.preventDefault();
+    catchEdgeMove() {
+      if (!this.isSidebarOpen) {
+        this._openSidebar(
+          this.sidebarMode || sidebarModesForViews[this.currentSidebarView]?.default,
+        );
+      }
+    },
+    handleWindowResize() {
+      const isRemainingSpaceEnoughForSidebarButtons = window.innerWidth > this.dividerPosition 
+        + sidebarWidthValues.buttons;
+      const isSidebarButtonsBreakpointReached = window.innerWidth < this.dividerPosition 
+        + sidebarWidthValues.buttons * 2;
 
-      const newPosition = window.innerWidth - e.pageX;
-      const isRemainingSpaceEnoughForSidebarButtons = e.pageX >= +sidebarButtonsWidth;
-      const isSidebarButtonsBreakpointReached = e.pageX < +sidebarButtonsWidth * 2;
+      if (!isRemainingSpaceEnoughForSidebarButtons && !this.isMobileScreen) {
+        this.dividerPosition = window.innerWidth - sidebarWidthValues.buttons;
+      }
 
-      if (newPosition >= +sidebarWidth && isRemainingSpaceEnoughForSidebarButtons) {
+      if (this.isMobileScreen) {
+        this.dividerPosition = sidebarWidthValues.main;
+      }
+
+      this.compactLayout = isSidebarButtonsBreakpointReached;
+      this.$emit('resize', this.dividerPosition);
+    },
+    handleSidebarResize(event) {
+      event.preventDefault();
+
+      const newPosition = window.innerWidth - event.pageX;
+      const isRemainingSpaceEnoughForSidebarButtons = event.pageX >= sidebarWidthValues.buttons;
+      const isSidebarButtonsBreakpointReached = event.pageX < sidebarWidthValues.buttons * 2;
+      const isNewPositionValid = newPosition >= sidebarWidthValues.main 
+        && isRemainingSpaceEnoughForSidebarButtons;
+
+      if (isNewPositionValid) {
         this.dividerPosition = newPosition;
       }
 
       if (!isRemainingSpaceEnoughForSidebarButtons) {
-        this.dividerPosition = window.innerWidth - +sidebarButtonsWidth;
+        this.dividerPosition = window.innerWidth - sidebarWidthValues.buttons;
         this.endResize();
       }
 
@@ -154,10 +155,10 @@ export default {
       this.$emit('resize', this.dividerPosition);
     },
     startResize() {
-      document.addEventListener('mousemove', this.handleResize);
+      document.addEventListener('mousemove', this.handleSidebarResize);
     },
     endResize() {
-      document.removeEventListener('mousemove', this.handleResize);
+      document.removeEventListener('mousemove', this.handleSidebarResize);
     },
     openListModal() {
       this.$vfm.show('listModal');
@@ -170,6 +171,9 @@ export default {
       return this.isMobileScreen || this.compactLayout
         ? 'brick'
         : 'bordered';
+    },
+    isMainModeButton(mode) {
+      return !this.isMobileScreen && !this.compactLayout && mode !== 'bin';
     },
     exitPublicView() {
       this._setCurrentListView('owner');
@@ -195,17 +199,18 @@ export default {
       `${globalTheme}-theme`,
     ]"
     :style="sidebarStyles"
-    @mouseup="endResize()"
+    @mouseup="endResize"
   >
     <div
       v-show="!isSidebarOpen"
-      ref="edgeMoveCatcher"
       class="edge-move-catcher"
+      @mouseover="catchEdgeMove"
+      @focus="catchEdgeMove"
     />
     <div
       v-if="isSidebarOpen && !isMobileScreen"
       class="divider-container"
-      @mousedown="startResize()"
+      @mousedown="startResize"
     >
       <div class="divider" />
     </div>
@@ -260,21 +265,19 @@ export default {
         title="sign in"
       />
     </div>
-    <div
-      class="sidebar-buttons"
-    >
+    <div class="sidebar-buttons">
       <div class="mode-buttons">
         <ButtonText
           v-for="mode in sidebarModes"
           :key="mode"
           :class="{
-            'mode-button' : !isMobileScreen && !compactLayout && mode !== 'bin',
+            'mode-button' : isMainModeButton(mode),
             'bin-mode-button' : mode === 'bin',
           }"
-          :with-box-shadow="!isMobileScreen && !compactLayout && mode !== 'bin'"
+          :with-box-shadow="isMainModeButton(mode)"
           :text="mode"
           :style-type="defineButtonStyleType(mode)"
-          :size="mode === 'bin' || isMobileScreen || compactLayout ? 'small' : ''"
+          :size="isMainModeButton(mode) ? '' : 'small'"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
@@ -473,6 +476,7 @@ export default {
         border-left: 1px solid map-get($colors, 'gray-light');
 
         .mode-buttons {
+          transition: none;
           transform: none;
         }
 
@@ -487,6 +491,7 @@ export default {
         z-index: 9;
         top: 0;
         bottom: unset;
+        width: 100%;
         padding-bottom: 30px;
       }
 
