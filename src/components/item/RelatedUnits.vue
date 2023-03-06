@@ -4,11 +4,7 @@ import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
-import { 
-  mapGetters,
-  mapActions,
-  mapMutations,
-} from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -110,12 +106,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations([
-      'updateItemFieldInCurrentList',
-    ]),
-    ...mapMutations('items', [
-      'updateItemFieldLocally',
-    ]),
     ...mapActions('lists', [
       '_fetchItemsByListId',
       '_fetchListById',
@@ -165,12 +155,7 @@ export default {
       return isListChoosingOnlyToShowItems ? isSavedOnServer : isChoosable;
     },
     updateItemField({ field, fullUnitsForLocalUpdate }) {
-      this.updateItemFieldLocally({ field, value: fullUnitsForLocalUpdate });
-      this.updateItemFieldInCurrentList({ field, value: fullUnitsForLocalUpdate });
-
-      if (this.itemToShow.title || this.itemToShow.details) {
-        this.$emit('save-item');
-      }
+      this.$emit('save-item', field, fullUnitsForLocalUpdate);
     },
     addRelatedItem() {
       this.updateItemField({
@@ -494,7 +479,6 @@ export default {
 
   .referring-units-container {
     display: grid;
-    gap: 10px;
   }
 
   .buttons-container {

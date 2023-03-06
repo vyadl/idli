@@ -1,3 +1,5 @@
+import { sidebarWidth, sidebarButtonsWidth, sidebarWidthBreakpoint } from '@/scss/style.module.scss';
+
 export const MIN_SEARCH_SYMBOLS = 3;
 export const GENERATED_ITEM_TITLE_MAX_LENGTH = 22;
 export const SCREEN_SIZE_CHECK_DELAY = 100;
@@ -44,6 +46,12 @@ export const sidebarModesForViews = {
     allowedSidebarModes: ['item', ...sidebarButtonsForViews.listPublicView],
     default: 'settings',
   },
+};
+
+export const sidebarWidthValues = {
+  main: parseInt(sidebarWidth, 10),
+  buttons: parseInt(sidebarButtonsWidth, 10),
+  breakpoint: parseInt(sidebarWidthBreakpoint, 10),
 };
 
 export const logoutOptions = [

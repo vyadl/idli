@@ -4,7 +4,7 @@ import ItemForm from '@/components/item/ItemForm.vue';
 import ItemView from '@/components/item/ItemView.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -13,6 +13,9 @@ export default {
     ItemView,
     InfoMessage,
     ButtonText,
+  },
+  props: {
+    isSidebarBreakpointReached: Boolean,
   },
   computed: {
     ...mapGetters('lists', [
@@ -23,6 +26,9 @@ export default {
     ]),
   },
   methods: {
+    ...mapMutations('items', [
+      'setCurrentItemObj',
+    ]),
     ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
@@ -35,10 +41,14 @@ export default {
     v-if="currentItemObj"
     class="sidebar-item"
   >
-    <ItemForm v-if="isOwnerView" />
+    <ItemForm
+      v-if="isOwnerView"
+      :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+    />
     <ItemView
       v-else
       :item="currentItemObj"
+      @finish-view="setCurrentItemObj(null)"
     />
   </SectionCard>
   <div v-else>

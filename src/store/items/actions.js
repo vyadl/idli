@@ -22,25 +22,12 @@ export default {
   ) {
     const isItemsVersionsMatch = cachedItem.updatedAt === responseItem.updatedAt;
 
-    function checkItemsEquality({ firstItem, secondItem }) {
-      return Object.keys(firstItem).every(
-        key => {
-          return firstItem[key] instanceof Object
-            ? firstItem[key].every(
-              (e, i) => JSON.stringify(e) === JSON.stringify(secondItem[key][i]),
-            )
-            : firstItem[key] === secondItem[key];
-        },
-      );
-    }
-
     if (isItemsVersionsMatch) {
-      const isItemChangedBeforeServerResponse = checkItemsEquality({
-        firstItem: getters.currentItemObj, 
-        secondItem: cachedItem,
-      });
+      const isItemChangedBeforeServerResponse = getters.currentItemObj.updatedAt
+        !== cachedItem.updatedAt;
 
       commit('setIsItemSavingAllowed', true);
+      commit('setCurrentItemObj', responseItem);
 
       if (isItemChangedBeforeServerResponse) {
         dispatch('_updateItemOnServer', {
@@ -61,7 +48,7 @@ export default {
     const cachedItem = rootGetters['cache/cache'][id];
 
     if (cachedItem) {
-      commit('setCurrentItemObj', cachedItem);
+      commit('setCurrentItemObj', JSON.parse(JSON.stringify(cachedItem)));
       commit('setIsItemSavingAllowed', false);
     }
     

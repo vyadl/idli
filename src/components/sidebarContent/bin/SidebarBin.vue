@@ -1,7 +1,6 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
-import TogglingBlock from '@/components/wrappers/TogglingBlock.vue';
 import BinUnit from '@/components/sidebarContent/bin/BinUnit.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
@@ -11,10 +10,12 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     SectionCard,
-    TogglingBlock,
     BinUnit,
     ButtonText,
     InfoMessage,
+  },
+  props: {
+    isSidebarBreakpointReached: Boolean,
   },
   data: () => ({
     requestHandling: {
@@ -122,7 +123,10 @@ export default {
 <template>
   <div class="sidebar-bin">
     <div v-if="deletedLists.length || deletedItems.length">
-      <div class="bin-mode-buttons">
+      <div
+        class="bin-mode-buttons"
+        :class="{ 'left': isSidebarBreakpointReached }"
+      >
         <ButtonText
           v-for="type in deletedUnitsTypes"
           :key="type.title"
@@ -205,6 +209,10 @@ export default {
       justify-content: center;
       gap: 20px;
       padding-bottom: 10px;
+
+      &.left {
+        justify-content: flex-start;
+      }
     }
 
     .all-buttons {

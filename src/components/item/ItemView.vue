@@ -19,6 +19,7 @@ export default {
       default: true,
     },
   },
+  emits: ['finish-view'],
   computed: {
     ...mapGetters('items', [
       'isItemSavingAllowed',
@@ -33,12 +34,12 @@ export default {
       return this.lists.find(list => list.id === this.item.listId);
     },
     itemCategory() {
-      return this.parentList.categories.find(
+      return this.parentList?.categories.find(
         category => category.id === this.item.category,
       );
     },
     itemTags() {
-      return this.parentList.tags.filter(
+      return this.parentList?.tags.filter(
         listTag => this.item.tags.includes(listTag.id),
       );
     },
@@ -54,6 +55,8 @@ export default {
         args,
       });
     }
+
+    this.$emit('finish-view');
   },
   methods: {
     closeItemModal() {
@@ -85,7 +88,7 @@ export default {
     </div>
     <div class="item-filters">
       <SectionCard
-        v-if="itemTags.length"
+        v-if="itemTags?.length"
         title="tags"
         size="small"
         text-style="caps"
@@ -97,7 +100,7 @@ export default {
             :key="tag.id"
             class="tag"
           >
-            {{ tag.title }}<span v-if="index !== itemTags.length - 1">, </span>
+            {{ tag.title }}<span v-if="index !== itemTags?.length - 1">, </span>
           </span>
         </div>
       </SectionCard>

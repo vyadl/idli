@@ -41,12 +41,6 @@ export default {
     ]),
   },
   methods: {
-    ...mapMutations([
-      'updateItemFieldInCurrentList',
-    ]),
-    ...mapMutations('items', [
-      'updateItemFieldLocally',
-    ]),
     ...mapMutations('lists', [
       'addCategoryToListLocally',
     ]),
@@ -111,9 +105,7 @@ export default {
       this.updateItemCategory('');
     },
     updateItemCategory(value) {
-      this.updateItemFieldLocally({ field: 'category', value });
-      this.updateItemFieldInCurrentList({ field: 'category', value });
-      this.$emit('save-item');
+      this.$emit('save-item', 'category', value);
     },
   },
 };

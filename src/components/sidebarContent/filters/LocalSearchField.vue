@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-  <div class="search-field">
+  <div class="local-search-field">
     <InputCustom 
       icon="/icons/loupe.svg"
       with-additional-element

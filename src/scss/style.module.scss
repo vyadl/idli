@@ -1,5 +1,9 @@
 @import './_breakpoints.scss';
+@import './_variables.scss';
 
 :export {
   sMedia: $s-media;
+  sidebarWidth: map-get($sidebar-width, 'main');
+  sidebarButtonsWidth: map-get($sidebar-width, 'buttons');
+  sidebarWidthBreakpoint: map-get($sidebar-width, 'breakpoint');
 }

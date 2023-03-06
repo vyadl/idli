@@ -102,6 +102,7 @@ export default {
   .input-custom {
     display: block;
     width: 100%;
+    max-width: 300px;
     margin-bottom: 15px;
 
     &.disabled {

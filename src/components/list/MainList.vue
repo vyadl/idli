@@ -344,8 +344,16 @@ export default {
         class="header"
         :class="{ hidden: isFocusOnList }"
       >
-        <div class="list-title">
-          {{ currentListObj.title }}
+        <div class="list-identifiers">
+          <span
+            v-if="!isOwnerView"
+            class="owner-username"
+          >
+            {{ currentListObj.username }}'s
+          </span>
+          <span class="list-title">
+            {{ currentListObj.title }}
+          </span>
         </div>
         <div class="buttons-container">
           <DraggableSwitch
@@ -440,9 +448,17 @@ export default {
       }
     }
 
-    .list-title {
+    .list-identifiers {
       padding: 10px 10px 0;
       background-color: map-get($colors, 'white');
+    }
+
+    .owner-username {
+      padding-right: 5px;
+      font-size: map-get($text, 'big-title-font-size');
+    }
+
+    .list-title {
       font-size: map-get($text, 'big-title-font-size');
       color: map-get($colors, 'gray-light');
     }
@@ -498,8 +514,11 @@ export default {
     }
 
     &.inverted-theme {
-      .list-title {
+      .list-identifiers {
         background-color: map-get($colors, 'black');
+      }
+
+      .list-title {
         color: map-get($colors, 'gray-dark');
       }
     }

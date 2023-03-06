@@ -31,6 +31,8 @@ export default {
     state.cache = {};
   },
 
+  // lists log
+
   setListsLog(state, listsLog) {
     state.listsLog = listsLog;
   },

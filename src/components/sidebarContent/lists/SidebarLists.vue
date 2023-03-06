@@ -14,6 +14,9 @@ export default {
     ButtonSign,
     ButtonText,
   },
+  props: {
+    isSidebarBreakpointReached: Boolean,
+  },
   data: () => ({
     requestHandling: {
       isRequestProcessing: false,
@@ -97,6 +100,7 @@ export default {
     class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
+    :position="isSidebarBreakpointReached ? 'left' : 'centered'"
   >
     <div class="lists-container">
       <div
@@ -145,7 +149,8 @@ export default {
     }
 
     .list {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr;
       align-items: center;
       width: fit-content;
       margin-bottom: 5px;
@@ -171,7 +176,7 @@ export default {
     }
 
     .list-title {
-      max-width: 200px;
+      width: fit-content;
       border-bottom: 2px solid map-get($colors, 'white');
       transition: border-color 0.2s;
 
