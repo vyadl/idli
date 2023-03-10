@@ -13,7 +13,7 @@ export const List = function List() {
   this.categories = [];
 };
 
-export const Item = function Item({ title = '', tags = [], category = null }) {
+export const Item = function Item({ title = '', tags = [], category = null } = {}) {
   this.title = title;
   this.details = '';
   this.tags = tags;
