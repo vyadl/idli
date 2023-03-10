@@ -306,12 +306,13 @@ export default {
   },
 
   _addGroupingFieldForListAndItem(
-    { commit, rootGetters, dispatch },
+    { commit, dispatch },
     {
       listObj,
       itemObj, 
       title,
       groupingFieldType,
+      isItemUpdateNeeded = true,
     },
   ) {
     commitFromRoot('increaseExplicitRequestsNumber');
@@ -327,39 +328,18 @@ export default {
         },
       )
       .then(({ data: responseList }) => {
-        const isAddingCategory = groupingFieldType === 'category';
-        const newGroupingFieldObj = responseList[isAddingCategory
-          ? 'categories'
-          : 'tags']?.find(
-          groupingField => groupingField.title === title,
-        );
-
-        if (isAddingCategory) {
-          // eslint-disable-next-line no-param-reassign
-          itemObj[groupingFieldType] = newGroupingFieldObj.id;
-        } else {
-          itemObj[groupingFieldType].push(newGroupingFieldObj.id);
-        }
-
-        if (rootGetters.currentListItems) {
-          commitFromRoot(
-            'updateItemFieldInCurrentList',
-            {
-              field: `${groupingFieldType}`,
-              value: itemObj[groupingFieldType],
-            },
-          );
-        }
-        
-        if (rootGetters['items/currentItemObj']) {
-          commitFromRoot('items/updateItemFieldLocally', {
-            field: `${groupingFieldType}`,
-            value: itemObj[groupingFieldType],
+        if (isItemUpdateNeeded) {
+          dispatch('_addGroupingFieldForItem', {
+            itemObj, 
+            title,
+            groupingFieldType,
+            responseList,
           });
         }
 
-        dispatchFromRoot('items/_saveItemOnServer', itemObj);
         commit('setCurrentListObj', responseList);
+
+        return responseList;
       })
       .catch(error => {
         notifyAboutError(error);
@@ -368,6 +348,49 @@ export default {
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
+  },
+
+  _addGroupingFieldForItem(
+    { rootGetters },
+    {
+      responseList,
+      itemObj, 
+      title,
+      groupingFieldType,
+    },
+  ) {
+    const isAddingCategory = groupingFieldType === 'category';
+    const newGroupingFieldObj = responseList[isAddingCategory
+      ? 'categories'
+      : 'tags']?.find(
+      groupingField => groupingField.title === title,
+    );
+
+    if (isAddingCategory) {
+      // eslint-disable-next-line no-param-reassign
+      itemObj[groupingFieldType] = newGroupingFieldObj.id;
+    } else {
+      itemObj[groupingFieldType].push(newGroupingFieldObj.id);
+    }
+
+    if (rootGetters.currentListItems) {
+      commitFromRoot(
+        'updateItemFieldInCurrentList',
+        {
+          field: `${groupingFieldType}`,
+          value: itemObj[groupingFieldType],
+        },
+      );
+    }
+    
+    if (rootGetters['items/currentItemObj']) {
+      commitFromRoot('items/updateItemFieldLocally', {
+        field: `${groupingFieldType}`,
+        value: itemObj[groupingFieldType],
+      });
+    }
+
+    dispatchFromRoot('items/_saveItemOnServer', itemObj);
   },
 
   // test lists

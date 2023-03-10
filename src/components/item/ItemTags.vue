@@ -11,6 +11,9 @@ export default {
   components: {
     MultiselectCustom,
   },
+  props: {
+    tagsForBulkItems: Array,
+  },
   emits: [
     'throw-error',
     'clear-error',
@@ -28,6 +31,7 @@ export default {
   computed: {
     ...mapGetters('lists', [
       'lists',
+      'currentListId',
       'currentListTags',
       'currentListTagsTitles',
     ]),
@@ -39,8 +43,26 @@ export default {
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
+    isBulkItemsMode() {
+      return this.tagsForBulkItems !== undefined;
+    },
     currentItemTagsTitles() {
       return this.currentItemTags.map(tag => tag.title);
+    },
+    tagsTitlesForBulkItems() {
+      const tagsObjs = this.currentListTags.filter(
+        listTag => this.tagsForBulkItems?.includes(listTag.id),
+      );
+      const tagsTitles = tagsObjs.map(tag => tag.title);
+
+      // return tagsTitles.length ? tagsTitles : null;
+
+      return tagsTitles;
+    },
+    selectedValue() {
+      return this.isBulkItemsMode
+        ? this.tagsTitlesForBulkItems
+        : this.currentItemTagsTitles;
     },
   },
   methods: {
@@ -70,7 +92,9 @@ export default {
       const newTagObj = this.currentListTags?.find(tag => tag.title === tagTitle);
 
       if (newTagObj) {
-        this.updateItemTags([...this.currentItemObj.tags, newTagObj.id]);
+        this.updateItemTags(this.currentItemObj && !this.isBulkItemsMode
+          ? [...this.currentItemObj.tags, newTagObj.id]
+          : newTagObj.id);
       } else {
         this.createNewTag(tagTitle);
       }
@@ -81,7 +105,7 @@ export default {
       const isTitleUnique = this.checkTitleUniqueness(tagTitle);
 
       if (isTitleUnique) {
-        const { listId } = this.currentItemObj;
+        const listId = this.currentItemObj?.listId || this.currentListId;
         const itemObj = JSON.parse(JSON.stringify(this.currentItemObj));
 
         this.addTagToListLocally({ listId, tagTitle });
@@ -93,10 +117,19 @@ export default {
           itemObj,
           title: tagTitle,
           groupingFieldType: 'tags',
+          isItemUpdateNeeded: !this.isBulkItemsMode,
         });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
-          .then(() => {
+          .then(responseList => {
+            if (this.isBulkItemsMode) {
+              const newTagObj = responseList.tags.find(
+                tag => tag.title === tagTitle,
+              );
+
+              this.updateItemTags(newTagObj.id);
+            }
+
             this.newTitle = '';
             this.clearSearch = false;
           });
@@ -108,11 +141,13 @@ export default {
       );
 
       if (removedTagObj) {
-        const removedTagIndex = this.currentItemObj.tags.findIndex(
+        const tagsArrayCopy = this.isBulkItemsMode
+          ? [...this.tagsForBulkItems]
+          : [...this.currentItemObj.tags];
+
+        const removedTagIndex = tagsArrayCopy.findIndex(
           tagId => tagId === removedTagObj.id,
         );
-        
-        const tagsArrayCopy = [...this.currentItemObj.tags];
 
         tagsArrayCopy.splice(removedTagIndex, 1);
 
@@ -132,7 +167,7 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <MultiselectCustom
-      :value="currentItemTagsTitles"
+      :value="selectedValue"
       mode="tags"
       placeholder="add tags"
       no-options-text="no tags - start typing to add new"
