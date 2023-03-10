@@ -4,7 +4,7 @@ import ItemForm from '@/components/item/ItemForm.vue';
 import ItemView from '@/components/item/ItemView.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -14,36 +14,42 @@ export default {
     InfoMessage,
     ButtonText,
   },
-  emits: ['scrollSidebarToTop'],
+  props: {
+    isSidebarBreakpointReached: Boolean,
+  },
   computed: {
     ...mapGetters('lists', [
       'isOwnerView',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
     ]),
   },
   methods: {
+    ...mapMutations('items', [
+      'setCurrentItemObj',
+    ]),
     ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
-    scrollSidebarToTop() {
-      this.$emit('scrollSidebarToTop');
-    },
   },
 };
 </script>
 
 <template>
   <SectionCard
-    v-if="edittingItemObj"
+    v-if="currentItemObj"
     class="sidebar-item"
   >
-    <ItemForm 
+    <ItemForm
       v-if="isOwnerView"
-      @scroll-sidebar-to-top="scrollSidebarToTop"
+      :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
     />
-    <ItemView v-else />
+    <ItemView
+      v-else
+      :item="currentItemObj"
+      @finish-view="setCurrentItemObj(null)"
+    />
   </SectionCard>
   <div v-else>
     <InfoMessage message="choose item from the list to see it here" />

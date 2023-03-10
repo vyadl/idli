@@ -1,10 +1,16 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
+import { sidebarWidth } from '@/scss/style.module.scss';
 
 export default {
   components: {
     SidebarPage,
+  },
+  data() {
+    return {
+      remainingSpaceNearSidebar: null,
+    };
   },
   computed: {
     ...mapGetters('sidebar', [
@@ -13,23 +19,39 @@ export default {
     ...mapGetters('settings', [
       'isListUnderSidebar',
     ]),
+    styles() {
+      const styles = {};
+
+      styles.width = !this.isListUnderSidebar && this.isSidebarOpen
+        ? `${this.remainingSpaceNearSidebar}px`
+        : '100%';
+      
+      return styles;
+    },
+  },
+  created() {
+    this.remainingSpaceNearSidebar = window.innerWidth - +sidebarWidth;
   },
   methods: {
     ...mapActions('sidebar', [
       '_closeSidebar',
     ]),
+    adjustWidth(width) {
+      this.remainingSpaceNearSidebar = window.innerWidth - width;
+    },
   },
 };
 </script>
 
 <template>
   <div class="with-sidebar">
-    <SidebarPage />
+    <SidebarPage @resize="adjustWidth" />
     <div
       class="main-content"
       :class="{
         'move-to-left': !isListUnderSidebar && isSidebarOpen,
       }"
+      :style="styles"
       @click="_closeSidebar"
     >
       <slot />
@@ -44,12 +66,8 @@ export default {
 
   .main-content {
     transition:
-      margin 0.5s,
+      width 0.5s,
       transform 0.5s;
-    
-    &.move-to-left {
-      margin-right: 280px;
-    }
   }
 }
 </style>

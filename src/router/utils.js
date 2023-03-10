@@ -7,7 +7,7 @@ function getQuery() {
 }
 
 export function pushRouteKeepQuery({ name, params }) {
-  router.push({ 
+  return router.push({ 
     name,
     params,
     query: getQuery(),
@@ -15,7 +15,7 @@ export function pushRouteKeepQuery({ name, params }) {
 }
 
 export function addQueryItems(queryToAdd) {
-  router.push({
+  return router.push({
     query: {
       ...getQuery(),
       ...queryToAdd,
@@ -34,7 +34,7 @@ export function deleteFromQuery(queryToDelete) {
     });
   }
 
-  router.push({ query });
+  return router.push({ query });
 }
 
 export function modifyQuery({ queryToDelete, queryToAdd }) {
@@ -47,26 +47,22 @@ export function modifyQuery({ queryToDelete, queryToAdd }) {
     delete query[key];
   });
 
-  router.push({ query });
+  return router.push({ query });
 }
 
-export function changeQueryOption(option, value) {
-  if (value) {
-    addQueryItems({
-      [option]: value,
-    });
-  } else {
-    deleteFromQuery(option);
-  }
+export function changeQueryOption({ option, value }) {
+  return value
+    ? addQueryItems({ [option]: value })
+    : deleteFromQuery(option);
 }
 
-export function changeQueryRespectingDefault(option, value) {
+export function changeQueryRespectingDefault({ option, value }) {
   const isValueDefault = checkDefaultValue(defaultQueryValues, option, value);
 
-  changeQueryOption(
-    defaultQueryValues[option].queryName,
-    isValueDefault ? null : value,
-  );
+  return changeQueryOption({
+    option: defaultQueryValues[option].queryName,
+    value: isValueDefault ? null : value,
+  });
 }
 
 export function handleQueryOnLoad(queryOptions, currentQuery) {
@@ -88,7 +84,7 @@ export function deleteExtraQuery(queryOptions, currentQuery) {
 
   const queryToDelete = Object.keys(currentQuery).filter(key => !availableQuery.has(key));
 
-  deleteFromQuery(queryToDelete);
+  return deleteFromQuery(queryToDelete);
 }
 
 function getDefaultValue(optionsObj, option) {

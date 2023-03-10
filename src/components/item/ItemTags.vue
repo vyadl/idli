@@ -11,9 +11,13 @@ export default {
   components: {
     MultiselectCustom,
   },
+  props: {
+    tagsForBulkItems: Array,
+  },
   emits: [
     'throw-error',
     'clear-error',
+    'save-item',
   ],
   data() {
     return {
@@ -25,40 +29,56 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'explicitRequestsNumber',
-    ]),
     ...mapGetters('lists', [
       'lists',
+      'currentListId',
       'currentListTags',
       'currentListTagsTitles',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
       'currentItemTags',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
+    isBulkItemsMode() {
+      return this.tagsForBulkItems !== undefined;
+    },
     currentItemTagsTitles() {
       return this.currentItemTags.map(tag => tag.title);
     },
+    tagsTitlesForBulkItems() {
+      const tagsObjs = this.currentListTags.filter(
+        listTag => this.tagsForBulkItems?.includes(listTag.id),
+      );
+      const tagsTitles = tagsObjs.map(tag => tag.title);
+
+      // return tagsTitles.length ? tagsTitles : null;
+
+      return tagsTitles;
+    },
+    selectedValue() {
+      return this.isBulkItemsMode
+        ? this.tagsTitlesForBulkItems
+        : this.currentItemTagsTitles;
+    },
   },
   methods: {
-    ...mapMutations([
-      'updateItemFieldLocally',
-    ]),
     ...mapMutations('lists', [
       'addTagToListLocally',
-    ]),
-    ...mapActions('items', [
-      '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
       '_checkGroupingFieldTitleUniqueness',
       '_addGroupingFieldForListAndItem',
     ]),
     async checkTitleUniqueness(tagTitle) {
+      if (this.responseItemObj) {
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(tagTitle);
 
       this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
@@ -72,7 +92,9 @@ export default {
       const newTagObj = this.currentListTags?.find(tag => tag.title === tagTitle);
 
       if (newTagObj) {
-        this.updateItemTags([...this.edittingItemObj.tags, newTagObj.id]);
+        this.updateItemTags(this.currentItemObj && !this.isBulkItemsMode
+          ? [...this.currentItemObj.tags, newTagObj.id]
+          : newTagObj.id);
       } else {
         this.createNewTag(tagTitle);
       }
@@ -83,8 +105,8 @@ export default {
       const isTitleUnique = this.checkTitleUniqueness(tagTitle);
 
       if (isTitleUnique) {
-        const { listId } = this.edittingItemObj;
-        const itemObj = JSON.parse(JSON.stringify(this.edittingItemObj));
+        const listId = this.currentItemObj?.listId || this.currentListId;
+        const itemObj = JSON.parse(JSON.stringify(this.currentItemObj));
 
         this.addTagToListLocally({ listId, tagTitle });
         this.requestHandling.isRequestProcessing = true;
@@ -95,10 +117,19 @@ export default {
           itemObj,
           title: tagTitle,
           groupingFieldType: 'tags',
-        }); 
+          isItemUpdateNeeded: !this.isBulkItemsMode,
+        });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
-          .then(() => {
+          .then(responseList => {
+            if (this.isBulkItemsMode) {
+              const newTagObj = responseList.tags.find(
+                tag => tag.title === tagTitle,
+              );
+
+              this.updateItemTags(newTagObj.id);
+            }
+
             this.newTitle = '';
             this.clearSearch = false;
           });
@@ -110,11 +141,13 @@ export default {
       );
 
       if (removedTagObj) {
-        const removedTagIndex = this.edittingItemObj.tags.findIndex(
+        const tagsArrayCopy = this.isBulkItemsMode
+          ? [...this.tagsForBulkItems]
+          : [...this.currentItemObj.tags];
+
+        const removedTagIndex = tagsArrayCopy.findIndex(
           tagId => tagId === removedTagObj.id,
         );
-        
-        const tagsArrayCopy = [...this.edittingItemObj.tags];
 
         tagsArrayCopy.splice(removedTagIndex, 1);
 
@@ -122,8 +155,7 @@ export default {
       }
     },
     updateItemTags(value) {
-      this.updateItemFieldLocally({ field: 'tags', value });
-      this._saveItemOnServer(this.edittingItemObj);
+      this.$emit('save-item', 'tags', value);
     },
   },
 };
@@ -135,7 +167,7 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <MultiselectCustom
-      :value="currentItemTagsTitles"
+      :value="selectedValue"
       mode="tags"
       placeholder="add tags"
       no-options-text="no tags - start typing to add new"
@@ -145,8 +177,7 @@ export default {
       :can-clear="false"
       :create-option="false"
       :clear-search-trigger="clearSearch"
-      :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
-      :show-options="!explicitRequestsNumber"
+      :disabled="requestHandling.isRequestProcessing"
       @select="tag => addTag(tag)"
       @deselect="tag => deleteTag(tag)"
       @search-change="checkTitleUniqueness"

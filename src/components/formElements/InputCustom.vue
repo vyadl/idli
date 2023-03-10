@@ -8,6 +8,11 @@ export default {
     type: {
       type: String,
       default: 'text',
+      validator(value) {
+        return value 
+          ? ['text', 'number', 'password', 'email'].includes(value)
+          : true;
+      },
     },
     styleType: {
       type: String,
@@ -19,6 +24,7 @@ export default {
     },
     modelValue: String,
     icon: String,
+    width: Number,
     disabled: {
       type: Boolean,
       default: false,
@@ -70,6 +76,7 @@ export default {
       { disabled, 'with-additional-element': withAdditionalElement },
       styleType,
     ]"
+    :style="`width: ${width}px;`"
   >
     <div class="label">
       {{ label }}
@@ -102,6 +109,7 @@ export default {
   .input-custom {
     display: block;
     width: 100%;
+    max-width: 300px;
     margin-bottom: 15px;
 
     &.disabled {

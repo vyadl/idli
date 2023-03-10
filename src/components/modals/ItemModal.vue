@@ -2,7 +2,7 @@
 import ModalBasic from '@/components/modals/ModalBasic.vue';
 import ItemForm from '@/components/item/ItemForm.vue';
 import ItemView from '@/components/item/ItemView.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -13,6 +13,14 @@ export default {
   computed: {
     ...mapGetters('lists', [
       'isOwnerView',
+    ]),
+    ...mapGetters('items', [
+      'currentItemObj',
+    ]),
+  },
+  methods: {
+    ...mapMutations('items', [
+      'setCurrentItemObj',
     ]),
   },
 };
@@ -25,6 +33,10 @@ export default {
     :width="isOwnerView ? 500 : 400"
   >
     <ItemForm v-if="isOwnerView" />
-    <ItemView v-else />
+    <ItemView
+      v-else
+      :item="currentItemObj"
+      @finish-view="setCurrentItemObj(null)"
+    />
   </ModalBasic>
 </template>

@@ -20,8 +20,6 @@ export default {
       'isLoggedIn',
     ]),
     ...mapGetters('items', [
-      'edittingItemIndex',
-      'edittingItemObj',
       'currentItemObj',
     ]),
     ...mapGetters('settings', [
@@ -46,7 +44,6 @@ export default {
         })
           .then(() => {
             this.item = this.currentItemObj;
-            this._findAndSetEdittingItemIndex(this.item);
 
             if (this.isItemFormInSidebar) {
               this._openSidebar('item');
@@ -88,7 +85,6 @@ export default {
     ]),
     ...mapActions('items', [
       '_fetchItemById',
-      '_findAndSetEdittingItemIndex',
     ]),
     ...mapActions('settings', [
       '_toggleItemFormLocation',
@@ -98,8 +94,6 @@ export default {
       '_closeSidebar',
     ]),
     setItemForEditting() {
-      this._findAndSetEdittingItemIndex(this.item);
-
       this.isItemFormInSidebar
         ? this._openSidebar('item')
         : this.$vfm.show('itemModal');
@@ -119,7 +113,7 @@ export default {
     class="single-item"
     :class="[
       `${globalTheme}-theme`,
-      { active: edittingItemObj?.id === item.id },
+      { active: currentItemObj?.id === item.id },
     ]"
   >
     <CustomLink

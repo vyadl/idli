@@ -2,8 +2,9 @@
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import RelatedUnits from '@/components/item/RelatedUnits.vue';
 import ItemActionsMenu from '@/components/item/ItemActionsMenu.vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
+import routerQueue from '@/router/routerQueue';
 
 export default {
   components: {
@@ -11,39 +12,53 @@ export default {
     RelatedUnits,
     ItemActionsMenu,
   },
+  props: {
+    item: Object,
+    isQueryNeedDeleting: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  emits: ['finish-view'],
   computed: {
-    ...mapGetters('lists', [
-      'currentListTags',
-      'currentListCategories',
-    ]),
     ...mapGetters('items', [
-      'currentItemObj',
+      'isItemSavingAllowed',
+    ]),
+    ...mapGetters('lists', [
+      'lists',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
-    currentItemCategory() {
-      return this.currentListCategories.find(
-        category => category.id === this.currentItemObj.category,
+    parentList() {
+      return this.lists.find(list => list.id === this.item.listId);
+    },
+    itemCategory() {
+      return this.parentList?.categories.find(
+        category => category.id === this.item.category,
       );
     },
-    currentItemTags() {
-      return this.currentListTags.filter(
-        listTag => this.currentItemObj.tags.includes(listTag.id),
+    itemTags() {
+      return this.parentList?.tags.filter(
+        listTag => this.item.tags.includes(listTag.id),
       );
     },
   },
   unmounted() {
-    this.setCurrentItemObj(null);
-    this.setEdittingItemIndex(null); 
+    if (this.isQueryNeedDeleting) {
+      const args = this.isItemFormInSidebar
+        ? ['item', 'sidebar']
+        : 'item';
 
-    deleteFromQuery(this.isItemFormInSidebar ? ['item', 'sidebar'] : 'item');
+      routerQueue.add({
+        method: deleteFromQuery,
+        args,
+      });
+    }
+
+    this.$emit('finish-view');
   },
   methods: {
-    ...mapMutations('items', [
-      'setEdittingItemIndex',
-      'setCurrentItemObj',
-    ]),
     closeItemModal() {
       this.$vfm.hide('itemModal');
     },
@@ -53,27 +68,27 @@ export default {
 
 <template>
   <div
-    v-if="currentItemObj"
+    v-if="item"
     class="item-view"
   >
-    <ItemActionsMenu />
+    <ItemActionsMenu v-if="isItemSavingAllowed" />
     <div class="text-fields">
       <div
         class="title"
-        :class="{ untitled: !currentItemObj.title }"
+        :class="{ untitled: !item.title }"
       >
-        {{ currentItemObj.title || 'Untitled' }}
+        {{ item.title || 'Untitled' }}
       </div>
       <div 
-        v-if="currentItemObj.details"
+        v-if="item.details"
         class="details"
       > 
-        {{ currentItemObj.details }}
+        {{ item.details }}
       </div>
     </div>
     <div class="item-filters">
       <SectionCard
-        v-if="currentItemTags.length"
+        v-if="itemTags?.length"
         title="tags"
         size="small"
         text-style="caps"
@@ -81,16 +96,16 @@ export default {
       >
         <div class="filters-container">
           <span
-            v-for="(tag, index) in currentItemTags"
+            v-for="(tag, index) in itemTags"
             :key="tag.id"
             class="tag"
           >
-            {{ tag.title }}<span v-if="index !== currentItemTags.length - 1">, </span>
+            {{ tag.title }}<span v-if="index !== itemTags?.length - 1">, </span>
           </span>
         </div>
       </SectionCard>
       <SectionCard
-        v-if="currentItemCategory"
+        v-if="itemCategory"
         title="category"
         size="small"
         text-style="caps"
@@ -98,12 +113,15 @@ export default {
       >
         <div class="filter-container">
           <div class="category">
-            {{ currentItemCategory.title }}
+            {{ itemCategory.title }}
           </div>
         </div>
       </SectionCard>
     </div>
-    <RelatedUnits />
+    <RelatedUnits
+      :item-to-show="item"
+      :editable="false"
+    />
   </div>
 </template>
 
@@ -129,7 +147,7 @@ export default {
 
     .title,
     .details {
-      overflow-wrap: break-word;
+      overflow-wrap: anywhere;
     }
 
     .filters-container {

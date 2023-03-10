@@ -1,12 +1,25 @@
 export default {
   currentItemObj: state => state.currentItemObj,
-  edittingItemIndex: state => state.edittingItemIndex,
-  edittingItemObj: (state, getters, rootState, rootGetters) => {
-    return rootGetters.currentListItems[state.edittingItemIndex];
-  },
+  responseItemObj: state => state.responseItemObj,
+  isItemSavingAllowed: state => state.isItemSavingAllowed,
+
   currentItemTags: (state, getters, rootState, rootGetters) => {
     return rootGetters['lists/currentListTags'].filter(
-      listTag => getters.edittingItemObj.tags.includes(listTag.id),
+      listTag => getters.currentItemObj?.tags?.includes(listTag.id),
     );
+  },
+
+  currentItemCategory: (state, getters, rootState, rootGetters) => {
+    return rootGetters['lists/currentListCategories'].find(
+      category => category.id === getters.currentItemObj?.category,
+    );
+  },
+
+  currentRelatedItemsIds: (state, getters) => {
+    return getters.currentItemObj?.relatedItems?.map(relatedItem => relatedItem.id);
+  },
+
+  currentRelatedListsIds: (state, getters) => {
+    return getters.currentItemObj?.relatedLists?.map(relatedList => relatedList.id);
   },
 };

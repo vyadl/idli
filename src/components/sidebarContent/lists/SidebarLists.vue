@@ -14,6 +14,9 @@ export default {
     ButtonSign,
     ButtonText,
   },
+  props: {
+    isSidebarBreakpointReached: Boolean,
+  },
   data: () => ({
     requestHandling: {
       isRequestProcessing: false,
@@ -54,12 +57,13 @@ export default {
     ...mapActions([
       '_resetCustomView',
     ]),
-    openListModal() {
-      this.$vfm.show('listModal');
+
+    openModal(name) {
+      this.$vfm.show(name);
     },
     setEdittingListObj(list) {
       this._setEdittingListObj(list);
-      this.openListModal();
+      this.openModal('listModal');
     },
     fetchListById(id) {
       this.requestHandling.isRequestProcessing = true;
@@ -97,6 +101,7 @@ export default {
     class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
+    :position="isSidebarBreakpointReached ? 'left' : 'centered'"
   >
     <div class="lists-container">
       <div
@@ -123,7 +128,7 @@ export default {
           text="add list"
           size="small"
           :disabled="requestHandling.isRequestProcessing"
-          @click="openListModal"
+          @click="openModal('listModal')"
         />
         <ButtonText
           v-if="isAddItemPossible"
@@ -145,7 +150,8 @@ export default {
     }
 
     .list {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr;
       align-items: center;
       width: fit-content;
       margin-bottom: 5px;
@@ -171,7 +177,7 @@ export default {
     }
 
     .list-title {
-      max-width: 200px;
+      width: fit-content;
       border-bottom: 2px solid map-get($colors, 'white');
       transition: border-color 0.2s;
 

@@ -1,19 +1,12 @@
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import InputCustom from '@/components/formElements/InputCustom.vue';
-import ButtonText from '@/components/formElements/ButtonText.vue';
+import VaultSearchField from '@/components/formElements/VaultSearchField.vue';
 
 export default {
   components: {
     PopupBox,
-    InputCustom,
-    ButtonText,
-  },
-  data() {
-    return {
-      searchValue: '',
-    };
+    VaultSearchField,
   },
   computed: {
     ...mapGetters('appearance', [
@@ -22,21 +15,6 @@ export default {
     ...mapGetters('auth', [
       'isLoggedIn',
     ]),
-    ...mapGetters('sidebar', [
-      'isSidebarOpen',
-      'sidebarMode',
-    ]),
-  },
-  methods: {
-    ...mapActions([
-      '_searchInVault',
-    ]),
-    redirectToSearchResults() {
-      this.$router.push({
-        name: 'search', 
-        query: { searchValue: this.searchValue },
-      });
-    },
   },
 };
 </script>
@@ -48,36 +26,11 @@ export default {
   >
     <PopupBox
       button-style-type="loupe"
+      popup-style-type="plain"
       :position="isMobileScreen ? 'upper-right' : 'left'"
       stop-propagation
     >
-      <form @submit.prevent="redirectToSearchResults">
-        <InputCustom
-          v-model="searchValue"
-          style-type="unbordered"
-          with-additional-element
-          placeholder="search in all your lists"
-        />
-        <ButtonText
-          class="find-button"
-          text="find"
-          size="smallest"
-          type="submit"
-          :disabled="!searchValue"
-        />
-      </form>
+      <VaultSearchField />
     </PopupBox>
   </div>
 </template>
-
-<style lang="scss">
-.search-vault {
-  position: relative;
-
-  .find-button {
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-  }
-}
-</style>

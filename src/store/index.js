@@ -7,6 +7,7 @@ import getters from './getters';
 import appearance from './appearance';
 import auth from './auth'; // eslint-disable-line import/no-cycle
 import bin from './bin';
+import cache from './cache';
 import filters from './filters';
 import lists from './lists';
 import items from './items';
@@ -23,6 +24,7 @@ const store = createStore({
     appearance,
     auth,
     bin,
+    cache,
     filters,
     lists,
     items,

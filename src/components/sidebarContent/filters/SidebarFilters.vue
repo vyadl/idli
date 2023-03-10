@@ -1,5 +1,5 @@
 <script>
-import SearchField from '@/components/sidebarContent/filters/SearchField.vue';
+import LocalSearchField from '@/components/sidebarContent/filters/LocalSearchField.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
 import CheckboxCustom from '@/components/formElements/CheckboxCustom.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -8,11 +8,14 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
-    SearchField,
+    LocalSearchField,
     SectionCard,
     CheckboxCustom,
     ButtonText,
     InfoMessage,
+  },
+  props: {
+    isSidebarBreakpointReached: Boolean,
   },
   computed: {
     ...mapGetters('filters', [
@@ -49,14 +52,21 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <div v-if="currentListObj">
-      <SectionCard title="search in list">
-        <SearchField />
+      <SectionCard
+        title="search in list"
+        :position="isSidebarBreakpointReached ? 'left' : 'centered'"
+      >
+        <LocalSearchField />
       </SectionCard>
-      <SectionCard title="filters">
+      <SectionCard
+        title="filters"
+        :position="isSidebarBreakpointReached ? 'left' : 'centered'"
+      >
         <SectionCard
           class="filters-title"
           title="tags"
           size="small"
+          :position="isSidebarBreakpointReached ? 'left' : 'centered'"
         >
           <InfoMessage
             v-if="tagsInfoMessage"
@@ -77,6 +87,7 @@ export default {
           class="filters-title"
           title="categories"
           size="small"
+          :position="isSidebarBreakpointReached ? 'left' : 'centered'"
         >
           <InfoMessage
             v-if="categoriesInfoMessage"

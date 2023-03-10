@@ -6,7 +6,7 @@ import { dispatchFromRoot } from '@/store/utils';
 export default {
   _setSorting({ state, commit, dispatch }, sorting) {
     commit('setSorting', sorting);
-    changeQueryRespectingDefault('sorting', sorting);
+    changeQueryRespectingDefault({ option: 'sorting', value: sorting });
 
     if (sorting === 'shuffled') {
       if (state.visualization.isItemsOrderReversed) {
@@ -16,20 +16,20 @@ export default {
   },
   _setMode({ commit }, mode) {
     commit('setMode', mode);
-    changeQueryRespectingDefault('mode', mode);
+    changeQueryRespectingDefault({ option: 'mode', value: mode });
   },
   _setListAlign({ commit }, align) {
     commit('setListAlign', align);
-    changeQueryRespectingDefault('align', align);
+    changeQueryRespectingDefault({ option: 'align', value: align });
   },
   _toggleItemsOrder({ getters, commit }) {
     dispatchFromRoot('_exitDraggableMode');
     commit('toggleItemsOrder');
-    changeQueryRespectingDefault('isItemsOrderReversed', getters.isItemsOrderReversed);
+    changeQueryRespectingDefault({ option: 'isItemsOrderReversed', value: getters.isItemsOrderReversed });
   },
   _toggleItemDetailsShowingMode({ getters, commit }) {
     commit('toggleItemDetailsShowingMode');
-    changeQueryRespectingDefault('areItemDetailsShown', getters.areItemDetailsShown);
+    changeQueryRespectingDefault({ option: 'areItemDetailsShown', value: getters.areItemDetailsShown });
   },
   _resetVisualizationToDefault({ commit }) {
     commit('resetVisualizationToDefault');

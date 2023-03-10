@@ -5,8 +5,10 @@ import WithSidebarLayout from '@/components/layouts/WithSidebarLayout.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
+import BulkItemsModal from '@/components/modals/BulkItemsModal.vue';
 import AboutModal from '@/components/modals/AboutModal.vue';
 import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
+import ItemConflictModal from '@/components/modals/ItemConflictModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
@@ -18,8 +20,10 @@ export default {
     ConfirmationModal,
     ListModal,
     ItemModal,
+    BulkItemsModal,
     AboutModal,
     PasswordChangeModal,
+    ItemConflictModal,
     AppNotification,
   },
   computed: {
@@ -77,6 +81,8 @@ export default {
 
     this._setUserFromLocalStorage();
     this._setUnitsFromLocalStorage(['settings']);
+    this._setItemsCacheFromLocalStorage();
+    this._setListsLogFromLocalStorage();
 
     initHotkeys();
   },
@@ -93,6 +99,10 @@ export default {
     ...mapActions('lists', [
       '_fetchTestLists',
       '_fetchListsForUser',
+    ]),
+    ...mapActions('cache', [
+      '_setItemsCacheFromLocalStorage',
+      '_setListsLogFromLocalStorage',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',
@@ -132,9 +142,11 @@ export default {
     </component>
     <ListModal />
     <ItemModal />
+    <BulkItemsModal />
     <AboutModal />
     <ConfirmationModal />
     <PasswordChangeModal />
+    <ItemConflictModal />
     <AppNotification v-if="notification" />
   </div>
 </template>

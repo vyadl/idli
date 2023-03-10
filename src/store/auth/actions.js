@@ -214,6 +214,7 @@ export default {
     commitFromRoot('lists/setCurrentListObj', null);
     commitFromRoot('lists/setCurrentListId', null);
     commitFromRoot('setModalNameToShow', '');
+    dispatchFromRoot('cache/_resetItemsCache');
     dispatchFromRoot('visualization/_resetVisualizationToDefault');
 
     deleteAccessToken();

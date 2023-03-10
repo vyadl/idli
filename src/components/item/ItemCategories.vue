@@ -11,9 +11,13 @@ export default {
   components: {
     MultiselectCustom,
   },
+  props: {
+    categoryForBulkItems: Number,
+  },
   emits: [
     'throw-error',
     'clear-error',
+    'save-item',
   ],
   data() {
     return {
@@ -25,43 +29,50 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'explicitRequestsNumber',
-    ]),
     ...mapGetters('lists', [
       'lists',
+      'currentListId',
       'currentListCategories',
       'currentListCategoriesTitles',
     ]),
     ...mapGetters('items', [
-      'edittingItemObj',
+      'currentItemObj',
+      'currentItemCategory',
+      'responseItemObj',
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
-    currentItemCategoryTitle() {
+    isBulkItemsMode() {
+      return this.categoryForBulkItems !== undefined;
+    },
+    categoryTitleForBulkItems() {
       const categoryObj = this.currentListCategories.find(
-        category => category.id === this.edittingItemObj.category,
+        category => category.id === this.categoryForBulkItems,
       );
 
-      return categoryObj?.title || '';
+      return categoryObj?.title;
+    },
+    selectedValue() {
+      return this.isBulkItemsMode
+        ? this.categoryTitleForBulkItems
+        : this.currentItemCategory?.title || '';
     },
   },
   methods: {
-    ...mapMutations([
-      'updateItemFieldLocally',
-    ]),
     ...mapMutations('lists', [
       'addCategoryToListLocally',
-    ]),
-    ...mapActions('items', [
-      '_saveItemOnServer',
     ]),
     ...mapActions('lists', [
       '_checkGroupingFieldTitleUniqueness',
       '_addGroupingFieldForListAndItem',
     ]),
     async checkTitleUniqueness(categoryTitle) {
+      if (this.responseItemObj) {
+        this.$vfm.show('itemConflictModal');
+        return;
+      }
+
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(categoryTitle);
 
       this.$emit(isTitleUnique ? 'clear-error' : 'throw-error');
@@ -88,8 +99,8 @@ export default {
       const isTitleUnique = this.checkTitleUniqueness(categoryTitle);
 
       if (isTitleUnique) {
-        const { listId } = this.edittingItemObj;
-        const itemObj = JSON.parse(JSON.stringify(this.edittingItemObj));
+        const listId = this.currentItemObj?.listId || this.currentListId;
+        const itemObj = JSON.parse(JSON.stringify(this.currentItemObj));
 
         this.addCategoryToListLocally({ listId, categoryTitle });
         this.requestHandling.isRequestProcessing = true;
@@ -100,10 +111,19 @@ export default {
           itemObj,
           title: categoryTitle,
           groupingFieldType: 'category',
+          isItemUpdateNeeded: !this.isBulkItemsMode,
         });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
-          .then(() => {
+          .then(responseList => {
+            if (this.isBulkItemsMode) {
+              const newCategoryObj = responseList.categories.find(
+                category => category.title === categoryTitle,
+              );
+
+              this.updateItemCategory(newCategoryObj.id);
+            }
+
             this.newTitle = '';
             this.clearSearch = false;
           });
@@ -113,8 +133,7 @@ export default {
       this.updateItemCategory('');
     },
     updateItemCategory(value) {
-      this.updateItemFieldLocally({ field: 'category', value });
-      this._saveItemOnServer(this.edittingItemObj);
+      this.$emit('save-item', 'category', value);
     },
   },
 };
@@ -126,7 +145,7 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <MultiselectCustom
-      :value="currentItemCategoryTitle"
+      :value="selectedValue"
       placeholder="choose category"
       no-options-text="no categories - start typing to add new"
       no-results-text=""
@@ -134,8 +153,7 @@ export default {
       :options="currentListCategoriesTitles"
       :create-option="false"
       :clear-search-trigger="clearSearch"
-      :disabled="requestHandling.isRequestProcessing || !!explicitRequestsNumber"
-      :show-options="!explicitRequestsNumber"
+      :disabled="requestHandling.isRequestProcessing"
       @select="category => changeCategory(category)"
       @clear="removeCategory()"
       @search-change="checkTitleUniqueness"
@@ -166,7 +184,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
 
     &:hover {
@@ -175,7 +193,7 @@ export default {
   }
 
   .new-option-desc {
-    font-size: 14px;
+    font-size: 12px;
     font-variant: small-caps;
     color: map-get($colors, 'gray-dark');
   }

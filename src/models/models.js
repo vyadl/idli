@@ -5,15 +5,17 @@ export const User = function User() {
   this.roles = [];
   this.accessToken = null;
 };
+
 export const List = function List() {
   this.title = null;
   this.isPrivate = true;
   this.tags = [];
   this.categories = [];
 };
-export const Item = function Item() {
-  this.title = '';
+
+export const Item = function Item({ title = '', tags = [], category = null }) {
+  this.title = title;
   this.details = '';
-  this.tags = [];
-  this.category = null;
+  this.tags = tags;
+  this.category = category;
 };

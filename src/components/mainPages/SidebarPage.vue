@@ -10,7 +10,7 @@ import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
 import SearchVault from '@/components/functionElements/SearchVault.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import { sidebarModesForViews } from '@/store/config';
+import { sidebarModesForViews, sidebarWidthValues } from '@/store/config';
 import { mapGetters, mapActions } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
 
@@ -27,6 +27,13 @@ export default {
     CustomLink,
     SearchVault,
     PopupBox,
+  },
+  emits: ['resize'],
+  data() {
+    return {
+      dividerPosition: sidebarWidthValues.main,
+      compactLayout: false,
+    };
   },
   computed: {
     ...mapGetters('appearance', [
@@ -58,6 +65,19 @@ export default {
     sidebarModes() {
       return sidebarModesForViews[this.currentSidebarView]?.sidebarModes;
     },
+    sidebarStyles() {
+      const styles = {};
+
+      styles.width = `${this.dividerPosition}px`;
+      styles.transform = this.isSidebarOpen
+        ? 'translateX(0)'
+        : `translateX(${this.dividerPosition}px)`;
+
+      return styles;
+    },
+    isSidebarBreakpointReached() {
+      return this.dividerPosition > sidebarWidthValues.breakpoint;
+    },
   },
   created() {
     const { sidebar } = this.$route.query;
@@ -76,13 +96,7 @@ export default {
     }
   },
   mounted() {
-    this.$refs.edgeMoveCatcher.addEventListener('mouseover', () => {
-      if (!this.isSidebarOpen) {
-        this._openSidebar(
-          this.sidebarMode || sidebarModesForViews[this.currentSidebarView]?.default,
-        );
-      }
-    });
+    window.addEventListener('resize', this.handleWindowResize);
   },
   methods: {
     ...mapActions('lists', [
@@ -95,29 +109,83 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
+    catchEdgeMove() {
+      if (!this.isSidebarOpen) {
+        this._openSidebar(
+          this.sidebarMode || sidebarModesForViews[this.currentSidebarView]?.default,
+        );
+      }
+    },
+    handleWindowResize() {
+      const isRemainingSpaceEnoughForSidebarButtons = window.innerWidth > this.dividerPosition 
+        + sidebarWidthValues.buttons;
+      const isSidebarButtonsBreakpointReached = window.innerWidth < this.dividerPosition 
+        + sidebarWidthValues.buttons * 2;
+
+      if (!isRemainingSpaceEnoughForSidebarButtons && !this.isMobileScreen) {
+        this.dividerPosition = window.innerWidth - sidebarWidthValues.buttons;
+      }
+
+      if (this.isMobileScreen) {
+        this.dividerPosition = sidebarWidthValues.main;
+      }
+
+      this.compactLayout = isSidebarButtonsBreakpointReached;
+      this.$emit('resize', this.dividerPosition);
+    },
+    handleSidebarResize(event) {
+      event.preventDefault();
+
+      const newPosition = window.innerWidth - event.pageX;
+      const isRemainingSpaceEnoughForSidebarButtons = event.pageX >= sidebarWidthValues.buttons;
+      const isSidebarButtonsBreakpointReached = event.pageX < sidebarWidthValues.buttons * 2;
+      const isNewPositionValid = newPosition >= sidebarWidthValues.main 
+        && isRemainingSpaceEnoughForSidebarButtons;
+
+      if (isNewPositionValid) {
+        this.dividerPosition = newPosition;
+      }
+
+      if (!isRemainingSpaceEnoughForSidebarButtons) {
+        this.dividerPosition = window.innerWidth - sidebarWidthValues.buttons;
+        this.endResize();
+      }
+
+      this.compactLayout = isSidebarButtonsBreakpointReached;
+      this.$emit('resize', this.dividerPosition);
+    },
+    startResize() {
+      document.addEventListener('mousemove', this.handleSidebarResize);
+    },
+    endResize() {
+      document.removeEventListener('mousemove', this.handleSidebarResize);
+    },
     openListModal() {
       this.$vfm.show('listModal');
     },
+    openModal(name) {
+      this.$vfm.show(name);
+    },
     defineButtonStyleType(mode) {
-      if (mode === 'bin' && !this.isMobileScreen) {
+      if (mode === 'bin' && !this.isMobileScreen && !this.compactLayout) {
         return 'underline';
       }
 
-      return this.isMobileScreen ? 'brick' : 'bordered';
+      return this.isMobileScreen || this.compactLayout
+        ? 'brick'
+        : 'bordered';
+    },
+    isMainModeButton(mode) {
+      return !this.isMobileScreen && !this.compactLayout && mode !== 'bin';
     },
     exitPublicView() {
       this._setCurrentListView('owner');
+      this._closeSidebar();
     },
     changeSidebarState() {
       this.isSidebarOpen
         ? this._closeSidebar()
         : this._openSidebar(this.sidebarMode);
-    },
-    scrollSidebarToTop() {
-      this.$refs.sidebarContent.scroll({
-        top: 0,
-        behavior: 'smooth',
-      });
     },
   },
 };
@@ -127,16 +195,30 @@ export default {
   <div
     class="sidebar-page"
     :class="[
-      { shown: isSidebarOpen },
+      {
+        shown: isSidebarOpen,
+        compact: compactLayout,
+      },
       `${globalTheme}-theme`,
     ]"
+    :style="sidebarStyles"
+    @mouseup="endResize"
   >
     <div
-      ref="edgeMoveCatcher"
+      v-show="!isSidebarOpen"
       class="edge-move-catcher"
+      @mouseover="catchEdgeMove"
+      @focus="catchEdgeMove"
     />
     <div
-      v-if="isOwnerView"
+      v-if="isSidebarOpen && !isMobileScreen"
+      class="divider-container"
+      @mousedown="startResize"
+    >
+      <div class="divider" />
+    </div>
+    <div
+      v-if="isOwnerView || $route.name === 'home'"
       class="search-button"
     >
       <SearchVault />
@@ -145,7 +227,7 @@ export default {
       v-if="isAddUnitPossible"
       class="add-unit-button"
       button-style-type="plus"
-      :position="isMobileScreen ? 'upper-right' : 'left'"
+      :position="isMobileScreen || compactLayout ? 'upper-right' : 'left'"
       stop-propagation
       content-type="functional"
     >
@@ -159,7 +241,13 @@ export default {
         text="new list"
         style-type="brick"
         size="small"
-        @click="openListModal"
+        @click="openModal('listModal')"
+      />
+      <ButtonText
+        text="add bulk items"
+        style-type="brick"
+        size="small"
+        @click="openModal('bulkItemsModal')"
       />
     </PopupBox>
     <div
@@ -192,13 +280,13 @@ export default {
           v-for="mode in sidebarModes"
           :key="mode"
           :class="{
-            'mode-button' : !isMobileScreen && mode !== 'bin',
+            'mode-button' : isMainModeButton(mode),
             'bin-mode-button' : mode === 'bin',
           }"
-          :with-box-shadow="!isMobileScreen && mode !== 'bin'"
+          :with-box-shadow="isMainModeButton(mode)"
           :text="mode"
           :style-type="defineButtonStyleType(mode)"
-          :size="mode === 'bin' || isMobileScreen ? 'small' : ''"
+          :size="isMainModeButton(mode) ? '' : 'small'"
           :active="sidebarMode === mode"
           @click="_openSidebar(mode)"
         />
@@ -217,14 +305,26 @@ export default {
       ref="sidebarContent"
       class="sidebar-content"
     >
-      <SidebarVisualization v-if="sidebarMode === 'visualization'" />
-      <SidebarFilters v-if="sidebarMode === 'filters'" />
-      <SidebarLists v-if="sidebarMode === 'lists'" />
+      <SidebarVisualization
+        v-if="sidebarMode === 'visualization'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
+      <SidebarFilters
+        v-if="sidebarMode === 'filters'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
+      <SidebarLists
+        v-if="sidebarMode === 'lists'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
       <SidebarSettings v-if="sidebarMode === 'settings'" />
-      <SidebarBin v-if="sidebarMode === 'bin'" />
+      <SidebarBin
+        v-if="sidebarMode === 'bin'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
       <SidebarItem
         v-if="sidebarMode === 'item'"
-        @scroll-sidebar-to-top="scrollSidebarToTop"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
       />
     </div>
   </div>
@@ -236,18 +336,11 @@ export default {
     z-index: 10;
     top: 0;
     right: 0;
-    width: 300px;
     height: 100vh;
     background-color: map-get($colors, 'white');
-    transform: translateX(300px);
-    transition:
-      transform 0.3s,
-      box-shadow 0.7s;
+    transition: transform 0.3s;
 
     &.shown {
-      box-shadow: 15px 0 25px 0 map-get($colors, 'gray-light');
-      transform: translateX(0);
-
       .mode-buttons {
         transform: translateX(-105%) translateX(-15px);
       }
@@ -263,6 +356,34 @@ export default {
       height: 100vh;
       width: 1px;
       left: -1px;
+    }
+
+    .divider-container {
+      --padding-right: 8px;
+      position: absolute;
+      z-index: 10;
+      height: 100vh;
+      right: calc(100% - var(--padding-right));
+      display: flex;
+      justify-content: flex-end;
+      padding-right: var(--padding-right);
+      width: calc(var(--padding-right) * 2);
+      background-color: transparent;
+      cursor: ew-resize;
+
+      &:hover {
+        .divider {
+          width: 4px;
+        }
+      }
+    }
+
+    .divider {
+      top: 0;
+      height: 100vh;
+      width: 2px;
+      background: map-get($colors, 'gray-light');
+      transition: width 0.2s;
     }
 
     .exit-public-view-button,
@@ -346,11 +467,6 @@ export default {
     &.inverted-theme {
       background-color: map-get($colors, 'black');
       color: map-get($colors, 'white');
-      border-left: 1px solid map-get($colors, 'gray-light');
-
-      &.shown {
-        box-shadow: none;
-      }
 
       .add-unit-button,
       .search-button,
@@ -358,13 +474,18 @@ export default {
       .sidebar-content {
         background-color: map-get($colors, 'black');
       }
-    }
-  }
 
-  @media #{breakpoints.$s-media} {
-    .sidebar-page {
+      .divider {
+        background-color: map-get($colors, 'gray-dark');
+      }
+    }
+
+    &.compact {
       &.shown {
+        border-left: 1px solid map-get($colors, 'gray-light');
+
         .mode-buttons {
+          transition: none;
           transform: none;
         }
 
@@ -374,8 +495,48 @@ export default {
         }
       }
 
-      .search-button {
-        top: 80px;
+      .sidebar-buttons {
+        position: fixed;
+        z-index: 9;
+        top: 0;
+        bottom: unset;
+        width: 100%;
+        padding-bottom: 30px;
+      }
+
+      .mode-buttons {
+        flex-flow: row wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 2px;
+        padding: 10px 20px;
+        background-color: map-get($colors, 'white');
+      }
+
+      .sidebar-content {
+        padding-top: 80px;
+        padding-bottom: 100px;
+      }
+
+      .state-button {
+        bottom: 120px;
+      }
+    }
+  }
+
+  @media #{breakpoints.$s-media} {
+    .sidebar-page {
+      &.shown {
+        border-left: 1px solid map-get($colors, 'gray-light');
+
+        .mode-buttons {
+          transform: none;
+        }
+
+        .exit-public-view-button,
+        .auth-buttons {
+          display: none;
+        }
       }
 
       .sidebar-buttons {
@@ -406,6 +567,8 @@ export default {
     }
 
     .inverted-theme {
+      border-left: 1px solid map-get($colors, 'gray-dark');
+
       .mode-buttons {
         background-color: map-get($colors, 'black');
       }
