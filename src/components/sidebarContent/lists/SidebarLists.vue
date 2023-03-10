@@ -57,12 +57,13 @@ export default {
     ...mapActions([
       '_resetCustomView',
     ]),
-    openListModal() {
-      this.$vfm.show('listModal');
+
+    openModal(name) {
+      this.$vfm.show(name);
     },
     setEdittingListObj(list) {
       this._setEdittingListObj(list);
-      this.openListModal();
+      this.openModal('listModal');
     },
     fetchListById(id) {
       this.requestHandling.isRequestProcessing = true;
@@ -127,7 +128,7 @@ export default {
           text="add list"
           size="small"
           :disabled="requestHandling.isRequestProcessing"
-          @click="openListModal"
+          @click="openModal('listModal')"
         />
         <ButtonText
           v-if="isAddItemPossible"

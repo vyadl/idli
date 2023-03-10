@@ -163,6 +163,9 @@ export default {
     openListModal() {
       this.$vfm.show('listModal');
     },
+    openModal(name) {
+      this.$vfm.show(name);
+    },
     defineButtonStyleType(mode) {
       if (mode === 'bin' && !this.isMobileScreen && !this.compactLayout) {
         return 'underline';
@@ -238,7 +241,13 @@ export default {
         text="new list"
         style-type="brick"
         size="small"
-        @click="openListModal"
+        @click="openModal('listModal')"
+      />
+      <ButtonText
+        text="add bulk items"
+        style-type="brick"
+        size="small"
+        @click="openModal('bulkItemsModal')"
       />
     </PopupBox>
     <div

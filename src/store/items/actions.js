@@ -183,6 +183,37 @@ export default {
       });
   },
 
+  _addBulkItemsOnServer({ rootGetters }, { items, listId }) {
+    commitFromRoot('increaseExplicitRequestsNumber');
+
+    return this.$config.axios
+      .post(
+        `${this.$config.apiBasePath}items/add-many/${listId}`,
+        { items },
+      )
+      .then(({ data: resultItems }) => {
+        if (rootGetters['lists/currentListId'] === listId) {
+          resultItems.forEach(item => {
+            commitFromRoot('addItem', item);
+          });
+
+          dispatchFromRoot('cache/_saveItemsFromListInCache', {
+            id: listId,
+            items: rootGetters.currentListItems,
+          });
+        }
+
+        return resultItems;
+      })
+      .catch(error => {
+        notifyAboutError(error);
+        dispatchFromRoot('lists/_fetchListById', { id: listId, cancelToken: null });
+      })
+      .finally(() => {
+        commitFromRoot('decreaseExplicitRequestsNumber');
+      });
+  },
+
   _updateItemOnServer({ getters, dispatch }, { item, cancelToken }) {
     if (!getters.isItemSavingAllowed) {
       return;

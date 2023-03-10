@@ -5,6 +5,7 @@ import WithSidebarLayout from '@/components/layouts/WithSidebarLayout.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
 import ListModal from '@/components/modals/ListModal.vue';
 import ItemModal from '@/components/modals/ItemModal.vue';
+import BulkItemsModal from '@/components/modals/BulkItemsModal.vue';
 import AboutModal from '@/components/modals/AboutModal.vue';
 import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
 import ItemConflictModal from '@/components/modals/ItemConflictModal.vue';
@@ -19,6 +20,7 @@ export default {
     ConfirmationModal,
     ListModal,
     ItemModal,
+    BulkItemsModal,
     AboutModal,
     PasswordChangeModal,
     ItemConflictModal,
@@ -140,6 +142,7 @@ export default {
     </component>
     <ListModal />
     <ItemModal />
+    <BulkItemsModal />
     <AboutModal />
     <ConfirmationModal />
     <PasswordChangeModal />

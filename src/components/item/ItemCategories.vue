@@ -11,6 +11,9 @@ export default {
   components: {
     MultiselectCustom,
   },
+  props: {
+    categoryForBulkItems: Number,
+  },
   emits: [
     'throw-error',
     'clear-error',
@@ -28,6 +31,7 @@ export default {
   computed: {
     ...mapGetters('lists', [
       'lists',
+      'currentListId',
       'currentListCategories',
       'currentListCategoriesTitles',
     ]),
@@ -39,6 +43,21 @@ export default {
     ...mapGetters('settings', [
       'isItemFormInSidebar',
     ]),
+    isBulkItemsMode() {
+      return this.categoryForBulkItems !== undefined;
+    },
+    categoryTitleForBulkItems() {
+      const categoryObj = this.currentListCategories.find(
+        category => category.id === this.categoryForBulkItems,
+      );
+
+      return categoryObj?.title;
+    },
+    selectedValue() {
+      return this.isBulkItemsMode
+        ? this.categoryTitleForBulkItems
+        : this.currentItemCategory?.title || '';
+    },
   },
   methods: {
     ...mapMutations('lists', [
@@ -80,7 +99,7 @@ export default {
       const isTitleUnique = this.checkTitleUniqueness(categoryTitle);
 
       if (isTitleUnique) {
-        const { listId } = this.currentItemObj;
+        const listId = this.currentItemObj?.listId || this.currentListId;
         const itemObj = JSON.parse(JSON.stringify(this.currentItemObj));
 
         this.addCategoryToListLocally({ listId, categoryTitle });
@@ -92,10 +111,19 @@ export default {
           itemObj,
           title: categoryTitle,
           groupingFieldType: 'category',
+          isItemUpdateNeeded: !this.isBulkItemsMode,
         });
 
         handleRequestStatuses(request, this.requestHandling, { onlyFinally: true })
-          .then(() => {
+          .then(responseList => {
+            if (this.isBulkItemsMode) {
+              const newCategoryObj = responseList.categories.find(
+                category => category.title === categoryTitle,
+              );
+
+              this.updateItemCategory(newCategoryObj.id);
+            }
+
             this.newTitle = '';
             this.clearSearch = false;
           });
@@ -117,7 +145,7 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <MultiselectCustom
-      :value="currentItemCategory?.title || ''"
+      :value="selectedValue"
       placeholder="choose category"
       no-options-text="no categories - start typing to add new"
       no-results-text=""
@@ -156,7 +184,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
 
     &:hover {
@@ -165,7 +193,7 @@ export default {
   }
 
   .new-option-desc {
-    font-size: 14px;
+    font-size: 12px;
     font-variant: small-caps;
     color: map-get($colors, 'gray-dark');
   }

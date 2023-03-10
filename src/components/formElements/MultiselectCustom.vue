@@ -76,7 +76,7 @@ export default {
       this.$emit('deselect', option);
     },
     change() {
-      if (typeof this.value !== 'string') {
+      if (this.value && typeof this.value !== 'string') {
         this.localValue = [...this.value];
       }
     },
