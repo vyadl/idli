@@ -91,7 +91,7 @@ export default {
     const unsavedItem = rootGetters.currentListItems.find(item => item.temporaryId);
 
     if (!unsavedItem) {
-      const newItem = new Item({});
+      const newItem = new Item();
       const itemWithTemporaryId = {
         ...newItem,
         temporaryId: Date.now(),
