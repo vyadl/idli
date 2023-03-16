@@ -11,11 +11,15 @@ export default {
       default: false,
     },
     blurTrigger: Boolean,
+    focusTrigger: Boolean,
   },
   emits: ['update:modelValue'],
   watch: {
     blurTrigger() {
       this.$refs.textarea.blur();
+    },
+    focusTrigger() {
+      this.$refs.textarea.focus();
     },
   },
   mounted() {

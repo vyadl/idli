@@ -3,6 +3,7 @@ export default {
   props: {
     to: Object,
     title: String,
+    titleInHtml: Boolean,
     newTab: Boolean,
     size: {
       type: String,
@@ -21,12 +22,18 @@ export default {
     class="custom-link"
     :class="[ size, `${globalTheme}-theme` ]"
   >
-    <router-link
-      :to="to"
-      :target="newTab ? '_blank' : ''"
+    <a
+      v-if="titleInHtml"
+      class="link-content"
+      @click.stop.prevent="$router.push(to)"
+      v-html="title"
+    />
+    <a
+      v-else
+      @click.stop.prevent="$router.push(to)"
     >
       {{ title }} 
-    </router-link>
+    </a>
     <div
       v-if="newTab"
       class="new-tab-icon"
@@ -38,6 +45,11 @@ export default {
 .custom-link {
   position: relative;
   color: map-get($colors, 'black');
+  cursor: pointer;
+
+  .link-content {
+    text-decoration: underline;
+  }
 
   .new-tab-icon {
     position: relative;

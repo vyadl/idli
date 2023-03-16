@@ -44,7 +44,7 @@ export default {
       return name;
     },
     isItemActive() {
-      return this.currentItemObj?.temporaryId 
+      return this.currentItemObj?.temporaryId
         ? this.currentItemObj.temporaryId === this.item.temporaryId
         : this.currentItemObj?.id === this.item.id;
     },
