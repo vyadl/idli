@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import SidebarPage from '@/components/mainPages/SidebarPage.vue';
-import { sidebarWidth } from '@/scss/style.module.scss';
+import { sidebarWidthValues } from '@/store/config';
 
 export default {
   components: {
@@ -30,7 +30,7 @@ export default {
     },
   },
   created() {
-    this.remainingSpaceNearSidebar = window.innerWidth - +sidebarWidth;
+    this.remainingSpaceNearSidebar = window.innerWidth - sidebarWidthValues.main;
   },
   methods: {
     ...mapActions('sidebar', [
@@ -48,9 +48,6 @@ export default {
     <SidebarPage @resize="adjustWidth" />
     <div
       class="main-content"
-      :class="{
-        'move-to-left': !isListUnderSidebar && isSidebarOpen,
-      }"
       :style="styles"
       @click="_closeSidebar"
     >

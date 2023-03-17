@@ -84,12 +84,16 @@ export default {
         detailsTextarea: false,
       },
       blurTrigger: false,
+      focusTrigger: false,
     };
   },
   computed: {
     ...mapGetters([
       'currentListItems',
       'explicitRequestsNumber',
+    ]),
+    ...mapGetters('cache', [
+      'cache',
     ]),
     ...mapGetters('items', [
       'currentItemTags',
@@ -130,6 +134,15 @@ export default {
         || this.showingStatuses.addons;
     },
   },
+  watch: {
+    'currentItemObj.id': {
+      handler() {
+        if (!this.currentItemObj.title) {
+          this.focusTrigger = !this.focusTrigger;
+        }
+      },
+    },
+  },
   unmounted() {
     if (!this.isItemFormInSidebar) {
       routerQueue.add({
@@ -138,7 +151,10 @@ export default {
       });
     }
 
-    if (!this.serverRequests.length) {
+    const { id, updatedAt } = this.currentItemObj;
+    const isItemChanged = this.cache[id]?.updatedAt !== updatedAt;
+
+    if (isItemChanged) {
       const { title, details } = this.currentItemObj;
 
       if (!title && details) {
@@ -151,7 +167,10 @@ export default {
         this.updateItemFieldInCurrentList(generatedTitleObj);
       }
 
-      this._saveItemOnServer(this.currentItemObj);
+      this.callActionDebounced(
+        this.currentItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
+        this.currentItemObj,
+      );
     }
 
     this.currentListItems.forEach(item => {
@@ -277,7 +296,8 @@ export default {
         :rows="3"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
-        :is-focus="!currentItemObj.id"
+        :is-focus="!currentItemObj.title"
+        :focus-trigger="focusTrigger"
         :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('title', value)"    
       />

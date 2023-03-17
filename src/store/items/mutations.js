@@ -11,6 +11,12 @@ export default {
     state.currentItemObj[field] = value;
   },
 
+  updateCurrentItemFieldsAfterServerResponse(state, { fieldsToUpdate, responseItem }) {
+    fieldsToUpdate.forEach(field => {
+      state.currentItemObj[field] = responseItem[field];
+    });
+  },
+
   setIsItemSavingAllowed(state, value) {
     state.isItemSavingAllowed = value;
   },

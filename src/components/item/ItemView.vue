@@ -23,6 +23,7 @@ export default {
   computed: {
     ...mapGetters('items', [
       'isItemSavingAllowed',
+      'currentItemObj',
     ]),
     ...mapGetters('lists', [
       'lists',
@@ -71,7 +72,7 @@ export default {
     v-if="item"
     class="item-view"
   >
-    <ItemActionsMenu v-if="isItemSavingAllowed" />
+    <ItemActionsMenu v-if="isItemSavingAllowed && currentItemObj" />
     <div class="text-fields">
       <div
         class="title"

@@ -175,7 +175,6 @@ export default {
 <style lang="scss">
   .sidebar-settings {
     max-width: 300px;
-    margin: 0 auto;
 
     .options-container {
       margin-bottom: 20px;
