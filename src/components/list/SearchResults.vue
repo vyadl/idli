@@ -147,7 +147,6 @@ export default {
             <CustomLink
               class="result-unit"
               :title="highlightResultText(item.title)"
-              title-in-html
               :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
             />
             <div
@@ -169,7 +168,6 @@ export default {
             :key="list.id"
             class="result-unit"
             :title="highlightResultText(list.title)"
-            title-in-html
             :to="{ name: 'list', params: { id: list.id } }"
           />
         </SectionCard>

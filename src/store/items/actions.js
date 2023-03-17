@@ -187,9 +187,7 @@ export default {
             'temporaryId',
           ];
 
-          fieldsToUpdate.forEach(field => {
-            commit('updateItemFieldLocally', { field, value: responseItem[field] });
-          });
+          commit('updateCurrentItemFieldsAfterServerResponse', { fieldsToUpdate, responseItem });
         }
       })
       .catch(error => {

@@ -3,7 +3,6 @@ export default {
   props: {
     to: Object,
     title: String,
-    titleInHtml: Boolean,
     newTab: Boolean,
     size: {
       type: String,
@@ -23,17 +22,10 @@ export default {
     :class="[ size, `${globalTheme}-theme` ]"
   >
     <a
-      v-if="titleInHtml"
       class="link-content"
       @click.stop.prevent="$router.push(to)"
       v-html="title"
     />
-    <a
-      v-else
-      @click.stop.prevent="$router.push(to)"
-    >
-      {{ title }} 
-    </a>
     <div
       v-if="newTab"
       class="new-tab-icon"
