@@ -25,17 +25,19 @@ export default {
     if (isItemsVersionsMatch) {
       const isItemChangedBeforeServerResponse = getters.currentItemObj.updatedAt
         !== cachedItem.updatedAt;
-
+      
       commit('setIsItemSavingAllowed', true);
-      commit('setCurrentItemObj', responseItem);
 
       if (isItemChangedBeforeServerResponse) {
         dispatch('_updateItemOnServer', {
           item: getters.currentItemObj,
           cancelToken: null,
         });
+      } else {
+        commit('setCurrentItemObj', responseItem);
+        dispatchFromRoot('cache/_saveItemInCache', responseItem);
       }
-    } else {
+    } else if (getters.currentItemObj) {
       commit('setResponseItemObj', responseItem);
       commitFromRoot('setModalNameToShow', 'itemConflictModal');
     }
@@ -70,8 +72,6 @@ export default {
             ? dispatch('_syncCachedItemWithServerItem', { cachedItem, responseItem })
             : commit('setCurrentItemObj', responseItem);
         }
-
-        dispatchFromRoot('cache/_saveItemInCache', responseItem);
 
         return responseItem;
       })
@@ -173,8 +173,21 @@ export default {
         commitFromRoot('updateItemByTemporaryId', responseItem);
         dispatchFromRoot('cache/_saveItemInCache', responseItem);
 
+        // eslint-disable-next-line no-param-reassign
+        delete responseItem.temporaryId;
+        
         if (getters.currentItemObj) {
-          commit('setCurrentItemObj', responseItem);
+          const fieldsToUpdate = [
+            'createdAt',
+            'updatedAt',
+            'listId',
+            'userId',
+            'deletedAt',
+            'id',
+            'temporaryId',
+          ];
+
+          commit('updateCurrentItemFieldsAfterServerResponse', { fieldsToUpdate, responseItem });
         }
       })
       .catch(error => {

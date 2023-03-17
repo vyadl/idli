@@ -97,6 +97,7 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', this.handleWindowResize);
+    window.addEventListener('mouseup', this.endResize);
   },
   methods: {
     ...mapActions('lists', [
@@ -202,7 +203,6 @@ export default {
       `${globalTheme}-theme`,
     ]"
     :style="sidebarStyles"
-    @mouseup="endResize"
   >
     <div
       v-show="!isSidebarOpen"
@@ -506,7 +506,7 @@ export default {
 
       .mode-buttons {
         flex-flow: row wrap;
-        justify-content: flex-end;
+        justify-content: flex-start;
         align-items: center;
         gap: 2px;
         padding: 10px 20px;

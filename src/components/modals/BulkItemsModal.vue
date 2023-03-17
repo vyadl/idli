@@ -18,7 +18,3 @@ export default {
     <BulkItemsForm />
   </ModalBasic>
 </template>
-
-<!-- <style lang="scss">
-  
-</style> -->

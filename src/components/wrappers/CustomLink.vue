@@ -21,12 +21,11 @@ export default {
     class="custom-link"
     :class="[ size, `${globalTheme}-theme` ]"
   >
-    <router-link
-      :to="to"
-      :target="newTab ? '_blank' : ''"
-    >
-      {{ title }} 
-    </router-link>
+    <a
+      class="link-content"
+      @click.stop.prevent="$router.push(to)"
+      v-html="title"
+    />
     <div
       v-if="newTab"
       class="new-tab-icon"
@@ -38,6 +37,11 @@ export default {
 .custom-link {
   position: relative;
   color: map-get($colors, 'black');
+  cursor: pointer;
+
+  .link-content {
+    text-decoration: underline;
+  }
 
   .new-tab-icon {
     position: relative;

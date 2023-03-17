@@ -1,3 +1,4 @@
+<!-- eslint-disable no-param-reassign -->
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
@@ -24,8 +25,7 @@ export default {
   GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
   data() {
     return {
-      bulkItems: '',
-      items: [],
+      bulkItemsString: '',
       delimiter: '\n',
       delimiterOptions: {
         lineBreak: {
@@ -36,13 +36,9 @@ export default {
           title: 'comma',
           value: ',',
         },
-        custom: {
-          title: 'custom',
-          value: '',
-        },
       },
-      customDelimiter: '',
-      trim: {
+      isCustomDelimiterFieldShown: false,
+      trimFiguresFrom: {
         start: null,
         end: null,
       },
@@ -61,34 +57,44 @@ export default {
       '_addBulkItemsOnServer',
     ]),
     addItems() {
-      this.items = this.bulkItems
-        .split(this.delimiter || this.customDelimiter)
-        .map(itemTitle => {
-          if (this.trim.start) {
-            // eslint-disable-next-line no-param-reassign
-            itemTitle = itemTitle.slice(this.trim.start);
-          }
+      const trimItemTitle = itemTitle => {
+        if (this.trimFiguresFrom.start) {
+          itemTitle = itemTitle.slice(this.trimFiguresFrom.start);
+        }
 
-          if (this.trim.end) {
-            // eslint-disable-next-line no-param-reassign
-            itemTitle = itemTitle.slice(0, itemTitle.length - this.trim.end);
-          }
+        if (this.trimFiguresFrom.end) {
+          itemTitle = itemTitle.slice(0, itemTitle.length - this.trimFiguresFrom.end);
+        }
 
-          // eslint-disable-next-line no-param-reassign
-          return new Item({
-            title: itemTitle,
-            tags: this.tags,
-            category: this.category,
-          });
+        return itemTitle;
+      };
+
+      const makeItemObj = itemTitle => {
+        return new Item({
+          title: itemTitle,
+          tags: this.tags,
+          category: this.category,
         });
+      };
+
+      const items = this.delimiter
+        ? this.bulkItemsString.split(this.delimiter)
+        : [this.bulkItemsString];
 
       this._addBulkItemsOnServer({
-        items: this.items,
+        items: items.map(item => makeItemObj(trimItemTitle(item))),
         listId: this.currentListId,
       })
         .then(() => {
           this.$vfm.hide('bulkItemsModal');
         });
+    },
+    setIsCustomDelimiterFieldShown(value) {
+      this.isCustomDelimiterFieldShown = value;
+
+      if (value) {
+        this.delimiter = '';
+      }
     },
     updateItemsField(field, value) {
       if (field === 'tags' && !Array.isArray(value)) {
@@ -110,7 +116,7 @@ export default {
 <template>
   <div class="bulk-items-form">
     <TextareaCustom
-      v-model="bulkItems"
+      v-model="bulkItemsString"
       label="type items titles"
       :rows="6"
       :is-focus="true"
@@ -128,11 +134,20 @@ export default {
           :label="option.title"
           :value="option.value"
           name="delimiter"
+          @click="setIsCustomDelimiterFieldShown(false)"
         />
+        <div class="custom-delimiter-button">
+          <ButtonText
+            text="custom"
+            size="small"
+            :active="isCustomDelimiterFieldShown"
+            @click="setIsCustomDelimiterFieldShown(true)"
+          />
+        </div>
       </div>
       <TextareaCustom
-        v-if="delimiter === delimiterOptions.custom.value"
-        v-model="customDelimiter"
+        v-if="isCustomDelimiterFieldShown"
+        v-model="delimiter"
         class="custom-delimiter"
         label="type your delimiter"
         :rows="2"
@@ -148,7 +163,7 @@ export default {
         <InputCustom
           v-for="edge in ['start', 'end']"
           :key="edge"
-          v-model="trim[edge]"
+          v-model="trimFiguresFrom[edge]"
           type="number"
           :label="`from ${edge}`"
           :width="70"
@@ -208,8 +223,13 @@ export default {
   .delimiter-options,
   .trim-options {
     display: flex;
+    align-items: baseline;
     gap: 10px;
     padding-top: 10px;
+  }
+
+  .custom-delimiter-button {
+    padding-left: 10px;
   }
 }
 </style>

@@ -65,55 +65,52 @@ export default {
       '_setListIdFromLocalStorage',
     ]),
     searchInVaultAndFindTextOnPage() {
-      this._searchInVault(this.searchValue)
-        .then(() => {
-          this.highlightResultText();
-        });
+      this._searchInVault(this.searchValue);
     },
-    highlightResultText() {
-      const resultUnits = document.querySelectorAll('.result-unit');
+    highlightResultText(resultUnit) {
       const searchValueLowerCased = this.searchValue.toLowerCase();
       const searchValueLength = this.searchValue.length;
       const htmlWrappers = ['<mark>', '</mark>'];
       const htmlWrappersLength = htmlWrappers.join('').length;
 
-      resultUnits.forEach(unit => {
-        if (unit.innerText.toLowerCase().includes(searchValueLowerCased)) {
-          const initialHtml = unit.innerHTML;
-          const initialHtmlLowerCased = initialHtml.toLowerCase();
+      const initialText = resultUnit;
 
-          let processedChunksString = '';
-          let extraSymbolsCount = 0;
+      if (!resultUnit.toLowerCase().includes(searchValueLowerCased)) {
+        return initialText;
+      }
 
-          let startIndex = initialHtmlLowerCased.indexOf(searchValueLowerCased);
-          let endIndex = startIndex + searchValueLength;
-          let currentChunk = initialHtml.slice(0, endIndex);
+      const initialTextLowerCased = initialText.toLowerCase();
 
-          while (currentChunk.length >= searchValueLength) {
-            const originalCasedFoundText = currentChunk.slice(startIndex, endIndex);
-            const newHtmlPiece = htmlWrappers[0] + originalCasedFoundText + htmlWrappers[1];
-            const replacedChunk = currentChunk.slice(0, startIndex) + newHtmlPiece;
+      let processedChunksString = '';
+      let extraSymbolsCount = 0;
 
-            processedChunksString += replacedChunk;
-            extraSymbolsCount += htmlWrappersLength;
+      let startIndex = initialTextLowerCased.indexOf(searchValueLowerCased);
+      let endIndex = startIndex + searchValueLength;
+      let currentChunk = initialText.slice(0, endIndex);
 
-            const newBeginningIndex = processedChunksString.length - extraSymbolsCount;
-            const remainingPartLowerCased = initialHtmlLowerCased.slice(newBeginningIndex);
+      while (currentChunk.length >= searchValueLength) {
+        const originalCasedFoundText = currentChunk.slice(startIndex, endIndex);
+        const newHtmlPiece = htmlWrappers[0] + originalCasedFoundText + htmlWrappers[1];
+        const replacedChunk = currentChunk.slice(0, startIndex) + newHtmlPiece;
 
-            startIndex = remainingPartLowerCased.indexOf(searchValueLowerCased);
+        processedChunksString += replacedChunk;
+        extraSymbolsCount += htmlWrappersLength;
 
-            if (startIndex === -1) {
-              processedChunksString += remainingPartLowerCased;
-              break;
-            }
+        const newBeginningIndex = processedChunksString.length - extraSymbolsCount;
+        const remainingPartLowerCased = initialTextLowerCased.slice(newBeginningIndex);
 
-            endIndex = startIndex + searchValueLength;
-            currentChunk = initialHtml.slice(newBeginningIndex, newBeginningIndex + endIndex);
-          }
+        startIndex = remainingPartLowerCased.indexOf(searchValueLowerCased);
 
-          unit.innerHTML = processedChunksString;
+        if (startIndex === -1) {
+          processedChunksString += remainingPartLowerCased;
+          break;
         }
-      });
+
+        endIndex = startIndex + searchValueLength;
+        currentChunk = initialText.slice(newBeginningIndex, newBeginningIndex + endIndex);
+      }
+
+      return processedChunksString;
     },
   },
 };
@@ -149,15 +146,14 @@ export default {
           >
             <CustomLink
               class="result-unit"
-              :title="item.title"
+              :title="highlightResultText(item.title)"
               :to="{ name: 'list', params: { id: item.listId }, query: { item: item.id } }"
             />
             <div
               v-if="item.details.toLowerCase().includes(searchValue.toLowerCase())"
               class="item-details result-unit"
-            >
-              {{ item.details }}
-            </div>
+              v-html="highlightResultText(item.details)"
+            />
           </div>
         </SectionCard>
         <SectionCard
@@ -171,7 +167,7 @@ export default {
             v-for="list in searchResults.lists"
             :key="list.id"
             class="result-unit"
-            :title="list.title"
+            :title="highlightResultText(list.title)"
             :to="{ name: 'list', params: { id: list.id } }"
           />
         </SectionCard>
