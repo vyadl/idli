@@ -90,7 +90,8 @@ export default {
   _addNewItemPlaceholder({ commit, getters, rootGetters }) {
     if (rootGetters['lists/isMaxItemsCountReachedInCurrentList']) {
       commitFromRoot('setModalNameToShow', 'itemsLimitModal');
-      return;
+
+      return null;
     }
 
     const unsavedItem = rootGetters.currentListItems.find(item => item.temporaryId);
@@ -179,7 +180,7 @@ export default {
         commitFromRoot('updateItemByTemporaryId', responseItem);
 
         const isItemStillOpenInForm = getters.currentItemObj 
-        && responseItem.temporaryId === getters.currentItemObj.temporaryId;
+          && responseItem.temporaryId === getters.currentItemObj.temporaryId;
 
         // eslint-disable-next-line no-param-reassign
         delete responseItem.temporaryId;
@@ -239,7 +240,7 @@ export default {
 
   _updateItemOnServer({ getters, dispatch }, { item, cancelToken }) {
     if (!getters.isItemSavingAllowed) {
-      return;
+      return null;
     }
 
     let { title } = item;

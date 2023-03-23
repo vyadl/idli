@@ -85,7 +85,7 @@ export default {
     ]),
     setItemForEditting() {
       if (this.isItemActive) {
-        return;
+        return null;
       }
 
       const { id } = this.item;

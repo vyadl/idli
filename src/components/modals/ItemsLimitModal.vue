@@ -25,9 +25,7 @@ export default {
     :width="400"
   >
     <div class="modal-content">
-      <WarningBox
-        message="Please delete items to add new one, or choose another list"
-      />
+      <WarningBox message="Please delete items to add new one, or choose another list" />
       <ButtonText
         text="OK"
         @click="closeModal"

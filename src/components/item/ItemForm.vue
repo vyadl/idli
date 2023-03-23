@@ -19,6 +19,7 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
+import { ITEM_TITLE_MAX_LENGTH, ITEM_DETAILS_MAX_LENGTH } from '@/store/config';
 import { deleteFromQuery } from '@/router/utils';
 import routerQueue from '@/router/routerQueue';
 
@@ -38,8 +39,8 @@ export default {
   props: {
     isSidebarBreakpointReached: Boolean,
   },
-  ITEM_TITLE_MAX_LENGTH: 500,
-  ITEM_DETAILS_MAX_LENGTH: 40000,
+  ITEM_TITLE_MAX_LENGTH,
+  ITEM_DETAILS_MAX_LENGTH,
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
@@ -231,7 +232,8 @@ export default {
       if (this.responseItemObj) {
         this.blurTrigger = !this.blurTrigger;
         this.$vfm.show('itemConflictModal');
-        return;
+
+        return null;
       }
 
       if (this.currentItemObj.title || this.currentItemObj.details) {
@@ -304,7 +306,7 @@ export default {
         class="title-input"
         label="title"
         :rows="3"
-        :maxlength="$options.ITEM_TITLE_MAX_LENGTH"
+        :max-length="$options.ITEM_TITLE_MAX_LENGTH"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!currentItemObj.title"
@@ -316,7 +318,7 @@ export default {
         v-if="isDetailsTextareaShown"
         label="details"
         :rows="4"
-        :maxlength="$options.ITEM_DETAILS_MAX_LENGTH"
+        :max-length="$options.ITEM_DETAILS_MAX_LENGTH"
         :model-value="currentItemObj.details"
         :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('details', value)"

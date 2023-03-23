@@ -76,7 +76,8 @@ export default {
     async checkTitleUniqueness(tagTitle) {
       if (this.responseItemObj) {
         this.$vfm.show('itemConflictModal');
-        return;
+
+        return null;
       }
 
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(tagTitle);

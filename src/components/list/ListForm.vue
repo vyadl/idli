@@ -12,6 +12,7 @@ import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 import { getFormattedDate, handleRequestStatuses } from '@/utils/misc';
+import { LIST_TITLE_MAX_LENGTH } from '@/store/config';
 
 export default {
   components: {
@@ -25,7 +26,7 @@ export default {
     CustomLink,
     MultiselectCustom,
   },
-  LIST_TITLE_MAX_LENGTH: 500,
+  LIST_TITLE_MAX_LENGTH,
   LIST_TITLE_ERROR: 'you already have a list with this title',
   GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
   data: () => ({
@@ -264,7 +265,7 @@ export default {
       v-model="list.title"
       label="title"
       :rows="3"
-      :maxlength="$options.LIST_TITLE_MAX_LENGTH"
+      :max-length="$options.LIST_TITLE_MAX_LENGTH"
       :is-focus="!list.id"
       :disabled="isListLoading"
       required

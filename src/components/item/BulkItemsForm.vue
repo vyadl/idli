@@ -10,7 +10,12 @@ import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { Item } from '@/models/models';
-import { LIST_ITEMS_MAX_COUNT } from '@/store/config';
+import {
+  LIST_ITEMS_MAX_COUNT,
+  BULK_ITEMS_MAX_COUNT,
+  BULK_ITEMS_MAX_TOTAL_LENGTH,
+  ITEM_TITLE_MAX_LENGTH,
+} from '@/store/config';
 
 export default {
   components: {
@@ -23,9 +28,9 @@ export default {
     ItemCategories,
     ErrorMessage,
   },
-  BULK_ITEMS_MAX_COUNT: 200,
-  BULK_ITEMS_MAX_TOTAL_LENGTH: 100000,
-  ITEM_TITLE_MAX_LENGTH: 500,
+  BULK_ITEMS_MAX_COUNT,
+  BULK_ITEMS_MAX_TOTAL_LENGTH,
+  ITEM_TITLE_MAX_LENGTH,
   LIST_ITEMS_MAX_COUNT,
   BULK_ITEMS_COUNT_ERROR_MESSAGE: 'you may add up to 200 items only',
   ITEM_TITLE_ERROR_MESSAGE: 'each item title should not be more than 500 symbols length',
@@ -80,7 +85,8 @@ export default {
 
         if (itemTitle.length > this.$options.ITEM_TITLE_MAX_LENGTH) {
           this.titlesErrorMessage = this.$options.ITEM_TITLE_ERROR_MESSAGE;
-          return;
+
+          return null;
         }
 
         return itemTitle;
@@ -102,7 +108,7 @@ export default {
 
       if (items.length > this.$options.BULK_ITEMS_MAX_COUNT) {
         this.titlesErrorMessage = this.titlesErrorMessage
-          ? this.titlesErrorMessage += `; also, ${this.$options.BULK_ITEMS_COUNT_ERROR_MESSAGE}`
+          ? `${this.titlesErrorMessage}; also, ${this.$options.BULK_ITEMS_COUNT_ERROR_MESSAGE}`
           : this.$options.BULK_ITEMS_COUNT_ERROR_MESSAGE;
       }
 
@@ -154,7 +160,7 @@ export default {
         v-model="bulkItemsString"
         label="type items titles"
         :rows="6"
-        :maxlength="$options.BULK_ITEMS_TOTAL_MAX_LENGTH"
+        :max-length="$options.BULK_ITEMS_TOTAL_MAX_LENGTH"
         :is-focus="true"
         @update:model-value="clearTitlesErrorMessage"
       />
