@@ -12,6 +12,9 @@ export const ITEM_TITLE_MAX_LENGTH = 500;
 export const ITEM_DETAILS_MAX_LENGTH = 40000;
 export const GENERATED_ITEM_TITLE_MAX_LENGTH = 22;
 
+// error messages
+export const GROUPING_FIELD_ERROR_MESSAGE = 'tags and categories should not have repeated titles';
+
 export const settingsValuesForMobileScreen = {
   isFocusOnList: false,
   isListUnderSidebar: true,

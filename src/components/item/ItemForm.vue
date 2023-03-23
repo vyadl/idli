@@ -19,7 +19,11 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
-import { ITEM_TITLE_MAX_LENGTH, ITEM_DETAILS_MAX_LENGTH } from '@/store/config';
+import {
+  ITEM_TITLE_MAX_LENGTH,
+  ITEM_DETAILS_MAX_LENGTH,
+  GROUPING_FIELD_ERROR_MESSAGE,
+} from '@/store/config';
 import { deleteFromQuery } from '@/router/utils';
 import routerQueue from '@/router/routerQueue';
 
@@ -45,7 +49,6 @@ export default {
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
     directly, not by grouping (like tags or category)`,
-  GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
   setup() {
     const store = useStore();
     const API_REQUEST_DELAY = 1500;
@@ -282,7 +285,7 @@ export default {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
     showErrorMessage() {
-      this.groupingFieldErrorMessage = this.$options.GROUPING_FIELD_ERROR_MESSAGE;
+      this.groupingFieldErrorMessage = GROUPING_FIELD_ERROR_MESSAGE;
     },
     clearErrorMessage() {
       this.groupingFieldErrorMessage = '';

@@ -15,6 +15,7 @@ import {
   BULK_ITEMS_MAX_COUNT,
   BULK_ITEMS_MAX_TOTAL_LENGTH,
   ITEM_TITLE_MAX_LENGTH,
+  GROUPING_FIELD_ERROR_MESSAGE,
 } from '@/store/config';
 
 export default {
@@ -32,10 +33,6 @@ export default {
   BULK_ITEMS_MAX_TOTAL_LENGTH,
   ITEM_TITLE_MAX_LENGTH,
   LIST_ITEMS_MAX_COUNT,
-  BULK_ITEMS_COUNT_ERROR_MESSAGE: 'you may add up to 200 items only',
-  ITEM_TITLE_ERROR_MESSAGE: 'each item title should not be more than 500 symbols length',
-  LIST_ITEMS_COUNT_ERROR_MESSAGE: 'you cannot add so many items in this list, limit exceeded',
-  GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
   data() {
     return {
       bulkItemsString: '',
@@ -84,7 +81,8 @@ export default {
         }
 
         if (itemTitle.length > this.$options.ITEM_TITLE_MAX_LENGTH) {
-          this.titlesErrorMessage = this.$options.ITEM_TITLE_ERROR_MESSAGE;
+          this.titlesErrorMessage = `each item title should not be more than 
+            ${this.$options.ITEM_TITLE_MAX_LENGTH} symbols length`;
 
           return null;
         }
@@ -107,13 +105,16 @@ export default {
       items = items.map(item => makeItemObj(trimItemTitle(item)));
 
       if (items.length > this.$options.BULK_ITEMS_MAX_COUNT) {
+        const bulkItemsErrorMessage = `you may add up to
+          ${this.$options.BULK_ITEMS_MAX_COUNT} items only`;
+
         this.titlesErrorMessage = this.titlesErrorMessage
-          ? `${this.titlesErrorMessage}; also, ${this.$options.BULK_ITEMS_COUNT_ERROR_MESSAGE}`
-          : this.$options.BULK_ITEMS_COUNT_ERROR_MESSAGE;
+          ? `${this.titlesErrorMessage}; also, ${bulkItemsErrorMessage}`
+          : bulkItemsErrorMessage;
       }
 
       if (this.currentListObj.items.length + items.length > this.$options.LIST_ITEMS_MAX_COUNT) {
-        this.titlesErrorMessage = this.$options.LIST_ITEMS_COUNT_ERROR_MESSAGE;
+        this.titlesErrorMessage = 'you cannot add so many items in this list, limit exceeded';
       }
 
       if (!this.titlesErrorMessage) {
@@ -141,7 +142,7 @@ export default {
       }
     },
     showGroupingFieldErrorMessage() {
-      this.groupingFieldErrorMessage = this.$options.GROUPING_FIELD_ERROR_MESSAGE;
+      this.groupingFieldErrorMessage = GROUPING_FIELD_ERROR_MESSAGE;
     },
     clearGroupingFieldErrorMessage() {
       this.groupingFieldErrorMessage = '';

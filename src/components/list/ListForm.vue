@@ -12,7 +12,7 @@ import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 import { getFormattedDate, handleRequestStatuses } from '@/utils/misc';
-import { LIST_TITLE_MAX_LENGTH } from '@/store/config';
+import { LIST_TITLE_MAX_LENGTH, GROUPING_FIELD_ERROR_MESSAGE } from '@/store/config';
 
 export default {
   components: {
@@ -28,7 +28,6 @@ export default {
   },
   LIST_TITLE_MAX_LENGTH,
   LIST_TITLE_ERROR: 'you already have a list with this title',
-  GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
   data: () => ({
     list: null,
     titleErrors: {
@@ -116,8 +115,8 @@ export default {
       }
 
       if (!areGroupingFieldsTitlesValid) {
-        this.titleErrors.tags = this.$options.GROUPING_FIELD_TITLE_ERROR;
-        this.titleErrors.categories = this.$options.GROUPING_FIELD_TITLE_ERROR;
+        this.titleErrors.tags = GROUPING_FIELD_ERROR_MESSAGE;
+        this.titleErrors.categories = GROUPING_FIELD_ERROR_MESSAGE;
       }
     },
     addGroupingField(groupingFieldType, title) {
