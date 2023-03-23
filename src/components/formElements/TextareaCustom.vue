@@ -6,6 +6,7 @@ export default {
     placeholder: String,
     isFocus: Boolean,
     rows: Number,
+    maxlength: Number,
     disabled: {
       type: Boolean,
       default: false,
@@ -52,6 +53,7 @@ export default {
       ref="textarea"
       class="textarea"
       :rows="rows"
+      :maxlength="maxlength"
       :value="modelValue"
       :placeholder="placeholder"
       :disabled="disabled"

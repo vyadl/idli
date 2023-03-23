@@ -131,9 +131,7 @@ export default {
       @input="clearMessage"
     />
     <div class="info-container">
-      <InfoMessage
-        :message="infoMessage"
-      />
+      <InfoMessage :message="infoMessage" />
       <ButtonText
         text="resend code"
         style-type="underline"

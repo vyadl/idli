@@ -38,6 +38,8 @@ export default {
   props: {
     isSidebarBreakpointReached: Boolean,
   },
+  ITEM_TITLE_MAX_LENGTH: 500,
+  ITEM_DETAILS_MAX_LENGTH: 40000,
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
@@ -62,6 +64,7 @@ export default {
 
         store.dispatch(action, { item, cancelToken: source.token })
           .finally(() => {
+            store.commit('items/decreaseBackgroundRequestsNumber', false);
             delete serverRequests[itemActualId];
           });
       },
@@ -161,6 +164,7 @@ export default {
         const generatedTitleObj = {
           field: 'title',
           value: generateTitleFromDetails(details),
+          itemId: this.currentItemObj.id || this.currentItemObj.temporaryId,
         };
 
         this.updateItemFieldLocally(generatedTitleObj);
@@ -191,6 +195,7 @@ export default {
     ...mapMutations('items', [
       'updateItemFieldLocally',
       'setCurrentItemObj',
+      'increaseBackgroundRequestsNumber',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',
@@ -200,7 +205,6 @@ export default {
       '_setListIdFromLocalStorage',
     ]),
     ...mapActions('items', [
-      '_saveItemOnServer',
       '_addItemOnServer',
       '_updateItemOnServer',
       '_deleteItemOnServer',
@@ -213,7 +217,11 @@ export default {
     },
     updateItemField(field, value) {
       this.updateItemFieldLocally({ field, value });
-      this.updateItemFieldInCurrentList({ field, value });
+      this.updateItemFieldInCurrentList({
+        field,
+        value,
+        itemId: this.currentItemObj.id || this.currentItemObj.temporaryId,
+      });
 
       this.updateItemFieldLocally({
         field: 'updatedAt',
@@ -227,6 +235,8 @@ export default {
       }
 
       if (this.currentItemObj.title || this.currentItemObj.details) {
+        this.increaseBackgroundRequestsNumber();
+
         this.callActionDebounced(
           this.currentItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
           this.currentItemObj,
@@ -294,6 +304,7 @@ export default {
         class="title-input"
         label="title"
         :rows="3"
+        :maxlength="$options.ITEM_TITLE_MAX_LENGTH"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!currentItemObj.title"
@@ -305,6 +316,7 @@ export default {
         v-if="isDetailsTextareaShown"
         label="details"
         :rows="4"
+        :maxlength="$options.ITEM_DETAILS_MAX_LENGTH"
         :model-value="currentItemObj.details"
         :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('details', value)"

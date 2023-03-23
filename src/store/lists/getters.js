@@ -1,3 +1,5 @@
+import { LIST_ITEMS_MAX_COUNT } from '@/store/config';
+
 export default {
   lists: state => state.lists,
   testLists: state => state.testLists,
@@ -15,4 +17,7 @@ export default {
   ),
   isPublicView: state => state.currentListView === 'public',
   isOwnerView: (state, getters) => getters.isUserOwnsCurrentList && !getters.isPublicView,
+  isMaxItemsCountReachedInCurrentList: state => {
+    return state.currentListObj.items.length >= LIST_ITEMS_MAX_COUNT;
+  },
 };

@@ -2,6 +2,7 @@ export default {
   currentItemObj: state => state.currentItemObj,
   responseItemObj: state => state.responseItemObj,
   isItemSavingAllowed: state => state.isItemSavingAllowed,
+  backgroundRequestsNumber: state => state.backgroundRequestsNumber,
 
   currentItemTags: (state, getters, rootState, rootGetters) => {
     return rootGetters['lists/currentListTags'].filter(

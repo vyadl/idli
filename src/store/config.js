@@ -3,6 +3,7 @@ import { sidebarWidth, sidebarButtonsWidth, sidebarWidthBreakpoint } from '@/scs
 export const MIN_SEARCH_SYMBOLS = 3;
 export const GENERATED_ITEM_TITLE_MAX_LENGTH = 22;
 export const SCREEN_SIZE_CHECK_DELAY = 100;
+export const LIST_ITEMS_MAX_COUNT = 2000;
 
 export const settingsValuesForMobileScreen = {
   isFocusOnList: false,

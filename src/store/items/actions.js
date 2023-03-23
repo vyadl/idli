@@ -87,10 +87,15 @@ export default {
       });
   },
 
-  _addNewItemPlaceholder({ commit, rootGetters }) {
+  _addNewItemPlaceholder({ commit, getters, rootGetters }) {
+    if (rootGetters['lists/isMaxItemsCountReachedInCurrentList']) {
+      commitFromRoot('setModalNameToShow', 'itemsLimitModal');
+      return;
+    }
+
     const unsavedItem = rootGetters.currentListItems.find(item => item.temporaryId);
 
-    if (!unsavedItem) {
+    if (!unsavedItem || (unsavedItem && getters.backgroundRequestsNumber)) {
       const newItem = new Item();
       const itemWithTemporaryId = {
         ...newItem,
@@ -122,10 +127,11 @@ export default {
       title = generateTitleFromDetails(details);
 
       if (rootGetters.currentListItems) {
-        commitFromRoot(
-          'updateItemFieldInCurrentList',
-          { field: 'title', value: title },
-        );
+        commitFromRoot('updateItemFieldInCurrentList', {
+          field: 'title',
+          value: title,
+          itemId: item.id || item.temporaryId,
+        });
       }
 
       if (getters.currentItemObj) {
@@ -171,12 +177,16 @@ export default {
       )
       .then(({ data: responseItem }) => {
         commitFromRoot('updateItemByTemporaryId', responseItem);
-        dispatchFromRoot('cache/_saveItemInCache', responseItem);
+
+        const isItemStillOpenInForm = getters.currentItemObj 
+        && responseItem.temporaryId === getters.currentItemObj.temporaryId;
 
         // eslint-disable-next-line no-param-reassign
         delete responseItem.temporaryId;
         
-        if (getters.currentItemObj) {
+        dispatchFromRoot('cache/_saveItemInCache', responseItem);
+        
+        if (isItemStillOpenInForm) {
           const fieldsToUpdate = [
             'createdAt',
             'updatedAt',
