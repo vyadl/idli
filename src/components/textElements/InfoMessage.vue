@@ -13,7 +13,10 @@ export default {
 <template>
   <div 
     class="info-message"
-    :class="{ big }"
+    :class="[
+      { big },
+      `${globalTheme}-theme`,
+    ]"
   >
     {{ message }}
   </div>
@@ -28,6 +31,10 @@ export default {
     
     &.big {
       font-size: 18px;
+    }
+
+    .inverted-theme {
+      color: map-get($colors, 'gray-dark');
     }
   }
 </style>

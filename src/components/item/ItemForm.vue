@@ -19,6 +19,11 @@ import { debounce } from 'throttle-debounce';
 import axios from 'axios';
 import { getFormattedDate } from '@/utils/misc';
 import { generateTitleFromDetails } from '@/store/utils';
+import {
+  ITEM_TITLE_MAX_LENGTH,
+  ITEM_DETAILS_MAX_LENGTH,
+  GROUPING_FIELD_ERROR_MESSAGE,
+} from '@/store/config';
 import { deleteFromQuery } from '@/router/utils';
 import routerQueue from '@/router/routerQueue';
 
@@ -38,11 +43,12 @@ export default {
   props: {
     isSidebarBreakpointReached: Boolean,
   },
+  ITEM_TITLE_MAX_LENGTH,
+  ITEM_DETAILS_MAX_LENGTH,
   NEW_ITEM_PLACEHOLDER: 'New item...',
   UNTITLED_ITEM_PLACEHOLDER: 'untitled',
   RELATED_UNITS_HINT_TEXT: `Connect item with another item or list
     directly, not by grouping (like tags or category)`,
-  GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
   setup() {
     const store = useStore();
     const API_REQUEST_DELAY = 1500;
@@ -62,6 +68,7 @@ export default {
 
         store.dispatch(action, { item, cancelToken: source.token })
           .finally(() => {
+            store.commit('items/decreaseBackgroundRequestsNumber', false);
             delete serverRequests[itemActualId];
           });
       },
@@ -161,6 +168,7 @@ export default {
         const generatedTitleObj = {
           field: 'title',
           value: generateTitleFromDetails(details),
+          itemId: this.currentItemObj.id || this.currentItemObj.temporaryId,
         };
 
         this.updateItemFieldLocally(generatedTitleObj);
@@ -191,6 +199,7 @@ export default {
     ...mapMutations('items', [
       'updateItemFieldLocally',
       'setCurrentItemObj',
+      'increaseBackgroundRequestsNumber',
     ]),
     ...mapActions('sidebar', [
       '_closeSidebar',
@@ -200,7 +209,6 @@ export default {
       '_setListIdFromLocalStorage',
     ]),
     ...mapActions('items', [
-      '_saveItemOnServer',
       '_addItemOnServer',
       '_updateItemOnServer',
       '_deleteItemOnServer',
@@ -213,7 +221,11 @@ export default {
     },
     updateItemField(field, value) {
       this.updateItemFieldLocally({ field, value });
-      this.updateItemFieldInCurrentList({ field, value });
+      this.updateItemFieldInCurrentList({
+        field,
+        value,
+        itemId: this.currentItemObj.id || this.currentItemObj.temporaryId,
+      });
 
       this.updateItemFieldLocally({
         field: 'updatedAt',
@@ -223,10 +235,13 @@ export default {
       if (this.responseItemObj) {
         this.blurTrigger = !this.blurTrigger;
         this.$vfm.show('itemConflictModal');
-        return;
+
+        return null;
       }
 
       if (this.currentItemObj.title || this.currentItemObj.details) {
+        this.increaseBackgroundRequestsNumber();
+
         this.callActionDebounced(
           this.currentItemObj.id ? 'items/_updateItemOnServer' : 'items/_addItemOnServer',
           this.currentItemObj,
@@ -270,7 +285,7 @@ export default {
       this.showingStatuses[target] = !this.showingStatuses[target];
     },
     showErrorMessage() {
-      this.groupingFieldErrorMessage = this.$options.GROUPING_FIELD_ERROR_MESSAGE;
+      this.groupingFieldErrorMessage = GROUPING_FIELD_ERROR_MESSAGE;
     },
     clearErrorMessage() {
       this.groupingFieldErrorMessage = '';
@@ -294,6 +309,7 @@ export default {
         class="title-input"
         label="title"
         :rows="3"
+        :max-length="$options.ITEM_TITLE_MAX_LENGTH"
         :model-value="itemName"
         :placeholder="titlePlaceholder"
         :is-focus="!currentItemObj.title"
@@ -305,6 +321,7 @@ export default {
         v-if="isDetailsTextareaShown"
         label="details"
         :rows="4"
+        :max-length="$options.ITEM_DETAILS_MAX_LENGTH"
         :model-value="currentItemObj.details"
         :blur-trigger="blurTrigger"
         @update:model-value="value => updateItemField('details', value)"

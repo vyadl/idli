@@ -374,13 +374,11 @@ export default {
     }
 
     if (rootGetters.currentListItems) {
-      commitFromRoot(
-        'updateItemFieldInCurrentList',
-        {
-          field: `${groupingFieldType}`,
-          value: itemObj[groupingFieldType],
-        },
-      );
+      commitFromRoot('updateItemFieldInCurrentList', {
+        field: `${groupingFieldType}`,
+        value: itemObj[groupingFieldType],
+        itemId: itemObj.id || itemObj.temporaryId,
+      });
     }
     
     if (rootGetters['items/currentItemObj']) {

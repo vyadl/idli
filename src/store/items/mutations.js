@@ -20,4 +20,12 @@ export default {
   setIsItemSavingAllowed(state, value) {
     state.isItemSavingAllowed = value;
   },
+
+  increaseBackgroundRequestsNumber(state) {
+    state.backgroundRequestsNumber++;
+  },
+
+  decreaseBackgroundRequestsNumber(state) {
+    state.backgroundRequestsNumber--;
+  },
 };

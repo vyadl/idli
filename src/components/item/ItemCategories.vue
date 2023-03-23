@@ -70,7 +70,8 @@ export default {
     async checkTitleUniqueness(categoryTitle) {
       if (this.responseItemObj) {
         this.$vfm.show('itemConflictModal');
-        return;
+
+        return null;
       }
 
       const isTitleUnique = await this._checkGroupingFieldTitleUniqueness(categoryTitle);

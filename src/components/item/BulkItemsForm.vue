@@ -10,6 +10,13 @@ import ItemTags from '@/components/item/ItemTags.vue';
 import ItemCategories from '@/components/item/ItemCategories.vue';
 import ErrorMessage from '@/components/textElements/ErrorMessage.vue';
 import { Item } from '@/models/models';
+import {
+  LIST_ITEMS_MAX_COUNT,
+  BULK_ITEMS_MAX_COUNT,
+  BULK_ITEMS_MAX_TOTAL_LENGTH,
+  ITEM_TITLE_MAX_LENGTH,
+  GROUPING_FIELD_ERROR_MESSAGE,
+} from '@/store/config';
 
 export default {
   components: {
@@ -22,7 +29,10 @@ export default {
     ItemCategories,
     ErrorMessage,
   },
-  GROUPING_FIELD_ERROR_MESSAGE: 'tags and categories should not have repeated titles',
+  BULK_ITEMS_MAX_COUNT,
+  BULK_ITEMS_MAX_TOTAL_LENGTH,
+  ITEM_TITLE_MAX_LENGTH,
+  LIST_ITEMS_MAX_COUNT,
   data() {
     return {
       bulkItemsString: '',
@@ -45,11 +55,13 @@ export default {
       category: null,
       tags: [],
       groupingFieldErrorMessage: '',
+      titlesErrorMessage: '',
     };
   },
   computed: {
     ...mapGetters('lists', [
       'currentListId',
+      'currentListObj',
     ]),
   },
   methods: {
@@ -57,6 +69,8 @@ export default {
       '_addBulkItemsOnServer',
     ]),
     addItems() {
+      this.clearTitlesErrorMessage();
+
       const trimItemTitle = itemTitle => {
         if (this.trimFiguresFrom.start) {
           itemTitle = itemTitle.slice(this.trimFiguresFrom.start);
@@ -64,6 +78,13 @@ export default {
 
         if (this.trimFiguresFrom.end) {
           itemTitle = itemTitle.slice(0, itemTitle.length - this.trimFiguresFrom.end);
+        }
+
+        if (itemTitle.length > this.$options.ITEM_TITLE_MAX_LENGTH) {
+          this.titlesErrorMessage = `each item title should not be more than 
+            ${this.$options.ITEM_TITLE_MAX_LENGTH} symbols length`;
+
+          return null;
         }
 
         return itemTitle;
@@ -77,17 +98,34 @@ export default {
         });
       };
 
-      const items = this.delimiter
+      let items = this.delimiter
         ? this.bulkItemsString.split(this.delimiter)
         : [this.bulkItemsString];
 
-      this._addBulkItemsOnServer({
-        items: items.map(item => makeItemObj(trimItemTitle(item))),
-        listId: this.currentListId,
-      })
-        .then(() => {
-          this.$vfm.hide('bulkItemsModal');
-        });
+      items = items.map(item => makeItemObj(trimItemTitle(item)));
+
+      if (items.length > this.$options.BULK_ITEMS_MAX_COUNT) {
+        const bulkItemsErrorMessage = `you may add up to
+          ${this.$options.BULK_ITEMS_MAX_COUNT} items only`;
+
+        this.titlesErrorMessage = this.titlesErrorMessage
+          ? `${this.titlesErrorMessage}; also, ${bulkItemsErrorMessage}`
+          : bulkItemsErrorMessage;
+      }
+
+      if (this.currentListObj.items.length + items.length > this.$options.LIST_ITEMS_MAX_COUNT) {
+        this.titlesErrorMessage = 'you cannot add so many items in this list, limit exceeded';
+      }
+
+      if (!this.titlesErrorMessage) {
+        this._addBulkItemsOnServer({
+          items,
+          listId: this.currentListId,
+        })
+          .then(() => {
+            this.$vfm.hide('bulkItemsModal');
+          });
+      }
     },
     setIsCustomDelimiterFieldShown(value) {
       this.isCustomDelimiterFieldShown = value;
@@ -103,11 +141,14 @@ export default {
         this[field] = value;
       }
     },
-    showErrorMessage() {
-      this.groupingFieldErrorMessage = this.$options.GROUPING_FIELD_ERROR_MESSAGE;
+    showGroupingFieldErrorMessage() {
+      this.groupingFieldErrorMessage = GROUPING_FIELD_ERROR_MESSAGE;
     },
-    clearErrorMessage() {
+    clearGroupingFieldErrorMessage() {
       this.groupingFieldErrorMessage = '';
+    },
+    clearTitlesErrorMessage() {
+      this.titlesErrorMessage = '';
     },
   },
 };
@@ -115,12 +156,22 @@ export default {
 
 <template>
   <div class="bulk-items-form">
-    <TextareaCustom
-      v-model="bulkItemsString"
-      label="type items titles"
-      :rows="6"
-      :is-focus="true"
-    />
+    <div>
+      <TextareaCustom
+        v-model="bulkItemsString"
+        label="type items titles"
+        :rows="6"
+        :max-length="$options.BULK_ITEMS_TOTAL_MAX_LENGTH"
+        :is-focus="true"
+        @update:model-value="clearTitlesErrorMessage"
+      />
+      <div class="error-section">
+        <ErrorMessage
+          v-if="titlesErrorMessage"
+          :message="titlesErrorMessage"
+        />
+      </div>
+    </div>
     <SectionCard
       title="choose delimiter"
       position="left"
@@ -182,8 +233,8 @@ export default {
       >
         <ItemCategories
           :category-for-bulk-items="category"
-          @throw-error="showErrorMessage"
-          @clear-error="clearErrorMessage"
+          @throw-error="showGroupingFieldErrorMessage"
+          @clear-error="clearGroupingFieldErrorMessage"
           @save-item="updateItemsField"
         />
       </SectionCard>
@@ -195,8 +246,8 @@ export default {
       >
         <ItemTags
           :tags-for-bulk-items="tags"
-          @throw-error="showErrorMessage"
-          @clear-error="clearErrorMessage"
+          @throw-error="showGroupingFieldErrorMessage"
+          @clear-error="clearGroupingFieldErrorMessage"
           @save-item="updateItemsField"
         />
       </SectionCard>
@@ -219,6 +270,10 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  .error-section {
+    height: 30px;
+  }
 
   .delimiter-options,
   .trim-options {
