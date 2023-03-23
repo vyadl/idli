@@ -125,7 +125,8 @@ export default {
     changeRelatedUnitMode(value) {
       if (this.responseItemObj) {
         this.$vfm.show('itemConflictModal');
-        return;
+
+        return null;
       }
 
       this.relatedUnitMode === value 

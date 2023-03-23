@@ -9,6 +9,7 @@ import BulkItemsModal from '@/components/modals/BulkItemsModal.vue';
 import AboutModal from '@/components/modals/AboutModal.vue';
 import PasswordChangeModal from '@/components/modals/PasswordChangeModal.vue';
 import ItemConflictModal from '@/components/modals/ItemConflictModal.vue';
+import ItemsLimitModal from '@/components/modals/ItemsLimitModal.vue';
 import AppNotification from '@/components/textElements/AppNotification.vue';
 import { initHotkeys } from '@/settings/hotkeysSettings';
 import checkAppVersion from '@/settings/appVersion';
@@ -24,6 +25,7 @@ export default {
     AboutModal,
     PasswordChangeModal,
     ItemConflictModal,
+    ItemsLimitModal,
     AppNotification,
   },
   computed: {
@@ -147,6 +149,7 @@ export default {
     <ConfirmationModal />
     <PasswordChangeModal />
     <ItemConflictModal />
+    <ItemsLimitModal />
     <AppNotification v-if="notification" />
   </div>
 </template>

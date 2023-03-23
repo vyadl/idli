@@ -1,8 +1,19 @@
 import { sidebarWidth, sidebarButtonsWidth, sidebarWidthBreakpoint } from '@/scss/style.module.scss';
 
-export const MIN_SEARCH_SYMBOLS = 3;
-export const GENERATED_ITEM_TITLE_MAX_LENGTH = 22;
 export const SCREEN_SIZE_CHECK_DELAY = 100;
+
+// symbols limits
+export const MIN_SEARCH_SYMBOLS = 3;
+export const LIST_TITLE_MAX_LENGTH = 500;
+export const LIST_ITEMS_MAX_COUNT = 2000;
+export const BULK_ITEMS_MAX_COUNT = 200;
+export const BULK_ITEMS_MAX_TOTAL_LENGTH = 100000;
+export const ITEM_TITLE_MAX_LENGTH = 500;
+export const ITEM_DETAILS_MAX_LENGTH = 40000;
+export const GENERATED_ITEM_TITLE_MAX_LENGTH = 22;
+
+// error messages
+export const GROUPING_FIELD_ERROR_MESSAGE = 'tags and categories should not have repeated titles';
 
 export const settingsValuesForMobileScreen = {
   isFocusOnList: false,

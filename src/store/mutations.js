@@ -59,9 +59,9 @@ export default {
     state.currentListItems.splice(index, 1, item);
   },
 
-  updateItemFieldInCurrentList(state, { field, value }) {
+  updateItemFieldInCurrentList(state, { field, value, itemId }) {
     const targetIndex = state.currentListItems
-      .findIndex(localItem => localItem.id === state.items.currentItemObj.id);
+      .findIndex(localItem => localItem.id === itemId || localItem.temporaryId === itemId);
 
     state.currentListItems[targetIndex][field] = value;
   },

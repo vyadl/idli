@@ -12,6 +12,7 @@ import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
 import { mapActions, mapGetters } from 'vuex';
 import { getFormattedDate, handleRequestStatuses } from '@/utils/misc';
+import { LIST_TITLE_MAX_LENGTH, GROUPING_FIELD_ERROR_MESSAGE } from '@/store/config';
 
 export default {
   components: {
@@ -25,8 +26,8 @@ export default {
     CustomLink,
     MultiselectCustom,
   },
+  LIST_TITLE_MAX_LENGTH,
   LIST_TITLE_ERROR: 'you already have a list with this title',
-  GROUPING_FIELD_TITLE_ERROR: 'tags and categories should not have repeated titles',
   data: () => ({
     list: null,
     titleErrors: {
@@ -52,6 +53,9 @@ export default {
     },
   }),
   computed: {
+    ...mapGetters([
+      'explicitRequestsNumber',
+    ]),
     ...mapGetters('appearance', [
       'isMobileScreen',
     ]),
@@ -68,6 +72,9 @@ export default {
     },
     categoriesTitles() {
       return this.list?.categories.map(category => category.title);
+    },
+    isListLoading() {
+      return this.requestHandling.isRequestProcessing || !!this.explicitRequestsNumber;
     },
   },
   watch: {
@@ -108,8 +115,8 @@ export default {
       }
 
       if (!areGroupingFieldsTitlesValid) {
-        this.titleErrors.tags = this.$options.GROUPING_FIELD_TITLE_ERROR;
-        this.titleErrors.categories = this.$options.GROUPING_FIELD_TITLE_ERROR;
+        this.titleErrors.tags = GROUPING_FIELD_ERROR_MESSAGE;
+        this.titleErrors.categories = GROUPING_FIELD_ERROR_MESSAGE;
       }
     },
     addGroupingField(groupingFieldType, title) {
@@ -257,8 +264,9 @@ export default {
       v-model="list.title"
       label="title"
       :rows="3"
+      :max-length="$options.LIST_TITLE_MAX_LENGTH"
       :is-focus="!list.id"
-      :disabled="requestHandling.isRequestProcessing"
+      :disabled="isListLoading"
       required
       @blur="validateListTitle"
       @input="titleErrors.list = ''"
@@ -271,7 +279,7 @@ export default {
         v-model="list.isPrivate"
         label="private"
         style-type="initial"
-        :disabled="requestHandling.isRequestProcessing"
+        :disabled="isListLoading"
       />
       <CustomLink
         v-if="isPublicViewLinkShown"
@@ -299,7 +307,7 @@ export default {
         :can-clear="false"
         :create-option="false"
         :show-options="!titleErrors.tags"
-        :disabled="requestHandling.isRequestProcessing"
+        :disabled="isListLoading"
         :clear-search-trigger="clearSearch.tags"
         :append-option="appendOption.tags"
         :new-title="newTitles.tags"
@@ -348,7 +356,7 @@ export default {
         :can-clear="false"
         :create-option="false"
         :show-options="!titleErrors.categories"
-        :disabled="requestHandling.isRequestProcessing"
+        :disabled="isListLoading"
         :clear-search-trigger="clearSearch.categories"
         :append-option="appendOption.categories"
         :new-title="newTitles.categories"
@@ -427,12 +435,12 @@ export default {
           :text="list.id ? 'save' : 'add'"
           type="submit"
           :size="isMobileScreen ? 'small' : ''"
-          :disabled="requestHandling.isRequestProcessing"
+          :disabled="isListLoading"
         />
         <ButtonText
           text="cancel"
           :size="isMobileScreen ? 'small' : ''"
-          :disabled="requestHandling.isRequestProcessing"
+          :disabled="isListLoading"
           @click="closeListModal"
         />
       </div>
@@ -441,7 +449,7 @@ export default {
         text="delete list"
         style-type="underline"
         :size="isMobileScreen ? 'small' : ''"
-        :disabled="requestHandling.isRequestProcessing"
+        :disabled="isListLoading"
         @click="deleteList"
       />
     </footer>

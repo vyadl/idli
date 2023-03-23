@@ -85,7 +85,7 @@ export default {
     ]),
     setItemForEditting() {
       if (this.isItemActive) {
-        return;
+        return null;
       }
 
       const { id } = this.item;
@@ -170,6 +170,7 @@ export default {
       padding: 5px;
       font-size: map-get($text, 'big-title-font-size');
       transition: 0.2s text-shadow;
+      overflow-wrap: anywhere;
       cursor: pointer;
 
       &.untitled{

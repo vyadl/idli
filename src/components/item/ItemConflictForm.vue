@@ -1,12 +1,14 @@
 <script>
 import ItemView from '@/components/item/ItemView.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
+import WarningBox from '@/components/textElements/WarningBox.vue';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
   components: {
     ItemView,
     ButtonText,
+    WarningBox,
   },
   computed: {
     ...mapGetters('items', [
@@ -50,10 +52,7 @@ export default {
 
 <template>
   <div class="item-conflict-form">
-    <div class="message">
-      There is another version of the item on server. 
-      <br> Action required:
-    </div>
+    <WarningBox message="There is another version of the item on server. Action required:" />
     <div class="items-to-compare">
       <ItemView
         v-for="item in [currentItemObj, responseItemObj]"
@@ -82,13 +81,6 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 30px;
-    
-    .message {
-      padding: 15px;
-      margin: 10px;
-      border: 1px solid map-get($colors, 'gray-dark');
-      box-shadow: 4px 4px map-get($colors, 'gray-dark');
-    }
 
     .items-to-compare {
       display: grid;
