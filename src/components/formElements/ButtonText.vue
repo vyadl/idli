@@ -3,6 +3,7 @@ export default {
   props: {
     text: String,
     withBoxShadow: Boolean,
+    withPlusIcon: Boolean,
     size: {
       type: String,
       default: 'medium',
@@ -74,7 +75,15 @@ export default {
     :disabled="disabled"
     @click="click($event)"
   >
-    {{ text }}
+    <div class="button-content">
+      <div>
+        {{ text }}
+      </div>
+      <div
+        v-if="withPlusIcon"
+        class="plus-icon"
+      />
+    </div>
   </button>
 </template>
 
@@ -90,6 +99,26 @@ export default {
     &:disabled {
       pointer-events: none;
       color: map-get($colors, 'gray-light');
+    }
+
+    .button-content {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .plus-icon {
+      background-image: url('/icons/plus.svg');
+      background-size: contain;
+      width: 15px;
+      height: 15px;
+      transition: filter 0.2s;
+    }
+
+    &:hover {
+      .plus-icon {
+        filter: invert(60%);
+      }
     }
 
     &.bordered {

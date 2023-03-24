@@ -81,6 +81,7 @@ export default {
       const source = this.$config.axios.CancelToken.source();
 
       this.listRequests.push(source);
+      this._resetCustomView();
 
       const request = this._fetchListById({ id, cancelToken: source.token });
 
@@ -89,7 +90,6 @@ export default {
           const index = this.listRequests.findIndex(listRequest => listRequest === source);
 
           this.listRequests.splice(index, 1);
-          this._resetCustomView();
         });
     },
   },

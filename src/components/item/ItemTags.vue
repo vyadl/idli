@@ -55,8 +55,6 @@ export default {
       );
       const tagsTitles = tagsObjs.map(tag => tag.title);
 
-      // return tagsTitles.length ? tagsTitles : null;
-
       return tagsTitles;
     },
     selectedValue() {
@@ -175,6 +173,7 @@ export default {
       no-results-text=""
       :small-text="isItemFormInSidebar"
       :options="currentListTagsTitles"
+      :show-options="!requestHandling.isRequestProcessing"
       :can-clear="false"
       :create-option="false"
       :clear-search-trigger="clearSearch"

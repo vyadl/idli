@@ -76,6 +76,13 @@ export default {
     changeBinMode(mode) {
       this.binMode = mode;
     },
+    changeBinModeToAvailable() {
+      const availableMode = this.deletedUnitsTypes.find(type => type.length);
+
+      if (availableMode) {
+        this.changeBinMode(availableMode.title);
+      }
+    },
     resolveAction(action, payload) {
       this.requestHandling.isRequestProcessing = true;
 
@@ -90,6 +97,8 @@ export default {
               time: 15000,
             });
           }
+
+          this.changeBinModeToAvailable();
         });
     },
     async resolveAllAction(action) {

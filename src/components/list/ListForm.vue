@@ -64,8 +64,14 @@ export default {
       'edittingListObj',
       'isUserOwnsCurrentList',
     ]),
+    ...mapGetters('sidebar', [
+      'sidebarMode',
+    ]),
+    ...mapGetters('settings', [
+      'isItemFormInSidebar',
+    ]),
     isPublicViewLinkShown() {
-      return this.list.id && !this.list.isPrivate;
+      return this.list.id && !this.edittingListObj.isPrivate;
     },
     tagsTitles() {
       return this.list?.tags.map(tag => tag.title);
@@ -96,6 +102,14 @@ export default {
       '_updateList',
       '_deleteList',
       '_setEdittingListObj',
+      '_fetchListById',
+    ]),
+    ...mapActions('items', [
+      '_fetchItemById',
+    ]),
+    ...mapActions('sidebar', [
+      '_openSidebar',
+      '_closeSidebar',
     ]),
     closeListModal() {
       this.$vfm.hide('listModal');
@@ -144,7 +158,7 @@ export default {
       const isGroupingFieldTitleUnique = this.checkGroupingFieldTitleUniqueness(title);
 
       if (!isGroupingFieldTitleUnique) {
-        this.titleErrors[groupingFieldType] = this.$options.GROUPING_FIELD_TITLE_ERROR;
+        this.titleErrors[groupingFieldType] = GROUPING_FIELD_ERROR_MESSAGE;
       }
 
       return isGroupingFieldTitleUnique;
@@ -207,7 +221,16 @@ export default {
         handleRequestStatuses(request, this.requestHandling)
           .then(() => {
             this.closeListModal();
+
+            if (this.sidebarMode === 'item') {
+              this._closeSidebar();
+            }
           });
+      } else {
+        this.requestHandling.errorMessage = this.showErrors({ 
+          isListTitleUnique,
+          areGroupingFieldsTitlesValid,
+        });
       }
     },
     updateList() {
@@ -245,6 +268,25 @@ export default {
       handleRequestStatuses(request, this.requestHandling)
         .then(() => {
           this.closeListModal();
+        });
+    },
+    async goToItem({ listId, itemId }) {
+      const query = this.isItemFormInSidebar
+        ? { item: itemId, sidebar: 'item' }
+        : { item: itemId };
+
+      await this.$router.push(
+        { name: 'list', params: { id: listId }, query },
+      );
+
+      this._fetchListById({ id: listId, cancelToken: null })
+        .then(async () => {
+          this.closeListModal();
+          await this._fetchItemById({ id: itemId, cancelToken: null });
+
+          this.isItemFormInSidebar
+            ? this._openSidebar('item')
+            : this.$vfm.show('itemModal');
         });
     },
     getFormattedDate(val) {
@@ -396,13 +438,14 @@ export default {
       title="referring items"
     >
       <div class="referring-units-container">
-        <CustomLink
+        <ButtonText
           v-for="item in list.referringItems"
           :key="item.id"
-          :to="{ name: 'item', params: { id: item.id || item }, query: { item: item.id } }"
-          :title="item.title || 'untitled'"
+          style-type="underline"
+          :text="item.title || 'untitled'"
           class="referring-unit"
-          :class="{ 'untitled-item': !item.title}"
+          :class="{ 'untitled-item': !item.title }"
+          @click="goToItem({ itemId: item.id, listId: item.listId })"
         />
       </div>
     </TogglingBlock>
