@@ -152,6 +152,7 @@ export default {
       no-results-text=""
       :small-text="isItemFormInSidebar"
       :options="currentListCategoriesTitles"
+      :show-options="!requestHandling.isRequestProcessing"
       :create-option="false"
       :clear-search-trigger="clearSearch"
       :disabled="requestHandling.isRequestProcessing"

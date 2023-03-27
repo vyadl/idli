@@ -3,7 +3,6 @@ import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import InfoMessage from '@/components/textElements/InfoMessage.vue';
 import { shuffleArray } from '@/utils/misc';
 import { sortByDate, sortByAlphabet } from '@/utils/sorting';
@@ -21,7 +20,6 @@ export default {
     DraggableSwitch,
     ListItem,
     ButtonText,
-    ButtonSign,
     InfoMessage,
   },
   beforeRouteEnter(to, from, next) {
@@ -179,8 +177,16 @@ export default {
     },
     isAddItemButtonShown() {
       return !['stars', 'cloud'].includes(this.mode)
-        && this.finalList?.length
         && this.isOwnerView;
+    },
+    noListButtonText() {
+      let buttonText = 'add new list';
+
+      if (this.lists.length) {
+        buttonText += ' or choose existing one';
+      }
+
+      return buttonText;
     },
   },
   watch: {
@@ -413,9 +419,11 @@ export default {
           class="add-item-button"
           title="add new item"
         >
-          <ButtonSign
-            style-type="plus"
+          <ButtonText
+            text="add item"
+            size="small"
             stop-propagation
+            with-plus-icon
             @click="_addNewItemPlaceholder"
           />
         </div>
@@ -428,6 +436,14 @@ export default {
       <InfoMessage
         message="no list is chosen"
         big
+        text-style="caps"
+      />
+      <ButtonText
+        v-if="isLoggedIn"
+        :text="noListButtonText"
+        style-type="underline"
+        stop-propagation
+        @click="_openSidebar('lists')"
       />
     </div>
   </div>
@@ -436,6 +452,7 @@ export default {
 <style lang="scss">
   .main-list {
     width: 100%;
+    min-width: 250px;
     min-height: 100vh;
 
     .header {

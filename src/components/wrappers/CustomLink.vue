@@ -12,6 +12,51 @@ export default {
           : true;
       },
     },
+    stopPropagation: {
+      type: Boolean,
+      default: true,
+    },
+    preventDefault: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  emits: ['click'],
+  methods: {
+    click(event) {
+      if (this.stopPropagation) {
+        event.stopPropagation();
+      }
+
+      if (this.preventDefault) {
+        event.preventDefault();
+      }
+
+      if (this.newTab) {
+        window.open(this.generateHref(), '_blank');
+      } else {
+        this.$router.push(this.to);
+      }
+
+      this.$emit('click');
+    },
+    generateHref() {   
+      let href = `${window.location.origin}/list`;
+
+      if (this.to.params) {
+        const params = Object.values(this.to.params).join('/');
+
+        href += `/${params}`;
+      }
+
+      if (this.to.query) {
+        const queryArray = Object.entries(this.to.query).map(entry => `${entry[0]}=${entry[1]}`);
+
+        href += `?${queryArray.join('&')}`;
+      }
+
+      return href;
+    },
   },
 };
 </script>
@@ -23,7 +68,7 @@ export default {
   >
     <a
       class="link-content"
-      @click.stop.prevent="$router.push(to)"
+      @click="click"
       v-html="title"
     />
     <div

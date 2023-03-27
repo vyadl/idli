@@ -6,6 +6,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    textStyle: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['caps'].includes(value)
+          : true;
+      },
+    },
   },
 };
 </script>
@@ -16,6 +24,7 @@ export default {
     :class="[
       { big },
       `${globalTheme}-theme`,
+      textStyle,
     ]"
   >
     {{ message }}
@@ -31,6 +40,12 @@ export default {
     
     &.big {
       font-size: 18px;
+    }
+
+    &.caps {
+      font-variant: small-caps;
+      letter-spacing: 1.8px;
+      margin-bottom: 0;
     }
 
     .inverted-theme {
