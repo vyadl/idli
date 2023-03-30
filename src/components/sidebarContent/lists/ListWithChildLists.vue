@@ -38,11 +38,11 @@ export default {
     sortedChildLists() {
       return sortByDate(this.childLists, 'updatedAt');
     },
-    breadCrumbs() {
-      return this.populateBreadCrumbs(this.parentList);
+    breadcrumbs() {
+      return this.populateBreadcrumbs(this.parentList);
     },
-    lastBreadCrumbIndex() {
-      return this.breadCrumbs.length - 1;
+    lastBreadcrumbIndex() {
+      return this.breadcrumbs.length - 1;
     },
   },
   methods: {
@@ -54,11 +54,11 @@ export default {
     ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
-    populateBreadCrumbs(list) {
-      const breadCrumbs = [];
+    populateBreadcrumbs(list) {
+      const breadcrumbs = [];
 
-      const findParentAndAddToBreadCrumbs = targetList => {
-        breadCrumbs.unshift({
+      const findParentAndAddToBreadcrumbs = targetList => {
+        breadcrumbs.unshift({
           title: targetList.title,
           id: targetList.id,
         });
@@ -69,14 +69,14 @@ export default {
           );
 
           if (parentList) {
-            findParentAndAddToBreadCrumbs(parentList);
+            findParentAndAddToBreadcrumbs(parentList);
           }
         }
       };
 
-      findParentAndAddToBreadCrumbs(list);
+      findParentAndAddToBreadcrumbs(list);
 
-      return breadCrumbs;
+      return breadcrumbs;
     },
     loadList(id) {
       this.$emit('load', id);
@@ -98,8 +98,8 @@ export default {
 </script>
 
 <template>
-  <div class="parent-with-children">
-    <div class="bread-crumbs-container">
+  <div class="list-with-child-lists">
+    <div class="breadcrumbs-container">
       <ButtonText
         text="lists"
         style-type="underline"
@@ -107,18 +107,18 @@ export default {
         @click="returnHome"
       />
       <div
-        v-for="(list, index) in breadCrumbs"
+        v-for="(list, index) in breadcrumbs"
         :key="list.id"
-        class="bread-crumb"
+        class="breadcrumb"
       >
-        <div class="bread-crumbs-divider">
+        <div class="breadcrumbs-divider">
           / 
         </div>
         <ButtonText
           :text="list.title"
-          :style-type="index === lastBreadCrumbIndex ? 'line' : 'underline'"
-          :size="index === lastBreadCrumbIndex? 'smallest' : 'small'"
-          :disabled="index === lastBreadCrumbIndex"
+          :style-type="index === lastBreadcrumbIndex ? 'line' : 'underline'"
+          :size="index === lastBreadcrumbIndex? 'smallest' : 'small'"
+          :disabled="index === lastBreadcrumbIndex"
           @click="loadList(list.id)"
         />
       </div>
@@ -167,21 +167,21 @@ export default {
 </template>
 
 <style lang="scss" scodep>
-  .parent-with-children {
+  .list-with-child-lists {
     margin-bottom: 100px;
   
-    .bread-crumbs-container {
+    .breadcrumbs-container {
       display: flex;
       flex-wrap: wrap;
       align-items: baseline;
     }
 
-    .bread-crumb {
+    .breadcrumb {
       display: flex;
       align-items: baseline;
     }
 
-    .bread-crumbs-divider {
+    .breadcrumbs-divider {
       padding: 0 3px;
       font-size: 10px;
     }

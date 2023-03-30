@@ -1,6 +1,6 @@
 <script>
 import SectionCard from '@/components/wrappers/SectionCard.vue';
-import ParentWithChildren from '@/components/sidebarContent/lists/ParentWithChildren.vue';
+import ListWithChildLists from '@/components/sidebarContent/lists/ListWithChildLists.vue';
 import TestData from '@/components/sidebarContent/lists/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -11,7 +11,7 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     SectionCard,
-    ParentWithChildren,
+    ListWithChildLists,
     TestData,
     ButtonSign,
     ButtonText,
@@ -163,7 +163,7 @@ export default {
     <TestData />
   </SectionCard>
   <div v-else>
-    <ParentWithChildren
+    <ListWithChildLists
       v-if="parentList"
       :parent-list="parentList"
       :is-request-processing="requestHandling.isRequestProcessing"
