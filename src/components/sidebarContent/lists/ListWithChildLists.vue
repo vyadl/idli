@@ -117,7 +117,7 @@ export default {
         <ButtonText
           :text="list.title"
           :style-type="index === lastBreadcrumbIndex ? 'line' : 'underline'"
-          :size="index === lastBreadcrumbIndex? 'smallest' : 'small'"
+          :size="index === lastBreadcrumbIndex ? 'smallest' : 'small'"
           :disabled="index === lastBreadcrumbIndex"
           @click="loadList(list.id)"
         />
