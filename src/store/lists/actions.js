@@ -20,31 +20,44 @@ export default {
 
     return this.$config.axios
       .get(`${this.$config.apiBasePath}lists`)
-      .then(({ data: responseList }) => {
-        commit('setLists', responseList);
+      .then(({ data: responseLists }) => {
+        commit('setLists', responseLists);
 
         const routerValues = router.currentRoute._value;
 
         if (routerValues.name === 'list' && !routerValues.params.id) {
           dispatch('_setListIdFromLocalStorage');
         }
+
+        dispatchFromRoot('cache/_saveAllListsInCache', responseLists);
       })
       .finally(() => {
         commitFromRoot('decreaseExplicitRequestsNumber');
       });
   },
 
-  _refreshListForEdittingForm({ commit }, { id, cancelToken }) {
+  _refreshListForEdittingForm({ commit, rootGetters }, { id, cancelToken }) {
     commitFromRoot('increaseExplicitRequestsNumber');
+
+    const cachedList = rootGetters['cache/listsCache'][id];
+
+    if (cachedList) {
+      commit('setEdittingListObj', cachedList);
+    }
 
     return this.$config.axios
       .get(
-        `${this.$config.apiBasePath}list/${id}`,
+        `${this.$config.apiBasePath}list/${id}?noItems=true`,
         { cancelToken },
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
         commit('setEdittingListObj', responseList);
+
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
 
         return responseList;
       })
@@ -60,8 +73,19 @@ export default {
       });
   },
 
-  _fetchListById({ commit, dispatch, getters }, { id, cancelToken }) {
+  _fetchListById({
+    commit,
+    dispatch,
+    getters,
+    rootGetters,
+  }, { id, cancelToken }) {
     commitFromRoot('increaseExplicitRequestsNumber');
+
+    const cachedList = rootGetters['cache/listsCache'][id];
+
+    if (cachedList) {
+      commit('setCurrentListObj', cachedList);
+    }
 
     if (!getters.modalNameToShow) {
       dispatch('_setCurrentListId', id);
@@ -78,7 +102,7 @@ export default {
 
     return this.$config.axios
       .get(
-        `${this.$config.apiBasePath}list/${id}`,
+        `${this.$config.apiBasePath}list/${id}?noReferringItems=true`,
         { cancelToken },
       )
       .then(({ data: responseList }) => {
@@ -91,6 +115,10 @@ export default {
         commitFromRoot('setCurrentListItems', items);
         commit('setCurrentListObj', responseList);
 
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
         dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items });
 
         return responseList;
@@ -120,6 +148,7 @@ export default {
         commit('addList', responseList);
         dispatch('_setCurrentListId', responseList.id);
         commit('setCurrentListObj', responseList);
+        dispatchFromRoot('cache/_saveListInCache', { list: responseList });
       })
       .catch(error => {
         throw getErrorMessage(error.response.data);
@@ -155,17 +184,17 @@ export default {
           categories,
         },
       )
-      .then(({ data: responseList }) => {  
-        const { items } = responseList;
-
+      .then(({ data: responseList }) => {
         commit('updateList', responseList);
 
         if (getters.currentListId === responseList.id) {
           commit('setCurrentListObj', responseList);
-          commitFromRoot('setCurrentListItems', items);
         }
 
-        dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items });
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
 
         return responseList;
       })
@@ -193,6 +222,14 @@ export default {
       )
       .then(({ data: responseList }) => {
         commit('updateList', responseList);
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
+        dispatchFromRoot('cache/_saveItemsFromListInCache', {
+          id: responseList.id,
+          items: responseList.items,
+        });
 
         return responseList;
       })
@@ -206,7 +243,6 @@ export default {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     await this.$config.axios.delete(`${this.$config.apiBasePath}list/delete/${id}`);
-    dispatchFromRoot('cache/_removeCacheByListId', id);
 
     if (getters.currentListObj?.id === id) {
       if (getters.lists.length > 1) {
@@ -224,7 +260,23 @@ export default {
       commitFromRoot('filters/resetFilters');
     }
 
+    if (getters.currentListObj?.parentListId === id) {
+      const listObj = getters.lists.find(list => list.id === id);
+
+      dispatch('_fetchListById', { id: listObj.parentListId, cancelToken: null });
+    }
+
+    const childLists = getters.lists.filter(list => list.parentListId === id);
+
+    if (childLists.length) {
+      childLists.forEach(childList => {
+        commit('deleteList', childList.id);
+        dispatchFromRoot('cache/_removeListFromCache', childList.id);
+      });
+    }
+
     commit('deleteList', id);
+    dispatchFromRoot('cache/_removeListFromCache', id);
     commitFromRoot('decreaseExplicitRequestsNumber');
   },
 
@@ -272,11 +324,15 @@ export default {
     commitFromRoot('increaseExplicitRequestsNumber');
 
     return this.$config.axios
-      .get(`${this.$config.apiBasePath}list/${getters.currentListId}`)
+      .get(`${this.$config.apiBasePath}list/${getters.currentListId}?noReferringItems=true&noLists=true`)
       .then(({ data: responseList }) => {
         const { id, items } = responseList;
 
         commitFromRoot('setCurrentListItems', items);
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
         dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items });
       })
       .finally(() => {
@@ -287,10 +343,16 @@ export default {
   _fetchItemsByListId(state, { id, cancelToken }) {
     return this.$config.axios
       .get(
-        `${this.$config.apiBasePath}list/${id}`,
+        `${this.$config.apiBasePath}list/${id}?noReferringItems=true&noLists=true`,
         { cancelToken },
       )
       .then(({ data: responseList }) => {
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
+        dispatchFromRoot('cache/_saveItemsFromListInCache', { id, items: responseList.items });
+
         return responseList;
       })
       .catch(error => {
@@ -337,6 +399,10 @@ export default {
           });
         }
 
+        dispatchFromRoot('cache/_saveListInCache', {
+          list: responseList,
+          byField: true,
+        });
         commit('setCurrentListObj', responseList);
 
         return responseList;
@@ -437,6 +503,7 @@ export default {
       commit('setCurrentListObj', responseList);
       commitFromRoot('setCurrentListItems', responseItems);
 
+      dispatchFromRoot('cache/_saveListInCache', { list: responseList });
       dispatchFromRoot('cache/_saveItemsFromListInCache', {
         id: responseList.id, 
         items: responseItems,

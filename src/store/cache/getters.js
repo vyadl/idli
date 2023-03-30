@@ -1,4 +1,4 @@
 export default {
-  cache: state => state.cache,
-  listsLog: state => state.listsLog,
+  itemsCache: state => state.itemsCache,
+  listsCache: state => state.listsCache,
 };

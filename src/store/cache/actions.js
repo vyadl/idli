@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import lsManager from '@/services/localStorageManager';
 
 export default {
@@ -5,50 +6,95 @@ export default {
     const changedValues = lsManager.setItemAndReturnUpdatedValues({ key, value });
 
     if (changedValues) {
-      commit('setListsLog', changedValues.listsLog);
+      commit('setListsCache', changedValues.listsCache);
       commit('setItemsCache', changedValues.itemsCache);
     }
   },
 
-  _setItemsCacheFromLocalStorage({ commit }) {
-    const cache = lsManager.getItem('itemsCache');
+  _setListsAndItemsCacheFromLocalStorage({ commit }) {
+    const itemsCache = lsManager.getItem('itemsCache');
+    const listsCache = lsManager.getItem('listsCache');
 
-    if (cache) {
-      commit('setItemsCache', cache);
+    if (itemsCache) {
+      commit('setItemsCache', itemsCache);
     }
-  },
 
-  _setListsLogFromLocalStorage({ commit }) {
-    const listsLog = lsManager.getItem('listsLog');
-
-    if (listsLog) {
-      commit('setListsLog', listsLog);
+    if (listsCache) {
+      commit('setListsCache', listsCache);
     }
   },
 
   _saveItemsFromListInCache({ getters, commit, dispatch }, { id, items }) {
-    if (items.length) {
+    if (items?.length) {
       commit('saveItemsFromListInCache', items);
-      commit('addListLoListsLog', id);
+      dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.itemsCache });
 
-      dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.cache });
-      dispatch('_setItemInLocalStorage', { key: 'listsLog', value: getters.listsLog });
+      items.forEach(item => {
+        commit('addItemIdToListInCache', { listId: id, itemId: item.id });
+      });
+
+      dispatch('_updateListTimeStampAndLocalStorage', id);
     }
   },
 
   _saveItemInCache({ getters, commit, dispatch }, item) {
     commit('saveItemInCache', item);
-    dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.cache });
+    dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.itemsCache });
+
+    commit('addItemIdToListInCache', { listId: item.listId, itemId: item.id });
+
+    dispatch('_updateListTimeStampAndLocalStorage', item.listId);
   },
 
-  _removeItemFromCache({ getters, commit, dispatch }, itemId) {
+  _removeItemFromCache({ getters, commit, dispatch }, { itemId, listId }) {
     commit('removeItemFromCache', itemId);
-    dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.cache });
+    dispatch('_setItemInLocalStorage', { key: 'itemsCache', value: getters.itemsCache });
+
+    commit('removeItemIdFromListInCache', { itemId, listId });
+
+    dispatch('_updateListTimeStampAndLocalStorage', listId);
   },
 
-  _resetItemsCache({ commit }) {
-    commit('resetItemsCache');
+  _updateListTimeStampAndLocalStorage({ getters, commit, dispatch }, id) {
+    commit('addTimeStampToList', id);
+    dispatch('_setItemInLocalStorage', { key: 'listsCache', value: getters.listsCache });
+  },
+
+  _saveAllListsInCache({ getters, commit, dispatch }, lists) {
+    const cache = {};
+
+    lists.forEach(list => {
+      cache[list.id] = list;
+    });
+
+    commit('setListsCache', cache);
+    dispatch('_setItemInLocalStorage', { key: 'listsCache', value: getters.listsCache });
+  },
+
+  _saveListInCache({ commit, dispatch }, { list, byField = false }) {
+    const listCopy = JSON.parse(JSON.stringify(list));
+
+    if (listCopy.items?.[0] instanceof Object) {
+      listCopy.items = listCopy.items.map(item => item.id);
+    }
+
+    commit(
+      byField
+        ? 'updateListFieldsInCache'
+        : 'rewriteListInCache',
+      listCopy,
+    );
+    dispatch('_updateListTimeStampAndLocalStorage', listCopy.id);
+  },
+
+  _removeListFromCache({ getters, commit, dispatch }, listId) {
+    commit('removeListFromCache', listId);
+    dispatch('_setItemInLocalStorage', { key: 'listsCache', value: getters.listsCache });
+  },
+
+  _resetCache({ commit }) {
+    commit('resetCache');
+    lsManager.removeItem('listsCache');
     lsManager.removeItem('itemsCache');
-    lsManager.removeItem('listsLog');
   },
 };

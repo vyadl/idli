@@ -29,32 +29,33 @@ export default {
   },
 
   removeOldestDataAndReturnUpdatedValues() {
-    const listsLog = this.getItem('listsLog');
-    const listsIdsFromLog = Object.keys(listsLog);
+    const itemsCache = this.getItem('itemsCache');
+    const listsCache = this.getItem('listsCache');
+    const listsWithTimeStamps = Object.values(listsCache).filter(list => list.timeStamp);
+    const listsTimeStamps = listsWithTimeStamps.map(list => list.timeStamp);
 
-    if (!listsLog || !listsIdsFromLog.length) {
+    if (!listsCache || !listsTimeStamps.length) {
       return null;
     }
 
-    const itemsCache = this.getItem('itemsCache');
-
-    const oldestSavedListTimestamp = Math.min(...Object.values(listsLog));
-    const oldestSavedListId = listsIdsFromLog
-      .find(key => listsLog[key] === oldestSavedListTimestamp);
+    const oldestSavedListTimestamp = Math.min(...Object.values(listsTimeStamps));
+    const oldestSavedListObj = Object.values(listsCache).find(
+      list => list.timeStamp === oldestSavedListTimestamp,
+    );
     
     const itemsIdsToDelete = Object.keys(itemsCache).filter(
-      itemId => itemsCache[itemId].listId === oldestSavedListId,
+      itemId => itemsCache[itemId].listId === oldestSavedListObj.id,
     );
 
     itemsIdsToDelete.forEach(itemId => {
       delete itemsCache[itemId];
     });
 
-    delete listsLog[oldestSavedListId];
+    delete listsCache[oldestSavedListObj.id];
 
-    this.setItemAndReturnUpdatedValues({ key: 'listsLog', value: listsLog });
+    this.setItemAndReturnUpdatedValues({ key: 'listsCache', value: listsCache });
 
-    return { itemsCache, listsLog };
+    return { itemsCache, listsCache };
   },
   
   removeItem(key) {

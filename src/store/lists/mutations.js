@@ -15,6 +15,10 @@ export default {
     state.currentListObj = list;
   },
 
+  setParentListIdForNewList(state, id) {
+    state.parentListIdForNewList = id;
+  },
+
   setCurrentListView(state, view) {
     state.currentListView = view;
   },

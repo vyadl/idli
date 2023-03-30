@@ -1,16 +1,19 @@
 <script>
 import PopupBox from '@/components/wrappers/PopupBox.vue';
+import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     PopupBox,
+    ButtonSign,
   },
   props: {
     title: {
       type: String,
       default: '',
     },
+    menuButtonAction: Function,
     hintText: {
       type: String,
       default: '',
@@ -55,13 +58,28 @@ export default {
     :class="`${globalTheme}-theme`"
   >
     <div class="title-section">
-      <h1
-        v-if="title"
-        class="title"
-        :class="[ textStyle, size, position ]"
+      <div
+        class="title-with-menu"
+        :class="[ position ]"
       >
-        {{ title }}
-      </h1>
+        <div
+          v-if="menuButtonAction"
+          class="menu-button"
+        >
+          <ButtonSign
+            style-type="dots"
+            size="big"
+            @click="menuButtonAction"
+          />
+        </div>
+        <h1
+          v-if="title"
+          class="title"
+          :class="[ textStyle, size ]"
+        >
+          {{ title }}
+        </h1>
+      </div>
       <div
         v-if="hintText"
         class="hint-area"
@@ -90,10 +108,18 @@ export default {
       gap: 10px;
     }
 
-    .title {
-      width: fit-content;
-      padding: 10px 0;
-      font-size: map-get($text, 'big-title-font-size');
+    .menu-button {
+      position: absolute;
+      top: 8px;
+      left: -20px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .title-with-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
 
       &.centered {
         margin: 0 auto 10px;
@@ -102,6 +128,18 @@ export default {
       &.left {
         text-align: left;
       }
+
+      &:hover {
+        .menu-button {
+          opacity: 1;
+        }
+      }
+    }
+
+    .title {
+      width: fit-content;
+      padding: 10px 0;
+      font-size: map-get($text, 'big-title-font-size');
 
       &.small {
         font-size: map-get($text, 'small-title-font-size');
