@@ -126,6 +126,16 @@ export default {
         transform: translate(-5px, -9px) rotate(90deg);
         transition: color 0.2s;
       }
+
+      &.big {
+        height: 23px;
+
+        &::before {
+          font-size: 18px;
+          font-weight: 800;
+          transform: translate(-4px, -10px) rotate(90deg);
+        }
+      }
     }
 
     &.plus {

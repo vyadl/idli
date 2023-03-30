@@ -180,11 +180,9 @@ export default {
         && this.isOwnerView;
     },
     noListButtonText() {
-      let buttonText = 'add new list';
-
-      if (this.lists.length) {
-        buttonText += ' or choose existing one';
-      }
+      const buttonText = this.lists.length
+        ? 'add new list or choose existing one'
+        : 'add new list';
 
       return buttonText;
     },

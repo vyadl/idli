@@ -5,6 +5,7 @@ export default {
   testLists: state => state.testLists,
   currentListId: state => state.currentListId,
   currentListObj: state => state.currentListObj,
+  parentListIdForNewList: state => state.parentListIdForNewList,
   edittingListObj: state => state.edittingListObj,
   currentListTags: (state, getters) => getters.currentListObj?.tags,
   currentListTagsTitles: (state, getters) => getters.currentListTags.map(tag => tag.title),

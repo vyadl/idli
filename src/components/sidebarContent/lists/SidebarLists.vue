@@ -1,5 +1,6 @@
 <script>
 import SectionCard from '@/components/wrappers/SectionCard.vue';
+import ParentWithChildren from '@/components/sidebarContent/lists/ParentWithChildren.vue';
 import TestData from '@/components/sidebarContent/lists/TestData.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
@@ -10,6 +11,7 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     SectionCard,
+    ParentWithChildren,
     TestData,
     ButtonSign,
     ButtonText,
@@ -34,18 +36,39 @@ export default {
       'currentListObj',
       'isOwnerView',
     ]),
-    sortedLists() {
-      return sortByDate(this.lists, 'updatedAt'); 
+    rootLists() {
+      return this.lists.filter(list => !list.parentListId);
     },
-    isAddItemPossible() {
-      return this.currentListObj 
-        && this.isOwnerView
-        && this.$route.name === 'list';
+    isRootListsMode() {
+      return !this.childListsForCurrentList
+        && !this.currentListObj?.parentListId;
+    },
+    childListsForCurrentList() {
+      let childLists = [];
+
+      if (this.currentListObj) {
+        childLists = this.lists.filter(list => list.parentListId === this.currentListObj.id);
+      }
+
+      return childLists.length ? childLists : null;
+    },
+    parentList() {
+      const value = this.currentListObj.lists?.length
+        ? this.currentListObj
+        : this.lists.find(list => list.id === this.currentListObj.parentListId);
+
+      return value;
+    },
+    sortedLists() {
+      return sortByDate(this.rootLists, 'updatedAt');
     },
   },
   methods: {
     ...mapMutations([
       'decreaseExplicitRequestsNumber',
+    ]),
+    ...mapMutations('lists', [
+      'setParentListIdForNewList',
     ]),
     ...mapActions('items', [
       '_addNewItemPlaceholder',
@@ -57,8 +80,11 @@ export default {
     ...mapActions([
       '_resetCustomView',
     ]),
+    openModal(name, parentListId) {
+      if (parentListId) {
+        this.setParentListIdForNewList(parentListId);
+      }
 
-    openModal(name) {
       this.$vfm.show(name);
     },
     setEdittingListObj(list) {
@@ -98,6 +124,7 @@ export default {
 
 <template>
   <SectionCard
+    v-if="isRootListsMode"
     class="sidebar-lists"
     :class="`${globalTheme}-theme`"
     title="lists"
@@ -127,20 +154,24 @@ export default {
         <ButtonText
           text="add list"
           size="small"
+          with-plus-icon
           :disabled="requestHandling.isRequestProcessing"
           @click="openModal('listModal')"
-        />
-        <ButtonText
-          v-if="isAddItemPossible"
-          text="add item"
-          size="small"
-          :disabled="requestHandling.isRequestProcessing"
-          @click="_addNewItemPlaceholder"
         />
       </div>
     </div>
     <TestData />
   </SectionCard>
+  <div v-else>
+    <ParentWithChildren
+      v-if="parentList"
+      :parent-list="parentList"
+      :is-request-processing="requestHandling.isRequestProcessing"
+      @edit="setEdittingListObj"
+      @load="fetchListById"
+      @add-list="openModal('listModal', parentList.id)"
+    />
+  </div>
 </template>
 
 <style lang="scss">

@@ -10,7 +10,7 @@ import CustomLink from '@/components/wrappers/CustomLink.vue';
 import MultiselectCustom from '@/components/formElements/MultiselectCustom.vue';
 import { isConfirmed } from '@/settings/confirmationPromise';
 import { List } from '@/models/models';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { getFormattedDate, handleRequestStatuses } from '@/utils/misc';
 import { LIST_TITLE_MAX_LENGTH, GROUPING_FIELD_ERROR_MESSAGE } from '@/store/config';
 
@@ -61,6 +61,8 @@ export default {
     ]),
     ...mapGetters('lists', [
       'lists',
+      'currentListId',
+      'parentListIdForNewList',
       'edittingListObj',
       'isUserOwnsCurrentList',
     ]),
@@ -97,6 +99,9 @@ export default {
     this.resetData();
   },
   methods: {
+    ...mapMutations('lists', [
+      'setParentListIdForNewList',
+    ]),
     ...mapActions('lists', [
       '_addList',
       '_updateList',
@@ -216,11 +221,16 @@ export default {
       if (isListTitleUnique && areGroupingFieldsTitlesValid) {
         this.requestHandling.isRequestProcessing = true;
 
+        if (this.parentListIdForNewList) {
+          this.list.parentListId = this.parentListIdForNewList;
+        }
+
         const request = this._addList(this.list);
 
         handleRequestStatuses(request, this.requestHandling)
           .then(() => {
             this.closeListModal();
+            this.setParentListIdForNewList(null);
 
             if (this.sidebarMode === 'item') {
               this._closeSidebar();
@@ -252,8 +262,13 @@ export default {
       }
     },
     async deleteList() {
-      const confirmationModalTitle = `are you sure you want to delete list  
+      const confirmationText = `are you sure you want to delete list  
         '${this.list.title}' ?`;
+      const additionalText = 'this will delete all child lists as well';
+
+      const confirmationModalTitle = this.list.lists?.length
+        ? `${confirmationText} ${additionalText}`
+        : confirmationText;
         
       const isRejected = !await isConfirmed(confirmationModalTitle);
 
@@ -453,7 +468,7 @@ export default {
       v-if="list?.createdAt"
       class="stats"
     >
-      <div>
+      <div v-if="list.items">
         total items: {{ list.items.length }}
       </div>
       <PopupBox

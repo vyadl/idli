@@ -47,7 +47,7 @@ export default {
     { commit, dispatch, rootGetters }, 
     { id, cancelToken },
   ) {
-    const cachedItem = rootGetters['cache/cache'][id];
+    const cachedItem = rootGetters['cache/itemsCache'][id];
 
     if (cachedItem) {
       commit('setCurrentItemObj', JSON.parse(JSON.stringify(cachedItem)));
@@ -215,9 +215,9 @@ export default {
         `${this.$config.apiBasePath}items/add-many/${listId}`,
         { items },
       )
-      .then(({ data: resultItems }) => {
+      .then(({ data: responseItems }) => {
         if (rootGetters['lists/currentListId'] === listId) {
-          resultItems.forEach(item => {
+          responseItems.forEach(item => {
             commitFromRoot('addItem', item);
           });
 
@@ -227,7 +227,7 @@ export default {
           });
         }
 
-        return resultItems;
+        return responseItems;
       })
       .catch(error => {
         notifyAboutError(error);
@@ -275,7 +275,7 @@ export default {
 
   _deleteItemOnServer(state, { itemId, listId }) {
     commitFromRoot('deleteItem', itemId);
-    dispatchFromRoot('cache/_removeItemFromCache', itemId);
+    dispatchFromRoot('cache/_removeItemFromCache', { itemId, listId });
     
     this.$config.axios
       .delete(`${this.$config.apiBasePath}item/delete/${listId}/${itemId}`)

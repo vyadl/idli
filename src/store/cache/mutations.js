@@ -1,47 +1,66 @@
 export default {
-  setItemsCache(state, cache) {
-    state.cache = cache;
-  },
-  
-  removeCacheByListId(state, listId) {
-    const itemsIdsToDelete = Object.keys(state.cache).filter(
-      itemId => state.cache[itemId].listId === listId,
-    );
-
-    itemsIdsToDelete.forEach(itemId => {
-      delete state.cache[itemId];
-    });
+  setItemsCache(state, itemsCache) {
+    state.itemsCache = itemsCache;
   },
 
   saveItemsFromListInCache(state, items) {
     items.forEach(item => {
-      state.cache[item.id] = item;
+      state.itemsCache[item.id] = item;
     });
   },
 
   saveItemInCache(state, item) {
-    state.cache[item.id] = item;
+    state.itemsCache[item.id] = item;
   },
 
   removeItemFromCache(state, itemId) {
-    delete state.cache[itemId];
+    delete state.itemsCache[itemId];
+  },
+  
+  setListsCache(state, listsCache) {
+    state.listsCache = listsCache;
   },
 
-  resetItemsCache(state) {
-    state.cache = {};
+  rewriteListInCache(state, list) {
+    state.listsCache[list.id] = list;
   },
 
-  // lists log
-
-  setListsLog(state, listsLog) {
-    state.listsLog = listsLog;
+  updateListFieldsInCache(state, list) {
+    Object.keys(list).forEach(key => {
+      state.listsCache[list.id][key] = list[key];
+    });
   },
 
-  addListLoListsLog(state, listId) {
-    state.listsLog[listId] = Date.now();
+  addTimeStampToList(state, listId) {
+    state.listsCache[listId].timeStamp = Date.now();
   },
 
-  removeListFromListsLog(state, listId) {
-    delete state.listsLog[listId];
+  addItemIdToListInCache(state, { listId, itemId }) {
+    if (state.listsCache[listId].items) {
+      state.listsCache[listId].items.push(itemId);
+    } else {
+      state.listsCache[listId].items = [itemId];
+    }
+  },
+
+  removeItemIdFromListInCache(state, { listId, itemId }) {
+    state.listsCache[listId].items.filter(item => item.id !== itemId);
+  },
+
+  removeListFromCache(state, listId) {
+    const itemsIdsToDelete = Object.keys(state.itemsCache).filter(
+      itemId => state.itemsCache[itemId].listId === listId,
+    );
+
+    itemsIdsToDelete.forEach(itemId => {
+      delete state.itemsCache[itemId];
+    });
+
+    delete state.listsCache[listId];
+  },
+
+  resetCache(state) {
+    state.itemsCache = {};
+    state.listsCache = {};
   },
 };
