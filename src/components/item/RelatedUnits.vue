@@ -497,7 +497,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 15px 0;
+    padding-bottom: 15px;
   }
 
   .new-related-unit-type {

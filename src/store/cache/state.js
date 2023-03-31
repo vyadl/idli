@@ -1,4 +1,4 @@
 export default {
-  cache: {},
-  listsLog: {},
+  itemsCache: {},
+  listsCache: {},
 };

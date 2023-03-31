@@ -100,7 +100,7 @@ export default {
       'explicitRequestsNumber',
     ]),
     ...mapGetters('cache', [
-      'cache',
+      'itemsCache',
     ]),
     ...mapGetters('items', [
       'currentItemTags',
@@ -159,7 +159,7 @@ export default {
     }
 
     const { id, updatedAt } = this.currentItemObj;
-    const isItemChanged = this.cache[id]?.updatedAt !== updatedAt;
+    const isItemChanged = this.itemsCache[id]?.updatedAt !== updatedAt;
 
     if (isItemChanged) {
       const { title, details } = this.currentItemObj;

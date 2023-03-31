@@ -11,7 +11,7 @@ import CustomLink from '@/components/wrappers/CustomLink.vue';
 import SearchVault from '@/components/functionElements/SearchVault.vue';
 import PopupBox from '@/components/wrappers/PopupBox.vue';
 import { sidebarModesForViews, sidebarWidthValues } from '@/store/config';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import { deleteFromQuery } from '@/router/utils';
 
 export default {
@@ -45,6 +45,7 @@ export default {
     ...mapGetters('lists', [
       'isUserOwnsCurrentList',
       'isPublicView',
+      'currentListId',
       'currentListObj',
       'isOwnerView',
     ]),
@@ -100,6 +101,9 @@ export default {
     window.addEventListener('mouseup', this.endResize);
   },
   methods: {
+    ...mapMutations('lists', [
+      'setParentListIdForNewList',
+    ]),
     ...mapActions('lists', [
       '_setCurrentListView',
     ]),
@@ -161,10 +165,11 @@ export default {
     endResize() {
       document.removeEventListener('mousemove', this.handleSidebarResize);
     },
-    openListModal() {
-      this.$vfm.show('listModal');
-    },
-    openModal(name) {
+    openModal(name, parentListId) {
+      if (parentListId) {
+        this.setParentListIdForNewList(parentListId);
+      }
+
       this.$vfm.show(name);
     },
     defineButtonStyleType(mode) {
@@ -232,16 +237,16 @@ export default {
       content-type="functional"
     >
       <ButtonText
-        text="new item"
+        text="add item"
         style-type="brick"
         size="small"
         @click="_addNewItemPlaceholder"
       />
       <ButtonText
-        text="new list"
+        text="add list"
         style-type="brick"
         size="small"
-        @click="openModal('listModal')"
+        @click="openModal('listModal', currentListId)"
       />
       <ButtonText
         text="add bulk items"
