@@ -343,6 +343,7 @@ export default {
     right: 0;
     height: 100vh;
     background-color: map-get($colors, 'white');
+    overflow: visible;
     transition: transform 0.3s;
 
     &.shown {
@@ -357,7 +358,7 @@ export default {
 
     .edge-move-catcher {
       position: absolute;
-      z-index: 20;
+      z-index: 15;
       height: 100vh;
       width: 1px;
       left: -1px;
@@ -400,11 +401,11 @@ export default {
 
     .sidebar-content {
       position: relative;
+      z-index: 200;
       width: 100%;
       height: 100%;
       padding: 25px;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: visible;
       background-color: map-get($colors, 'white');
     }
 
@@ -453,7 +454,7 @@ export default {
 
     .search-button {
       position: fixed;
-      z-index: 100;
+      z-index: 50;
       top: 15px;
       padding: 5px;
       background-color: map-get($colors, 'white');
@@ -462,7 +463,7 @@ export default {
 
     .add-unit-button {
       position: fixed;
-      z-index: 100;
+      z-index: 50;
       top: 50px;
       padding: 5px;
       background-color: map-get($colors, 'white');

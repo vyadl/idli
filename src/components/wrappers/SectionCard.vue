@@ -1,19 +1,21 @@
 <script>
 import PopupBox from '@/components/wrappers/PopupBox.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
+import ListActionsMenu from '@/components/list/ListActionsMenu.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     PopupBox,
-    ButtonSign,
+    ListActionsMenu,
   },
   props: {
     title: {
       type: String,
       default: '',
     },
-    menuButtonAction: Function,
+    bordered: Boolean,
+    listForMenu: Object,
+    titleClickMethod: Function,
     hintText: {
       type: String,
       default: '',
@@ -57,25 +59,33 @@ export default {
     class="section-card"
     :class="`${globalTheme}-theme`"
   >
-    <div class="title-section">
+    <div
+      v-if="title"
+      class="title-section"
+    >
       <div
         class="title-with-menu"
         :class="[ position ]"
       >
         <div
-          v-if="menuButtonAction"
+          v-if="listForMenu"
           class="menu-button"
         >
-          <ButtonSign
-            style-type="dots"
-            size="big"
-            @click="menuButtonAction"
+          <ListActionsMenu
+            :list="listForMenu"
+            button-size="big"
           />
         </div>
         <h1
           v-if="title"
           class="title"
-          :class="[ textStyle, size ]"
+          :class="[
+            textStyle,
+            size, {
+              bordered,
+              clickable: titleClickMethod,
+            }]"
+          @click="titleClickMethod"
         >
           {{ title }}
         </h1>
@@ -110,8 +120,8 @@ export default {
 
     .menu-button {
       position: absolute;
-      top: 8px;
-      left: -20px;
+      top: 10px;
+      left: -17px;
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -120,6 +130,7 @@ export default {
       position: relative;
       display: flex;
       align-items: center;
+      gap: 5px;
 
       &.centered {
         margin: 0 auto 10px;
@@ -138,7 +149,7 @@ export default {
 
     .title {
       width: fit-content;
-      padding: 10px 0;
+      padding: 10px 0 7px;
       font-size: map-get($text, 'big-title-font-size');
 
       &.small {
@@ -155,11 +166,25 @@ export default {
         font-size: 18px;
         line-height: 1.6;
       }
+
+      &.bordered {
+        padding-bottom: 5px;
+        border-bottom: 2px solid map-get($colors, 'black');
+      }
+
+      &.clickable {
+        cursor: pointer;
+      }
     }
 
     &.inverted-theme {
       .title {
         color: map-get($colors, 'white');
+
+        &.bordered {
+          padding-bottom: 6px;
+          border-bottom: 2px solid map-get($colors, 'white');
+        }
       }
     }
   }

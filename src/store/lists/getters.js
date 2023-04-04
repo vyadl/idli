@@ -19,6 +19,6 @@ export default {
   isPublicView: state => state.currentListView === 'public',
   isOwnerView: (state, getters) => getters.isUserOwnsCurrentList && !getters.isPublicView,
   isMaxItemsCountReachedInCurrentList: state => {
-    return state.currentListObj.items.length >= LIST_ITEMS_MAX_COUNT;
+    return state.currentListObj.items?.length >= LIST_ITEMS_MAX_COUNT;
   },
 };

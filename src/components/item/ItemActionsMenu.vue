@@ -34,3 +34,12 @@ export default {
     <DropdownMenu :options="itemActions" />
   </div>
 </template>
+
+<style lang="scss">
+  .item-actions-menu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding-top: 10px;
+  }
+</style>

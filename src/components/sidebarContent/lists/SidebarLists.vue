@@ -1,8 +1,8 @@
 <script>
 import SectionCard from '@/components/wrappers/SectionCard.vue';
+import ListActionsMenu from '@/components/list/ListActionsMenu.vue';
 import ListWithChildLists from '@/components/sidebarContent/lists/ListWithChildLists.vue';
 import TestData from '@/components/sidebarContent/lists/TestData.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { sortByDate } from '@/utils/sorting';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
@@ -11,9 +11,9 @@ import { handleRequestStatuses } from '@/utils/misc';
 export default {
   components: {
     SectionCard,
+    ListActionsMenu,
     ListWithChildLists,
     TestData,
-    ButtonSign,
     ButtonText,
   },
   props: {
@@ -75,7 +75,6 @@ export default {
     ]),
     ...mapActions('lists', [
       '_fetchListById',
-      '_setEdittingListObj',
     ]),
     ...mapActions([
       '_resetCustomView',
@@ -86,10 +85,6 @@ export default {
       }
 
       this.$vfm.show(name);
-    },
-    setEdittingListObj(list) {
-      this._setEdittingListObj(list);
-      this.openModal('listModal');
     },
     fetchListById(id) {
       this.requestHandling.isRequestProcessing = true;
@@ -136,11 +131,9 @@ export default {
         :key="list.id"
         class="list"
       >
-        <ButtonSign
-          class="edit-button"
+        <ListActionsMenu
+          :list="list"
           :class="{ active: isMobileScreen || list.id === currentListId }"
-          style-type="dots"
-          @click="setEdittingListObj(list)"
         />
         <ButtonText
           class="list-title"
@@ -166,8 +159,6 @@ export default {
     <ListWithChildLists
       v-if="parentList"
       :parent-list="parentList"
-      :is-request-processing="requestHandling.isRequestProcessing"
-      @edit="setEdittingListObj"
       @load="fetchListById"
       @add-list="openModal('listModal', parentList.id)"
     />
@@ -193,13 +184,13 @@ export default {
       }
 
       &:hover {
-        .edit-button {
+        .list-actions-menu {
           opacity: 1;
         }
       }
     }
 
-    .edit-button {
+    .list-actions-menu {
       opacity: 0;
 
       &.active {

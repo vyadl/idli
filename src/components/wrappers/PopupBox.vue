@@ -28,6 +28,14 @@ export default {
           : true;
       },
     },
+    buttonSize: {
+      type: String,
+      validator(value) {
+        return value
+          ? ['big'].includes(value)
+          : true;
+      },
+    },
     contentType: {
       type: String,
       default: 'informational',
@@ -89,10 +97,11 @@ export default {
 </script>
 
 <template>
-  <div class="popup">
+  <div class="popup-box">
     <ButtonSign
       class="toggling-button"
       :style-type="buttonStyleType"
+      :size="buttonSize"
       :active="isShown"
       :stop-propagation="stopPropagation"
       @click="togglePopUp"
@@ -115,12 +124,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.popup {
+.popup-box {
   position: relative;
+  z-index: 150;
 
   .popup-content {
     position: absolute;
-    z-index: 15;
+    z-index: 150;
     width: 200px;
     background-color: map-get($colors, 'white');
 
