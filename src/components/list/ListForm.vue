@@ -265,8 +265,11 @@ export default {
       const confirmationText = `are you sure you want to delete list  
         '${this.list.title}' ?`;
       const additionalText = 'this will delete all child lists as well';
+      const isListHasChildLists = this.lists
+        .filter(list => list.parentListId === this.list.id)
+        .length;
 
-      const confirmationModalTitle = this.list.lists?.length
+      const confirmationModalTitle = isListHasChildLists
         ? `${confirmationText} ${additionalText}`
         : confirmationText;
         

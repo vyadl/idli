@@ -9,6 +9,7 @@ export default {
   },
   props: {
     options: Array,
+    buttonSize: String,
     position: {
       type: String,
       default: 'left',
@@ -34,6 +35,7 @@ export default {
   <div class="dropdown-menu">
     <PopupBox
       button-style-type="dots"
+      :button-size="buttonSize"
       stop-propagation
       :position="position"
       content-type="functional"
@@ -50,12 +52,3 @@ export default {
     </PopupBox>
   </div>
 </template>
-
-<style lang="scss">
-  .dropdown-menu {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    padding-top: 10px;
-  }
-</style>

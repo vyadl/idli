@@ -80,11 +80,19 @@ export default {
     },
   },
   methods: {
+    ...mapActions('items', [
+      '_addNewItemPlaceholder',
+    ]),
     ...mapActions('sidebar', [
       '_openSidebar',
     ]),
     setItemForEditting() {
       if (this.isItemActive) {
+        return null;
+      }
+
+      if (this.item.temporaryId) {
+        this._addNewItemPlaceholder();
         return null;
       }
 

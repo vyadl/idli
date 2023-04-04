@@ -87,6 +87,16 @@ export default {
       commit('setCurrentListObj', cachedList);
     }
 
+    if (cachedList.items?.length) {
+      const fullItems = [];
+
+      cachedList.items.forEach(item => {
+        fullItems.push(rootGetters['cache/itemsCache'][item]);
+      });
+
+      commitFromRoot('setCurrentListItems', fullItems);
+    }
+
     if (!getters.modalNameToShow) {
       dispatch('_setCurrentListId', id);
     }
@@ -164,6 +174,8 @@ export default {
     tags,
     categories,
     id,
+    parentListId,
+    updatedAt,
   }) {
     commitFromRoot('increaseExplicitRequestsNumber');
     commit('updateList', {
@@ -172,6 +184,8 @@ export default {
       tags,
       categories,
       id,
+      parentListId,
+      updatedAt,
     });
 
     return this.$config.axios
