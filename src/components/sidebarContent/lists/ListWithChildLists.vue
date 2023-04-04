@@ -1,29 +1,24 @@
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex';
+import ListActionsMenu from '@/components/list/ListActionsMenu.vue';
 import SectionCard from '@/components/wrappers/SectionCard.vue';
-import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import { sortByDate } from '@/utils/sorting';
 
 export default {
   components: {
+    ListActionsMenu,
     SectionCard,
-    ButtonSign,
     ButtonText,
   },
   props: {
     parentList: Object,
-    isRequestProcessing: Boolean,
   },
   emits: [
     'load',
-    'edit',
     'addList',
   ],
   computed: {
-    ...mapGetters('appearance', [
-      'isMobileScreen',
-    ]),
     ...mapGetters('lists', [
       'lists',
       'currentListId',
@@ -41,9 +36,6 @@ export default {
     breadcrumbs() {
       return this.populateBreadcrumbs(this.parentList);
     },
-    lastBreadcrumbIndex() {
-      return this.breadcrumbs.length - 1;
-    },
   },
   methods: {
     ...mapMutations('lists', [
@@ -54,6 +46,13 @@ export default {
     ...mapActions('items', [
       '_addNewItemPlaceholder',
     ]),
+    isBreadcrumbClickable(index) {
+      const lastBreadcrumbIndex = this.breadcrumbs.length - 1;
+      const isCurrentIndexLast = index === lastBreadcrumbIndex;
+      const isLastBreadcrumbOpen = this.breadcrumbs[lastBreadcrumbIndex].id === this.currentListId;
+
+      return !isCurrentIndexLast || (isCurrentIndexLast && !isLastBreadcrumbOpen);
+    },
     populateBreadcrumbs(list) {
       const breadcrumbs = [];
 
@@ -81,11 +80,13 @@ export default {
     loadList(id) {
       this.$emit('load', id);
     },
-    editList(list) {
-      this.$emit('edit', list);
-    },
     addList() {
       this.$emit('addList');
+    },
+    handleTitleClick() {
+      if (this.currentListId !== this.parentList.id) {
+        return this.loadList.bind(this, this.parentList.id);
+      }
     },
     returnHome() {
       this.setCurrentListId(null);
@@ -116,19 +117,20 @@ export default {
         </div>
         <ButtonText
           :text="list.title"
-          :style-type="index === lastBreadcrumbIndex ? 'line' : 'underline'"
-          :size="index === lastBreadcrumbIndex ? 'smallest' : 'small'"
-          :disabled="index === lastBreadcrumbIndex"
+          :style-type="isBreadcrumbClickable(index) ? 'underline' : 'line'"
+          :size="isBreadcrumbClickable(index) ? 'small' : 'smallest'"
+          :disabled="!isBreadcrumbClickable(index)"
           @click="loadList(list.id)"
         />
       </div>
     </div>
     <SectionCard
-      v-if="!isRequestProcessing"
       class="content-container"
       :title="parentList?.title"
       position="left"
-      :menu-button-action="() => editList(parentList)"
+      :list-for-menu="parentList"
+      :bordered="parentList.id === currentListId"
+      :title-click-method="handleTitleClick()"
     >
       <SectionCard
         v-if="childLists"
@@ -142,10 +144,7 @@ export default {
           :key="childList.id"
           class="child-list"
         >
-          <ButtonSign
-            style-type="dots"
-            @click="editList(childList)"
-          />
+          <ListActionsMenu :list="childList" />
           <ButtonText
             class="list-title"
             :text="childList.title"
@@ -159,7 +158,6 @@ export default {
         text="add list"
         size="small"
         with-plus-icon
-        :disabled="isRequestProcessing"
         @click="addList"
       />
     </SectionCard>
