@@ -10,21 +10,63 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands
-      uses: appleboy/ssh-action@master
-      env:
-       NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
-       TOKEN: ${{ secrets.TOKEN_GITHUB }}
-      with:
-        host: ${{ secrets.HOST_SERVER }}
-        username: ${{ secrets.NICKNAME_SERVER }}
-        password: ${{ secrets.PASSWORD_SERVER }}
-        port: ${{ secrets.PORT_SERVER }}
-        envs: NICKNAME,TOKEN
-        script_stop: true
-        script: |
-          source /home/vyadl/nodevenv/dev.idli/14/bin/activate && cd /home/vyadl/dev.idli
-          git checkout dev
-          git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" dev
-          npm install
-          npm run build
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16' # Specify the Node.js version you need
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+      # - name: executing remote ssh commands
+      #   uses: appleboy/ssh-action@master
+      #   env:
+      #    NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
+      #    TOKEN: ${{ secrets.TOKEN_GITHUB }}
+      #   with:
+      #     host: ${{ secrets.HOST_SERVER }}
+      #     username: ${{ secrets.NICKNAME_SERVER }}
+      #     password: ${{ secrets.PASSWORD_SERVER }}
+      #     port: ${{ secrets.PORT_SERVER }}
+      #     envs: NICKNAME,TOKEN
+      #     script_stop: true
+      #     script: |
+      #       source /home/vyadl/nodevenv/dev.idli/14/bin/activate && cd /home/vyadl/dev.idli
+      #       git checkout dev
+      #       git pull "https://$NICKNAME:$TOKEN@github.com/vyadl/idli.git" dev
+      #       npm install
+      #       npm run build
+
+      - name: Clear remote dist directory
+        uses: appleboy/ssh-action@master
+        env:
+         NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
+         TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        with:
+          host: ${{ secrets.HOST_SERVER }}
+          username: ${{ secrets.NICKNAME_SERVER }}
+          password: ${{ secrets.PASSWORD_SERVER }}
+          port: ${{ secrets.PORT_SERVER }}
+          envs: NICKNAME,TOKEN
+          script_stop: true
+          script: |
+            rm -rf /home/vyadl/dev.idli/dist
+
+      - name: Copy files to remote server
+        uses: appleboy/scp-action@master
+        env:
+         NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
+         TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        with:
+          host: ${{ secrets.HOST_SERVER }}
+          username: ${{ secrets.NICKNAME_SERVER }}
+          password: ${{ secrets.PASSWORD_SERVER }}
+          port: ${{ secrets.PORT_SERVER }}
+          envs: NICKNAME,TOKEN
+          target: /home/vyadl/dev.idli/dist
+          source: "dist/*"
