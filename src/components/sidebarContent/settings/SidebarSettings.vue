@@ -32,6 +32,7 @@ export default {
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
+      'isListFormInSidebar',
       'isFocusOnList',
       'isListUnderSidebar',
       'isUsingHotkeys',
@@ -76,6 +77,7 @@ export default {
   methods: {
     ...mapActions('settings', [
       '_toggleItemFormLocation',
+      '_toggleListFormLocation',
       '_toggleFocusMode',
       '_toggleSidebarAndListIntersection',
       '_toggleUsingHotkeys',
@@ -99,6 +101,14 @@ export default {
         :model-value="isItemFormInSidebar"
         name="isItemFormInSidebar"
         @change="_toggleItemFormLocation"
+      />
+      <CheckboxCustom
+        label="show list form in sidebar"
+        style-type="initial"
+        :value="false"
+        :model-value="isListFormInSidebar"
+        name="isListFormInSidebar"
+        @change="_toggleListFormLocation"
       />
       <CheckboxCustom
         class="full-screen-option"

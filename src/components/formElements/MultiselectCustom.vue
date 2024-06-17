@@ -172,6 +172,7 @@ export default {
   &-dropdown {
     border: 1px solid map-get($colors, 'gray-dark');
     border-top: none;
+    z-index: 200;
   }
 
   &-option {

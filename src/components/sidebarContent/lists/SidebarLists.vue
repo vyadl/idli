@@ -177,7 +177,7 @@ export default {
       align-items: center;
       width: fit-content;
       margin-bottom: 5px;
-      transform: translateX(-16px);
+      margin-left: -16px;
 
       &:last-of-type {
         margin-bottom: 20px;

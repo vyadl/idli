@@ -12,7 +12,7 @@ export default {
     buttonSize: String,
     position: {
       type: String,
-      default: 'left',
+      default: 'right',
       validator(value) {
         return value
           ? [

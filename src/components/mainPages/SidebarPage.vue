@@ -5,6 +5,7 @@ import SidebarLists from '@/components/sidebarContent/lists/SidebarLists.vue';
 import SidebarBin from '@/components/sidebarContent/bin/SidebarBin.vue';
 import SidebarSettings from '@/components/sidebarContent/settings/SidebarSettings.vue';
 import SidebarItem from '@/components/sidebarContent/item/SidebarItem.vue';
+import SidebarList from '@/components/sidebarContent/list/SidebarList.vue';
 import ButtonText from '@/components/formElements/ButtonText.vue';
 import ButtonSign from '@/components/formElements/ButtonSign.vue';
 import CustomLink from '@/components/wrappers/CustomLink.vue';
@@ -19,6 +20,7 @@ export default {
     SidebarVisualization,
     SidebarFilters,
     SidebarLists,
+    SidebarList,
     SidebarSettings,
     SidebarBin,
     SidebarItem,
@@ -322,6 +324,10 @@ export default {
         v-if="sidebarMode === 'lists'"
         :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
       />
+      <SidebarList
+        v-if="sidebarMode === 'list'"
+        :is-sidebar-breakpoint-reached="isSidebarBreakpointReached"
+      />
       <SidebarSettings v-if="sidebarMode === 'settings'" />
       <SidebarBin
         v-if="sidebarMode === 'bin'"
@@ -405,7 +411,7 @@ export default {
       width: 100%;
       height: 100%;
       padding: 25px;
-      overflow: visible;
+      overflow: auto;
       background-color: map-get($colors, 'white');
     }
 

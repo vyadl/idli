@@ -26,11 +26,14 @@ export default {
     ...mapGetters('lists', [
       'lists',
     ]),
+    ...mapGetters('settings', [
+      'isListFormInSidebar',
+    ]),
     listActions() {
       return [
         {
           name: 'edit list',
-          method: this.openModalForEdittingList,
+          method: this.openListForEdittingList,
         },
         {
           name: this.list.isPrivate ? 'make public' : 'make private',
@@ -62,9 +65,17 @@ export default {
       '_updateList',
       '_deleteList',
     ]),
-    openModalForEdittingList() {
+    ...mapActions('sidebar', [
+      '_openSidebar',
+    ]),
+    openListForEdittingList() {
       this._setEdittingListObj(this.list);
-      this.$vfm.show('listModal');
+
+      if (this.isListFormInSidebar) {
+        this._openSidebar('list');
+      } else {
+        this.$vfm.show('listModal');
+      }
     },
     toggleListPrivateField() {
       this.requestHandling.isRequestProcessing = true;
@@ -75,6 +86,8 @@ export default {
         tags: this.list.tags,
         categories: this.list.categories,
         id: this.list.id,
+        parentListId: this.list.parentListId,
+        updatedAt: this.list.updatedAt,
       });
 
       handleRequestStatuses(request, this.requestHandling);

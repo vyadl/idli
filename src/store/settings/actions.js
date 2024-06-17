@@ -5,6 +5,10 @@ export default {
     commit('toggleItemFormLocation');
     dispatchFromRoot('_saveUnitInLocalStorage', 'settings');
   },
+  _toggleListFormLocation({ commit }) {
+    commit('toggleListFormLocation');
+    dispatchFromRoot('_saveUnitInLocalStorage', 'settings');
+  },
   _toggleFocusMode({ getters, commit }) {
     commit('toggleFocusMode');
 

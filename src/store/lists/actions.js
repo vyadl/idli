@@ -176,6 +176,7 @@ export default {
     id,
     parentListId,
     updatedAt,
+    customStyles,
   }) {
     commitFromRoot('increaseExplicitRequestsNumber');
     commit('updateList', {
@@ -186,6 +187,7 @@ export default {
       id,
       parentListId,
       updatedAt,
+      customStyles,
     });
 
     return this.$config.axios
@@ -196,6 +198,7 @@ export default {
           isPrivate,
           tags,
           categories,
+          customStyles,
         },
       )
       .then(({ data: responseList }) => {

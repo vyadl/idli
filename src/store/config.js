@@ -39,7 +39,7 @@ const sidebarButtonsForViews = {
 export const sidebarModesForViews = {
   loggedInView: {
     sidebarModes: sidebarButtonsForViews.loggedInView,
-    allowedSidebarModes: ['item', ...sidebarButtonsForViews.loggedInView],
+    allowedSidebarModes: ['item', 'list', ...sidebarButtonsForViews.loggedInView],
     default: 'lists',
   },
   itemPublicView: {

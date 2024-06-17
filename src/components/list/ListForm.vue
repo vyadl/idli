@@ -30,6 +30,7 @@ export default {
   LIST_TITLE_ERROR: 'you already have a list with this title',
   data: () => ({
     list: null,
+    isAddingCustomStyles: false,
     titleErrors: {
       list: '',
       tags: '',
@@ -62,6 +63,7 @@ export default {
     ...mapGetters('lists', [
       'lists',
       'currentListId',
+      'currentListObj',
       'parentListIdForNewList',
       'edittingListObj',
       'isUserOwnsCurrentList',
@@ -71,6 +73,7 @@ export default {
     ]),
     ...mapGetters('settings', [
       'isItemFormInSidebar',
+      'isListFormInSidebar',
     ]),
     isPublicViewLinkShown() {
       return this.list.id && !this.edittingListObj.isPrivate;
@@ -95,6 +98,13 @@ export default {
       immediate: true,
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      if (!this.edittingListObj && this.currentListId) {
+        this._setEdittingListObj(this.currentListObj)
+      }
+    })
+  },
   unmounted() {
     this.resetData();
   },
@@ -116,8 +126,15 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
-    closeListModal() {
-      this.$vfm.hide('listModal');
+    closeListForm() {
+      if (this.isListFormInSidebar) {
+        this._openSidebar('lists')
+      } else {
+        this.$vfm.hide('listModal');
+      }
+    },
+    addCustomStyles() {
+      this.isAddingCustomStyles = true;
     },
     resetData() {
       this._setEdittingListObj(null);
@@ -229,7 +246,7 @@ export default {
 
         handleRequestStatuses(request, this.requestHandling)
           .then(() => {
-            this.closeListModal();
+            this.closeListForm();
             this.setParentListIdForNewList(null);
 
             if (this.sidebarMode === 'item') {
@@ -248,7 +265,7 @@ export default {
       const isListTitleUnique = this.validateListTitle();
 
       if (isListTitleUnique && areGroupingFieldsTitlesValid) {
-        this.closeListModal();
+        this.closeListForm();
         this.requestHandling.isRequestProcessing = true;
 
         const request = this._updateList(this.list);
@@ -285,7 +302,7 @@ export default {
 
       handleRequestStatuses(request, this.requestHandling)
         .then(() => {
-          this.closeListModal();
+          this.closeListForm();
         });
     },
     async goToItem({ listId, itemId }) {
@@ -299,7 +316,7 @@ export default {
 
       this._fetchListById({ id: listId, cancelToken: null })
         .then(async () => {
-          this.closeListModal();
+          this.closeListForm();
           await this._fetchItemById({ id: itemId, cancelToken: null });
 
           this.isItemFormInSidebar
@@ -467,6 +484,23 @@ export default {
         />
       </div>
     </TogglingBlock>
+    <ButtonText
+      v-if="!list?.customStyles"
+      text="add custom styles"
+      :size="isMobileScreen ? 'small' : ''"
+      @click="addCustomStyles"
+    />
+    <TogglingBlock
+      v-if="list?.customStyles || isAddingCustomStyles"
+      title="custom styles"
+    >
+      <TextareaCustom
+        v-model="list.customStyles"
+        label="Custom styles"
+        :rows="10"
+        :is-focus="!list.id"
+      />
+    </TogglingBlock>
     <div 
       v-if="list?.createdAt"
       class="stats"
@@ -502,7 +536,7 @@ export default {
           text="cancel"
           :size="isMobileScreen ? 'small' : ''"
           :disabled="isListLoading"
-          @click="closeListModal"
+          @click="closeListForm"
         />
       </div>
       <ButtonText

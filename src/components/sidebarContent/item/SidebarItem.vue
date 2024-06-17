@@ -28,9 +28,9 @@ export default {
     ]),
     isItemInListWithChildLists() {
       const isListHasChildLists = this.lists
-        .filter(list => list.parentListId === this.currentListObj.id)
+        .filter(list => list.parentListId === this.currentListObj?.id)
         .length;
-      const isListHasParentList = this.currentListObj.parentListId;
+      const isListHasParentList = this.currentListObj?.parentListId;
 
       return isListHasChildLists || isListHasParentList;
     },

@@ -12,6 +12,7 @@
     "@yeger/vue-masonry-wall": "^3.0.42",
     "axios": "^0.26.1",
     "get-browser-fingerprint": "^2.1.1",
+    "sass.js": "^0.11.1",
     "throttle-debounce": "^5.0.0",
     "vite": "^3.0.3",
     "vue": "^3.2.37",
@@ -27,6 +28,6 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-vue": "^8.7.1",
     "eslint-plugin-vuejs-accessibility": "^1.1.1",
-    "sass": "^1.49.11"
+    "sass": "^1.66.1"
   }
 }

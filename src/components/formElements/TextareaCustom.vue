@@ -7,6 +7,7 @@ export default {
     isFocus: Boolean,
     rows: Number,
     maxLength: Number,
+    resizable: Boolean,
     disabled: {
       type: Boolean,
       default: false,

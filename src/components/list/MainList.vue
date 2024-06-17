@@ -1,4 +1,5 @@
 <script>
+import Sass from 'sass.js';
 import DraggableList from '@/components/list/DraggableList.vue';
 import DraggableSwitch from '@/components/functionElements/DraggableSwitch.vue';
 import ListItem from '@/components/item/ListItem.vue';
@@ -94,6 +95,7 @@ export default {
       shuffledList: null,
       finalList: null,
       serverRequests: [],
+      currentCustomCssEl: null,
     };
   },
   computed: {
@@ -191,6 +193,13 @@ export default {
     shuffleTrigger() {
       this.shuffledList = shuffleArray(this.finalList);
     },
+    currentListObj: {
+      handler() {
+        this.tryRemoveCssElement();
+        this.tryApplyStyles();
+      },
+      deep: true,
+    },
     currentListItems: {
       handler(items) {
         this.shuffledList = null;
@@ -241,6 +250,13 @@ export default {
       dateCreated: () => sortByDate(this.filteredList, 'createdAt'),
       dateUpdated: () => sortByDate(this.filteredList, 'updatedAt'),
     };
+
+    if (this.currentListObj?.customStyles) {
+      await this.tryApplyStyles();
+    }
+  },
+  beforeUnmount() {
+    this.tryRemoveCssElement();
   },
   methods: {
     ...mapMutations('filters', [
@@ -307,6 +323,53 @@ export default {
 
       return this.shuffledList;
     },
+    async tryApplyStyles() {
+      try {
+        const css = await this.getCompiledStyles();
+
+        if (css) {
+          const style = document.createElement('style');
+          style.setAttribute('id', this.currentListObj?.id);
+
+          this.currentCustomCssEl = style;
+
+          style.innerHTML = css;
+          this.currentCustomCssEl = document.head.appendChild(style);
+
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        return false;
+      }
+    },
+    tryRemoveCssElement() {
+      if (this.currentCustomCssEl) {
+        try {
+          this.currentCustomCssEl.remove();
+        } catch (err) {
+          console.log('can\'t remove css');
+        }
+      }
+    },
+    getCompiledStyles() {
+      const newSassString = `
+        .main-list[data-list-id="${this.currentListObj?.id}"] {
+          ${this.currentListObj?.customStyles}
+        }
+      `;
+  
+      return new Promise((resolve, reject) => {
+        Sass.compile(newSassString, result => {
+          if (result && result.text) {
+            resolve(result.text);
+          } else {
+            reject();
+          }
+        });
+      });
+    },
     setArrowHotkeys() {
       document.addEventListener('keyup', event => {
         if (!event.target.closest('input[type=text]') && !event.target.closest('textarea')) {
@@ -341,6 +404,7 @@ export default {
 <template>
   <div
     class="main-list"
+    :data-list-id="currentListObj?.id"
     :class="`${globalTheme}-theme`"
   >
     <div v-if="currentListObj">
