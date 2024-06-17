@@ -29,8 +29,11 @@ jobs:
           password: ${{ secrets.PASSWORD_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           envs: NICKNAME,TOKEN
+          script_stop: true
+          script: |
+            scp ${{ secrets.NICKNAME_GITHUB }}@${{ secrets.HOST_SERVER }}:/home/vyadl/dev.idli/.env ./.env
           source: /home/vyadl/dev.idli/.env
-          target: ./.env
+          target: "./.env
 
       - name: Install dependencies
         run: npm install
