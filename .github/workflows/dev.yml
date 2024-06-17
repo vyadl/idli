@@ -32,8 +32,6 @@ jobs:
           script_stop: true
           script: |
             scp ${{ secrets.NICKNAME_GITHUB }}@${{ secrets.HOST_SERVER }}:/home/vyadl/dev.idli/.env ./.env
-          source: /home/vyadl/dev.idli/.env
-          target: "./.env
 
       - name: Install dependencies
         run: npm install
