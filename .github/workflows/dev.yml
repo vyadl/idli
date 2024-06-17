@@ -18,6 +18,20 @@ jobs:
         with:
           node-version: '16' # Specify the Node.js version you need
 
+      - name: Copy .env file from remote server
+        uses: appleboy/scp-action@master
+        env:
+         NICKNAME: ${{ secrets.NICKNAME_GITHUB }}
+         TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        with:
+          host: ${{ secrets.HOST_SERVER }}
+          username: ${{ secrets.NICKNAME_SERVER }}
+          password: ${{ secrets.PASSWORD_SERVER }}
+          port: ${{ secrets.PORT_SERVER }}
+          envs: NICKNAME,TOKEN
+          source: /home/vyadl/dev.idli/.env
+          target: ./.env
+
       - name: Install dependencies
         run: npm install
 
@@ -68,5 +82,5 @@ jobs:
           password: ${{ secrets.PASSWORD_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           envs: NICKNAME,TOKEN
-          target: /home/vyadl/dev.idli/dist
+          target: /home/vyadl/dev.idli
           source: "dist/*"
