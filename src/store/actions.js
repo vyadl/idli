@@ -86,4 +86,13 @@ export default {
       ...queryGroups.visualization,
     ]);
   },
+
+  // view acoording things
+
+  _globalBlockSelecting({ commit }) {
+    commit('setBlockGlobalSelecting', true)
+  },
+  _globalAllowSelecting({ commit }) {
+    commit('setBlockGlobalSelecting', false)
+  },
 };

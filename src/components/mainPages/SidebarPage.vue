@@ -116,6 +116,7 @@ export default {
       '_openSidebar',
       '_closeSidebar',
     ]),
+    ...mapActions(['_globalBlockSelecting', '_globalAllowSelecting']),
     catchEdgeMove() {
       if (!this.isSidebarOpen) {
         this._openSidebar(
@@ -163,9 +164,11 @@ export default {
     },
     startResize() {
       document.addEventListener('mousemove', this.handleSidebarResize);
+      this._globalBlockSelecting();
     },
     endResize() {
       document.removeEventListener('mousemove', this.handleSidebarResize);
+      this._globalAllowSelecting();
     },
     openModal(name, parentListId) {
       if (parentListId) {

@@ -10,4 +10,5 @@ export default {
   confirmationModalTitle: '',
   explicitRequestsNumber: 0,
   currentRouteName: '',
+  isGlobalSelectingBlocked: false,
 };

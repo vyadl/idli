@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { mapGetters, mapActions, mapMutations, mapState } from 'vuex';
 import AuthPageLayout from '@/components/layouts/AuthPageLayout.vue';
 import WithSidebarLayout from '@/components/layouts/WithSidebarLayout.vue';
 import ConfirmationModal from '@/components/modals/ConfirmationModal.vue';
@@ -45,6 +45,7 @@ export default {
       'modalNameToShow',
       'explicitRequestsNumber',
     ]),
+    ...mapState(['isGlobalSelectingBlocked']),
     layout() {
       return `${this.$route.meta.layout}`;
     },
@@ -122,7 +123,7 @@ export default {
 <template>
   <div
     class="app"
-    :class="`${globalTheme}-theme`"
+    :class="[`${globalTheme}-theme`, { 'global-selecting-blocked': isGlobalSelectingBlocked }]"
   >
     <transition name="fade">
       <div
@@ -160,6 +161,12 @@ export default {
     align-items: center;
     width: 100%;
     min-height: 100vh;
+
+    &.global-selecting-blocked {
+      * {
+        user-select: none;
+      }
+    }
 
     .preloader {
       position: fixed;

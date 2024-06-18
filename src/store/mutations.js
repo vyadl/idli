@@ -80,4 +80,8 @@ export default {
   setSearchResults(state, results) {
     state.searchResults = results;
   },
+
+  setBlockGlobalSelecting(state, status) {
+    state.isGlobalSelectingBlocked = status
+  }
 };
